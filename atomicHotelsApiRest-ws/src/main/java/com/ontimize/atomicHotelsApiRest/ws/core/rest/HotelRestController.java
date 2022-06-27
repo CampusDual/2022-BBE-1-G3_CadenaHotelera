@@ -8,11 +8,11 @@ import com.ontimize.atomicHotelsApiRest.api.core.service.ICandidateService;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IHotelService;
 import com.ontimize.jee.server.rest.ORestController;
 
-@RestController
-@RequestMapping("/hotels")
+@RestController // indica que esta clase trabaja como un controlador, que responderá a las peticiones cuya URL tenga el path indicado en la anotación
+@RequestMapping("/hotels") //(en este caso, hotels)
 public class HotelRestController extends ORestController<IHotelService> {
 
- @Autowired
+ @Autowired //permite que los DAO se enlacen correctamente a las variables donde las hemos definido, evitando el uso de métodos getter y setter.
  private IHotelService hotelService;
 
  @Override
