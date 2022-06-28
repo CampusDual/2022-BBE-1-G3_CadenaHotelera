@@ -41,8 +41,6 @@ INSERT INTO beds_combo (bdc_name,bdc_slots) values('Cama King-Size',2);
 INSERT INTO beds_combo (bdc_name,bdc_slots) values('Cama individual y cama King-Size',2);
 INSERT INTO beds_combo (bdc_name,bdc_slots) values('Dos camas individuales y una King-Size',4);
 
-INSERT INTO beds_combo (bdc_name,bdc_slots) values('Cama individual',1);
-INSERT INTO beds_combo (bdc_name,bdc_slots) values('Cama individual',1);
 
 
 
