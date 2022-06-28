@@ -19,26 +19,11 @@
 				}
 			],
 			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "demouser",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "demo",
-							"type": "string"
-						}
-					]
-				},
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"data\": {\r\n        \"htl_name\": \"Atom 01\",\r\n        \"htl_street\": \"Plaza de España 1\",\r\n        \"htl_city\": \"Vigo\",\r\n        \"htl_postal_code\": \"36201\",\r\n        \"htl_state\": \"Galicia\",\r\n        \"htl_country\": \"España\",\r\n        \"htl_phone\": \"987 654 321\",\r\n        \"htl_email\": \"hi@atom01.com\",\r\n        \"htl_description\": \"Nuevo hotel de lujo.\",\r\n        \"htl_is_open\": 1\r\n    },\r\n    \"sqltypes\": {\r\n        \"htl_name\": 12,\r\n        \"htl_street\": 12,\r\n        \"htl_city\": 12,\r\n        \"htl_postal_code\": 12,\r\n        \"htl_state\": 12,\r\n        \"htl_country\": 12,\r\n        \"htl_phone\": 12,\r\n        \"htl_email\": 12,\r\n        \"htl_description\": 12,\r\n        \"htl_is_open\": 5\r\n    }\r\n}",
+					"raw": "{\r\n    \"data\": {\r\n        \"htl_name\": \"Atom 234\",\r\n        \"htl_street\": \"Plaza de España 1\",\r\n        \"htl_city\": \"Vigo\",\r\n        \"htl_postal_code\": \"36201\",\r\n        \"htl_state\": \"Galicia\",\r\n        \"htl_country\": \"España\",\r\n        \"htl_phone\": \"987 654 321\",\r\n        \"htl_email\": \"hi@atom01.com\",\r\n        \"htl_description\": \"Nuevo hotel de lujo.\",\r\n        \"htl_is_open\": 1\r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -55,6 +40,47 @@
 					"path": [
 						"hotels",
 						"hotel"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R all hotel",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"columns\": [\"htl_id\",\"htl_name\",\"htl_city\",\"htl_postal_code\",\"htl_state\",\"htl_country\",\"htl_phone\",\"htl_email\",\"htl_description\",\"htl_is_open\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/hotels/hotel/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"hotels",
+						"hotel",
+						"search"
 					]
 				}
 			},
@@ -117,6 +143,46 @@
 			"response": []
 		},
 		{
+			"name": "-D hotel Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"htl_id\": 2\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/hotels/hotel",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"hotels",
+						"hotel"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "-U hotel",
 			"event": [
 				{
@@ -130,21 +196,6 @@
 				}
 			],
 			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "demouser",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "demo",
-							"type": "string"
-						}
-					]
-				},
 				"method": "PUT",
 				"header": [],
 				"body": {
@@ -170,61 +221,41 @@
 				}
 			},
 			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "demouser",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "demo",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
 		},
 		{
-			"name": "-D hotel Copy",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "demouser",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "demo",
-							"type": "string"
-						}
-					]
-				},
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"filter\": {\r\n     \"htl_id\": 1\r\n    }\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:33333/hotels/hotel",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "33333",
-					"path": [
-						"hotels",
-						"hotel"
-					]
-				}
-			},
-			"response": []
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }
