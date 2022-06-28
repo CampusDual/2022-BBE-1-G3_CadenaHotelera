@@ -9,4 +9,17 @@ catalog="" schema="${mainschema}" table="hotels" datasource="mainDataSource" sql
 		<Column>htl_id</Column>
 	</UpdateKeys>
 	<GeneratedKey>htl_id</GeneratedKey>	
+	 <Queries>
+  <Query id="queryHotel">
+   <Sentence>
+   <![CDATA[
+     SELECT
+      #COLUMNS#
+     FROM
+      public.hotels
+     #WHERE#
+   ]]>
+   </Sentence>
+  </Query>
+ </Queries>
 </JdbcEntitySetup>

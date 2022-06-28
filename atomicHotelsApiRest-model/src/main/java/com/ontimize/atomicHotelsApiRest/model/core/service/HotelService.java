@@ -99,5 +99,12 @@ public class HotelService implements IHotelService {
 	public EntityResult hotelDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 		return this.daoHelper.delete(this.hotelDao, keyMap);
 	}
+	
+
+	public EntityResult hotelDataQuery(Map<String, Object> keysValues, List<String> attrList) {
+		 EntityResult queryRes = this.daoHelper.query(this.hotelDao, EntityResultTools.keysvalues("htl_id", keysValues.get("htl_id")), 
+				 EntityResultTools.attributes("htl_id", "htl_name", "htl_street","htl_city","htl_postal_code","htl_state","htl_country","htl_phone","htl_email"),"queryHotel");
+    return queryRes;
+	}
 
 }
