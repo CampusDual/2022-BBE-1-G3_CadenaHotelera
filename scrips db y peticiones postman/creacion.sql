@@ -30,6 +30,21 @@ CREATE TABLE beds_combo(
 	bdc_name varchar(255) NOT NULL,
 	bdc_slots int2 NOT NULL
 );
+INSERT INTO beds_combo (bdc_name,bdc_slots) values('Cama individual',1);
+INSERT INTO beds_combo (bdc_name,bdc_slots) values('Dos camas individuales',2);
+INSERT INTO beds_combo (bdc_name,bdc_slots) values('Tres camas individuales',3);
+INSERT INTO beds_combo (bdc_name,bdc_slots) values('Cama doble',2);
+INSERT INTO beds_combo (bdc_name,bdc_slots) values('Cama individual y doble ',3);
+INSERT INTO beds_combo (bdc_name,bdc_slots) values('Dos camas individuales y una doble',4);
+INSERT INTO beds_combo (bdc_name,bdc_slots) values('Dos camas dobles ',4);
+INSERT INTO beds_combo (bdc_name,bdc_slots) values('Cama King-Size',2);
+INSERT INTO beds_combo (bdc_name,bdc_slots) values('Cama individual y cama King-Size',2);
+INSERT INTO beds_combo (bdc_name,bdc_slots) values('Dos camas individuales y una King-Size',4);
+
+INSERT INTO beds_combo (bdc_name,bdc_slots) values('Cama individual',1);
+INSERT INTO beds_combo (bdc_name,bdc_slots) values('Cama individual',1);
+
+
 
 -- DROP TABLE room_types;
 CREATE TABLE room_types (
@@ -39,7 +54,7 @@ CREATE TABLE room_types (
 	rmt_price NUMERIC(7,2) NOT NULL DEFAULT 0,
 	rmt_htl_id int4 NOT NULL,
 	rmt_bdc_id int4 NOT NULL,
-	CONSTRAINT fk_rmt_htl_id FOREIGN KEY(rmt_htl_id) REFERENCES hotels(htl_id)
+	CONSTRAINT fk_rmt_htl_id FOREIGN KEY(rmt_htl_id) REFERENCES hotels(htl_id),
 	CONSTRAINT fk_rmt_bdc_id FOREIGN KEY(rmt_bdc_id) REFERENCES beds_combo(bdc_id)
 );
 
