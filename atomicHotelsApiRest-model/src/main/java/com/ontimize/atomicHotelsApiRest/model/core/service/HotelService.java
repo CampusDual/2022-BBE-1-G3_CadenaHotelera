@@ -16,6 +16,7 @@ import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
+import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 
 @Service("HotelService")
@@ -31,9 +32,9 @@ public class HotelService implements IHotelService {
 	public EntityResult hotelQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = this.daoHelper.query(this.hotelDao, keyMap, attrList);
-		System.out.println("keyMap:" + keyMap.toString()); // TODO eliminar
-		System.out.println("attrList:" + attrList.toString());// TODO eliminar
-		resultado.setMessage("mensaje cambiado");
+		// System.out.println("keyMap:" + keyMap.toString()); // TODO eliminar
+		// System.out.println("attrList:" + attrList.toString());// TODO eliminar
+		resultado.setMessage("mensaje cambiado"); // TODO eliminar
 		return resultado;
 	}
 
@@ -42,20 +43,22 @@ public class HotelService implements IHotelService {
 		EntityResult resultado = new EntityResultMapImpl();
 
 		// OPCION A (comprobando si el registro ya existe)
-		if (attrMap.containsKey(HotelDao.ATTR_NAME)) {
-			Map<String, Object> auxKeyMap = new HashMap<String, Object>();
-			List<String> auxAttrList = new ArrayList<String>();
-			auxKeyMap.put(HotelDao.ATTR_NAME, attrMap.get(HotelDao.ATTR_NAME));
-			auxAttrList.add(HotelDao.ATTR_NAME);
-			EntityResult auxEntity = hotelQuery(auxKeyMap, auxAttrList);
-			System.out.println("coincidencias:" + auxEntity.calculateRecordNumber());// TODO eliminar
-			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
-				resultado = this.daoHelper.insert(this.hotelDao, attrMap);
-			} else {
-				resultado.setCode(EntityResult.OPERATION_WRONG);
-				resultado.setMessage("Error al crear Hotel - El registro ya existe");
-			}
-		}
+//		if (attrMap.containsKey(HotelDao.ATTR_NAME)) {
+//			Map<String, Object> auxKeyMap = new HashMap<String, Object>();
+//			List<String> auxAttrList = new ArrayList<String>();
+//			auxKeyMap.put(HotelDao.ATTR_NAME, attrMap.get(HotelDao.ATTR_NAME));
+//			auxAttrList.add(HotelDao.ATTR_NAME);
+//			EntityResult auxEntity = hotelQuery(auxKeyMap, auxAttrList);
+//			// System.out.println("coincidencias:" + auxEntity.calculateRecordNumber());//
+//			// TODO eliminar
+//			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
+//				resultado = this.daoHelper.insert(this.hotelDao, attrMap);
+//			} else {
+//				resultado.setCode(EntityResult.OPERATION_WRONG);
+//				resultado.setMessage("Error al crear Hotel - El registro ya existe");
+//			}
+//		}
+
 		// TODO limpiar pruebas de setMessage
 
 		// OPCION B (capturando excepción duplicateKey)
@@ -70,7 +73,19 @@ public class HotelService implements IHotelService {
 //			resultado.setCode(EntityResult.OPERATION_WRONG);
 //			resultado.setMessage("Error al crear Hotel - El registro ya existe");
 //		}
-
+		
+		// OPCION C (comprobando si el registro ya existe)
+		if (attrMap.containsKey(HotelDao.ATTR_NAME)) {
+			EntityResult auxEntity = this.daoHelper.query(this.hotelDao,
+					EntityResultTools.keysvalues(HotelDao.ATTR_NAME, attrMap.get(HotelDao.ATTR_NAME)),
+					EntityResultTools.attributes(HotelDao.ATTR_NAME));
+			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
+				resultado = this.daoHelper.insert(this.hotelDao, attrMap);
+			} else {
+				resultado.setCode(EntityResult.OPERATION_WRONG);
+				resultado.setMessage("Error al crear Hotel - El registro ya existe");
+			}
+		}
 		return resultado;
 	}
 

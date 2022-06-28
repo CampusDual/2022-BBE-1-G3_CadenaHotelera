@@ -8,27 +8,5 @@ catalog="" schema="${mainschema}" table="hotels" datasource="mainDataSource" sql
 	<UpdateKeys>
 		<Column>htl_id</Column>
 	</UpdateKeys>
-	<GeneratedKey>htl_id</GeneratedKey>
-	<Queries>
-		<Query id="byName">
-			
-			<Sentence>
-				<![CDATA[
-     SELECT
-      #COLUMNS#
-     FROM
-      PUBLIC.OFFER_CANDIDATES OC
-     INNER JOIN PUBLIC.OFFER O ON
-      OC.OFFER_ID = O.ID
-     INNER JOIN PUBLIC.CANDIDATE C ON
-      OC.CANDIDATE_ID = C.ID
-     INNER JOIN PUBLIC.OFFER_STATUS OS ON
-      O.OFFER_STATUS = OS.ID
-     INNER JOIN PUBLIC.OFFER_CANDIDATE_STATUS OCS ON
-      O.OFFER_STATUS = OCS.ID
-     #WHERE#
-   ]]>
-			</Sentence>
-		</Query>
-	</Queries>
+	<GeneratedKey>htl_id</GeneratedKey>	
 </JdbcEntitySetup>

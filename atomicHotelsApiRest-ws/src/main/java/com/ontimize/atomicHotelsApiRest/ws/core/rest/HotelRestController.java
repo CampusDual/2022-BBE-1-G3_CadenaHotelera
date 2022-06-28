@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ontimize.atomicHotelsApiRest.api.core.service.ICandidateService;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IHotelService;
 import com.ontimize.jee.server.rest.ORestController;
 
