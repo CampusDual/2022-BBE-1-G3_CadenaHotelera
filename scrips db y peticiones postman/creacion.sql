@@ -65,4 +65,17 @@ CREATE TABLE room_types_features (
 	PRIMARY KEY (rmt_id,ftr_id)
 );
 
+-- BG- 111
+-- DROP TABLE public.rooms;
+CREATE TABLE public.rooms (
+	rm_htl_id int4 NOT NULL,
+	rm_number int4 NOT null,
+	rm_square_meters int4,
+	rm_rmt_id int4,
+	rm_status int2 default 0,
+	primary key(rm_htl_id, rm_number),
+	foreign key (rm_htl_id) references hotels(htl_id),
+	foreign key (rm_rmt_id) references room_types(rmt_id)
+);
+
 
