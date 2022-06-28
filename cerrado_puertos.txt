@@ -1,0 +1,3 @@
+netstat -aon | findstr :3333 en mi caso ->lista las conexiones activas por puerto 3333
+
+taskkill /pid XXXX /F introducimos el PID y matamos el proceso
