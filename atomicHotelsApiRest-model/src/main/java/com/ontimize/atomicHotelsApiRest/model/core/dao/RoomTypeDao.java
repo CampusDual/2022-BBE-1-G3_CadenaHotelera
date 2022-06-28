@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import com.ontimize.jee.server.dao.common.ConfigurationFile;
 import com.ontimize.jee.server.dao.jdbc.OntimizeJdbcDaoSupport;
 
-@Repository("HotelDao")
+@Repository("RoomTypeDao")
 @Lazy
 @ConfigurationFile(configurationFile = "dao/RoomTypeDao.xml", configurationFilePlaceholder = "dao/placeholders.properties")
 public class RoomTypeDao extends OntimizeJdbcDaoSupport {
@@ -16,6 +16,5 @@ public class RoomTypeDao extends OntimizeJdbcDaoSupport {
 	public static final String ATTR_DESCRIPTION = TAG +"description";
 	public static final String ATTR_PRICE = TAG +"price";
 	public static final String ATTR_HOTEL_ID = TAG +"htl_id";
-	public static final String ATTR_BEDS_COMBO = TAG +"bdc_id";
-	
+	public static final String ATTR_BEDS_COMBO = TAG +"bdc_id";	
 }
