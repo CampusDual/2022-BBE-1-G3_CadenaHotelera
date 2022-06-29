@@ -1,0 +1,371 @@
+{
+	"info": {
+		"_postman_id": "da8b123c-b330-44c3-b189-de5639d53cb9",
+		"name": "Rooms",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "-C room",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n    \"data\": {\r\n        \"rm_htl_id\": 1,\r\n        \"rm_number\": 101,\r\n        \"rm_square_meters\":10,\r\n        \"rm_rmt_id\":1,\r\n        \"rm_status\":1\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/rooms/room",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"rooms",
+						"room"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R all rooms",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/rooms/room?columns=rm_htl_id,rm_number,rm_square_meters,rm_rmt_id,rm_status",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"rooms",
+						"room"
+					],
+					"query": [
+						{
+							"key": "columns",
+							"value": "rm_htl_id,rm_number,rm_square_meters,rm_rmt_id,rm_status"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R all rooms",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"columns\": [\"rm_htl_id\",\"rm_number\",\"rm_square_meters\",\"rm_rmt_id\",\"rm_status\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/rooms/room/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"rooms",
+						"room",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R rooms by hotel",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"rm_htl_id\": 1\r\n    },\r\n    \"columns\": [\"rm_htl_id\",\"rm_number\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/rooms/room/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"rooms",
+						"room",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R data rooms by hotel ",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"rm_htl_id\":1\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/rooms/roomData/search",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"rooms",
+						"roomData",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "- R data room",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"rm_htl_id\":1,\r\n        \"rm_number\":101\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/rooms/roomData/search",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"rooms",
+						"roomData",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "- U room",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"rm_htl_id\": 1,\r\n    \"rm_number\": 102\r\n    },\r\n    \"data\": {\r\n        \"rm_rmt_id\":5,\r\n        \"rm_status\": 0\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/rooms/room",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"rooms",
+						"room"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-D room",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"rm_htl_id\": 1,\r\n     \"rm_number\": 102\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/rooms/room",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"rooms",
+						"room"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
