@@ -11,4 +11,5 @@ public interface IRoomTypeService {
 	 public EntityResult roomTypeInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException;
 	 public EntityResult roomTypeUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
 	 public EntityResult roomTypeDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
+	 public EntityResult infoQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
 }
