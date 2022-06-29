@@ -1,6 +1,5 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -60,18 +59,10 @@ public class RoomTypeService implements IRoomTypeService {
 	public EntityResult roomTypeDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 		return this.daoHelper.delete(this.roomTypeDao, keyMap);
 	}
-
-	public EntityResult roomTypeDataQuery(Map<String, Object> keyMap, List<String> attrList) {
-		Map<String, Object> auxKeyMap = new HashMap<String, Object>();
-		if (keyMap.containsKey(RoomTypeDao.ATTR_ID)) {
-			auxKeyMap.put(RoomTypeDao.ATTR_ID, keyMap.get(RoomTypeDao.ATTR_ID));
-		}
-		
-		EntityResult queryRes = this.daoHelper.query(
-				this.roomTypeDao, auxKeyMap, EntityResultTools.attributes(RoomTypeDao.ATTR_ID, RoomTypeDao.ATTR_NAME, RoomTypeDao.ATTR_DESCRIPTION,
-						RoomTypeDao.ATTR_PRICE, "bdc_name", "bdc_slots"),
-				"queryRoomType");
-		return queryRes;
+	
+	@Override
+	public EntityResult infoQuery(Map<String, Object> keyMap, List<String> attrList) {
+		return this.daoHelper.query(this.roomTypeDao, keyMap, attrList, "queryRoomTypes");
 	}
 
 }

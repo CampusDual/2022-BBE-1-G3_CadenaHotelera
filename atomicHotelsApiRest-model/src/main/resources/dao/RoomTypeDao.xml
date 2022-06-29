@@ -11,13 +11,13 @@
 		<Query id="queryRoomTypes">
 			<Sentence>
 				<![CDATA[
-     SELECT
-      #COLUMNS#
-     FROM
-      room_types
-     JOIN beds_combo ON bdc_id = rmt_bdc_id
-     #WHERE#
-   ]]>
+				    SELECT
+				     	#COLUMNS#
+				    FROM
+				     	room_types
+			     	JOIN beds_combo ON bdc_id = rmt_bdc_id
+				    #WHERE#
+			    ]]>
 			</Sentence>
 		</Query>
 	</Queries>

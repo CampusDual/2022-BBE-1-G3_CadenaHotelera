@@ -1,0 +1,877 @@
+{
+	"info": {
+		"_postman_id": "fccf7713-2a8d-4144-95e4-e639b449ad75",
+		"name": "AtomicHotels",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Hotels",
+			"item": [
+				{
+					"name": "-C hotel",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"data\": {\r\n        \"htl_name\": \"Atom 234\",\r\n        \"htl_street\": \"Plaza de España 1\",\r\n        \"htl_city\": \"Vigo\",\r\n        \"htl_postal_code\": \"36201\",\r\n        \"htl_state\": \"Galicia\",\r\n        \"htl_country\": \"España\",\r\n        \"htl_phone\": \"987 654 321\",\r\n        \"htl_email\": \"hi@atom01.com\",\r\n        \"htl_description\": \"Nuevo hotel de lujo.\",\r\n        \"htl_is_open\": 1\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:33333/hotels/hotel",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "33333",
+							"path": [
+								"hotels",
+								"hotel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "-R all hotels",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "demouser",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "demo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:33333/hotels/hotel?columns=htl_id,htl_name,htl_city,htl_postal_code,htl_state,htl_country,htl_phone,htl_email,htl_description,htl_is_open",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "33333",
+							"path": [
+								"hotels",
+								"hotel"
+							],
+							"query": [
+								{
+									"key": "columns",
+									"value": "htl_id,htl_name,htl_city,htl_postal_code,htl_state,htl_country,htl_phone,htl_email,htl_description,htl_is_open"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "-R all hotel",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"columns\": [\"algo\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:33333/hotels/hotel/search",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "33333",
+							"path": [
+								"hotels",
+								"hotel",
+								"search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "-R data hotel",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "demouser",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "demo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"filter\":{\r\n        \"htl_id\":5\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:33333/hotels/hotelData/search",
+							"host": [
+								"localhost"
+							],
+							"port": "33333",
+							"path": [
+								"hotels",
+								"hotelData",
+								"search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "-R hotel",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "demouser",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "demo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"filter\": {\r\n     \"htl_id\": 1\r\n    },\r\n    \"columns\": [\"htl_id\",\"htl_name\",\"htl_city\",\"htl_postal_code\",\"htl_state\",\"htl_country\",\"htl_phone\",\"htl_email\",\r\n                \"htl_description\",\"htl_is_open\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:33333/hotels/hotel/search",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "33333",
+							"path": [
+								"hotels",
+								"hotel",
+								"search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "-U hotel",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"filter\": {\r\n     \"htl_id\": 1\r\n    },\r\n    \"data\": {\r\n        \"htl_name\": \"Atom01updated3\",\r\n        \"htl_is_open\": 0\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:33333/hotels/hotel",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "33333",
+							"path": [
+								"hotels",
+								"hotel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "-D hotel Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"filter\": {\r\n     \"htl_id\": 2\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:33333/hotels/hotel",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "33333",
+							"path": [
+								"hotels",
+								"hotel"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Features",
+			"item": [
+				{
+					"name": "-C secador",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "demouser",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "demo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n    \"data\": {\r\n        \"ftr_name\": \"Secador de pelo\",\r\n        \"ftr_description\": \"Philips 1000W\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:33333/features/feature",
+							"host": [
+								"localhost"
+							],
+							"port": "33333",
+							"path": [
+								"features",
+								"feature"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "-C jacuzzi",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "demouser",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "demo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n    \"data\": {\r\n        \"ftr_name\": \"Jacuzzi\",\r\n        \"ftr_description\": \"7 chorros\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:33333/features/feature",
+							"host": [
+								"localhost"
+							],
+							"port": "33333",
+							"path": [
+								"features",
+								"feature"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "-R all features",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "demouser",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "demo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:33333/features/feature?columns=ftr_id,ftr_name,ftr_description",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "33333",
+							"path": [
+								"features",
+								"feature"
+							],
+							"query": [
+								{
+									"key": "columns",
+									"value": "ftr_id,ftr_name,ftr_description"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "-R all features",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "demouser",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "demo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"columns\": [\"ftr_id\",\"ftr_name\",\"ftr_description\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:33333/features/feature/search",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "33333",
+							"path": [
+								"features",
+								"feature",
+								"search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "-R feauture",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "demouser",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "demo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"filter\": {\r\n     \"ftr_id\": 1\r\n    },\r\n    \"columns\": [\"ftr_id\",\"ftr_name\",\"ftr_description\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:33333/features/feature/search",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "33333",
+							"path": [
+								"features",
+								"feature",
+								"search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "-U jacuzzi",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "demouser",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "demo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"filter\": {\r\n     \"ftr_id\": 1\r\n    },\r\n    \"data\": {\r\n        \"ftr_name\": \"Jacuzzi 7 chorros\",\r\n        \"ftr_description\": \"El jacuzzi tiene 7 chorros\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:33333/features/feature",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "33333",
+							"path": [
+								"features",
+								"feature"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "-D jacuzzi",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "demouser",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "demo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"filter\": {\r\n     \"ftr_id\": 1\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:33333/features/feature",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "33333",
+							"path": [
+								"features",
+								"feature"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Room Types",
+			"item": [
+				{
+					"name": "-C basica individual",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "demouser",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "demo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n    \"data\": {\r\n        \"rmt_name\": \"Habitación económica superior\",\r\n        \"rmt_description\": \"Habitación básica doble\",\r\n        \"rmt_price\": 75.8005,\r\n        \"rmt_bdc_id\": \"4\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:33333/roomTypes/roomType",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "33333",
+							"path": [
+								"roomTypes",
+								"roomType"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "-R roomTypes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "demouser",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "demo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"filter\": {\r\n     \"rmt_id\": 1\r\n    },\r\n    \"columns\": [\"rmt_id\",\"rmt_name\",\"rmt_description\",\"rmt_price\",\"rmt_bdc_id\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:33333/roomTypes/roomType/search",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "33333",
+							"path": [
+								"roomTypes",
+								"roomType",
+								"search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "-R info roomTypes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "demouser",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "demo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"filter\": {\r\n     \"rmt_id\": 4\r\n    },    \r\n    \"columns\": [\"rmt_id\",\"rmt_name\",\"rmt_description\",\"rmt_price\",\"bdc_name\",\"bdc_slots\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:33333/roomTypes/info/search",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "33333",
+							"path": [
+								"roomTypes",
+								"info",
+								"search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "-R info con RequestMapping roomTypes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "demouser",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "demo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"filter\": {\r\n     \"rmt_id\": 4\r\n    },    \r\n    \"columns\": [\"rmt_id\",\"rmt_name\",\"rmt_description\",\"rmt_price\",\"bdc_name\",\"bdc_slots\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:33333/roomTypes/info",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "33333",
+							"path": [
+								"roomTypes",
+								"info"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "demouser",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "demo",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
