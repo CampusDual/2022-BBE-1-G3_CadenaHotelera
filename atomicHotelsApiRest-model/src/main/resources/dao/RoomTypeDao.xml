@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<JdbcEntitySetup xmlns="http://www.ontimize.com/schema/jdbc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ontimize.com/schema/jdbc http://www.ontimize.com/schema/jdbc/ontimize-jdbc-dao.xsd" catalog="" schema="${mainschema}" table="roomTypes" datasource="mainDataSource" sqlhandler="dbSQLStatementHandler">
+<JdbcEntitySetup xmlns="http://www.ontimize.com/schema/jdbc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ontimize.com/schema/jdbc http://www.ontimize.com/schema/jdbc/ontimize-jdbc-dao.xsd" catalog="" schema="${mainschema}" table="room_types" datasource="mainDataSource" sqlhandler="dbSQLStatementHandler">
 	<DeleteKeys>
 		<Column>rmt_id</Column>
 	</DeleteKeys>
@@ -15,8 +15,7 @@
       #COLUMNS#
      FROM
       room_types
-     JOIN hotels ON htl_id = rmt_htl_id 
-     JOIN beds_combo ON htl_id = rmt_htl_id
+     JOIN beds_combo ON bdc_id = rmt_bdc_id
      #WHERE#
    ]]>
 			</Sentence>
