@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<JdbcEntitySetup xmlns="http://www.ontimize.com/schema/jdbc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.ontimize.com/schema/jdbc http://www.ontimize.com/schema/jdbc/ontimize-jdbc-dao.xsd" 
+catalog="" schema="${mainschema}" table="rooms" datasource="mainDataSource" sqlhandler="dbSQLStatementHandler">
+	<DeleteKeys>
+		<Column>rm_htl_id</Column>
+		<Column>rm_number</Column>
+	</DeleteKeys>
+	<UpdateKeys>
+		<Column>rm_htl_id</Column>
+		<Column>rm_number</Column>
+	</UpdateKeys>
+		<Queries>
+		<Query id="queryRooms">
+			<Sentence>
+				<![CDATA[
+     SELECT
+      #COLUMNS#
+     FROM
+      rooms
+     JOIN room_types ON rm_rmt_id = rmt_id
+     JOIN hotels ON rm_htl_id = htl_id
+     #WHERE#
+   ]]>
+			</Sentence>
+		</Query>
+	</Queries>
+</JdbcEntitySetup>

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.service.IHotelService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomTypeDao;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
@@ -103,7 +104,7 @@ public class HotelService implements IHotelService {
 
 	public EntityResult hotelDataQuery(Map<String, Object> keysValues, List<String> attrList) {
 		 EntityResult queryRes = this.daoHelper.query(this.hotelDao, EntityResultTools.keysvalues("htl_id", keysValues.get("htl_id")), 
-				 EntityResultTools.attributes("htl_id", "htl_name", "htl_street","htl_city","htl_postal_code","htl_state","htl_country","htl_phone","htl_email"),"queryHotel");
+				 EntityResultTools.attributes(HotelDao.ATTR_ID, HotelDao.ATTR_NAME,HotelDao.ATTR_STREET,HotelDao.ATTR_CITY,HotelDao.ATTR_CP,HotelDao.ATTR_STATE,HotelDao.ATTR_COUNTRY,HotelDao.ATTR_PHONE,HotelDao.ATTR_EMAIL,HotelDao.ATTR_DESCRIPTION,HotelDao.ATTR_IS_OPEN),"queryHotel");
     return queryRes;
 	}
 
