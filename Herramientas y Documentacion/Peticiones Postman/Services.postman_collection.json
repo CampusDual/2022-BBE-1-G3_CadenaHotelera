@@ -1,0 +1,310 @@
+{
+	"info": {
+		"_postman_id": "382a1a5b-ffc5-4def-8f3d-8238df80c39c",
+		"name": "Services",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "-C castillo Hinchable",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n    \"data\": {\r\n        \"srv_name\": \"Castillo Hinchable\",\r\n        \"srv_description\": \"Tres pisos y con la boca de bob esponja que se abre y se cierra\"\r\n\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/services/service",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"services",
+						"service"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-C piscina",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n    \"data\": {\r\n        \"srv_name\": \"Castillo Hinchable\",\r\n        \"srv_description\": \"Tres pisos y con la boca de bob esponja que se abre y se cierra\"\r\n\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/services/service",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"services",
+						"service"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-C golf",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n    \"data\": {\r\n        \"srv_name\": \"Castillo Hinchable\",\r\n        \"srv_description\": \"Tres pisos y con la boca de bob esponja que se abre y se cierra\"\r\n\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/services/service",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"services",
+						"service"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R all Services",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:33333/services/service?columns=srv_id,srv_name,srv_description",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"services",
+						"service"
+					],
+					"query": [
+						{
+							"key": "columns",
+							"value": "srv_id,srv_name,srv_description"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R Service",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"srv_id\": 1\r\n    },\r\n    \"columns\": [\"srv_name\",\"srv_description\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/services/service/search",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"services",
+						"service",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-U service",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"srv_id\":3\r\n},\r\n\"data\":{\r\n    \"srv_name\":\"Campo de gol de viejos\"\r\n}\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/services/service",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"services",
+						"service"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-D Service",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \r\n    \"filter\":{\r\n        \"srv_id\":2\r\n    }\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/services/service",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"services",
+						"service"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
