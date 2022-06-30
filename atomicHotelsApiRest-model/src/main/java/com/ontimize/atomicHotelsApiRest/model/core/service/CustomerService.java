@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.service.ICustomerService;
@@ -55,7 +56,13 @@ public class CustomerService implements ICustomerService{
 
  @Override
  public EntityResult customerDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
-  return this.daoHelper.delete(this.customerDao, keyMap);
+	 EntityResult resultado = new EntityResultMapImpl();	 
+	 try {
+		 resultado=this.daoHelper.delete(this.customerDao, keyMap); 
+	 }catch(DataIntegrityViolationException e) {
+		 resultado = new EntityResultWrong("Error al borrar Customer - Tiene un registo de reserva");
+	 }
+  return resultado;
  }
 
 }

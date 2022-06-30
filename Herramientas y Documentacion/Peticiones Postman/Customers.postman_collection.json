@@ -1,0 +1,272 @@
+{
+	"info": {
+		"_postman_id": "c8dff7d3-647f-4f77-9fe1-763f6a7e7c46",
+		"name": "Customers",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "-C customer",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"data\":\r\n    {\"cst_name\":\"Paula\",\r\n    \"cst_surnames\":\"Rodriguez Pérez\",\r\n    \"cst_dni\":\"22222222U\",\r\n    \"cst_address\":\"calle aaaaa\",\r\n    \"cst_nationality\":\"española\",\r\n    \"cst_phone\":\"11111\",\r\n    \"cst_creditcard\":\"123123-12123\",\r\n    \"cst_valid_date\":\"2022-12-12\"}\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/customers/customer",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"customers",
+						"customer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "- R all customers",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:33333/customers/customer?columns=cst_id,cst_name,cst_surnames,cst_email,cst_birth_date,cst_dni,cst_address,cst_nationality,cst_phone,cst_creditcard,cst_valid_date",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"customers",
+						"customer"
+					],
+					"query": [
+						{
+							"key": "columns",
+							"value": "cst_id,cst_name,cst_surnames,cst_email,cst_birth_date,cst_dni,cst_address,cst_nationality,cst_phone,cst_creditcard,cst_valid_date"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R all customers",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \"columns\": [\"cst_id\",\"cst_name\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/customers/customer/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"customers",
+						"customer",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R costumer",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"cst_id\": 1\r\n    },\r\n    \"columns\": [\"cst_id\",\"cst_name\",\"cst_surnames\",\"cst_email\",\"cst_birth_date\",\"cst_dni\",\"cst_address\",\"cst_nationality\",\"cst_phone\",\"cst_creditcard\",\"cst_valid_date\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/customers/customer/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"customers",
+						"customer",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "- U costumer",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"cst_id\": 2\r\n    },\r\n    \"data\": {\r\n        \"cst_name\": \"Laura\",\r\n        \"cst_birth_date\":\"1990-12-12\"\r\n    },\r\n    \"sqltypes\":{\r\n        \"cst_birth_date\":91\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/customers/customer",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"customers",
+						"customer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-D costumer",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"cst_id\": 1\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/customers/customer",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"customers",
+						"customer"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
