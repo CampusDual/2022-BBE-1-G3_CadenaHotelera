@@ -25,10 +25,33 @@ public class HotelRestController extends ORestController<IHotelService> {
  }
  
 	@RequestMapping(
-			value = "/login",
+			value = "/query",
 			method = RequestMethod.POST,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-		public ResponseEntity<EntityResult> login() {
+		public ResponseEntity<EntityResult> query() { 
+			//return this.getService().hotelQuery(this.getService().));
+		return new ResponseEntity<>(HttpStatus.OK);
+		}
+	
+	@RequestMapping(
+			value = "/create",
+			method = RequestMethod.POST,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+		public ResponseEntity<EntityResult> create() {
+			return new ResponseEntity<>(HttpStatus.OK);
+		}
+	@RequestMapping(
+			value = "/update",
+			method = RequestMethod.PUT,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+		public ResponseEntity<EntityResult> update() {
+			return new ResponseEntity<>(HttpStatus.OK);
+		}
+	@RequestMapping(
+			value = "/delete",
+			method = RequestMethod.DELETE,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+		public ResponseEntity<EntityResult> delete() {
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
 }
