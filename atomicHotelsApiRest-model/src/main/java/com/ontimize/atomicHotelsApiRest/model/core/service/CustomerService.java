@@ -9,8 +9,12 @@ import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.service.ICustomerService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
+import com.ontimize.atomicHotelsApiRest.model.core.ontimizeExtra.EntityResultWrong;
 import com.ontimize.jee.common.dto.EntityResult;
+import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
+import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 
 @Service("CustomerService")
@@ -28,7 +32,19 @@ public class CustomerService implements ICustomerService{
 
  @Override
  public EntityResult customerInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
-  return this.daoHelper.insert(this.customerDao, attrMap);
+	 EntityResult resultado = new EntityResultMapImpl();
+	 
+		if (attrMap.containsKey(CustomerDao.ATTR_DNI)) {
+			EntityResult auxEntity = this.daoHelper.query(this.customerDao,
+					EntityResultTools.keysvalues(CustomerDao.ATTR_DNI, attrMap.get(CustomerDao.ATTR_DNI)),
+					EntityResultTools.attributes(CustomerDao.ATTR_DNI));
+			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
+				resultado = this.daoHelper.insert(this.customerDao, attrMap);
+			} else {				
+				resultado = new EntityResultWrong("Error al crear Customer - El registro ya existe");
+			}
+		}
+		return resultado;
  }
 
  @Override
