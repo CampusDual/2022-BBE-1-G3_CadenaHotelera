@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IHotelService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomTypeDao;
+import com.ontimize.atomicHotelsApiRest.model.core.ontimizeExtra.EntityResultWrong;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
@@ -82,9 +83,8 @@ public class HotelService implements IHotelService {
 					EntityResultTools.attributes(HotelDao.ATTR_NAME));
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
 				resultado = this.daoHelper.insert(this.hotelDao, attrMap);
-			} else {
-				resultado.setCode(EntityResult.OPERATION_WRONG);
-				resultado.setMessage("Error al crear Hotel - El registro ya existe");
+			} else {				
+				resultado = new EntityResultWrong("Error al crear Hotel - El registro ya existe");
 			}
 		}
 		return resultado;

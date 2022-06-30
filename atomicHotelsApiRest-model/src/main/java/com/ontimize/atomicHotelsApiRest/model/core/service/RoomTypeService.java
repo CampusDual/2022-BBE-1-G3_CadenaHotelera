@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.service.IRoomTypeService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomTypeDao;
+import com.ontimize.atomicHotelsApiRest.model.core.ontimizeExtra.EntityResultWrong;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
@@ -42,8 +43,7 @@ public class RoomTypeService implements IRoomTypeService {
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
 				resultado = this.daoHelper.insert(this.roomTypeDao, attrMap);
 			} else {
-				resultado.setCode(EntityResult.OPERATION_WRONG);
-				resultado.setMessage("Error al crear RoomType - El registro ya existe");
+				resultado = new EntityResultWrong("Error al crear RoomType - El registro ya existe");				
 			}
 		}
 		return resultado;
