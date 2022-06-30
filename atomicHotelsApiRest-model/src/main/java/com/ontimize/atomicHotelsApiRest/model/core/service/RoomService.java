@@ -95,6 +95,8 @@ public class RoomService implements IRoomService{
 				 EntityResultTools.attributes(RoomDao.ATTR_HOTEL_ID, RoomDao.ATTR_NUMBER,RoomDao.ATTR_SQUARE_METERS,RoomDao.ATTR_STATUS,RoomDao.ATTR_ROOM_TYPE_ID,HotelDao.ATTR_NAME,RoomTypeDao.ATTR_NAME,RoomTypeDao.ATTR_PRICE),"queryRooms");
    return queryRes;
 	}
+	
+
 
 }
 
