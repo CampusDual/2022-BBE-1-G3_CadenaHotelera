@@ -29,7 +29,7 @@ public class RoomTypesController extends ORestController<IRoomTypeService> {
 		return this.roomTypesService;
 	}
 
-	@RequestMapping(value = "info", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "infoCosas", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public EntityResult infoSearch(@RequestBody Map<String, Object> req) {
 		try {
 //			List<String> attrList = (List<String>) req.get("columns");
