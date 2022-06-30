@@ -1,0 +1,213 @@
+{
+	"info": {
+		"_postman_id": "d7ac54da-521a-42ed-83e9-a0d20035b2a2",
+		"name": "Bookings",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "-C booking",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"data\": {\r\n        \"bkg_stb_id\": 1,\r\n        \"bkg_cst_id\": 2,\r\n        \"bkg_rm_id\": 1,\r\n        \"bkg_observations\": \"holita\",\r\n        \"bkg_checkin\": \"2022-07-23\",\r\n        \"bkg_checkout\": \"2022-08-21\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookings/booking",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookings",
+						"booking"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R booking",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"bkg_stb_id\": 1\r\n    },\r\n    \"columns\": \r\n        [\"bkg_stb_id\",\r\n        \"bkg_cst_id\",\r\n        \"bkg_rm_id\",\r\n        \"bkg_observations\",\r\n        \"bkg_checkin\",\r\n        \"bkg_checkout\"]    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookings/booking/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookings",
+						"booking",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R all  booking",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"columns\": \r\n        [\"bkg_stb_id\",\r\n        \"bkg_cst_id\",\r\n        \"bkg_rm_id\",\r\n        \"bkg_observations\",\r\n        \"bkg_checkin\",\r\n        \"bkg_checkout\"]    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookings/booking/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookings",
+						"booking",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-U booking",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"bkg_id\": 1\r\n    },\r\n    \"data\": {\r\n        \"bkg_stb_id\": 4\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookings/booking",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookings",
+						"booking"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-D booking",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"bkg_id\": 3\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookings/booking",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookings",
+						"booking"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "demouser",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "demo",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
