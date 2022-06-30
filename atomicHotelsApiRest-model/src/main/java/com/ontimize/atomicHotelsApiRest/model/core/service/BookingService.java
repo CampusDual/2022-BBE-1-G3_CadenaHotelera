@@ -75,7 +75,7 @@ public class BookingService implements IBookingService {
 	public EntityResult bookingsInRangeQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
-//TODO ESTO NO FUNCIONA
+//
 		if (keyMap.containsKey("range_checkin") && keyMap.containsKey("range_checkout")) {
 			BasicField checkin = new BasicField(BookingDao.ATTR_CHECKIN);
 			BasicField checkout = new BasicField(BookingDao.ATTR_CHECKOUT);
@@ -92,10 +92,10 @@ public class BookingService implements IBookingService {
 				 * (range_checkin >= bkg_checkin AND range_chekin < bkg_checkout) OR
 				 * (range_checkout <= bkg_checkout AND range_chekout > bkg_checkin)
 				 */
-				BasicExpression exp01 = new BasicExpression(rangeCheckin, BasicOperator.MORE_EQUAL_OP, checkin);
-				BasicExpression exp02 = new BasicExpression(rangeCheckout, BasicOperator.LESS_EQUAL_OP, checkout);
-				BasicExpression exp03 = new BasicExpression(rangeCheckin, BasicOperator.LESS_OP, checkout);
-				BasicExpression exp04 = new BasicExpression(rangeCheckout, BasicOperator.MORE_OP, checkin);
+				BasicExpression exp01 = new BasicExpression(checkin, BasicOperator.LESS_EQUAL_OP, rangeCheckin);
+				BasicExpression exp02 = new BasicExpression(checkout, BasicOperator.MORE_EQUAL_OP, rangeCheckout);
+				BasicExpression exp03 = new BasicExpression(checkout, BasicOperator.MORE_OP, rangeCheckin);
+				BasicExpression exp04 = new BasicExpression(checkin, BasicOperator.LESS_OP, rangeCheckout);
 
 				BasicExpression groupExp01 = new BasicExpression(exp01, BasicOperator.AND_OP, exp02);
 				BasicExpression groupExp02 = new BasicExpression(exp01, BasicOperator.AND_OP, exp03);
@@ -103,13 +103,11 @@ public class BookingService implements IBookingService {
 
 				BasicExpression auxfinalExp = new BasicExpression(groupExp01, BasicOperator.OR_OP, groupExp02);
 				BasicExpression finalExp = new BasicExpression(auxfinalExp, BasicOperator.OR_OP, groupExp03);
+				
 				keyMap.put(SQLStatementBuilder.ExtendedSQLConditionValuesProcessor.EXPRESSION_KEY, finalExp);
 				keyMap.remove("range_checkin");
 				keyMap.remove("range_checkout");
-				System.err.println(keyMap);
-				System.err.println(attrList);
-				System.err.println("finalExp: " + finalExp.toString());
-				
+
 				resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList);
 			} catch (ParseException e) {
 				e.printStackTrace();
