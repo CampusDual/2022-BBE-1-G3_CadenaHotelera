@@ -23,5 +23,21 @@ catalog="" schema="${mainschema}" table="rooms" datasource="mainDataSource" sqlh
    ]]>
 			</Sentence>
 		</Query>
+		<Query id="queryBookedRooms">
+			<Sentence>
+				<![CDATA[
+				     SELECT
+				      	#COLUMNS#
+				     FROM
+				      rooms
+				     JOIN booking 
+				     	ON bkg_rm_id = rm_id
+				     	AND (bkg_checkin >= checkin
+				     		AND bkg_checkin <= checkout)
+				     JOIN hotels ON rm_htl_id = htl_id
+				     #WHERE#
+				   ]]>
+			</Sentence>
+		</Query>
 	</Queries>
 </JdbcEntitySetup>

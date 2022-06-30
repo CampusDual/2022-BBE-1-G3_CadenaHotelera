@@ -73,7 +73,7 @@ public class RoomService implements IRoomService{
 			resultado.setMessage("Error al actualizar Room - Prentende asignarle una FK que no existe");
 		}catch(org.springframework.jdbc.SQLWarningException e) {
 			resultado.setCode(EntityResult.OPERATION_WRONG);
-			resultado.setMessage("Error al actualizar Room - Debe introdrocir el id del hotel y el número de la habitación");
+			resultado.setMessage("Error al actualizar Room - Debe introducir el id del hotel y el número de la habitación");
 		}
 		return resultado;
 	}
@@ -85,7 +85,7 @@ public class RoomService implements IRoomService{
 			resultado=this.daoHelper.delete(this.roomDao, keyMap);
 		}catch(org.springframework.jdbc.SQLWarningException e) {
 			resultado.setCode(EntityResult.OPERATION_WRONG);
-			resultado.setMessage("Error al eliminar Room - Debe introdrocir el id del hotel y el número de la habitación");
+			resultado.setMessage("Error al eliminar Room - Debe introducir el id del hotel y el número de la habitación");
 		}
 		return resultado;
 	}

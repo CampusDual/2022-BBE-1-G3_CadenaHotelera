@@ -24,33 +24,4 @@ public class BookingRestController extends ORestController<IBookingService> {
   return this.bookingService;
  }
  
-	@RequestMapping(
-			value = "/query",
-			method = RequestMethod.POST,
-			produces = MediaType.APPLICATION_JSON_VALUE)
-		public ResponseEntity<EntityResult> query() { 
-		return new ResponseEntity<>(HttpStatus.OK);
-		}
-	
-	@RequestMapping(
-			value = "/create",
-			method = RequestMethod.POST,
-			produces = MediaType.APPLICATION_JSON_VALUE)
-		public ResponseEntity<EntityResult> create() {
-			return new ResponseEntity<>(HttpStatus.OK);
-		}
-	@RequestMapping(
-			value = "/update",
-			method = RequestMethod.PUT,
-			produces = MediaType.APPLICATION_JSON_VALUE)
-		public ResponseEntity<EntityResult> update() {
-			return new ResponseEntity<>(HttpStatus.OK);
-		}
-	@RequestMapping(
-			value = "/delete",
-			method = RequestMethod.DELETE,
-			produces = MediaType.APPLICATION_JSON_VALUE)
-		public ResponseEntity<EntityResult> delete() {
-			return new ResponseEntity<>(HttpStatus.OK);
-		}
 }

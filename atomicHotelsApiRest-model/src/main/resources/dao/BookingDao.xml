@@ -8,5 +8,22 @@ catalog="" schema="${mainschema}" table="bookings" datasource="mainDataSource" s
 	<UpdateKeys>		
 		<Column>bkg_id</Column>
 	</UpdateKeys>
-	<GeneratedKey>bkg_id</GeneratedKey>			
+	<GeneratedKey>bkg_id</GeneratedKey>
+	<Queries>
+		<Query id="queryBookingsInRange">
+			<Sentence>
+				<![CDATA[
+				    SELECT
+				     	#COLUMNS#
+				    FROM
+				     	bookings				    
+				    WHERE
+				    	(range_checkin >= bkg_checkin AND range_chekout <= bkg_checkout)
+				    	OR (range_checkin >= bkg_checkin AND range_chekin < bkg_checkout)
+				    	OR (range_checkout <= bkg_checkout AND range_chekout > bkg_checkin)				    	   
+				    #WHERE_CONCAT#				    
+			    ]]>
+			</Sentence>
+		</Query>
+	</Queries>			
 </JdbcEntitySetup>
