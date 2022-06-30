@@ -36,7 +36,7 @@ public class RoomService implements IRoomService{
 		return resultado;
 	}
 
-	@Override
+	@Override//TODO cambiar la comprobación de clave duplicada por las uniques
 	public EntityResult roomInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
@@ -54,7 +54,7 @@ public class RoomService implements IRoomService{
 		return resultado;
 	}
 
-	@Override
+	@Override//TODO cambiar la comprobación de clave duplicada por las uniques y tratar las otras excepciones de la manera adecuada.
 	public EntityResult roomUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
