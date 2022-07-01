@@ -125,3 +125,16 @@ srv_name varchar(255) not null,
 srv_description varchar(255)
 );
 
+-- DROP TABLE public.hotels_services;
+
+CREATE TABLE public.hotels_services (
+	htl_id int4 NOT NULL,
+	srv_id int4 NOT NULL,
+	CONSTRAINT hotels_services_pkey PRIMARY KEY (htl_id, srv_id)
+);
+
+
+-- public.hotels_services foreign keys
+
+ALTER TABLE public.hotels_services ADD CONSTRAINT fk_htl_id FOREIGN KEY (htl_id) REFERENCES public.hotels(htl_id);
+ALTER TABLE public.hotels_services ADD CONSTRAINT fk_srv_id FOREIGN KEY (srv_id) REFERENCES public.services(srv_id);
