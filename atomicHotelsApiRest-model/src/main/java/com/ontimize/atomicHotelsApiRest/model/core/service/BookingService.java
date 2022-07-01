@@ -87,27 +87,36 @@ public class BookingService implements IBookingService {
 				// keyMap.get("range_checkout")));
 
 				/*
-				 * (range_checkin >= bkg_checkin AND range_chekout <= bkg_checkout) OR
-				 * (range_checkin >= bkg_checkin AND range_chekin < bkg_checkout) OR
-				 * (range_checkout <= bkg_checkout AND range_chekout > bkg_checkin)
+				 * (range_checkin >= bkg_checkin AND range_checkin < bkg_checkout) OR
+				 * (range_checkout > bkg_checkin AND range_checkout <= bkg_checkout) OR
+				 * (range_checkin < bkg_checkin AND range_chekout > bkg_checkout)
 				 */
+				
+				//(range_checkin >= bkg_checkin AND range_checkin < bkg_checkout) OR
 				BasicExpression exp01 = new BasicExpression(checkin, BasicOperator.LESS_EQUAL_OP, rangeCheckin);
-				BasicExpression exp02 = new BasicExpression(checkout, BasicOperator.MORE_EQUAL_OP, rangeCheckout);
-				BasicExpression exp03 = new BasicExpression(checkout, BasicOperator.MORE_OP, rangeCheckin);
+				BasicExpression exp02 = new BasicExpression(checkout, BasicOperator.MORE_OP, rangeCheckin);
+				BasicExpression groupExp01 = new BasicExpression(exp01, BasicOperator.AND_OP, exp02); //dentro rangeCheckin
+
+				//(range_checkout > bkg_checkin AND range_checkout <= bkg_checkout) OR
+				BasicExpression exp03 = new BasicExpression(checkout, BasicOperator.MORE_EQUAL_OP, rangeCheckout);
 				BasicExpression exp04 = new BasicExpression(checkin, BasicOperator.LESS_OP, rangeCheckout);
+				BasicExpression groupExp02 = new BasicExpression(exp03, BasicOperator.AND_OP, exp04);//dentro rangeCheckout 
 
-				BasicExpression groupExp01 = new BasicExpression(exp01, BasicOperator.AND_OP, exp02);
-				BasicExpression groupExp02 = new BasicExpression(exp01, BasicOperator.AND_OP, exp03);
-				BasicExpression groupExp03 = new BasicExpression(exp02, BasicOperator.AND_OP, exp04);
+				BasicExpression exp05 = new BasicExpression(checkin, BasicOperator.MORE_OP, rangeCheckin);
+				BasicExpression exp06 = new BasicExpression(checkout, BasicOperator.LESS_OP, rangeCheckout);
+				BasicExpression groupExp03 = new BasicExpression(exp05, BasicOperator.AND_OP, exp06);//dentro checkin y checkout
 
+				//las uno
 				BasicExpression auxfinalExp = new BasicExpression(groupExp01, BasicOperator.OR_OP, groupExp02);
 				BasicExpression finalExp = new BasicExpression(auxfinalExp, BasicOperator.OR_OP, groupExp03);
 				
+			
 				keyMap.put(SQLStatementBuilder.ExtendedSQLConditionValuesProcessor.EXPRESSION_KEY, finalExp);
 				keyMap.remove("range_checkin");
 				keyMap.remove("range_checkout");
 
-				resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList);
+				resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList);			
+				System.err.println(resultado.toString());
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
