@@ -29,26 +29,26 @@ public class HotelServiceService implements IHotelServiceService{
 	private DefaultOntimizeDaoHelper daoHelper;
 
 	@Override
-	public EntityResult serviceQuery(Map<String, Object> keyMap, List<String> attrList)
+	public EntityResult hotelServiceQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = this.daoHelper.query(this.hotelserviceDao, keyMap, attrList);
 		return resultado;
 	}
 
 	@Override
-	public EntityResult serviceInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
+	public EntityResult hotelServiceInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
 		return resultado;
 	}
 
 	@Override
-	public EntityResult serviceUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
+	public EntityResult hotelServiceUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
 		return this.daoHelper.update(this.hotelserviceDao, attrMap, keyMap);
 	}
 
 	@Override
-	public EntityResult serviceDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
+	public EntityResult hotelServiceDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 		return this.daoHelper.delete(this.hotelserviceDao, keyMap);
 	}
 
