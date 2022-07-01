@@ -22,8 +22,8 @@ import com.ontimize.jee.server.dao.IOntimizeDaoSupport;
 
 @Service("RoomService")
 @Lazy
-public class RoomService implements IRoomService{
-	
+public class RoomService implements IRoomService {
+
 	@Autowired
 	private RoomDao roomDao;
 	@Autowired
@@ -36,7 +36,7 @@ public class RoomService implements IRoomService{
 		return resultado;
 	}
 
-	@Override//TODO cambiar la comprobación de clave duplicada por las uniques
+	@Override
 	public EntityResult roomInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
@@ -54,7 +54,7 @@ public class RoomService implements IRoomService{
 		return resultado;
 	}
 
-	@Override//TODO cambiar la comprobación de clave duplicada por las uniques y tratar las otras excepciones de la manera adecuada.
+	@Override
 	public EntityResult roomUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
@@ -68,12 +68,9 @@ public class RoomService implements IRoomService{
 		} catch (DuplicateKeyException e) {
 			resultado.setCode(EntityResult.OPERATION_WRONG);
 			resultado.setMessage("Error al actualizar Room - No se puede duplicar un registro");
-		}catch(org.springframework.dao.DataIntegrityViolationException e) {
+		} catch (org.springframework.dao.DataIntegrityViolationException e) {
 			resultado.setCode(EntityResult.OPERATION_WRONG);
-			resultado.setMessage("Error al actualizar Room - Prentende asignarle una FK que no existe");
-		}catch(org.springframework.jdbc.SQLWarningException e) {
-			resultado.setCode(EntityResult.OPERATION_WRONG);
-			resultado.setMessage("Error al actualizar Room - Debe introducir el id del hotel y el número de la habitación");
+			resultado.setMessage("Error al actualizar Room - Prentende asignarle un tipo de habitación que no existe");
 		}
 		return resultado;
 	}
@@ -81,22 +78,17 @@ public class RoomService implements IRoomService{
 	@Override
 	public EntityResult roomDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
-		try {
-			resultado=this.daoHelper.delete(this.roomDao, keyMap);
-		}catch(org.springframework.jdbc.SQLWarningException e) {
-			resultado.setCode(EntityResult.OPERATION_WRONG);
-			resultado.setMessage("Error al eliminar Room - Debe introducir el id del hotel y el número de la habitación");
-		}
+		resultado = this.daoHelper.delete(this.roomDao, keyMap);
 		return resultado;
 	}
-	
-	public EntityResult roomDataQuery(Map<String, Object> keysValues, List<String> attrList) {
-		 EntityResult queryRes = this.daoHelper.query(this.roomDao, keysValues, 
-				 EntityResultTools.attributes(RoomDao.ATTR_HOTEL_ID, RoomDao.ATTR_NUMBER,RoomDao.ATTR_SQUARE_METERS,RoomDao.ATTR_STATUS,RoomDao.ATTR_ROOM_TYPE_ID,HotelDao.ATTR_NAME,RoomTypeDao.ATTR_NAME,RoomTypeDao.ATTR_PRICE),"queryRooms");
-   return queryRes;
-	}
-	
 
+	public EntityResult roomDataQuery(Map<String, Object> keysValues, List<String> attrList) {
+		EntityResult queryRes = this.daoHelper.query(this.roomDao, keysValues,
+				EntityResultTools.attributes(RoomDao.ATTR_HOTEL_ID, RoomDao.ATTR_NUMBER, RoomDao.ATTR_SQUARE_METERS,
+						RoomDao.ATTR_STATUS, RoomDao.ATTR_ROOM_TYPE_ID, HotelDao.ATTR_NAME, RoomTypeDao.ATTR_NAME,
+						RoomTypeDao.ATTR_PRICE),
+				"queryRooms");
+		return queryRes;
+	}
 
 }
-
