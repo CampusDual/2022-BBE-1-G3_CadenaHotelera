@@ -1,5 +1,6 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,7 +9,9 @@ import java.util.Map;
 import org.postgresql.xml.EmptyStringEntityResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.jdbc.SQLWarningException;
 import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.service.IHotelService;
@@ -36,13 +39,24 @@ public class HotelService implements IHotelService {
 		EntityResult resultado = this.daoHelper.query(this.hotelDao, keyMap, attrList);
 		// System.out.println("keyMap:" + keyMap.toString()); // TODO eliminar
 		// System.out.println("attrList:" + attrList.toString());// TODO eliminar
-		resultado.setMessage("mensaje cambiado"); // TODO eliminar
+//		resultado.setMessage("mensaje cambiado"); // TODO eliminar
 		return resultado;
 	}
 
 	@Override
 	public EntityResult hotelInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
+
+		try {
+			resultado = this.daoHelper.insert(this.hotelDao, attrMap);
+			resultado.setMessage("Hotel registrado");
+		} catch (DuplicateKeyException e) {
+			resultado = new EntityResultWrong("Error al crear Hotel - El registro ya existe");
+		} catch (DataIntegrityViolationException e) {
+			resultado = new EntityResultWrong("Error al crear Hotel - Falta algún campo obligatorio");
+		} catch (Exception e) {
+			resultado = new EntityResultWrong("Error al registrar Hotel");
+		}
 
 		// OPCION A (comprobando si el registro ya existe)
 //		if (attrMap.containsKey(HotelDao.ATTR_NAME)) {
@@ -61,21 +75,21 @@ public class HotelService implements IHotelService {
 //			}
 //		}
 
+		// OPCION B (capturando excepción duplicateKey)
+//		try {
+//			resultado = this.daoHelper.insert(this.hotelDao, attrMap);
+//			if (resultado != null && resultado.getCode() == EntityResult.OPERATION_WRONG) {
+//				resultado.setMessage("Error al insertar datos");
+//			} else {
+//				resultado.setMessage("mensaje cambiado2 desde insert");
+//			}
+//		} catch (DuplicateKeyException e) {
+//			resultado.setCode(EntityResult.OPERATION_WRONG);
+//			resultado.setMessage("Error al crear Hotel - El registro ya existe");
+//		}
+
 		// TODO limpiar pruebas de setMessage
 
-//		 OPCION B (capturando excepción duplicateKey)
-		try {
-			resultado = this.daoHelper.insert(this.hotelDao, attrMap);
-			if (resultado != null && resultado.getCode() == EntityResult.OPERATION_WRONG) {
-				resultado.setMessage("Error al insertar datos");
-			} else {
-				resultado.setMessage("mensaje cambiado2 desde insert");
-			}
-		} catch (DuplicateKeyException e) {
-			resultado.setCode(EntityResult.OPERATION_WRONG);
-			resultado.setMessage("Error al crear Hotel - El registro ya existe");
-		}
-		
 //		// OPCION C (comprobando si el registro ya existe)
 //		if (attrMap.containsKey(HotelDao.ATTR_NAME)) {
 //			EntityResult auxEntity = this.daoHelper.query(this.hotelDao,
@@ -93,19 +107,55 @@ public class HotelService implements IHotelService {
 	@Override
 	public EntityResult hotelUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
-		return this.daoHelper.update(this.hotelDao, attrMap, keyMap);
+		EntityResult resultado = new EntityResultMapImpl();
+		try {
+			resultado = this.daoHelper.update(this.hotelDao, attrMap, keyMap);
+			resultado.setMessage("Hotel actualizado");
+		} catch (DuplicateKeyException e) {
+			resultado = new EntityResultWrong("Error al actualizar Hotel - No es posible duplicar un registro");
+		} catch (DataIntegrityViolationException e) {
+			resultado = new EntityResultWrong("Error al actualizar Hotel - Falta algún campo obligatorio");
+		} catch (SQLWarningException e) {
+			resultado = new EntityResultWrong(
+					"Error al actualizar Hotel - Falta el htl_id (PK) del Hotel a actualizar");
+		} catch (Exception e) {
+			resultado = new EntityResultWrong("Error al actualizar Hotel");
+		}
+		return resultado;
 	}
 
 	@Override
 	public EntityResult hotelDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
-		return this.daoHelper.delete(this.hotelDao, keyMap);
+		
+		EntityResult resultado = new EntityResultMapImpl();		
+		try {
+			if (keyMap.containsKey(HotelDao.ATTR_ID)) {
+				EntityResult auxEntity = this.daoHelper.query(this.hotelDao,
+						EntityResultTools.keysvalues(HotelDao.ATTR_ID, keyMap.get(HotelDao.ATTR_ID)),
+						EntityResultTools.attributes(HotelDao.ATTR_ID));
+				if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
+					resultado = new EntityResultWrong("Error al eliminar Hotel - El Hotel a eliminar no existe");
+				} else {
+					resultado = this.daoHelper.delete(this.hotelDao, keyMap);
+					resultado.setMessage("Hotel eliminado");
+				}
+			}else {
+				resultado = new EntityResultWrong("Error al eliminar Hotel - Falta el htl_id (PK) del Hotel a eliminar");
+			}
+		} catch (Exception e) {
+			resultado = new EntityResultWrong("Error al eliminar Hotel");
+		}
+		return resultado;
 	}
-	
 
 	public EntityResult hotelDataQuery(Map<String, Object> keysValues, List<String> attrList) {
-		 EntityResult queryRes = this.daoHelper.query(this.hotelDao, EntityResultTools.keysvalues("htl_id", keysValues.get("htl_id")), 
-				 EntityResultTools.attributes(HotelDao.ATTR_ID, HotelDao.ATTR_NAME,HotelDao.ATTR_STREET,HotelDao.ATTR_CITY,HotelDao.ATTR_CP,HotelDao.ATTR_STATE,HotelDao.ATTR_COUNTRY,HotelDao.ATTR_PHONE,HotelDao.ATTR_EMAIL,HotelDao.ATTR_DESCRIPTION,HotelDao.ATTR_IS_OPEN),"queryHotel");
-    return queryRes;
+		EntityResult queryRes = this.daoHelper.query(this.hotelDao,
+				EntityResultTools.keysvalues("htl_id", keysValues.get("htl_id")),
+				EntityResultTools.attributes(HotelDao.ATTR_ID, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET,
+						HotelDao.ATTR_CITY, HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY,
+						HotelDao.ATTR_PHONE, HotelDao.ATTR_EMAIL, HotelDao.ATTR_DESCRIPTION, HotelDao.ATTR_IS_OPEN),
+				"queryHotel");
+		return queryRes;
 	}
 
 }
