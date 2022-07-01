@@ -63,30 +63,30 @@ public class HotelService implements IHotelService {
 
 		// TODO limpiar pruebas de setMessage
 
-		// OPCION B (capturando excepción duplicateKey)
-//		try {
-//			resultado = this.daoHelper.insert(this.hotelDao, attrMap);
-//			if (resultado != null && resultado.getCode() == EntityResult.OPERATION_WRONG) {
-//				resultado.setMessage("Error al insertar datos");
-//			} else {
-//				resultado.setMessage("mensaje cambiado2 desde insert");
-//			}
-//		} catch (DuplicateKeyException e) {
-//			resultado.setCode(EntityResult.OPERATION_WRONG);
-//			resultado.setMessage("Error al crear Hotel - El registro ya existe");
-//		}
-		
-		// OPCION C (comprobando si el registro ya existe)
-		if (attrMap.containsKey(HotelDao.ATTR_NAME)) {
-			EntityResult auxEntity = this.daoHelper.query(this.hotelDao,
-					EntityResultTools.keysvalues(HotelDao.ATTR_NAME, attrMap.get(HotelDao.ATTR_NAME)),
-					EntityResultTools.attributes(HotelDao.ATTR_NAME));
-			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
-				resultado = this.daoHelper.insert(this.hotelDao, attrMap);
-			} else {				
-				resultado = new EntityResultWrong("Error al crear Hotel - El registro ya existe");
+//		 OPCION B (capturando excepción duplicateKey)
+		try {
+			resultado = this.daoHelper.insert(this.hotelDao, attrMap);
+			if (resultado != null && resultado.getCode() == EntityResult.OPERATION_WRONG) {
+				resultado.setMessage("Error al insertar datos");
+			} else {
+				resultado.setMessage("mensaje cambiado2 desde insert");
 			}
+		} catch (DuplicateKeyException e) {
+			resultado.setCode(EntityResult.OPERATION_WRONG);
+			resultado.setMessage("Error al crear Hotel - El registro ya existe");
 		}
+		
+//		// OPCION C (comprobando si el registro ya existe)
+//		if (attrMap.containsKey(HotelDao.ATTR_NAME)) {
+//			EntityResult auxEntity = this.daoHelper.query(this.hotelDao,
+//					EntityResultTools.keysvalues(HotelDao.ATTR_NAME, attrMap.get(HotelDao.ATTR_NAME)),
+//					EntityResultTools.attributes(HotelDao.ATTR_NAME));
+//			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
+//				resultado = this.daoHelper.insert(this.hotelDao, attrMap);
+//			} else {				
+//				resultado = new EntityResultWrong("Error al crear Hotel - El registro ya existe");
+//			}
+//		}
 		return resultado;
 	}
 
