@@ -11,7 +11,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 
-import com.ontimize.atomicHotelsApiRest.api.core.service.IServiceService;
+import com.ontimize.atomicHotelsApiRest.api.core.service.IHotelServiceService;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
@@ -21,7 +21,7 @@ import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelServiceDao;
 
 @Service("HotelServiceService")
 @Lazy
-public class HotelServiceService implements IServiceService{
+public class HotelServiceService implements IHotelServiceService{
 	
 	@Autowired
 	private HotelServiceDao hotelserviceDao;
