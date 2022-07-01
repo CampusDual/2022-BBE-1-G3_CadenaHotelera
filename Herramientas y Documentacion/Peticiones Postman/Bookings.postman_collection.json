@@ -112,7 +112,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\": {\r\n     \"bkg_id\": 1\r\n    },\r\n    \"data\": {\r\n        \"bkg_stb_id\": 4\r\n    }\r\n}",
+					"raw": "{\r\n    \"filter\": {\r\n     \"bkg_id\": 1\r\n    },\r\n    \"data\": {\r\n        \"bkg_checkout\": \"2023-02-02\"\r\n    },\r\n    \"sqltypes\":{\r\n         \"bkg_checkout\": 91\r\n    }\r\n\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -169,6 +169,36 @@
 					"path": [
 						"bookings",
 						"booking"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R bookingsInRange",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"range_checkin\": \"2022-01-05\",\r\n        \"range_checkout\": \"2023-01-20\"\r\n    },\r\n    \"columns\": \r\n        [\"bkg_id\",\r\n        \"bkg_rm_id\",\r\n        \"bkg_stb_id\",\r\n        \"bkg_cst_id\",        \r\n        \"bkg_observations\",\r\n        \"bkg_checkin\",\r\n        \"bkg_checkout\"],\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookings/bookingsInRange/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookings",
+						"bookingsInRange",
+						"search"
 					]
 				}
 			},

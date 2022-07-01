@@ -80,7 +80,6 @@ public class BookingService implements IBookingService {
 			BasicField checkin = new BasicField(BookingDao.ATTR_CHECKIN);
 			BasicField checkout = new BasicField(BookingDao.ATTR_CHECKOUT);
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			System.err.println(keyMap);
 			try {
 				Date rangeCheckin = dateFormat.parse((String) keyMap.get("range_checkin"));
 				Date rangeCheckout = dateFormat.parse((String) keyMap.get("range_checkout"));
