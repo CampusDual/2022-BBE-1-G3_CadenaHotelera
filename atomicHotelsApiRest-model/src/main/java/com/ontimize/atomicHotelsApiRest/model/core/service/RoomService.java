@@ -108,7 +108,7 @@ public class RoomService implements IRoomService {
 		return resultado;
 	}
 
-	public EntityResult roomDataQuery(Map<String, Object> keysValues, List<String> attrList) {
+	public EntityResult roomInfoQuery(Map<String, Object> keysValues, List<String> attrList) {
 		return this.daoHelper.query(this.roomDao, keysValues, attrList, "queryRooms");
 	}
 
@@ -127,10 +127,11 @@ public class RoomService implements IRoomService {
 			keyMap.remove(BookingDao.NON_ATTR_START_DATE);
 			keyMap.remove(BookingDao.NON_ATTR_END_DATE);				
 			
-			List<Object> bookedRoomsIdList = EntityResultExtraTools.listFromColumn(bookedRoomsER, BookingDao.ATTR_ROOM_ID);			
+			List<Object> bookedRoomsIdList = EntityResultExtraTools.listFromColumn(bookedRoomsER, BookingDao.ATTR_ROOM_ID);	
+			System.err.println(bookedRoomsER);
 			BasicExpression finalExp = new BasicExpression(new BasicField(RoomDao.ATTR_ID), BasicOperator.NOT_IN_OP,bookedRoomsIdList );
 			keyMap.put(SQLStatementBuilder.ExtendedSQLConditionValuesProcessor.EXPRESSION_KEY, finalExp);
-			resultado = this.daoHelper.query(this.roomDao, keyMap, attrList);
+			resultado = this.daoHelper.query(this.roomDao, keyMap, attrList,"queryRooms");
 		} else {
 			resultado = new EntityResultWrong("Faltan campos necesarios, checkin o checkout");
 		}

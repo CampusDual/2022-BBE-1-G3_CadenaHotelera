@@ -1,42 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<JdbcEntitySetup xmlns="http://www.ontimize.com/schema/jdbc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-xsi:schemaLocation="http://www.ontimize.com/schema/jdbc http://www.ontimize.com/schema/jdbc/ontimize-jdbc-dao.xsd" 
-catalog="" schema="${mainschema}" table="rooms" datasource="mainDataSource" sqlhandler="dbSQLStatementHandler">
-		<DeleteKeys>
+<JdbcEntitySetup xmlns="http://www.ontimize.com/schema/jdbc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ontimize.com/schema/jdbc http://www.ontimize.com/schema/jdbc/ontimize-jdbc-dao.xsd" catalog="" schema="${mainschema}" table="rooms" datasource="mainDataSource" sqlhandler="dbSQLStatementHandler">
+	<DeleteKeys>
 		<Column>rm_id</Column>
 	</DeleteKeys>
 	<UpdateKeys>
 		<Column>rm_id</Column>
 	</UpdateKeys>
-	<GeneratedKey>rm_id</GeneratedKey>	
-		<Queries>
+	<GeneratedKey>rm_id</GeneratedKey>
+	<Queries>
 		<Query id="queryRooms">
 			<Sentence>
 				<![CDATA[
-     SELECT
-      #COLUMNS#
-     FROM
-      rooms
-     JOIN room_types ON rm_rmt_id = rmt_id
-     JOIN hotels ON rm_htl_id = htl_id
-     #WHERE#
-   ]]>
+					     SELECT
+					      #COLUMNS#
+					     FROM
+					      rooms
+					     LEFT JOIN room_types ON rm_rmt_id = rmt_id
+					     LEFT JOIN hotels ON rm_htl_id = htl_id
+					     WHERE 
+					     rm_status != 0
+					     #WHERE_CONCAT#
+					   ]]>
 			</Sentence>
 		</Query>
-		<Query id="queryBookedRooms">
+		<Query id="queryFullRooms">
 			<Sentence>
 				<![CDATA[
-				     SELECT
-				      	#COLUMNS#
-				     FROM
-				      rooms
-				     JOIN booking 
-				     	ON bkg_rm_id = rm_id
-				     	AND (bkg_checkin >= checkin
-				     		AND bkg_checkin <= checkout)
-				     JOIN hotels ON rm_htl_id = htl_id
-				     #WHERE#
-				   ]]>
+					     SELECT
+					      #COLUMNS#
+					     FROM
+					      rooms
+					     LEFT JOIN room_types ON rm_rmt_id = rmt_id
+					     LEFT JOIN hotels ON rm_htl_id = htl_id	
+					     #WHERE#
+					   ]]>
 			</Sentence>
 		</Query>
 	</Queries>
