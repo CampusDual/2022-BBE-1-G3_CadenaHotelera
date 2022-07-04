@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "97685c0e-3529-4c5a-bc0d-577da5b864af",
+		"_postman_id": "840a362f-825d-472f-8af6-75ba0d3dff48",
 		"name": "Features",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -27,7 +27,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": " {\r\n    \"data\": {\r\n        \"ftr_name\": \"Secador de pelo\",\r\n        \"ftr_description\": \"Philips 1000W\"\r\n    }\r\n}",
+					"raw": " {\r\n    \"data\": {\r\n        \"ftr_id\": 10,\r\n        \"ftr_name\": \"Secador de pelo\",\r\n        \"ftr_description\": \"Philips 1000W\"\r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -70,7 +70,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": " {\r\n    \"data\": {\r\n        \"ftr_name\": \"Jacuzzi\",\r\n        \"ftr_description\": \"7 chorros\"\r\n    }\r\n}",
+					"raw": " {\r\n    \"data\": {\r\n        \"ftr_id\": 2,\r\n        \"ftr_name\": \"Jacuzzi\",\r\n        \"ftr_description\": \"7 chorros\"\r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -244,7 +244,315 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\": {\r\n     \"ftr_id\": 1\r\n    },\r\n    \"data\": {\r\n        \"ftr_name\": \"Jacuzzi 7 chorros\",\r\n        \"ftr_description\": \"El jacuzzi tiene 7 chorros\"\r\n    }\r\n}",
+					"raw": "{\r\n    \"filter\": {\r\n     \"ftr_id\": 2\r\n    },\r\n    \"data\": {\r\n        \"ftr_name\": \"El jacuzzi tiene 7 chorros\",\r\n        \"ftr_description\": \"Jacuzzi 7 chorros\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/features/feature",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"features",
+						"feature"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-U secador",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"ftr_id\": 10\r\n    },\r\n    \"data\": {\r\n        \"ftr_name\": \"Secador de pelo\",\r\n        \"ftr_description\": \"Color negro. Potencia: 2500W\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/features/feature",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"features",
+						"feature"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-U caja fuerte",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"ftr_id\": 3\r\n    },\r\n    \"data\": {\r\n        \"ftr_name\": \"Caja fuerte\",\r\n        \"ftr_description\": \"Ferrimax Serie Hotel TSW. Espesor total de las paredes: 80 mm; cada nivel de seguridad lleva un blindaje interior diferente\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/features/feature",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"features",
+						"feature"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-U amenities",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"ftr_id\": 6\r\n    },\r\n    \"data\": {\r\n        \"ftr_name\": \"Amenities\",\r\n        \"ftr_description\": \"Toallas, peines, cepillos de dientes, gel y jabón sin aditivos, toallitas desmaquillantes y gorros de ducha.\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/features/feature",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"features",
+						"feature"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-U bañera",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"ftr_id\": 6\r\n    },\r\n    \"data\": {\r\n        \"ftr_name\": \"Bañera con hidromasaje\",\r\n        \"ftr_description\": \"Spatec Duo. Fabricada en fibra de vidrio reforzado con acabado acrílico, color negro, dimensiones: 180x120x61 cm, LED de iluminación subacuática, desinfección automática con ozono\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/features/feature",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"features",
+						"feature"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-U tv cable",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"ftr_id\": 7\r\n    },\r\n    \"data\": {\r\n        \"ftr_name\": \"Tv por cable\",\r\n        \"ftr_description\": \"Pantalla panorámica de 50 pulgadas, Full HD o HD Ready, conexiones USB, HDMI, MP3\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/features/feature",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"features",
+						"feature"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-U wifi",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"ftr_id\": 8\r\n    },\r\n    \"data\": {\r\n        \"ftr_name\": \"Zona Wifi\",\r\n        \"ftr_description\": \"Wifi hotspot a través de un proceso de autenticación o login.\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/features/feature",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"features",
+						"feature"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-U insonorización",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"ftr_id\": 9\r\n    },\r\n    \"data\": {\r\n        \"ftr_name\": \"Insonorización\",\r\n        \"ftr_description\": \"Insonorización de la habitación y aislamiento acústico de las ventanas.\"\r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -298,6 +606,572 @@
 				"url": {
 					"raw": "http://localhost:33333/features/feature",
 					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"features",
+						"feature"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-D secador",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"ftr_id\": 1\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/features/feature",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"features",
+						"feature"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-D caja fuerte",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"ftr_id\": 3\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/features/feature",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"features",
+						"feature"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-D amenities",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"ftr_id\": 4\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/features/feature",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"features",
+						"feature"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-D bañera",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"ftr_id\": 6\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/features/feature",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"features",
+						"feature"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-D tv cable",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"ftr_id\": 7\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/features/feature",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"features",
+						"feature"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-D wifi",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"ftr_id\": 8\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/features/feature",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"features",
+						"feature"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-D insonorización",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"ftr_id\": 9\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/features/feature",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"features",
+						"feature"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "C caja fuerte",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n    \"data\": {\r\n        \"ftr_id\": 3,\r\n        \"ftr_name\": \"Caja fuerte\",\r\n        \"ftr_description\": \"Ferrimax Serie Hotel TSW\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/features/feature",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"features",
+						"feature"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "C amenities",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n    \"data\": {\r\n        \"ftr_id\": 4,\r\n        \"ftr_name\": \"Amenities\",\r\n        \"ftr_description\": \"Toallas, peine, cepillos de dientes, jabones y geles, desmaquillantes y gorros de ducha\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/features/feature",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"features",
+						"feature"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "C bañera",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n    \"data\": {\r\n        \"ftr_id\": 6,\r\n        \"ftr_name\": \"Bañera de hidromasaje Spatec Duo\",\r\n        \"ftr_description\": \"Fabricada en fibra de vidrio reforzado con acabado acrílico, color negro, dimensiones: 180x120x61 cm, LED de iluminación subacuática, desinfección automática con ozono\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/features/feature",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"features",
+						"feature"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "C tv cable",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n    \"data\": {\r\n        \"ftr_id\": 7,\r\n        \"ftr_name\": \"Tv por cable\",\r\n        \"ftr_description\": \"Pantalla panorámica de 40 pulgadas, Full HD o HD Ready, conexiones USB, HDMI, MP3 \"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/features/feature",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"features",
+						"feature"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "C wifi",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n    \"data\": {\r\n        \"ftr_id\": 8,\r\n        \"ftr_name\": \"Wifi zone\",\r\n        \"ftr_description\": \"Wifi hotspot para controlar y gestionar el acceso a redes WiFi a través de un proceso de autenticación o login.\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/features/feature",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"features",
+						"feature"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "C insonorización",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n    \"data\": {\r\n        \"ftr_id\": 9,\r\n        \"ftr_name\": \"Insonorización\",\r\n        \"ftr_description\": \"A fin de evitar ruidos molestos y permitir una mejor conciliación del sueño y descanso, dispondrá de una magnífica insonorización de la habitación y aislamiento acústico de las ventanas. \"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/features/feature",
 					"host": [
 						"localhost"
 					],

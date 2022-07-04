@@ -16,12 +16,20 @@ catalog="" schema="${mainschema}" table="bookings" datasource="mainDataSource" s
 				    SELECT
 				     	#COLUMNS#
 				    FROM
-				     	bookings				    
-				    WHERE
-				    	(range_checkin >= bkg_checkin AND range_chekout <= bkg_checkout)
-				    	OR (range_checkin >= bkg_checkin AND range_chekin < bkg_checkout)
-				    	OR (range_checkout <= bkg_checkout AND range_chekout > bkg_checkin)				    	   
-				    #WHERE_CONCAT#				    
+				     	bookings				    				    					    	
+				    #WHERE#				    
+			    ]]>
+			</Sentence>
+		</Query>
+		<Query id="queryRoomsUnbookedgInRange">
+			<Sentence>
+				<![CDATA[
+				    SELECT
+				     	#COLUMNS#
+				    FROM
+				     	bookings
+				    LEFT JOIN rooms ON bkg_rm_id = rm_id		    				    					    	
+				    #WHERE#				    
 			    ]]>
 			</Sentence>
 		</Query>
