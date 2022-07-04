@@ -47,7 +47,6 @@ public class RoomService implements IRoomService {
 
 	@Override
 	public EntityResult roomInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
-
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
 			resultado = this.daoHelper.insert(this.roomDao, attrMap);
@@ -125,18 +124,49 @@ public class RoomService implements IRoomService {
 			EntityResult bookedRoomsER = bookingService.bookingsInRangeQuery(auxKeyMap,
 					EntityResultTools.attributes(BookingDao.ATTR_ROOM_ID));
 			keyMap.remove(BookingDao.NON_ATTR_START_DATE);
-			keyMap.remove(BookingDao.NON_ATTR_END_DATE);				
-			
-			List<Object> bookedRoomsIdList = EntityResultExtraTools.listFromColumn(bookedRoomsER, BookingDao.ATTR_ROOM_ID);	
-			System.err.println(bookedRoomsER);
-			BasicExpression finalExp = new BasicExpression(new BasicField(RoomDao.ATTR_ID), BasicOperator.NOT_IN_OP,bookedRoomsIdList );
+			keyMap.remove(BookingDao.NON_ATTR_END_DATE);
+
+			List<Object> bookedRoomsIdList = EntityResultExtraTools.listFromColumn(bookedRoomsER,
+					BookingDao.ATTR_ROOM_ID);
+
+			BasicExpression finalExp = new BasicExpression(new BasicField(RoomDao.ATTR_ID), BasicOperator.NOT_IN_OP,
+					bookedRoomsIdList);
 			keyMap.put(SQLStatementBuilder.ExtendedSQLConditionValuesProcessor.EXPRESSION_KEY, finalExp);
-			resultado = this.daoHelper.query(this.roomDao, keyMap, attrList,"queryRooms");
+			resultado = this.daoHelper.query(this.roomDao, keyMap, attrList, "queryRooms");
 		} else {
 			resultado = new EntityResultWrong("Faltan campos necesarios, checkin o checkout");
 		}
 
 		return resultado;
+	}
+
+	//TODO está en bookingService y roomService... ¿eliminar alguno?
+	public boolean isRoomUnbookedgInRangeQuery(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
+		EntityResult resultado = new EntityResultMapImpl();
+
+		if (keyMap.containsKey(BookingDao.NON_ATTR_START_DATE) && keyMap.containsKey(BookingDao.NON_ATTR_END_DATE)
+				&& keyMap.containsKey(RoomDao.ATTR_ID)) {
+			Map<String, Object> auxKeyMap = new HashMap<String, Object>();
+			auxKeyMap.put(BookingDao.NON_ATTR_START_DATE, keyMap.get(BookingDao.NON_ATTR_START_DATE));
+			auxKeyMap.put(BookingDao.NON_ATTR_END_DATE, keyMap.get(BookingDao.NON_ATTR_END_DATE));
+			auxKeyMap.put(BookingDao.ATTR_ROOM_ID, keyMap.get(RoomDao.ATTR_ID));
+
+			EntityResult bookedRoomsER = bookingService.bookingsInRangeQuery(auxKeyMap,
+					EntityResultTools.attributes(BookingDao.ATTR_ROOM_ID));
+			keyMap.remove(BookingDao.NON_ATTR_START_DATE);
+			keyMap.remove(BookingDao.NON_ATTR_END_DATE);
+
+			List<Object> bookedRoomsIdList = EntityResultExtraTools.listFromColumn(bookedRoomsER,
+					BookingDao.ATTR_ROOM_ID);
+			BasicExpression finalExp = new BasicExpression(new BasicField(RoomDao.ATTR_ID), BasicOperator.NOT_IN_OP,
+					bookedRoomsIdList);
+			keyMap.put(SQLStatementBuilder.ExtendedSQLConditionValuesProcessor.EXPRESSION_KEY, finalExp);
+			resultado = this.daoHelper.query(this.roomDao, keyMap, EntityResultTools.attributes(RoomDao.ATTR_ID));
+			return resultado.calculateRecordNumber() == 0;
+		} else {
+			return false;
+		}
+
 	}
 
 }

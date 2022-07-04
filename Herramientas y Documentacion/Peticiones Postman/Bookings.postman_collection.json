@@ -12,7 +12,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"data\": {\r\n        \"bkg_stb_id\": 1,\r\n        \"bkg_cst_id\": 2,\r\n        \"bkg_rm_id\": 1,\r\n        \"bkg_observations\": \"holita\",\r\n        \"bkg_checkin\": \"2022-07-23\",\r\n        \"bkg_checkout\": \"2022-08-21\"\r\n    }\r\n}",
+					"raw": "{\r\n    \"data\": {\r\n        \"bkg_stb_id\": 1,\r\n        \"bkg_cst_id\": 2,\r\n        \"bkg_rm_id\":6,        \r\n        \"bkg_checkin\": \"2022-01-04\",\r\n        \"bkg_checkout\": \"2023-01-19\"\r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -181,7 +181,37 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\":{\r\n        \"range_checkin\": \"2022-01-05\",\r\n        \"range_checkout\": \"2023-01-20\"\r\n    },\r\n    \"columns\": \r\n        [\"bkg_id\",\r\n        \"bkg_rm_id\",\r\n        \"bkg_stb_id\",\r\n        \"bkg_cst_id\",        \r\n        \"bkg_observations\",\r\n        \"bkg_checkin\",\r\n        \"bkg_checkout\"],\r\n\r\n}",
+					"raw": "{\r\n    \"filter\":{\r\n        \"start_date\": \"2022-01-05\",\r\n        \"end_date\": \"2023-01-20\"\r\n    },\r\n    \"columns\": \r\n        [\"bkg_id\",\r\n        \"bkg_rm_id\",\r\n        \"bkg_stb_id\",\r\n        \"bkg_cst_id\",        \r\n        \"bkg_observations\",\r\n        \"bkg_checkin\",\r\n        \"bkg_checkout\"]\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookings/bookingsInRange/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookings",
+						"bookingsInRange",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R  2bookingsInRange",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"start_date\": \"2022-01-05\",\r\n        \"end_date\": \"2023-01-20\"\r\n    },\r\n    \"columns\": \r\n        [\"bkg_rm_id\"]\r\n\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
