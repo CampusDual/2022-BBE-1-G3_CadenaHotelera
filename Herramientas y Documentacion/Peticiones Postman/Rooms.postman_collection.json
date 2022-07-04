@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "da8b123c-b330-44c3-b189-de5639d53cb9",
+		"_postman_id": "536edb2d-92a0-4c48-b068-afdc4251f48e",
 		"name": "Rooms",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -27,7 +27,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": " {\r\n    \"data\": {\r\n        \"rm_htl_id\": 1,\r\n        \"rm_number\": 101,\r\n        \"rm_square_meters\":10,\r\n        \"rm_rmt_id\":1,\r\n        \"rm_status\":1\r\n    }\r\n}",
+					"raw": " {\r\n    \"data\": {\r\n        \"rm_htl_id\": 1,\r\n        \"rm_number\": 105,\r\n        \"rm_square_meters\":10,\r\n        \"rm_rmt_id\":5,\r\n        \"rm_status\":0\r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -301,7 +301,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\": {\r\n     \"rm_htl_id\": 1,\r\n    \"rm_number\": 102\r\n    },\r\n    \"data\": {\r\n        \"rm_rmt_id\":5,\r\n        \"rm_status\": 0\r\n    }\r\n}",
+					"raw": "{\r\n    \"filter\": {\r\n     \"rm_htl_id\": 1,\r\n     \"rm_number\":102\r\n    },\r\n    \"data\": {\r\n         \"rm_number\": 103,\r\n         \"rm_rmt_id\":6,\r\n        \"rm_status\": 0\r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
