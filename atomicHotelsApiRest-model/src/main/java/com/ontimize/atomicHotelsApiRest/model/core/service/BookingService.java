@@ -116,7 +116,7 @@ public class BookingService implements IBookingService {
 				keyMap.remove("range_checkout");
 
 				resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList);			
-				System.err.println(resultado.toString());
+				//System.err.println(resultado.toString());
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
