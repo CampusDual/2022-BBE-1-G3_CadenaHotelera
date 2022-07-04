@@ -76,13 +76,13 @@ public class BookingService implements IBookingService {
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
 //
-		if (keyMap.containsKey("range_checkin") && keyMap.containsKey("range_checkout")) {
+		if (keyMap.containsKey(BookingDao.NON_ATTR_START_DATE) && keyMap.containsKey(BookingDao.NON_ATTR_END_DATE)) {
 			BasicField checkin = new BasicField(BookingDao.ATTR_CHECKIN);
 			BasicField checkout = new BasicField(BookingDao.ATTR_CHECKOUT);
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 			try {
-				Date rangeCheckin = dateFormat.parse((String) keyMap.get("range_checkin"));
-				Date rangeCheckout = dateFormat.parse((String) keyMap.get("range_checkout"));
+				Date rangeCheckin = dateFormat.parse((String) keyMap.get(BookingDao.NON_ATTR_START_DATE));
+				Date rangeCheckout = dateFormat.parse((String) keyMap.get(BookingDao.NON_ATTR_END_DATE));
 				// BasicField rangeCheckout = new BasicField(((String)
 				// keyMap.get("range_checkout")));
 
@@ -112,8 +112,8 @@ public class BookingService implements IBookingService {
 				
 			
 				keyMap.put(SQLStatementBuilder.ExtendedSQLConditionValuesProcessor.EXPRESSION_KEY, finalExp);
-				keyMap.remove("range_checkin");
-				keyMap.remove("range_checkout");
+				keyMap.remove(BookingDao.NON_ATTR_START_DATE);
+				keyMap.remove(BookingDao.NON_ATTR_END_DATE);
 
 				resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList);			
 				//System.err.println(resultado.toString());
@@ -121,9 +121,10 @@ public class BookingService implements IBookingService {
 				e.printStackTrace();
 			}
 		} else {
-			resultado = new EntityResultWrong("Faltan campos necesarios, range_checkin o range_checkout");
+			resultado = new EntityResultWrong("Faltan campos necesarios");
 		}
 		return resultado;
 	}
+	
 
 }
