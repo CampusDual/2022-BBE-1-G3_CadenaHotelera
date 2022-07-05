@@ -117,34 +117,6 @@ public class RoomService implements IRoomService {
 	@Override
 	public EntityResult roomsUnbookedInRangeQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
-//		EntityResult resultado;
-//
-//		if (keyMap.containsKey(BookingDao.NON_ATTR_START_DATE) && keyMap.containsKey(BookingDao.NON_ATTR_END_DATE)) {
-//			Map<String, Object> auxKeyMap = new HashMap<String, Object>();
-//			auxKeyMap.put(BookingDao.NON_ATTR_START_DATE, keyMap.get(BookingDao.NON_ATTR_START_DATE));
-//			auxKeyMap.put(BookingDao.NON_ATTR_END_DATE, keyMap.get(BookingDao.NON_ATTR_END_DATE));
-//
-//			// omite reservas con estados cancelados
-//			BasicExpression bookingStatusFilter = new BasicExpression(new BasicField(BookingDao.ATTR_STATUS_ID),
-//					BasicOperator.NOT_EQUAL_OP, BookingDao.STATUS_CANCELED);
-//			auxKeyMap.put(SQLStatementBuilder.ExtendedSQLConditionValuesProcessor.EXPRESSION_KEY, bookingStatusFilter);
-//
-//			EntityResult bookedRoomsER = bookingService.bookingsInRangeQuery(auxKeyMap,
-//					EntityResultTools.attributes(BookingDao.ATTR_ROOM_ID));
-//
-//			keyMap.remove(BookingDao.NON_ATTR_START_DATE);
-//			keyMap.remove(BookingDao.NON_ATTR_END_DATE);
-//
-//			List<Object> bookedRoomsIdList = EntityResultExtraTools.listFromColumn(bookedRoomsER,
-//					BookingDao.ATTR_ROOM_ID);
-//
-//			BasicExpression finalExp = new BasicExpression(new BasicField(RoomDao.ATTR_ID), BasicOperator.NOT_IN_OP,
-//					bookedRoomsIdList);
-//			keyMap.put(SQLStatementBuilder.ExtendedSQLConditionValuesProcessor.EXPRESSION_KEY, finalExp);
-//			resultado = this.daoHelper.query(this.roomDao, keyMap, attrList, "queryRooms");
-//		} else {
-//			resultado = new EntityResultWrong("Faltan campos necesarios, checkin o checkout");
-//		}
 		try {
 			return roomsUnbookedgInRange(keyMap, attrList);
 		} catch (MissingFieldsException e) {
@@ -182,7 +154,6 @@ public class RoomService implements IRoomService {
 			List<Object> bookedRoomsIdList = roomsBookedInRange((String) keyMap.get(BookingDao.NON_ATTR_START_DATE), (String) 
 					keyMap.get(BookingDao.NON_ATTR_END_DATE), auxKeyMap);
 
-			//todo comprobar punteros
 			keyMap.remove(BookingDao.NON_ATTR_START_DATE);
 			keyMap.remove(BookingDao.NON_ATTR_END_DATE);
 			BasicExpression finalExp = new BasicExpression(new BasicField(RoomDao.ATTR_ID), BasicOperator.NOT_IN_OP,
@@ -225,7 +196,9 @@ public class RoomService implements IRoomService {
 		if (bookedRoomsER.isWrong()) {
 			throw new EntityResultRequiredException();
 		}
-		// bookedRoomsER.get(BookingDao.ATTR_ROOM_ID); //todo comprobar.		
+		// bookedRoomsER.get(BookingDao.ATTR_ROOM_ID); //todo comprobar.	
+//		System.err.println("desde get: \n" + bookedRoomsER.get(BookingDao.ATTR_ROOM_ID));
+//		System.err.println("desde list: \n" + EntityResultExtraTools.listFromColumn(bookedRoomsER, BookingDao.ATTR_ROOM_ID));
 		return EntityResultExtraTools.listFromColumn(bookedRoomsER, BookingDao.ATTR_ROOM_ID);
 	}
 

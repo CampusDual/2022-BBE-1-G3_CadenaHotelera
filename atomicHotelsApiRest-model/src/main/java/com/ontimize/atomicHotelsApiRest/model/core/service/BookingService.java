@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IBookingService;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IRoomService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
-import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomDao;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.EntityResultRequiredException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.jee.common.db.SQLStatementBuilder.BasicExpression;
@@ -89,6 +88,11 @@ public class BookingService implements IBookingService {
 	@Override
 	public EntityResult bookingUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
+		BasicExpression notCanceled = new BasicExpression(new BasicField(BookingDao.ATTR_STATUS_ID),BasicOperator.NOT_EQUAL_OP, BookingDao.STATUS_CANCELED);
+		//todo no funciona basic expression, pero el sql si
+		//update bookings SET bkg_stb_id = 4 Where bkg_id = 1 AND bkg_stb_id != 3;
+		EntityResultExtraTools.putBasicExpression(keyMap, notCanceled);
+//		System.err.println(keyMap);
 		return this.daoHelper.update(this.bookingDao, attrMap, keyMap);
 	}
 
@@ -106,79 +110,28 @@ public class BookingService implements IBookingService {
 		} catch (MissingFieldsException e) {
 			e.printStackTrace();
 			return new EntityResultWrong("Faltan campos necesarios");
-		}		
+		}
 	}
-	
+
 	@Override
 	public EntityResult bookingsInRangeInfoQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		try {
 			bookingsInRangeBuilder(keyMap, attrList);
-			return this.daoHelper.query(this.bookingDao, keyMap, attrList,"queryInfoBooking");
+			return this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryInfoBooking");
 		} catch (MissingFieldsException e) {
 			e.printStackTrace();
 			return new EntityResultWrong("Faltan campos necesarios");
-		}		
+		}
 	}
-	
-//	@Override
-//	public EntityResult bookingsInRangeQuery(Map<String, Object> keyMap, List<String> attrList)
-//			throws OntimizeJEERuntimeException {
-//		EntityResult resultado = new EntityResultMapImpl();
-//		if (keyMap.containsKey(BookingDao.NON_ATTR_START_DATE) && keyMap.containsKey(BookingDao.NON_ATTR_END_DATE)) {
-//			BasicField checkin = new BasicField(BookingDao.ATTR_CHECKIN);
-//			BasicField checkout = new BasicField(BookingDao.ATTR_CHECKOUT);
-//			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-//			try {
-//				Date rangeCheckin = dateFormat.parse((String) keyMap.get(BookingDao.NON_ATTR_START_DATE));
-//				Date rangeCheckout = dateFormat.parse((String) keyMap.get(BookingDao.NON_ATTR_END_DATE));
-//				// BasicField rangeCheckout = new BasicField(((String)
-//				// keyMap.get("range_checkout")));
-//
-//				/*
-//				 * (range_checkin >= bkg_checkin AND range_checkin < bkg_checkout) OR
-//				 * (range_checkout > bkg_checkin AND range_checkout <= bkg_checkout) OR
-//				 * (range_checkin < bkg_checkin AND range_chekout > bkg_checkout)
-//				 */
-//
-//				// (range_checkin >= bkg_checkin AND range_checkin < bkg_checkout) OR
-//				BasicExpression exp01 = new BasicExpression(checkin, BasicOperator.LESS_EQUAL_OP, rangeCheckin);
-//				BasicExpression exp02 = new BasicExpression(checkout, BasicOperator.MORE_OP, rangeCheckin);
-//				BasicExpression groupExp01 = new BasicExpression(exp01, BasicOperator.AND_OP, exp02); // dentro
-//																										// rangeCheckin
-//
-//				// (range_checkout > bkg_checkin AND range_checkout <= bkg_checkout) OR
-//				BasicExpression exp03 = new BasicExpression(checkout, BasicOperator.MORE_EQUAL_OP, rangeCheckout);
-//				BasicExpression exp04 = new BasicExpression(checkin, BasicOperator.LESS_OP, rangeCheckout);
-//				BasicExpression groupExp02 = new BasicExpression(exp03, BasicOperator.AND_OP, exp04);// dentro
-//																										// rangeCheckout
-//
-//				BasicExpression exp05 = new BasicExpression(checkin, BasicOperator.MORE_OP, rangeCheckin);
-//				BasicExpression exp06 = new BasicExpression(checkout, BasicOperator.LESS_OP, rangeCheckout);
-//				BasicExpression groupExp03 = new BasicExpression(exp05, BasicOperator.AND_OP, exp06);// dentro checkin y
-//																										// checkout
-//
-//				// las uno
-//				BasicExpression auxFilterRangeBE = new BasicExpression(groupExp01, BasicOperator.OR_OP, groupExp02);
-//				BasicExpression filterRangeBE = new BasicExpression(auxFilterRangeBE, BasicOperator.OR_OP, groupExp03);
-//		
-//				EntityResultExtraTools.putBasicExpression(keyMap, filterRangeBE); // nuevo metodo
-//
-//				keyMap.remove(BookingDao.NON_ATTR_START_DATE);
-//				keyMap.remove(BookingDao.NON_ATTR_END_DATE);
-//
-//				resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList);
-//
-//			} catch (ParseException e) {
-//				e.printStackTrace();
-//				resultado = new EntityResultWrong();
-//			}
-//		} else {
-//			resultado = new EntityResultWrong("Faltan campos necesarios");
-//		}
-//		return resultado;
-//	}
 
+	/**
+	 * Modifica las keyMap y attrList, para realizar las basic expresionsn
+	 * 
+	 * @param keyMap
+	 * @param attrList
+	 * @throws MissingFieldsException
+	 */
 	public void bookingsInRangeBuilder(Map<String, Object> keyMap, List<String> attrList)
 			throws MissingFieldsException {
 
@@ -189,8 +142,6 @@ public class BookingService implements IBookingService {
 			try {
 				Date rangeCheckin = dateFormat.parse((String) keyMap.get(BookingDao.NON_ATTR_START_DATE));
 				Date rangeCheckout = dateFormat.parse((String) keyMap.get(BookingDao.NON_ATTR_END_DATE));
-				// BasicField rangeCheckout = new BasicField(((String)
-				// keyMap.get("range_checkout")));
 
 				/*
 				 * (range_checkin >= bkg_checkin AND range_checkin < bkg_checkout) OR
