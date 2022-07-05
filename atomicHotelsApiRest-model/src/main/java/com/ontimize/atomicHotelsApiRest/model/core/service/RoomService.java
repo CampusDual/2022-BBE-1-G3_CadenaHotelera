@@ -128,6 +128,7 @@ public class RoomService implements IRoomService {
 
 			EntityResult bookedRoomsER = bookingService.bookingsInRangeQuery(auxKeyMap,
 					EntityResultTools.attributes(BookingDao.ATTR_ROOM_ID));
+
 			keyMap.remove(BookingDao.NON_ATTR_START_DATE);
 			keyMap.remove(BookingDao.NON_ATTR_END_DATE);
 
