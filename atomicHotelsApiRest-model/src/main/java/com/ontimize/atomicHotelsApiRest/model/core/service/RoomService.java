@@ -121,6 +121,11 @@ public class RoomService implements IRoomService {
 			auxKeyMap.put(BookingDao.NON_ATTR_START_DATE, keyMap.get(BookingDao.NON_ATTR_START_DATE));
 			auxKeyMap.put(BookingDao.NON_ATTR_END_DATE, keyMap.get(BookingDao.NON_ATTR_END_DATE));
 
+			// omite reservas con estados cancelados
+			BasicExpression bookingStatusFilter = new BasicExpression(new BasicField(BookingDao.ATTR_STATUS_ID),
+					BasicOperator.NOT_EQUAL_OP, BookingDao.STATUS_CANCELED);
+			auxKeyMap.put(SQLStatementBuilder.ExtendedSQLConditionValuesProcessor.EXPRESSION_KEY, bookingStatusFilter);
+
 			EntityResult bookedRoomsER = bookingService.bookingsInRangeQuery(auxKeyMap,
 					EntityResultTools.attributes(BookingDao.ATTR_ROOM_ID));
 			keyMap.remove(BookingDao.NON_ATTR_START_DATE);
@@ -140,7 +145,7 @@ public class RoomService implements IRoomService {
 		return resultado;
 	}
 
-	//TODO está en bookingService y roomService... ¿eliminar alguno?
+	// TODO está en bookingService y roomService... ¿eliminar alguno?
 	public boolean isRoomUnbookedgInRangeQuery(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
 

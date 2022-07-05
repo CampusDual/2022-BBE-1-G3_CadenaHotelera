@@ -19,6 +19,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.service.IBookingService;
 
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomDao;
+import com.ontimize.atomicHotelsApiRest.model.core.exceptions.MissingFieldsException;
 import com.ontimize.jee.common.db.SQLStatementBuilder;
 import com.ontimize.jee.common.db.SQLStatementBuilder.BasicExpression;
 import com.ontimize.jee.common.db.SQLStatementBuilder.BasicField;
@@ -50,17 +51,20 @@ public class BookingService implements IBookingService {
 		EntityResult resultado = new EntityResultMapImpl();
 		if (attrMap.containsKey(BookingDao.ATTR_CHECKIN) && attrMap.containsKey(BookingDao.ATTR_CHECKOUT)
 				&& attrMap.containsKey(BookingDao.ATTR_ROOM_ID)) {
-//todo verificar habitación disponible y fechas
 			if (((String) attrMap.get(BookingDao.ATTR_CHECKIN))
 					.compareTo((String) attrMap.get(BookingDao.ATTR_CHECKOUT)) >= 0) {
 				resultado.setCode(EntityResult.OPERATION_WRONG);
 				resultado.setMessage("Checkin no puede ser posterior a checkout");
 			} else {
-				if (isRoomUnbookedgInRangeQuery(attrMap)) {
-					System.err.println(attrMap);
-					resultado = this.daoHelper.insert(this.bookingDao, attrMap);
-				} else {
-					resultado = new EntityResultWrong("La habitación ya está reservada en esa franja de fechas.");
+				try {
+					if (isRoomUnbookedgInRangeQuery(attrMap)) {
+						resultado = this.daoHelper.insert(this.bookingDao, attrMap);
+					} else {
+						resultado = new EntityResultWrong("La habitación ya está reservada en esa franja de fechas.");
+					}
+				} catch (MissingFieldsException e) {
+					resultado = new EntityResultWrong("Error al comprobar reservas de la habitación");
+					e.printStackTrace();
 				}
 			}
 
@@ -127,7 +131,7 @@ public class BookingService implements IBookingService {
 				keyMap.remove(BookingDao.NON_ATTR_END_DATE);
 
 				resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList);
-				// System.err.println(resultado.toString());
+				
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
@@ -146,12 +150,15 @@ public class BookingService implements IBookingService {
 	}
 
 	/**
+	 * Comprueba si una habitación en concreto está vacia.
 	 * 
 	 * @param keyMap requiere checkin, checkout, room_id. El resto los ignora.
 	 * @return True si la room_id está libre en esa franja de fechas.
 	 * @throws OntimizeJEERuntimeException
+	 * @throws MissingFieldsException
 	 */
-	public boolean isRoomUnbookedgInRangeQuery(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
+	public boolean isRoomUnbookedgInRangeQuery(Map<String, Object> keyMap)
+			throws OntimizeJEERuntimeException, MissingFieldsException {
 		EntityResult resultado = new EntityResultMapImpl();
 
 		if (keyMap.containsKey(BookingDao.ATTR_CHECKIN) && keyMap.containsKey(BookingDao.ATTR_CHECKOUT)
@@ -162,6 +169,8 @@ public class BookingService implements IBookingService {
 			auxKeyMap.put(BookingDao.ATTR_ROOM_ID, keyMap.get(BookingDao.ATTR_ROOM_ID));
 			resultado = bookingsInRangeQuery(keyMap.get(BookingDao.ATTR_CHECKIN), keyMap.get(BookingDao.ATTR_CHECKOUT),
 					keyMap.get(BookingDao.ATTR_ROOM_ID));
+		} else {
+			throw new MissingFieldsException(null);
 		}
 		if (resultado.isWrong()) {
 			return false;
