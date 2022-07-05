@@ -123,15 +123,23 @@ public class BookingService implements IBookingService {
 																										// checkout
 
 				// las uno
-				BasicExpression auxfinalExp = new BasicExpression(groupExp01, BasicOperator.OR_OP, groupExp02);
-				BasicExpression finalExp = new BasicExpression(auxfinalExp, BasicOperator.OR_OP, groupExp03);
+				BasicExpression auxFilterRangeBE = new BasicExpression(groupExp01, BasicOperator.OR_OP, groupExp02);
+				BasicExpression filterRangeBE = new BasicExpression(auxFilterRangeBE, BasicOperator.OR_OP, groupExp03);
+				BasicExpression finalBE = filterRangeBE;
 
-				keyMap.put(SQLStatementBuilder.ExtendedSQLConditionValuesProcessor.EXPRESSION_KEY, finalExp);
+				// si el keyMap viene con basic expressions, la unimos con AND
+				if (keyMap.containsKey(SQLStatementBuilder.ExtendedSQLConditionValuesProcessor.EXPRESSION_KEY)) {
+					finalBE = new BasicExpression(
+							keyMap.get(SQLStatementBuilder.ExtendedSQLConditionValuesProcessor.EXPRESSION_KEY),
+							BasicOperator.AND_OP, filterRangeBE);
+				}
+				keyMap.put(SQLStatementBuilder.ExtendedSQLConditionValuesProcessor.EXPRESSION_KEY, finalBE);
+
 				keyMap.remove(BookingDao.NON_ATTR_START_DATE);
 				keyMap.remove(BookingDao.NON_ATTR_END_DATE);
 
 				resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList);
-				
+
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
@@ -143,8 +151,8 @@ public class BookingService implements IBookingService {
 
 	public EntityResult bookingsInRangeQuery(Object checkin, Object checkout, Object roomId) {
 		Map<String, Object> keyMap = new HashMap<String, Object>();
-		keyMap.put(bookingDao.NON_ATTR_START_DATE, checkin);
-		keyMap.put(bookingDao.NON_ATTR_END_DATE, checkin);
+		keyMap.put(BookingDao.NON_ATTR_START_DATE, checkin);
+		keyMap.put(BookingDao.NON_ATTR_END_DATE, checkin);
 		keyMap.put(BookingDao.ATTR_ROOM_ID, roomId);
 		return bookingsInRangeQuery(keyMap, EntityResultTools.attributes(BookingDao.ATTR_ROOM_ID));
 	}
