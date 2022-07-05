@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.ontimize.jee.common.db.SQLStatementBuilder;
+import com.ontimize.jee.common.db.SQLStatementBuilder.BasicExpression;
+import com.ontimize.jee.common.db.SQLStatementBuilder.BasicOperator;
 import com.ontimize.jee.common.dto.EntityResult;
 
 public class EntityResultExtraTools {
@@ -29,4 +32,20 @@ private EntityResultExtraTools() {
 		return list;
 	}
 
+	/**
+	 * Añade una basic expression al hashmap, en caso de que ya exista alguna BE, la concatena con AND   
+	 * @param keyMap keyMap donde insertar la basic expression
+	 * @param be
+	 */
+	public static void putBasicExpression(Map<String, Object> keyMap, BasicExpression be){
+		BasicExpression finalBE;
+		if (keyMap.containsKey(SQLStatementBuilder.ExtendedSQLConditionValuesProcessor.EXPRESSION_KEY)) {
+			finalBE = new BasicExpression(
+					keyMap.get(SQLStatementBuilder.ExtendedSQLConditionValuesProcessor.EXPRESSION_KEY),
+					BasicOperator.AND_OP, be);
+		}else{
+			finalBE = be;
+		}
+		keyMap.put(SQLStatementBuilder.ExtendedSQLConditionValuesProcessor.EXPRESSION_KEY, finalBE);
+	}
 }

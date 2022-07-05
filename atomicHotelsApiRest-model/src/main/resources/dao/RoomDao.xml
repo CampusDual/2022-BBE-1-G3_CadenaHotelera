@@ -8,7 +8,40 @@
 	</UpdateKeys>
 	<GeneratedKey>rm_id</GeneratedKey>
 	<Queries>
-		<Query id="queryRooms">
+		<Query id="queryEnabledRooms">
+			<Sentence>
+				<![CDATA[
+					     SELECT
+					      #COLUMNS#
+					     FROM
+					      rooms
+					     LEFT JOIN room_types ON rm_rmt_id = rmt_id
+					     WHERE 
+					     rm_status != 0
+					     #WHERE_CONCAT#
+					   ]]>
+			</Sentence>
+		</Query>
+		<Query id="queryExampledRooms">
+			<Sentence>
+				<![CDATA[
+					     SELECT
+					      #COLUMNS#
+					     FROM
+					      rooms
+					     LEFT JOIN room_types ON rm_rmt_id = rmt_id
+					     LEFT JOIN hotels ON rm_htl_id = htl_id
+					     WHERE 
+					     rm_status != 0
+					     AND rm_id not in (
+					     	SELECT DISTINCT bkg_rm_id 
+					     	FROM bookings
+					     	#WHERE# 
+					     )					     					     
+					   ]]>
+			</Sentence>
+		</Query>
+		<Query id="queryInfoRooms">
 			<Sentence>
 				<![CDATA[
 					     SELECT
@@ -23,7 +56,7 @@
 					   ]]>
 			</Sentence>
 		</Query>
-		<Query id="queryFullRooms">
+		<Query id="queryInfoFullRooms">
 			<Sentence>
 				<![CDATA[
 					     SELECT

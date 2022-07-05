@@ -10,28 +10,20 @@ catalog="" schema="${mainschema}" table="bookings" datasource="mainDataSource" s
 	</UpdateKeys>
 	<GeneratedKey>bkg_id</GeneratedKey>
 	<Queries>
-		<Query id="queryBookingsInRange">
-			<Sentence>
-				<![CDATA[
-				    SELECT
-				     	#COLUMNS#
-				    FROM
-				     	bookings				    				    					    	
-				    #WHERE#				    
-			    ]]>
-			</Sentence>
-		</Query>
-		<Query id="queryRoomsUnbookedgInRange">
+		<Query id="queryInfoBooking">
 			<Sentence>
 				<![CDATA[
 				    SELECT
 				     	#COLUMNS#
 				    FROM
 				     	bookings
-				    LEFT JOIN rooms ON bkg_rm_id = rm_id		    				    					    	
+				   	LEFT JOIN status_booking ON stb_id = bkg_stb_id
+				   	LEFT JOIN customers ON cst_id = bkg_cst_id
+				   	LEFT JOIN rooms ON rm_id = bkg_rm_id
+				   	LEFT JOIN room_types ON rmt_id = rm_rmt_id			    				    					    		
 				    #WHERE#				    
 			    ]]>
 			</Sentence>
-		</Query>
+		</Query>		
 	</Queries>			
 </JdbcEntitySetup>

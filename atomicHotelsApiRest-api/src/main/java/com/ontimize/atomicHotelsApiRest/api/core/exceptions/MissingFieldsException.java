@@ -1,4 +1,4 @@
-package com.ontimize.atomicHotelsApiRest.model.core.exceptions;
+package com.ontimize.atomicHotelsApiRest.api.core.exceptions;
 
 public class MissingFieldsException extends Exception{
 
