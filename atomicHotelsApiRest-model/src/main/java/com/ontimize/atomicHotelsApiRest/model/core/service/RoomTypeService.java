@@ -5,9 +5,13 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.jdbc.SQLWarningException;
 import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.service.IRoomTypeService;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.FeatureDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomTypeDao;
 import com.ontimize.atomicHotelsApiRest.model.core.ontimizeExtra.EntityResultWrong;
 import com.ontimize.jee.common.dto.EntityResult;
@@ -35,29 +39,65 @@ public class RoomTypeService implements IRoomTypeService {
 	@Override
 	public EntityResult roomTypeInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
-
-		if (attrMap.containsKey(RoomTypeDao.ATTR_NAME)) {
-			EntityResult auxEntity = this.daoHelper.query(this.roomTypeDao,
-					EntityResultTools.keysvalues(RoomTypeDao.ATTR_NAME, attrMap.get(RoomTypeDao.ATTR_NAME)),
-					EntityResultTools.attributes(RoomTypeDao.ATTR_NAME));
-			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
-				resultado = this.daoHelper.insert(this.roomTypeDao, attrMap);
-			} else {
-				resultado = new EntityResultWrong("Error al crear RoomType - El registro ya existe");				
-			}
+		try {
+			resultado = this.daoHelper.insert(this.roomTypeDao, attrMap);
+			resultado.setMessage("RoomType registrada");
+		} catch (DuplicateKeyException e) {
+			resultado = new EntityResultWrong("Error al crear RoomType - El registro ya existe");
+		} catch (DataIntegrityViolationException e) {
+			resultado = new EntityResultWrong("Error al crear RoomType - Falta algún campo obligatorio");
+		} catch (Exception e) {
+			resultado = new EntityResultWrong("Error al registrar RoomType");
 		}
+
 		return resultado;
+		
 	}
 
 	@Override
 	public EntityResult roomTypeUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
-		return this.daoHelper.update(this.roomTypeDao, attrMap, keyMap);
+		EntityResult resultado = new EntityResultMapImpl();
+		try {
+			resultado = this.daoHelper.update(this.roomTypeDao, attrMap, keyMap);
+			resultado.setMessage("RoomType actualizada");
+		} catch (DuplicateKeyException e) {
+			resultado = new EntityResultWrong("Error al actualizar RoomType - No es posible duplicar un registro");
+		} catch (DataIntegrityViolationException e) {
+			resultado = new EntityResultWrong("Error al actualizar RoomType - Falta algún campo obligatorio");
+		} catch (SQLWarningException e) {
+			resultado = new EntityResultWrong(
+					"Error al actualizar RoomType - Falta el rmt_id (PK) de la RoomType a actualizar");
+		} catch (Exception e) {
+			resultado = new EntityResultWrong("Error al actualizar RoomType");
+		}
+		return resultado; 
+		
 	}
 
 	@Override
 	public EntityResult roomTypeDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
-		return this.daoHelper.delete(this.roomTypeDao, keyMap);
+
+		EntityResult resultado = new EntityResultMapImpl();		
+		try {
+			if (keyMap.containsKey(RoomTypeDao.ATTR_ID)) {
+				EntityResult auxEntity = this.daoHelper.query(this.roomTypeDao,
+						EntityResultTools.keysvalues(RoomTypeDao.ATTR_ID, keyMap.get(RoomTypeDao.ATTR_ID)),
+						EntityResultTools.attributes(RoomTypeDao.ATTR_ID));
+				if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
+					resultado = new EntityResultWrong("Error al eliminar RoomType - La RoomType a eliminar no existe");
+				} else {
+					resultado =  this.daoHelper.delete(this.roomTypeDao, keyMap);
+					resultado.setMessage("RoomType eliminada");
+				}
+			}else {
+				resultado = new EntityResultWrong("Error al eliminar RoomType - Falta el rmt_id (PK) de la RoomType a eliminar");
+			}
+		} catch (Exception e) {
+			resultado = new EntityResultWrong("Error al eliminar RoomType");
+		}
+		return resultado;
+		
 	}
 	
 	@Override
