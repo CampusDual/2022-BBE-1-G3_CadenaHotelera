@@ -88,16 +88,17 @@ public class BookingService implements IBookingService {
 	@Override
 	public EntityResult bookingUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
-		BasicExpression notCanceled = new BasicExpression(new BasicField(BookingDao.ATTR_STATUS_ID),BasicOperator.NOT_EQUAL_OP, BookingDao.STATUS_CANCELED);
 		//todo no funciona basic expression, pero el sql si
-		//update bookings SET bkg_stb_id = 4 Where bkg_id = 1 AND bkg_stb_id != 3;
+		//update bookings SET bkg_stb_id = 4 Where bkg_id = 1 AND bkg_stb_id != 3; // no se puede, requiere el campo en el dao.xml
+		BasicExpression notCanceled = new BasicExpression(new BasicField(BookingDao.ATTR_STATUS_ID),BasicOperator.NOT_EQUAL_OP, BookingDao.STATUS_CANCELED);
 		EntityResultExtraTools.putBasicExpression(keyMap, notCanceled);
-//		System.err.println(keyMap);
-		return this.daoHelper.update(this.bookingDao, attrMap, keyMap);
+		System.err.println(keyMap);
+		return this.daoHelper.update(this.bookingDao, attrMap, keyMap);		
 	}
 
 	@Override
 	public EntityResult bookingDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
+		//anular este cruz, o automizar a cancelado
 		return this.daoHelper.delete(this.bookingDao, keyMap);
 	}
 

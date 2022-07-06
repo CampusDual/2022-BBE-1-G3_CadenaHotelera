@@ -58,7 +58,9 @@ public class CustomerService implements ICustomerService{
 	 EntityResult resultado = new EntityResultMapImpl();
 		try {
 			resultado = this.daoHelper.update(this.customerDao, attrMap, keyMap);
-			resultado.setMessage("Customer actualizado");
+			if(resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
+				resultado.setMessage("No se han encontrado registros para actualizar");			
+			}
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong("Error al actualizar Customer - No es posible duplicar un registro");
 		} catch (DataIntegrityViolationException e) {
