@@ -309,7 +309,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:33333/rooms/roomsUnbookedgInRange/search",
+					"raw": "http://localhost:33333/rooms/roomsUnbookedInRange/search",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -317,7 +317,7 @@
 					"port": "33333",
 					"path": [
 						"rooms",
-						"roomsUnbookedgInRange",
+						"roomsUnbookedInRange",
 						"search"
 					]
 				}
@@ -354,7 +354,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:33333/rooms/roomsUnbookedgInRange/search",
+					"raw": "http://localhost:33333/rooms/roomsUnbookedInRange/search",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -362,7 +362,7 @@
 					"port": "33333",
 					"path": [
 						"rooms",
-						"roomsUnbookedgInRange",
+						"roomsUnbookedInRange",
 						"search"
 					]
 				}

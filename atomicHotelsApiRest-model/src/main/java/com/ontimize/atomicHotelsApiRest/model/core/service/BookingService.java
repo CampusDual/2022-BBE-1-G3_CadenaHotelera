@@ -106,7 +106,7 @@ public class BookingService implements IBookingService {
 			throws OntimizeJEERuntimeException {
 		try {
 			bookingsInRangeBuilder(keyMap, attrList);
-			return this.daoHelper.query(this.bookingDao, keyMap, attrList);
+			return this.daoHelper.query(this.bookingDao, keyMap, attrList,"queryBasicBooking");
 		} catch (MissingFieldsException e) {
 			e.printStackTrace();
 			return new EntityResultWrong("Faltan campos necesarios");
