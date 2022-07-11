@@ -20,6 +20,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.service.IRoomService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomDao;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.EntityResultRequiredException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.atomicHotelsApiRest.model.core.ontimizeExtra.EntityResultExtraTools;
 import com.ontimize.atomicHotelsApiRest.model.core.ontimizeExtra.EntityResultWrong;
@@ -121,10 +122,13 @@ public class RoomService implements IRoomService {
 			return roomsUnbookedgInRange(keyMap, attrList);
 		} catch (MissingFieldsException e) {
 			e.printStackTrace();
-			return new EntityResultWrong("Faltan campos requeridos");
+			return new EntityResultWrong(e.getMessage());
 		} catch (EntityResultRequiredException e) {
 			e.printStackTrace();
-			return new EntityResultWrong("Error al realizar consultas dependientes.");
+			return new EntityResultWrong(e.getMessage());
+		} catch (InvalidFieldsValuesException e) {
+			e.printStackTrace();
+			return new EntityResultWrong(e.getMessage());
 		}
 	}
 
@@ -138,9 +142,10 @@ public class RoomService implements IRoomService {
 	 * @throws OntimizeJEERuntimeException
 	 * @throws MissingFieldsException
 	 * @throws EntityResultRequiredException 
+	 * @throws InvalidFieldsValuesException 
 	 */
 	public EntityResult roomsUnbookedgInRange(Map<String, Object> keyMap, List<String> attrList)
-			throws OntimizeJEERuntimeException, MissingFieldsException, EntityResultRequiredException {
+			throws OntimizeJEERuntimeException, MissingFieldsException, EntityResultRequiredException, InvalidFieldsValuesException {
 		EntityResult resultado;
 		if (keyMap.containsKey(BookingDao.NON_ATTR_START_DATE) && keyMap.containsKey(BookingDao.NON_ATTR_END_DATE)) {
 			Map<String, Object> auxKeyMap = new HashMap<String, Object>();
@@ -180,30 +185,35 @@ public class RoomService implements IRoomService {
 	 *         fechas. Puede contener duplicados.
 	 * @throws OntimizeJEERuntimeException
 	 * @throws EntityResultRequiredException
+	 * @throws InvalidFieldsValuesException 
 	 */
 	public List<Object> roomsBookedInRange(String startDate, String endDate, Map<String, Object> bookingKeyMap)
-			throws OntimizeJEERuntimeException, EntityResultRequiredException {
+			throws OntimizeJEERuntimeException, EntityResultRequiredException, InvalidFieldsValuesException {
 		bookingKeyMap.put(BookingDao.NON_ATTR_START_DATE, startDate);
 		bookingKeyMap.put(BookingDao.NON_ATTR_END_DATE, endDate);
 
-		// omite reservas con estados cancelados
-		BasicExpression bookingStatusFilter = new BasicExpression(new BasicField(BookingDao.ATTR_STATUS_ID),
-				BasicOperator.NOT_EQUAL_OP, BookingDao.STATUS_CANCELED);
-		EntityResultExtraTools.putBasicExpression(bookingKeyMap, bookingStatusFilter);
+//		// omite reservas con estados cancelados
+//		BasicExpression bookingStatusFilter = new BasicExpression(new BasicField(BookingDao.ATTR_STATUS_ID),
+//				BasicOperator.NOT_EQUAL_OP, BookingDao.STATUS_CANCELED);
+//		EntityResultExtraTools.putBasicExpression(bookingKeyMap, bookingStatusFilter);
 
 		EntityResult bookedRoomsER = bookingService.bookingsInRangeQuery(bookingKeyMap,
 				EntityResultTools.attributes(BookingDao.ATTR_ROOM_ID));
 		if (bookedRoomsER.isWrong()) {
 			throw new EntityResultRequiredException();
 		}
+//		System.err.println("start : "+startDate);
+//		System.err.println("end : "+endDate);
+//		System.err.println("keymap : "+bookingKeyMap);
+//		System.err.println(bookedRoomsER);
 		// bookedRoomsER.get(BookingDao.ATTR_ROOM_ID); //todo comprobar.	
-//		System.err.println("desde get: \n" + bookedRoomsER.get(BookingDao.ATTR_ROOM_ID));
-//		System.err.println("desde list: \n" + EntityResultExtraTools.listFromColumn(bookedRoomsER, BookingDao.ATTR_ROOM_ID));
+		System.err.println("desde get: \n" + bookedRoomsER.get(BookingDao.ATTR_ROOM_ID));
+		System.err.println("desde list: \n" + EntityResultExtraTools.listFromColumn(bookedRoomsER, BookingDao.ATTR_ROOM_ID));
 		return EntityResultExtraTools.listFromColumn(bookedRoomsER, BookingDao.ATTR_ROOM_ID);
 	}
 
 	public List<Object> roomsBookedgInRange(String startDate, String endDate)
-			throws OntimizeJEERuntimeException, EntityResultRequiredException {
+			throws OntimizeJEERuntimeException, EntityResultRequiredException, InvalidFieldsValuesException {
 		Map<String, Object> bookingKeyMap = new HashMap<>();
 		return roomsBookedInRange(startDate, endDate, bookingKeyMap);
 	}
@@ -216,15 +226,16 @@ public class RoomService implements IRoomService {
 	 * @return True si la room_id está libre en esa franja de fechas.
 	 * @throws OntimizeJEERuntimeException
 	 * @throws EntityResultRequiredException
+	 * @throws InvalidFieldsValuesException 
 	 * @throws MissingFieldsException
 	 */
 	 @Override
 	public boolean isRoomUnbookedgInRangeQuery(String startDate, String endDate, Integer roomId)
-			throws OntimizeJEERuntimeException, EntityResultRequiredException {
+			throws OntimizeJEERuntimeException, EntityResultRequiredException, InvalidFieldsValuesException {
 		Map<String, Object> keyMap = new HashMap<String, Object>();
 		keyMap.put(BookingDao.ATTR_ROOM_ID, roomId);
 		List<Object> bookedRoomsIdList = roomsBookedInRange(startDate, endDate, keyMap);
-
+		System.err.println("desde isRoom" + bookedRoomsIdList.toString());
 		return bookedRoomsIdList.isEmpty();
 
 	}
