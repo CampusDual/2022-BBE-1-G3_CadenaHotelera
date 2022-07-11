@@ -14,7 +14,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.service.ICustomerService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomDao;
-import com.ontimize.atomicHotelsApiRest.model.core.ontimizeExtra.EntityResultWrong;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;

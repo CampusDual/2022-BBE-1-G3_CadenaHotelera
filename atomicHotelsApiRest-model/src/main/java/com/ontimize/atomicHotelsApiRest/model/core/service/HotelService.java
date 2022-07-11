@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IHotelService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomTypeDao;
-import com.ontimize.atomicHotelsApiRest.model.core.ontimizeExtra.EntityResultWrong;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;

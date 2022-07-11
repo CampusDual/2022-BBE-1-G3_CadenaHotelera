@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ontimize.atomicHotelsApiRest.api.core.service.IRoomTypeService;
-import com.ontimize.atomicHotelsApiRest.model.core.ontimizeExtra.EntityResultWrong;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.server.rest.ORestController;
 

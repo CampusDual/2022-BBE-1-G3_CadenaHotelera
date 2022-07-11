@@ -10,7 +10,7 @@ import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
 
 public interface IBookingService {
 	
-	public EntityResult bookingQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
+	public EntityResult bookingQuery(Map<Object, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
 	public EntityResult bookingInfoQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
 	public EntityResult bookingInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException, EntityResultRequiredException;
 	public EntityResult bookingUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap) throws OntimizeJEERuntimeException;

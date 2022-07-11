@@ -10,14 +10,14 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-
-import com.ontimize.atomicHotelsApiRest.model.core.ontimizeExtra.EntityResultExtraTools;
-import com.ontimize.atomicHotelsApiRest.model.core.ontimizeExtra.EntityResultWrong;
 import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.service.IBookingService;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IRoomService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultExtraTools;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.EntityResultRequiredException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
@@ -27,6 +27,7 @@ import com.ontimize.jee.common.db.SQLStatementBuilder.BasicOperator;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
+import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 
 @Service("BookingService")
@@ -43,7 +44,7 @@ public class BookingService implements IBookingService {
 	IRoomService roomService;
 
 	@Override
-	public EntityResult bookingQuery(Map<String, Object> keyMap, List<String> attrList)
+	public EntityResult bookingQuery(Map<Object, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		return this.daoHelper.query(this.bookingDao, keyMap, attrList);
 	}
@@ -57,49 +58,58 @@ public class BookingService implements IBookingService {
 	@Override
 	public EntityResult bookingInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
-		if (attrMap.containsKey(BookingDao.ATTR_CHECKIN) && attrMap.containsKey(BookingDao.ATTR_CHECKOUT)
-				&& attrMap.containsKey(BookingDao.ATTR_ROOM_ID)) {
-			if (((String) attrMap.get(BookingDao.ATTR_CHECKIN))
-					.compareTo((String) attrMap.get(BookingDao.ATTR_CHECKOUT)) >= 0) {
-				resultado.setCode(EntityResult.OPERATION_WRONG);
-				resultado.setMessage("Checkin no puede ser posterior a checkout");
-			} else {
-				try {
-					if (roomService.isRoomUnbookedgInRangeQuery((String) attrMap.get(BookingDao.ATTR_CHECKIN),
-							(String) attrMap.get(BookingDao.ATTR_CHECKOUT),
-							(Integer) attrMap.get(BookingDao.ATTR_ROOM_ID))) {
-						resultado = this.daoHelper.insert(this.bookingDao, attrMap);
-					} else {
-						resultado = new EntityResultWrong("La habitación ya está reservada en esa franja de fechas.");
-					}
-				} catch (EntityResultRequiredException | MissingFieldsException | InvalidFieldsValuesException e) {
-					System.err.println(e.getMessage());				
-					resultado = new EntityResultWrong(e.getMessage());
+		try {
+			ValidateFields.required(attrMap, BookingDao.ATTR_START, BookingDao.ATTR_END, BookingDao.ATTR_ROOM_ID);
+			int validateRange = ValidateFields.dataRange(BookingDao.ATTR_START, BookingDao.ATTR_END);
+			switch (validateRange) {
+			case 1:
+				resultado = new EntityResultWrong("Checkin no puede ser posterior a checkout");
+				break;
+			case 2:
+				resultado = new EntityResultWrong("Checkin no puede ser anterior a hoy");
+				break;
+				
+			case 0:
+				if (roomService.isRoomUnbookedgInRangeQuery((String) attrMap.get(BookingDao.ATTR_CHECKIN),
+						(String) attrMap.get(BookingDao.ATTR_CHECKOUT),
+						(Integer) attrMap.get(BookingDao.ATTR_ROOM_ID))) {
+					resultado = this.daoHelper.insert(this.bookingDao, attrMap);
+				} else {
+					resultado = new EntityResultWrong("La habitación ya está reservada en esa franja de fechas.");
 				}
 			}
 
-		} else {
-			resultado = new EntityResultWrong("Faltan campos necesarios");
+		} catch (EntityResultRequiredException | MissingFieldsException | InvalidFieldsValuesException e) {
+			System.err.println(e.getMessage());
+			resultado = new EntityResultWrong(e.getMessage());
 		}
+
 		return resultado;
 	}
 
 	@Override
 	public EntityResult bookingUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
-		// todo no funciona basic expression, pero el sql si
-		// update bookings SET bkg_stb_id = 4 Where bkg_id = 1 AND bkg_stb_id != 3; //
-		// no se puede, requiere el campo en el dao.xml
-		BasicExpression notCanceled = new BasicExpression(new BasicField(BookingDao.ATTR_STATUS_ID),
-				BasicOperator.NOT_EQUAL_OP, BookingDao.STATUS_CANCELED);
-		EntityResultExtraTools.putBasicExpression(keyMap, notCanceled);
-		return this.daoHelper.update(this.bookingDao, attrMap, keyMap);
+		try {
+			ValidateFields.required(keyMap, BookingDao.ATTR_ID);
+			EntityResult subConsulta = bookingQuery(
+					EntityResultTools.keysvalues(BookingDao.ATTR_ID, keyMap.get(BookingDao.ATTR_ID)),
+					EntityResultTools.attributes(BookingDao.ATTR_CANCELED, BookingDao.ATTR_CHECKOUT));
+			if ((subConsulta.get(BookingDao.ATTR_CANCELED) == null)
+					&& (subConsulta.get(BookingDao.ATTR_CHECKOUT) == null)) {
+				return this.daoHelper.update(this.bookingDao, attrMap, keyMap);
+			} else {
+				return new EntityResultWrong("No se pueden modificar reservas canceladas o finalizadas");
+			}
+		} catch (MissingFieldsException e) {
+			return new EntityResultWrong(e.getMessage());
+		}
 	}
 
 	@Override
 	public EntityResult bookingDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
-		// anular este cruz, o automizar a cancelado
-		return this.daoHelper.delete(this.bookingDao, keyMap);
+//		return this.daoHelper.delete(this.bookingDao, keyMap);
+		return new EntityResultWrong("No se pueden eliminar reservas, debe cancelarla");
 	}
 
 	@Override
@@ -114,7 +124,6 @@ public class BookingService implements IBookingService {
 		}
 	}
 
-	
 	@Override
 	public EntityResult bookingsInRangeInfoQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
@@ -138,59 +147,47 @@ public class BookingService implements IBookingService {
 	 */
 	public void bookingsInRangeBuilder(Map<String, Object> keyMap, List<String> attrList)
 			throws MissingFieldsException, InvalidFieldsValuesException {
-		if (keyMap.containsKey(BookingDao.NON_ATTR_START_DATE) && keyMap.containsKey(BookingDao.NON_ATTR_END_DATE)) {
-			if (((String) keyMap.get(BookingDao.NON_ATTR_START_DATE))
-					.compareTo((String) keyMap.get(BookingDao.NON_ATTR_END_DATE)) >= 0) {
-				throw new InvalidFieldsValuesException("La fecha de inicio no puede ser superior a la fecha de fin");
-			} else {
+		ValidateFields.required(keyMap, BookingDao.ATTR_START, BookingDao.ATTR_END);
 
-			}
-			BasicField checkin = new BasicField(BookingDao.ATTR_CHECKIN);
-			BasicField checkout = new BasicField(BookingDao.ATTR_CHECKOUT);
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			try {
-				Date rangeCheckin = dateFormat.parse((String) keyMap.get(BookingDao.NON_ATTR_START_DATE));
-				Date rangeCheckout = dateFormat.parse((String) keyMap.get(BookingDao.NON_ATTR_END_DATE));
+		Date rangeStart = ValidateFields.stringToDate(BookingDao.ATTR_START);
+		Date rangeEnd = ValidateFields.stringToDate(BookingDao.ATTR_END);
+		ValidateFields.dataRange(rangeStart, rangeEnd);
 
-				/*
-				 * (range_checkin >= bkg_checkin AND range_checkin < bkg_checkout) OR
-				 * (range_checkout > bkg_checkin AND range_checkout <= bkg_checkout) OR
-				 * (range_checkin < bkg_checkin AND range_chekout > bkg_checkout)
-				 */
+		BasicField bkgStart = new BasicField(BookingDao.ATTR_START);
+		BasicField bkgEnd = new BasicField(BookingDao.ATTR_END);
 
-				// (range_checkin >= bkg_checkin AND range_checkin < bkg_checkout) OR
-				BasicExpression exp01 = new BasicExpression(checkin, BasicOperator.LESS_EQUAL_OP, rangeCheckin);
-				BasicExpression exp02 = new BasicExpression(checkout, BasicOperator.MORE_OP, rangeCheckin);
-				BasicExpression groupExp01 = new BasicExpression(exp01, BasicOperator.AND_OP, exp02); // dentro
-																										// rangeCheckin
+		/*
+		 * (range_checkin >= bkg_checkin AND range_checkin < bkg_checkout) OR
+		 * (range_checkout > bkg_checkin AND range_checkout <= bkg_checkout) OR
+		 * (range_checkin < bkg_checkin AND range_chekout > bkg_checkout)
+		 */
 
-				// (range_checkout > bkg_checkin AND range_checkout <= bkg_checkout) OR
-				BasicExpression exp03 = new BasicExpression(checkout, BasicOperator.MORE_EQUAL_OP, rangeCheckout);
-				BasicExpression exp04 = new BasicExpression(checkin, BasicOperator.LESS_OP, rangeCheckout);
-				BasicExpression groupExp02 = new BasicExpression(exp03, BasicOperator.AND_OP, exp04);// dentro
-																										// rangeCheckout
+		// (range_checkin >= bkg_checkin AND range_checkin < bkg_checkout) OR
+		BasicExpression exp01 = new BasicExpression(bkgStart, BasicOperator.LESS_EQUAL_OP, rangeStart);
+		BasicExpression exp02 = new BasicExpression(bkgEnd, BasicOperator.MORE_OP, rangeStart);
+		BasicExpression groupExp01 = new BasicExpression(exp01, BasicOperator.AND_OP, exp02); // dentro
+																								// rangeCheckin
 
-				BasicExpression exp05 = new BasicExpression(checkin, BasicOperator.MORE_OP, rangeCheckin);
-				BasicExpression exp06 = new BasicExpression(checkout, BasicOperator.LESS_OP, rangeCheckout);
-				BasicExpression groupExp03 = new BasicExpression(exp05, BasicOperator.AND_OP, exp06);// dentro checkin y
-																										// checkout
+		// (range_checkout > bkg_checkin AND range_checkout <= bkg_checkout) OR
+		BasicExpression exp03 = new BasicExpression(bkgEnd, BasicOperator.MORE_EQUAL_OP, rangeEnd);
+		BasicExpression exp04 = new BasicExpression(bkgStart, BasicOperator.LESS_OP, rangeEnd);
+		BasicExpression groupExp02 = new BasicExpression(exp03, BasicOperator.AND_OP, exp04);// dentro
+																								// rangeCheckout
 
-				// las uno
-				BasicExpression auxFilterRangeBE = new BasicExpression(groupExp01, BasicOperator.OR_OP, groupExp02);
-				BasicExpression filterRangeBE = new BasicExpression(auxFilterRangeBE, BasicOperator.OR_OP, groupExp03);
+		BasicExpression exp05 = new BasicExpression(bkgStart, BasicOperator.MORE_OP, rangeStart);
+		BasicExpression exp06 = new BasicExpression(bkgEnd, BasicOperator.LESS_OP, rangeEnd);
+		BasicExpression groupExp03 = new BasicExpression(exp05, BasicOperator.AND_OP, exp06);// dentro checkin y
+																								// checkout
 
-				EntityResultExtraTools.putBasicExpression(keyMap, filterRangeBE); // nuevo metodo
+		// las uno
+		BasicExpression auxFilterRangeBE = new BasicExpression(groupExp01, BasicOperator.OR_OP, groupExp02);
+		BasicExpression filterRangeBE = new BasicExpression(auxFilterRangeBE, BasicOperator.OR_OP, groupExp03);
 
-				keyMap.remove(BookingDao.NON_ATTR_START_DATE);
-				keyMap.remove(BookingDao.NON_ATTR_END_DATE);
+		EntityResultExtraTools.putBasicExpression(keyMap, filterRangeBE); // nuevo metodo
 
-			} catch (ParseException e) {
-				throw new InvalidFieldsValuesException(e.toString());
-			}
-		} else {
-			throw new MissingFieldsException(
-					"Faltan campos " + BookingDao.NON_ATTR_START_DATE + " o " + BookingDao.NON_ATTR_END_DATE);
-		}
+		keyMap.remove(BookingDao.ATTR_START);
+		keyMap.remove(BookingDao.ATTR_END);
+
 	}
 
 }

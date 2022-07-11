@@ -1,4 +1,4 @@
-package com.ontimize.atomicHotelsApiRest.model.core.ontimizeExtra;
+package com.ontimize.atomicHotelsApiRest.model.core.tools;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 
