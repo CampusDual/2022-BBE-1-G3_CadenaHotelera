@@ -19,6 +19,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.service.IBookingService;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IRoomService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.EntityResultRequiredException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.jee.common.db.SQLStatementBuilder.BasicExpression;
 import com.ontimize.jee.common.db.SQLStatementBuilder.BasicField;
@@ -63,20 +64,22 @@ public class BookingService implements IBookingService {
 				resultado.setCode(EntityResult.OPERATION_WRONG);
 				resultado.setMessage("Checkin no puede ser posterior a checkout");
 			} else {
-
 				try {
 					if (roomService.isRoomUnbookedgInRangeQuery((String) attrMap.get(BookingDao.ATTR_CHECKIN),
 							(String) attrMap.get(BookingDao.ATTR_CHECKOUT),
 							(Integer) attrMap.get(BookingDao.ATTR_ID))) {
+						System.out.println("insercción\n" + attrMap);
 						resultado = this.daoHelper.insert(this.bookingDao, attrMap);
 					} else {
 						resultado = new EntityResultWrong("La habitación ya está reservada en esa franja de fechas.");
 					}
 				} catch (EntityResultRequiredException e) {
-					resultado = new EntityResultWrong("Error al realizar consulta dependiente");
+					resultado = new EntityResultWrong(e.getMessage());
 					e.printStackTrace();
+				} catch (InvalidFieldsValuesException e) {
+					e.printStackTrace();
+					resultado = new EntityResultWrong(e.getMessage());
 				}
-
 			}
 
 		} else {
@@ -88,29 +91,34 @@ public class BookingService implements IBookingService {
 	@Override
 	public EntityResult bookingUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
-		//todo no funciona basic expression, pero el sql si
-		//update bookings SET bkg_stb_id = 4 Where bkg_id = 1 AND bkg_stb_id != 3; // no se puede, requiere el campo en el dao.xml
-		BasicExpression notCanceled = new BasicExpression(new BasicField(BookingDao.ATTR_STATUS_ID),BasicOperator.NOT_EQUAL_OP, BookingDao.STATUS_CANCELED);
+		// todo no funciona basic expression, pero el sql si
+		// update bookings SET bkg_stb_id = 4 Where bkg_id = 1 AND bkg_stb_id != 3; //
+		// no se puede, requiere el campo en el dao.xml
+		BasicExpression notCanceled = new BasicExpression(new BasicField(BookingDao.ATTR_STATUS_ID),
+				BasicOperator.NOT_EQUAL_OP, BookingDao.STATUS_CANCELED);
 		EntityResultExtraTools.putBasicExpression(keyMap, notCanceled);
 		System.err.println(keyMap);
-		return this.daoHelper.update(this.bookingDao, attrMap, keyMap);		
+		return this.daoHelper.update(this.bookingDao, attrMap, keyMap);
 	}
 
 	@Override
 	public EntityResult bookingDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
-		//anular este cruz, o automizar a cancelado
+		// anular este cruz, o automizar a cancelado
 		return this.daoHelper.delete(this.bookingDao, keyMap);
 	}
 
 	@Override
 	public EntityResult bookingsInRangeQuery(Map<String, Object> keyMap, List<String> attrList)
-			throws OntimizeJEERuntimeException {
+			throws OntimizeJEERuntimeException, InvalidFieldsValuesException {
 		try {
 			bookingsInRangeBuilder(keyMap, attrList);
-			return this.daoHelper.query(this.bookingDao, keyMap, attrList,"queryBasicBooking");
+			return this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryBasicBooking");
 		} catch (MissingFieldsException e) {
 			e.printStackTrace();
-			return new EntityResultWrong("Faltan campos necesarios");
+			return new EntityResultWrong(e.getMessage());
+		} catch (InvalidFieldsValuesException e) {
+			e.printStackTrace();
+			return new EntityResultWrong(e.getMessage());
 		}
 	}
 
@@ -118,11 +126,17 @@ public class BookingService implements IBookingService {
 	public EntityResult bookingsInRangeInfoQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		try {
+			System.err.println("keymap : "+keyMap);
+
 			bookingsInRangeBuilder(keyMap, attrList);
+			System.err.println("keymap2 : "+keyMap);
 			return this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryInfoBooking");
 		} catch (MissingFieldsException e) {
 			e.printStackTrace();
-			return new EntityResultWrong("Faltan campos necesarios");
+			return new EntityResultWrong(e.getMessage());
+		} catch (InvalidFieldsValuesException e) {
+			e.printStackTrace();
+			return new EntityResultWrong(e.getMessage());
 		}
 	}
 
@@ -132,11 +146,19 @@ public class BookingService implements IBookingService {
 	 * @param keyMap
 	 * @param attrList
 	 * @throws MissingFieldsException
+	 * @throws InvalidFieldsValuesException
 	 */
 	public void bookingsInRangeBuilder(Map<String, Object> keyMap, List<String> attrList)
-			throws MissingFieldsException {
-
+			throws MissingFieldsException, InvalidFieldsValuesException {
+		System.out.println(keyMap);
+		System.out.println(attrList);
 		if (keyMap.containsKey(BookingDao.NON_ATTR_START_DATE) && keyMap.containsKey(BookingDao.NON_ATTR_END_DATE)) {
+			if (((String) keyMap.get(BookingDao.NON_ATTR_START_DATE))
+					.compareTo((String) keyMap.get(BookingDao.NON_ATTR_END_DATE)) >= 0) {
+				throw new InvalidFieldsValuesException("La fecha de inicio no puede ser superior a la fecha de fin");
+			} else {
+
+			}
 			BasicField checkin = new BasicField(BookingDao.ATTR_CHECKIN);
 			BasicField checkout = new BasicField(BookingDao.ATTR_CHECKOUT);
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -177,10 +199,11 @@ public class BookingService implements IBookingService {
 				keyMap.remove(BookingDao.NON_ATTR_END_DATE);
 
 			} catch (ParseException e) {
-				e.printStackTrace();
+				throw new InvalidFieldsValuesException(e.toString());
 			}
 		} else {
-			throw new MissingFieldsException("Faltan campos necesarios");
+			throw new MissingFieldsException(
+					"Faltan campos " + BookingDao.NON_ATTR_START_DATE + " o " + BookingDao.NON_ATTR_END_DATE);
 		}
 	}
 
