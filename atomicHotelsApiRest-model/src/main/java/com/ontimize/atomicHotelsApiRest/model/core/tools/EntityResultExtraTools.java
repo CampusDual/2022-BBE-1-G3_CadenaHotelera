@@ -1,9 +1,10 @@
-package com.ontimize.atomicHotelsApiRest.model.core.ontimizeExtra;
+package com.ontimize.atomicHotelsApiRest.model.core.tools;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.jee.common.db.SQLStatementBuilder;
 import com.ontimize.jee.common.db.SQLStatementBuilder.BasicExpression;
 import com.ontimize.jee.common.db.SQLStatementBuilder.BasicOperator;
@@ -48,4 +49,5 @@ private EntityResultExtraTools() {
 		}
 		keyMap.put(SQLStatementBuilder.ExtendedSQLConditionValuesProcessor.EXPRESSION_KEY, finalBE);
 	}
+	
 }

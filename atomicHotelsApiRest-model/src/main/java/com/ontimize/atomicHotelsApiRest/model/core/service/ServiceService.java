@@ -21,7 +21,7 @@ import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.FeatureDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.ServiceDao;
-import com.ontimize.atomicHotelsApiRest.model.core.ontimizeExtra.EntityResultWrong;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 
 @Service("ServiceService")
 @Lazy

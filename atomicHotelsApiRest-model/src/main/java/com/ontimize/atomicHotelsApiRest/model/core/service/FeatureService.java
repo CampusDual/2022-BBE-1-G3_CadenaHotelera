@@ -20,7 +20,7 @@ import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.FeatureDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
-import com.ontimize.atomicHotelsApiRest.model.core.ontimizeExtra.EntityResultWrong;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 
 @Service("FeatureService")
 @Lazy
@@ -61,15 +61,20 @@ public class FeatureService implements IFeatureService{
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
+			
 			resultado = this.daoHelper.update(this.featureDao, attrMap, keyMap);
-			resultado.setMessage("Feature actualizada");
+			if(resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
+				resultado = new EntityResultWrong("Error al actualizar Feature - El regsitro que pretende actualizar no existe.");		
+			}else {
+				resultado.setMessage("Feature actualizada");
+			}			
+			
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong("Error al actualizar Feature - No es posible duplicar un registro");
 		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong("Error al actualizar Feature - Falta algún campo obligatorio");
 		} catch (SQLWarningException e) {
-			resultado = new EntityResultWrong(
-					"Error al actualizar Feature - Falta el ftr_id (PK) de la Feature a actualizar");
+			resultado = new EntityResultWrong("Error al actualizar Feature - "+e.getMessage());
 		} catch (Exception e) {
 			resultado = new EntityResultWrong("Error al actualizar Feature");
 		}
@@ -94,7 +99,10 @@ public class FeatureService implements IFeatureService{
 			}else {
 				resultado = new EntityResultWrong("Error al eliminar Feature - Falta el ftr_id (PK) de la Feature a eliminar");
 			}
+		}catch(DataIntegrityViolationException e) {
+			resultado = new EntityResultWrong("Error al eliminar Feature - Está referenciada en alguna otra tabla (FK)");
 		} catch (Exception e) {
+			e.printStackTrace();
 			resultado = new EntityResultWrong("Error al eliminar Feature");
 		}
 		return resultado;

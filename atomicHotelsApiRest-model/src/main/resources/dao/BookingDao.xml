@@ -17,7 +17,6 @@ catalog="" schema="${mainschema}" table="bookings" datasource="mainDataSource" s
 				     	#COLUMNS#
 				    FROM
 				     	bookings
-				   	LEFT JOIN status_booking ON stb_id = bkg_stb_id
 				   	LEFT JOIN customers ON cst_id = bkg_cst_id
 				   	LEFT JOIN rooms ON rm_id = bkg_rm_id
 				   	LEFT JOIN room_types ON rmt_id = rm_rmt_id		
@@ -33,7 +32,6 @@ catalog="" schema="${mainschema}" table="bookings" datasource="mainDataSource" s
 				     	#COLUMNS#
 				    FROM
 				     	bookings
-				   	LEFT JOIN status_booking ON stb_id = bkg_stb_id
 				   	LEFT JOIN rooms ON rm_id = bkg_rm_id
 				    #WHERE#				    
 			    ]]>

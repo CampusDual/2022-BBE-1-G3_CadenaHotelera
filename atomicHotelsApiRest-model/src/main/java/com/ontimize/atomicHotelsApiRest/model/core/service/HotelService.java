@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IHotelService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomTypeDao;
-import com.ontimize.atomicHotelsApiRest.model.core.ontimizeExtra.EntityResultWrong;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
@@ -52,8 +52,10 @@ public class HotelService implements IHotelService {
 			resultado.setMessage("Hotel registrado");
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong("Error al crear Hotel - El registro ya existe");
+		
 		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong("Error al crear Hotel - Falta algún campo obligatorio");
+		
 		} catch (Exception e) {
 			resultado = new EntityResultWrong("Error al registrar Hotel");
 		}
@@ -110,15 +112,23 @@ public class HotelService implements IHotelService {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
 			resultado = this.daoHelper.update(this.hotelDao, attrMap, keyMap);
+			if(resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
+				resultado = new EntityResultWrong("Error al actualizar Hotel - El regsitro que pretende actualizar no existe.");			
+			}else {
 			resultado.setMessage("Hotel actualizado");
+			}
+		
 		} catch (DuplicateKeyException e) {
-			resultado = new EntityResultWrong("Error al actualizar Hotel - No es posible duplicar un registro");
+			e.printStackTrace();
+			resultado = new EntityResultWrong("Error al actualizar Hotel - No es posible duplicar un registro");		
 		} catch (DataIntegrityViolationException e) {
+			e.printStackTrace();
 			resultado = new EntityResultWrong("Error al actualizar Hotel - Falta algún campo obligatorio");
 		} catch (SQLWarningException e) {
-			resultado = new EntityResultWrong(
-					"Error al actualizar Hotel - Falta el htl_id (PK) del Hotel a actualizar");
+			e.printStackTrace();
+			resultado = new EntityResultWrong("Error al actualizar Hotel - "+e.getMessage());
 		} catch (Exception e) {
+			e.printStackTrace();
 			resultado = new EntityResultWrong("Error al actualizar Hotel");
 		}
 		return resultado;
@@ -142,6 +152,8 @@ public class HotelService implements IHotelService {
 			}else {
 				resultado = new EntityResultWrong("Error al eliminar Hotel - Falta el htl_id (PK) del Hotel a eliminar");
 			}
+		}catch(DataIntegrityViolationException e) {
+			resultado = new EntityResultWrong("Error al eliminar Hotel - Está referenciado en alguna otra tabla (FK)");
 		} catch (Exception e) {
 			resultado = new EntityResultWrong("Error al eliminar Hotel");
 		}

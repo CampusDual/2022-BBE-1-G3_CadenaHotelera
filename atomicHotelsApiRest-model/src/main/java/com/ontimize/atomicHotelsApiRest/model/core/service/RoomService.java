@@ -21,11 +21,12 @@ import com.ontimize.atomicHotelsApiRest.api.core.service.IBookingService;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IRoomService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomDao;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultExtraTools;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.EntityResultRequiredException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
-import com.ontimize.atomicHotelsApiRest.model.core.ontimizeExtra.EntityResultExtraTools;
-import com.ontimize.atomicHotelsApiRest.model.core.ontimizeExtra.EntityResultWrong;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
 import com.ontimize.jee.common.tools.EntityResultTools;
@@ -145,28 +146,31 @@ public class RoomService implements IRoomService {
 			throws OntimizeJEERuntimeException, MissingFieldsException, EntityResultRequiredException,
 			InvalidFieldsValuesException {
 		EntityResult resultado;
-		if (keyMap.containsKey(BookingDao.NON_ATTR_START_DATE) && keyMap.containsKey(BookingDao.NON_ATTR_END_DATE)) {
-			Map<String, Object> auxKeyMap = new HashMap<String, Object>();
-			if (keyMap.containsKey(RoomDao.ATTR_ID)) {
-				auxKeyMap.put(BookingDao.ATTR_ROOM_ID, keyMap.get(RoomDao.ATTR_ID));
-			}
-			if (keyMap.containsKey(RoomDao.ATTR_HOTEL_ID)) {
-				auxKeyMap.put(BookingDao.ATTR_ROOM_ID, keyMap.get(RoomDao.ATTR_ID));
-			} // comprobar filtro id hotel en reservas
 
-			List<Object> bookedRoomsIdList = roomsBookedInRange((String) keyMap.get(BookingDao.NON_ATTR_START_DATE),
-					(String) keyMap.get(BookingDao.NON_ATTR_END_DATE), auxKeyMap);
+		ValidateFields.required(keyMap, BookingDao.ATTR_START, BookingDao.ATTR_END);
 
-			keyMap.remove(BookingDao.NON_ATTR_START_DATE);
-			keyMap.remove(BookingDao.NON_ATTR_END_DATE);
-			BasicExpression finalExp = new BasicExpression(new BasicField(RoomDao.ATTR_ID), BasicOperator.NOT_IN_OP,
-					bookedRoomsIdList);
-			EntityResultExtraTools.putBasicExpression(keyMap, finalExp);
-
-			resultado = this.daoHelper.query(this.roomDao, keyMap, attrList, "queryInfoRooms");
-		} else {
-			throw new MissingFieldsException("Faltan campos necesarios, checkin o checkout");
+		if (ValidateFields.dataRange(BookingDao.ATTR_START, BookingDao.ATTR_END) == 1) {
+			throw new InvalidFieldsValuesException("Checkin no puede ser posterior a checkout");
 		}
+
+		Map<String, Object> auxKeyMap = new HashMap<String, Object>();
+		if (keyMap.containsKey(RoomDao.ATTR_ID)) {
+			auxKeyMap.put(BookingDao.ATTR_ROOM_ID, keyMap.get(RoomDao.ATTR_ID));
+		}
+		if (keyMap.containsKey(RoomDao.ATTR_HOTEL_ID)) {
+			auxKeyMap.put(BookingDao.ATTR_ROOM_ID, keyMap.get(RoomDao.ATTR_ID));
+		} // comprobar filtro id hotel en reservas
+
+		List<Object> bookedRoomsIdList = roomsBookedInRange((String) keyMap.get(BookingDao.ATTR_START),
+				(String) keyMap.get(BookingDao.ATTR_END), auxKeyMap);
+
+		keyMap.remove(BookingDao.ATTR_START);
+		keyMap.remove(BookingDao.ATTR_END);
+		BasicExpression finalExp = new BasicExpression(new BasicField(RoomDao.ATTR_ID), BasicOperator.NOT_IN_OP,
+				bookedRoomsIdList);
+		EntityResultExtraTools.putBasicExpression(keyMap, finalExp);
+
+		resultado = this.daoHelper.query(this.roomDao, keyMap, attrList, "queryInfoRooms");
 
 		return resultado;
 	}
@@ -187,8 +191,8 @@ public class RoomService implements IRoomService {
 	 */
 	public List<Object> roomsBookedInRange(String startDate, String endDate, Map<String, Object> bookingKeyMap)
 			throws OntimizeJEERuntimeException, EntityResultRequiredException, InvalidFieldsValuesException {
-		bookingKeyMap.put(BookingDao.NON_ATTR_START_DATE, startDate);
-		bookingKeyMap.put(BookingDao.NON_ATTR_END_DATE, endDate);
+		bookingKeyMap.put(BookingDao.ATTR_START, startDate);
+		bookingKeyMap.put(BookingDao.ATTR_END, endDate);
 
 //		// omite reservas con estados cancelados
 //		BasicExpression bookingStatusFilter = new BasicExpression(new BasicField(BookingDao.ATTR_STATUS_ID),
