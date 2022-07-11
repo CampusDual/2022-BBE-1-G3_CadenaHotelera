@@ -8,9 +8,9 @@ import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
 
 public interface IServicesXtraService {
 	
-	public EntityResult customerQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
-	public EntityResult customerInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException;
-	public EntityResult customerUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
-	public EntityResult customerDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
+	public EntityResult servicesXtraQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
+	public EntityResult servicesXtraInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException;
+	public EntityResult servicesXtraUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
+	public EntityResult servicesXtraDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
 
 }

@@ -13,6 +13,7 @@ import org.springframework.jdbc.SQLWarningException;
 import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.service.IFeatureService;
+import com.ontimize.atomicHotelsApiRest.api.core.service.IServicesXtraService;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
@@ -23,9 +24,9 @@ import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.ServicesXtraDao;
 import com.ontimize.atomicHotelsApiRest.model.core.ontimizeExtra.EntityResultWrong;
 
-@Service("FeatureService")
+@Service("ServicesXtraService")
 @Lazy
-public class ServicesXtraService implements IFeatureService{
+public class ServicesXtraService implements IServicesXtraService{
 	
 	@Autowired
 	private ServicesXtraDao servicesXtraDao;
@@ -33,14 +34,14 @@ public class ServicesXtraService implements IFeatureService{
 	private DefaultOntimizeDaoHelper daoHelper;
 
 	@Override
-	public EntityResult featureQuery(Map<String, Object> keyMap, List<String> attrList)
+	public EntityResult servicesXtraQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = this.daoHelper.query(this.servicesXtraDao, keyMap, attrList);
 		return resultado;
 	}
 
 	@Override
-	public EntityResult featureInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
+	public EntityResult servicesXtraInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 		
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
@@ -58,7 +59,7 @@ public class ServicesXtraService implements IFeatureService{
 	}
 
 	@Override
-	public EntityResult featureUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
+	public EntityResult servicesXtraUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
@@ -78,14 +79,14 @@ public class ServicesXtraService implements IFeatureService{
 	}
 
 	@Override
-	public EntityResult featureDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
+	public EntityResult servicesXtraDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 		
 		EntityResult resultado = new EntityResultMapImpl();		
 		try {
-			if (keyMap.containsKey(FeatureDao.ATTR_ID)) {
+			if (keyMap.containsKey(ServicesXtraDao.ATTR_ID)) {
 				EntityResult auxEntity = this.daoHelper.query(this.servicesXtraDao,
-						EntityResultTools.keysvalues(FeatureDao.ATTR_ID, keyMap.get(FeatureDao.ATTR_ID)),
-						EntityResultTools.attributes(FeatureDao.ATTR_ID));
+						EntityResultTools.keysvalues(ServicesXtraDao.ATTR_ID, keyMap.get(ServicesXtraDao.ATTR_ID)),
+						EntityResultTools.attributes(ServicesXtraDao.ATTR_ID));
 				if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
 					resultado = new EntityResultWrong("Error al eliminar el servicio extra - El servicio extra a eliminar no existe");
 				} else {
