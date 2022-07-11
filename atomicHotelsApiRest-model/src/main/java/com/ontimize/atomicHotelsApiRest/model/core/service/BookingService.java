@@ -68,7 +68,7 @@ public class BookingService implements IBookingService {
 			case 2:
 				resultado = new EntityResultWrong("Checkin no puede ser anterior a hoy");
 				break;
-				
+
 			case 0:
 				if (roomService.isRoomUnbookedgInRangeQuery((String) attrMap.get(BookingDao.ATTR_CHECKIN),
 						(String) attrMap.get(BookingDao.ATTR_CHECKOUT),

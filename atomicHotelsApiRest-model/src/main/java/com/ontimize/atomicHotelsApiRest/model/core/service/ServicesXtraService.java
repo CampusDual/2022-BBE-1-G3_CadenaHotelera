@@ -69,7 +69,8 @@ public class ServicesXtraService implements IServicesXtraService{
 			resultado = new EntityResultWrong("Error al actualizar el servicio extra - No es posible duplicar un registro.");
 		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong("Error al actualizar el servicio extra - Falta algún campo obligatorio.");
-		} catch (SQLWarningException e) {
+		} catch (SQLWarningException e) { 
+			e.printStackTrace();
 			resultado = new EntityResultWrong(
 					"Error al actualizar el servicio extra - Falta el sxt_id (PK) del servicio extra a actualizar.");
 		} catch (Exception e) {

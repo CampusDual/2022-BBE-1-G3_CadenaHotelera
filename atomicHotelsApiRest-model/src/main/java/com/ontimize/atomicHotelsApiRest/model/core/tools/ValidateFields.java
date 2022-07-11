@@ -7,7 +7,6 @@ import java.util.Map;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
-import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
 
 public class ValidateFields {
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -19,6 +18,9 @@ public class ValidateFields {
 		for(String field: fields) {
 			if(!keyMap.containsKey(field)) {
 				throw new MissingFieldsException("Falta el campo " + field);
+			}
+			if(keyMap.get(field) == null) {
+				throw new MissingFieldsException("El campo " + field + " es nulo");
 			}
 		}		
 	}
