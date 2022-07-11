@@ -9,7 +9,7 @@ import com.ontimize.jee.server.dao.jdbc.OntimizeJdbcDaoSupport;
 @Repository("XtrasDao")
 @Lazy
 @ConfigurationFile(configurationFile = "dao/XtrasDao.xml", configurationFilePlaceholder = "dao/placeholders.properties")
-public class XtrasDao extends OntimizeJdbcDaoSupport {
+public class ServicesXtraDao extends OntimizeJdbcDaoSupport {
 	
 	public static final String TAG = "xtr_";
 	public static final String ATTR_ID = TAG+"id";

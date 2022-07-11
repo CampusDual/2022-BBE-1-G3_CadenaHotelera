@@ -3,12 +3,12 @@
 xsi:schemaLocation="http://www.ontimize.com/schema/jdbc http://www.ontimize.com/schema/jdbc/ontimize-jdbc-dao.xsd" 
 catalog="" schema="${mainschema}" table="services" datasource="mainDataSource" sqlhandler="dbSQLStatementHandler">
 	<DeleteKeys>
-		<Column>xtr_id</Column>
+		<Column>sxt_id</Column>
 	</DeleteKeys>
 	<UpdateKeys>
-		<Column>xtr_name</Column>
+		<Column>sxt_name</Column>
 	</UpdateKeys>
-	<GeneratedKey>xtr_description</GeneratedKey>	
+	<GeneratedKey>sxt_description</GeneratedKey>	
 </JdbcEntitySetup>
 
          	
