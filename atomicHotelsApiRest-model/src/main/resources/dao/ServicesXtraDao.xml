@@ -6,9 +6,9 @@ catalog="" schema="${mainschema}" table="servicesxtra" datasource="mainDataSourc
 		<Column>sxt_id</Column>
 	</DeleteKeys>
 	<UpdateKeys>
-		<Column>sxt_name</Column>
+		<Column>sxt_id</Column>
 	</UpdateKeys>
-	<GeneratedKey>sxt_description</GeneratedKey>	
+	<GeneratedKey>sxt_id</GeneratedKey>	
 </JdbcEntitySetup>
 
          	
