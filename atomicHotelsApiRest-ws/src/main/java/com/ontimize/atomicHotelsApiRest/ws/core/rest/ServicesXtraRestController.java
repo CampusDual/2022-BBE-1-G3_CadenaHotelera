@@ -8,7 +8,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.service.IServicesXtraService;
 import com.ontimize.jee.server.rest.ORestController;
 
 @RestController // indica que esta clase trabaja como un controlador, que responderá a las peticiones cuya URL tenga el path indicado en la anotación
-@RequestMapping("/servicesXtra") //(en este caso, servicesXtra)
+@RequestMapping("/servicesXtra") //(en este caso, servicesXtra)(primera del postman)
 
 public class ServicesXtraRestController extends ORestController<IServicesXtraService>{
 
