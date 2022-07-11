@@ -11,6 +11,7 @@ import org.springframework.jdbc.SQLWarningException;
 import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.service.IRoomTypeService;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.FeatureDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomTypeDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
@@ -39,13 +40,19 @@ public class RoomTypeService implements IRoomTypeService {
 	@Override
 	public EntityResult roomTypeInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
+		
 		try {
+			if (attrMap.containsKey(RoomTypeDao.ATTR_NAME) && attrMap.containsKey(RoomTypeDao.ATTR_PRICE)&& attrMap.containsKey(RoomTypeDao.ATTR_BEDS_COMBO)) {
 			resultado = this.daoHelper.insert(this.roomTypeDao, attrMap);
 			resultado.setMessage("RoomType registrada");
+			}else {
+				resultado = new EntityResultWrong("Error al crear RoomType - Faltan campos obligatorios.");
+			}
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong("Error al crear RoomType - El registro ya existe");
 		} catch (DataIntegrityViolationException e) {
-			resultado = new EntityResultWrong("Error al crear RoomType - Falta algún campo obligatorio");
+			e.printStackTrace();
+			resultado = new EntityResultWrong("Error al crear RoomType - No existe la referencia a la tabla beds_combo (FK (rmt_bdc_id))");
 		} catch (Exception e) {
 			resultado = new EntityResultWrong("Error al registrar RoomType");
 		}

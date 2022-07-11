@@ -59,15 +59,14 @@ public class CustomerService implements ICustomerService{
 		try {
 			resultado = this.daoHelper.update(this.customerDao, attrMap, keyMap);
 			if(resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
-				resultado.setMessage("No se han encontrado registros para actualizar");			
+				resultado = new EntityResultWrong("Error al actualizar Customer - El regsitro que pretende actualizar no existe.");	
 			}
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong("Error al actualizar Customer - No es posible duplicar un registro");
 		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong("Error al actualizar Customer - Falta algún campo obligatorio");
 		} catch (SQLWarningException e) {
-			resultado = new EntityResultWrong(
-					"Error al actualizar Customer - Falta el cts_id (PK) de la Customer a actualizar");
+			resultado = new EntityResultWrong("Error al actualizar Customer - "+e.getMessage());
 		} catch (Exception e) {
 			resultado = new EntityResultWrong("Error al actualizar Customer");
 		}
@@ -91,6 +90,8 @@ public class CustomerService implements ICustomerService{
 			}else {
 				resultado = new EntityResultWrong("Error al eliminar Customer - Falta el cst_id (PK) del Customer a eliminar");
 			}
+		}catch(DataIntegrityViolationException e) {
+			resultado = new EntityResultWrong("Error al eliminar Customer - Está referenciado en alguna otra tabla (FK)");
 		} catch (Exception e) {
 			resultado = new EntityResultWrong("Error al eliminar Customer");
 		}
