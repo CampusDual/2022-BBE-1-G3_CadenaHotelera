@@ -5,12 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
-
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IBedComboService;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
@@ -18,6 +19,8 @@ import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
 import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BedComboDao;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
 
 @Service("BedComboService")
 @Lazy
@@ -37,7 +40,25 @@ public class BedComboService implements IBedComboService{
 
 	@Override
 	public EntityResult bedComboInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException { 
-		return this.daoHelper.insert(this.bedComboDao, attrMap);
+	
+		try {
+			ValidateFields.required(attrMap,BedComboDao.ATTR_NAME,BedComboDao.ATTR_SLOTS);
+			return this.daoHelper.insert(this.bedComboDao, attrMap);
+		} catch (MissingFieldsException e) {
+			return new EntityResultWrong(e.getMessage());
+			
+		}
+		
+//		
+//		System.err.println(attrMap);
+//		if(attrMap.containsKey(BedComboDao.ATTR_NAME) &&attrMap.get(BedComboDao.ATTR_NAME)!="") {
+//			return this.daoHelper.insert(this.bedComboDao, attrMap);
+//		}else {
+//			return new EntityResultWrong("falta porner el nombre anormal , no vela nulo sub");
+//		}
+		
+		
+		
 	}
 
 	@Override
