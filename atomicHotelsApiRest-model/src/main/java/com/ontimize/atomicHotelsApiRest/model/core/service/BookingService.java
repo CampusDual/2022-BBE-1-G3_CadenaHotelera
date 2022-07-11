@@ -67,17 +67,13 @@ public class BookingService implements IBookingService {
 				try {
 					if (roomService.isRoomUnbookedgInRangeQuery((String) attrMap.get(BookingDao.ATTR_CHECKIN),
 							(String) attrMap.get(BookingDao.ATTR_CHECKOUT),
-							(Integer) attrMap.get(BookingDao.ATTR_ID))) {
-						System.out.println("insercción\n" + attrMap);
+							(Integer) attrMap.get(BookingDao.ATTR_ROOM_ID))) {
 						resultado = this.daoHelper.insert(this.bookingDao, attrMap);
 					} else {
 						resultado = new EntityResultWrong("La habitación ya está reservada en esa franja de fechas.");
 					}
-				} catch (EntityResultRequiredException e) {
-					resultado = new EntityResultWrong(e.getMessage());
-					e.printStackTrace();
-				} catch (InvalidFieldsValuesException e) {
-					e.printStackTrace();
+				} catch (EntityResultRequiredException | MissingFieldsException | InvalidFieldsValuesException e) {
+					System.err.println(e.getMessage());				
 					resultado = new EntityResultWrong(e.getMessage());
 				}
 			}
@@ -97,7 +93,6 @@ public class BookingService implements IBookingService {
 		BasicExpression notCanceled = new BasicExpression(new BasicField(BookingDao.ATTR_STATUS_ID),
 				BasicOperator.NOT_EQUAL_OP, BookingDao.STATUS_CANCELED);
 		EntityResultExtraTools.putBasicExpression(keyMap, notCanceled);
-		System.err.println(keyMap);
 		return this.daoHelper.update(this.bookingDao, attrMap, keyMap);
 	}
 
@@ -113,29 +108,22 @@ public class BookingService implements IBookingService {
 		try {
 			bookingsInRangeBuilder(keyMap, attrList);
 			return this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryBasicBooking");
-		} catch (MissingFieldsException e) {
-			e.printStackTrace();
-			return new EntityResultWrong(e.getMessage());
-		} catch (InvalidFieldsValuesException e) {
-			e.printStackTrace();
+		} catch (MissingFieldsException | InvalidFieldsValuesException e) {
+			System.err.println(e.getMessage());
 			return new EntityResultWrong(e.getMessage());
 		}
 	}
 
+	
 	@Override
 	public EntityResult bookingsInRangeInfoQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		try {
-			System.err.println("keymap : "+keyMap);
 
 			bookingsInRangeBuilder(keyMap, attrList);
-			System.err.println("keymap2 : "+keyMap);
 			return this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryInfoBooking");
-		} catch (MissingFieldsException e) {
-			e.printStackTrace();
-			return new EntityResultWrong(e.getMessage());
-		} catch (InvalidFieldsValuesException e) {
-			e.printStackTrace();
+		} catch (MissingFieldsException | InvalidFieldsValuesException e) {
+			System.err.println(e.getMessage());
 			return new EntityResultWrong(e.getMessage());
 		}
 	}
@@ -150,8 +138,6 @@ public class BookingService implements IBookingService {
 	 */
 	public void bookingsInRangeBuilder(Map<String, Object> keyMap, List<String> attrList)
 			throws MissingFieldsException, InvalidFieldsValuesException {
-		System.out.println(keyMap);
-		System.out.println(attrList);
 		if (keyMap.containsKey(BookingDao.NON_ATTR_START_DATE) && keyMap.containsKey(BookingDao.NON_ATTR_END_DATE)) {
 			if (((String) keyMap.get(BookingDao.NON_ATTR_START_DATE))
 					.compareTo((String) keyMap.get(BookingDao.NON_ATTR_END_DATE)) >= 0) {
