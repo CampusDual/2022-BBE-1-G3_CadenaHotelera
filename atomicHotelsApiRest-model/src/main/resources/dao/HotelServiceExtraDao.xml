@@ -10,5 +10,6 @@ catalog="" schema="${mainschema}" table="hotel_services" datasource="mainDataSou
 		<Column>sxt_id</Column>
 		<Column>htl_id</Column>
 	</UpdateKeys>
+	<GeneratedKey>htl_id</GeneratedKey>	
 	
 </JdbcEntitySetup>0" encoding="UTF-8"?>

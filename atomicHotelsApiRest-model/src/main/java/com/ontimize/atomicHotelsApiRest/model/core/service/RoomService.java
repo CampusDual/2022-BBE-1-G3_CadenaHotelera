@@ -1,7 +1,5 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -149,7 +147,7 @@ public class RoomService implements IRoomService {
 
 		ValidateFields.required(keyMap, BookingDao.ATTR_START, BookingDao.ATTR_END);
 
-		if (ValidateFields.dataRange(BookingDao.ATTR_START, BookingDao.ATTR_END) == 1) {
+		if (ValidateFields.dataRange(keyMap.get(BookingDao.ATTR_START), keyMap.get(BookingDao.ATTR_END)) == 1) {
 			throw new InvalidFieldsValuesException("Checkin no puede ser posterior a checkout");
 		}
 

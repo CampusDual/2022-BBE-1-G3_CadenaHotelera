@@ -19,7 +19,7 @@ public class BookingDao extends OntimizeJdbcDaoSupport {
 	public static final String ATTR_CHECKOUT = TAG +"checkout";
 	public static final String ATTR_CANCELED = TAG +"canceled";
 	public static final String ATTR_CREATED= TAG +"created";
-	public static final String ATTR_STATUS_ID = TAG +"stb_id";
+//	public static final String ATTR_STATUS_ID = TAG +"stb_id";
 	public static final String ATTR_CUSTOMER_ID = TAG +"cst_id";
 	public static final String ATTR_ROOM_ID = TAG +"rm_id";
 //	public static final String NON_ATTR_START_DATE = "start_date";

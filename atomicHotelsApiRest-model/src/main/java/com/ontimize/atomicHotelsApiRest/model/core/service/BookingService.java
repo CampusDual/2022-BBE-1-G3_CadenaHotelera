@@ -60,7 +60,7 @@ public class BookingService implements IBookingService {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
 			ValidateFields.required(attrMap, BookingDao.ATTR_START, BookingDao.ATTR_END, BookingDao.ATTR_ROOM_ID);
-			int validateRange = ValidateFields.dataRange(BookingDao.ATTR_START, BookingDao.ATTR_END);
+			int validateRange = ValidateFields.dataRange(attrMap.get(BookingDao.ATTR_START), attrMap.get(BookingDao.ATTR_END));
 			switch (validateRange) {
 			case 1:
 				resultado = new EntityResultWrong("Checkin no puede ser posterior a checkout");
@@ -149,8 +149,8 @@ public class BookingService implements IBookingService {
 			throws MissingFieldsException, InvalidFieldsValuesException {
 		ValidateFields.required(keyMap, BookingDao.ATTR_START, BookingDao.ATTR_END);
 
-		Date rangeStart = ValidateFields.stringToDate(BookingDao.ATTR_START);
-		Date rangeEnd = ValidateFields.stringToDate(BookingDao.ATTR_END);
+		Date rangeStart = ValidateFields.stringToDate((String) keyMap.get(BookingDao.ATTR_START));
+		Date rangeEnd = ValidateFields.stringToDate((String) keyMap.get(BookingDao.ATTR_END));
 		ValidateFields.dataRange(rangeStart, rangeEnd);
 
 		BasicField bkgStart = new BasicField(BookingDao.ATTR_START);
