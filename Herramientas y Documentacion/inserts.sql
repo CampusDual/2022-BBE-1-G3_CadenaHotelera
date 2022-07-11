@@ -442,3 +442,19 @@ INSERT INTO public.room_types_features (rmt_id,ftr_id) VALUES (9,7);
 INSERT INTO public.room_types_features (rmt_id,ftr_id) VALUES (9,8);
 
 
+--SERVICESEXTRA
+INSERT INTO public.servicesExtra (xtr_name, xtr_description) VALUES ('Servicio de custodia de maletas.', 'Podrá dejarnos sus pertenencias con toda seguridad.');
+INSERT INTO public.servicesExtra (xtr_name, xtr_description) VALUES ('Servicio de lavandería.', 'Ropa limpia en 24 horas.');
+INSERT INTO public.servicesExtra (xtr_name, xtr_description) VALUES ('Servicio de peluquería.', 'Directamente a la habitación.');
+INSERT INTO public.servicesExtra (xtr_name, xtr_description) VALUES ('Sauna.', 'Tonifica y libera toxinas.');
+INSERT INTO public.servicesExtra (xtr_name, xtr_description) VALUES ('Gimnasio.', 'Mantén la rutina del cuerpo en vacaciones.');
+INSERT INTO public.servicesExtra (xtr_name, xtr_description) VALUES ('Bienvenida personalizada.', 'Qué mejor bienvenida, que celebrarlo con champagne, flores y bombones.');
+INSERT INTO public.servicesExtra (xtr_name, xtr_description) VALUES ('Alquiler de salones.', 'Para reuniones profesionales, comuniones, bodas y grandes eventos, disponemos del salón que necesitas.');
+INSERT INTO public.servicesExtra (xtr_name, xtr_description) VALUES ('Visitas guiadas.', 'Tenemos los mejores tours para que disfutes de tu estancia.');
+INSERT INTO public.servicesExtra (xtr_name, xtr_description) VALUES ('Servicio restaurante.', 'Plantilla profesional y excelente servicio.');
+INSERT INTO public.servicesExtra (xtr_name, xtr_description) VALUES ('Media pensión.', 'Incluido desayuno y una comida (almuerzo o cena).');
+INSERT INTO public.servicesExtra (xtr_name, xtr_description) VALUES ('Pensión completa.', 'Incluye desayuno, almuerzo y cena.');
+INSERT INTO public.servicesExtra (xtr_name, xtr_description) VALUES ('Media pensión plus.', 'Incluye desayuno y cena en nuestro restaurante, tendrás también libre elección de restaurantes asociados para cenar durante toda la estancia, cena en un restaurante diferente cada noche.');
+INSERT INTO public.servicesExtra (xtr_name, xtr_description) VALUES ('Servicio de habitación.', 'Te llevamos lo que necesites para que no abandones tu lugar de descanso.');
+INSERT INTO public.servicesExtra (xtr_name, xtr_description) VALUES ('Aparcaniños.', 'Para que los más pequeños, no impidan que disfrutes de un poco de tiempo para ti.');
+INSERT INTO public.servicesExtra (xtr_name, xtr_description) VALUES ('Minibar.', 'Las mejores bebidas y snacks al alcance de su mano.');
