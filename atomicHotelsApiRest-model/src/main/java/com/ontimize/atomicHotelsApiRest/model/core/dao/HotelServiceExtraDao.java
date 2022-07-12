@@ -12,8 +12,8 @@ public class HotelServiceExtraDao {
 	@Lazy
 	@ConfigurationFile(configurationFile = "dao/HotelServiceExtraDao.xml", configurationFilePlaceholder = "dao/placeholders.properties")
 	public class HotelServiceDao extends OntimizeJdbcDaoSupport {
-		public static final String ATTR_ID_HTL ="htl_id";
-		public static final String ATTR_ID_SXT="sxt_id";
+		public static final String ATTR_ID_HTL = "htl_id";
+		public static final String ATTR_ID_SXT = "sxt_id";
 	}
 
 }
