@@ -92,30 +92,44 @@ public class BookingService implements IBookingService {
 	@Override
 	public EntityResult bookingActionUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
+		EntityResult resultadoER = new EntityResultWrong("Acción no válida");
 		try {
 			ValidateFields.required(attrMap, BookingDao.ATTR_ID);
 			ValidateFields.required(keyMap, BookingDao.NON_ATTR_ACTION);
 			ValidateFields.restricted(keyMap, BookingDao.ATTR_ID, BookingDao.ATTR_CUSTOMER_ID, BookingDao.ATTR_CHECKIN, BookingDao.ATTR_CHECKOUT,
 					BookingDao.ATTR_CANCELED, BookingDao.ATTR_CREATED);
-
-			switch (getBookingStatus(attrMap.get(BookingDao.ATTR_ID))) {
+			
+			BookingDao.Status status = getBookingStatus(attrMap.get(BookingDao.ATTR_ID));
+			switch (status) {
+			
 			case CANCELED:
-				return new EntityResultWrong("No se pueden modificar reservas canceladas");
+				resultadoER = new EntityResultWrong("No se pueden modificar reservas canceladas");
+				break;
+				
 			case COMPLETED:
-				return new EntityResultWrong("No se pueden modificar reservas finalizadas");
+				resultadoER = new EntityResultWrong("No se pueden modificar reservas finalizadas");
+				break;
+				
 			case IN_PROGRESS:
 				if (keyMap.get(BookingDao.NON_ATTR_ACTION).equals(BookingDao.Action.CHECK_OUT)) {
 					keyMap.put(BookingDao.ATTR_CHECKOUT, new Date());
-					return this.daoHelper.update(this.bookingDao, attrMap, keyMap);
-				}else {
-					return new EntityResultWrong("Acción no válida");
 				}
-			default:
-				return this.daoHelper.update(this.bookingDao, attrMap, keyMap);
+				resultadoER = this.daoHelper.update(this.bookingDao, attrMap, keyMap);
+				break;
+				
+			case CONFIRMED:
+				if (keyMap.get(BookingDao.NON_ATTR_ACTION).equals(BookingDao.Action.CHECK_IN)) {
+					keyMap.put(BookingDao.ATTR_CHECKIN, new Date());
+				}else if (keyMap.get(BookingDao.NON_ATTR_ACTION).equals(BookingDao.Action.CANCEL)) { 
+					keyMap.put(BookingDao.ATTR_CANCELED, new Date());
+				}
+				resultadoER = this.daoHelper.update(this.bookingDao, attrMap, keyMap);
+				break;		
 			}
 		} catch (MissingFieldsException | EntityResultRequiredException e) {
-			return new EntityResultWrong(e.getMessage());
+			resultadoER = new EntityResultWrong(e.getMessage());
 		}
+		return resultadoER;
 	}
 
 	@Override
