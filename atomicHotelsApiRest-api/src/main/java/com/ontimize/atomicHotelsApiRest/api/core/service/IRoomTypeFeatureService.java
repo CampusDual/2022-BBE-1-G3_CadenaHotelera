@@ -9,7 +9,6 @@ import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
 public interface IRoomTypeFeatureService {
 	 public EntityResult roomTypeFeatureQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
 	 public EntityResult roomTypeFeatureInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException;
-	 public EntityResult roomTypeFeatureUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
 	 public EntityResult roomTypeFeatureDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
 
 }

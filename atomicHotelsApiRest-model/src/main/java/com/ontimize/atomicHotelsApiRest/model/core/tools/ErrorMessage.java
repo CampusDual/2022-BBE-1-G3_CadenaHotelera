@@ -15,7 +15,7 @@ public class ErrorMessage {
 	 
 	 public static String UPDATE_ERROR_DUPLICATED_FIELD = UPDATE_ERROR+"- No es posible duplicar un registro";
 	 
-	 public static String UPDATE_ERROR_REQUIRED_FIELDS = UPDATE_ERROR+"- No es psoible eliminar campos obligatorios";
+	 public static String UPDATE_ERROR_REQUIRED_FIELDS = UPDATE_ERROR+"- No es posible eliminar campos obligatorios";
 	 
 	 public static String UPDATE_ERROR_MISSING_FK = UPDATE_ERROR+"- No existe la referencia necesaria en otra tabla";
 	 

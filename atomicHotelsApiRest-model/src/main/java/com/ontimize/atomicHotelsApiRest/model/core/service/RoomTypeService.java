@@ -85,13 +85,10 @@ public class RoomTypeService implements IRoomTypeService {
 		} catch (MissingFieldsException e) {
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + e.getMessage());
 		} catch (DuplicateKeyException e) {
-			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
 		} catch (DataIntegrityViolationException e) {//Pendiente controlar mejor (Hacer query de clave foránea para controlar eso por otro lado??)
-			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FK+" / "+ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
 		} catch (Exception e) {
-			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR);
 		}
 		return resultado; 

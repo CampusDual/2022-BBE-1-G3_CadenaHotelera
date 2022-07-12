@@ -11,5 +11,5 @@ import com.ontimize.jee.server.dao.jdbc.OntimizeJdbcDaoSupport;
 @ConfigurationFile(configurationFile = "dao/RoomTypeFeatureDao.xml", configurationFilePlaceholder = "dao/placeholders.properties")
 public class RoomTypeFeatureDao extends OntimizeJdbcDaoSupport {
 	public static final String ATTR_ROOM_ID = "rmt_id";
-	public static final String ATTR_FEATURE_ID = "ft_id";
+	public static final String ATTR_FEATURE_ID = "ftr_id";
 }
