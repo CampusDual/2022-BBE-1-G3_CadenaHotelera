@@ -1,7 +1,8 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
-import java.awt.print.Book;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -89,22 +90,30 @@ public class BookingService implements IBookingService {
 	}
 
 	@Override
-	public EntityResult bookingUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
+	public EntityResult bookingActionUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
 		try {
-			ValidateFields.required(keyMap, BookingDao.ATTR_ID);
-			ValidateFields.restricted(attrMap, BookingDao.ATTR_CHECKIN, BookingDao.ATTR_CHECKOUT,
+			ValidateFields.required(attrMap, BookingDao.ATTR_ID);
+			ValidateFields.required(keyMap, BookingDao.NON_ATTR_ACTION);
+			ValidateFields.restricted(keyMap, BookingDao.ATTR_ID, BookingDao.ATTR_CUSTOMER_ID, BookingDao.ATTR_CHECKIN, BookingDao.ATTR_CHECKOUT,
 					BookingDao.ATTR_CANCELED, BookingDao.ATTR_CREATED);
-			EntityResult subConsulta = bookingQuery(
-					EntityResultTools.keysvalues(BookingDao.ATTR_ID, keyMap.get(BookingDao.ATTR_ID)),
-					EntityResultTools.attributes(BookingDao.ATTR_CANCELED, BookingDao.ATTR_CHECKOUT));
-			if ((subConsulta.get(BookingDao.ATTR_CANCELED) == null)
-					&& (subConsulta.get(BookingDao.ATTR_CHECKOUT) == null)) {
+
+			switch (getBookingStatus(attrMap.get(BookingDao.ATTR_ID))) {
+			case CANCELED:
+				return new EntityResultWrong("No se pueden modificar reservas canceladas");
+			case COMPLETED:
+				return new EntityResultWrong("No se pueden modificar reservas finalizadas");
+			case IN_PROGRESS:
+				if (keyMap.get(BookingDao.NON_ATTR_ACTION).equals(BookingDao.Action.CHECK_OUT)) {
+					keyMap.put(BookingDao.ATTR_CHECKOUT, new Date());
+					return this.daoHelper.update(this.bookingDao, attrMap, keyMap);
+				}else {
+					return new EntityResultWrong("Acción no válida");
+				}
+			default:
 				return this.daoHelper.update(this.bookingDao, attrMap, keyMap);
-			} else {
-				return new EntityResultWrong("No se pueden modificar reservas canceladas o finalizadas");
 			}
-		} catch (MissingFieldsException e) {
+		} catch (MissingFieldsException | EntityResultRequiredException e) {
 			return new EntityResultWrong(e.getMessage());
 		}
 	}
@@ -141,7 +150,7 @@ public class BookingService implements IBookingService {
 	}
 
 	/**
-	 * Modifica las keyMap y attrList, para realizar las basic expresionsn
+	 * Modifica las keyMap y attrList, para realizar las basic expresions
 	 * 
 	 * @param keyMap
 	 * @param attrList
@@ -190,6 +199,35 @@ public class BookingService implements IBookingService {
 
 		keyMap.remove(BookingDao.ATTR_START);
 		keyMap.remove(BookingDao.ATTR_END);
+
+	}
+
+	public BookingDao.Status getBookingStatus(Object bookingId) throws EntityResultRequiredException {
+		Map<String, Object> keyMap = new HashMap<>();
+		keyMap.put(BookingDao.ATTR_ID, bookingId);
+
+		List<String> attrList = new ArrayList<>();
+		attrList.add(BookingDao.ATTR_START);
+		attrList.add(BookingDao.ATTR_END);
+		attrList.add(BookingDao.ATTR_CHECKIN);
+		attrList.add(BookingDao.ATTR_CHECKOUT);
+		attrList.add(BookingDao.ATTR_CREATED);
+
+		EntityResult consultaER = this.daoHelper.query(this.bookingDao, keyMap, attrList);
+		System.err.println(consultaER);
+		if (consultaER.calculateRecordNumber() == 1) {
+			if (consultaER.get(BookingDao.ATTR_CANCELED) != null) {
+				return BookingDao.Status.CANCELED;
+			} else if (consultaER.get(BookingDao.ATTR_CHECKOUT) != null) {
+				return BookingDao.Status.COMPLETED;
+			} else if (consultaER.get(BookingDao.ATTR_CHECKIN) != null) {
+				return BookingDao.Status.IN_PROGRESS;
+			} else {
+				return BookingDao.Status.CONFIRMED;
+			}
+		} else {
+			throw new EntityResultRequiredException("Error al consultar estado de la reserva");
+		}
 
 	}
 

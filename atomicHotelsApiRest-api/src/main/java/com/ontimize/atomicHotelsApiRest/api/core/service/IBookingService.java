@@ -13,7 +13,7 @@ public interface IBookingService {
 	public EntityResult bookingQuery(Map<Object, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
 	public EntityResult bookingInfoQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
 	public EntityResult bookingInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException, EntityResultRequiredException;
-	public EntityResult bookingUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
+	public EntityResult bookingActionUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
 	public EntityResult bookingDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
 	public EntityResult bookingsInRangeQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException, InvalidFieldsValuesException;
 	public EntityResult bookingsInRangeInfoQuery(Map<String, Object> keyMap, List<String> attrList)
