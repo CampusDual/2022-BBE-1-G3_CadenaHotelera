@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import com.ontimize.jee.server.dao.common.ConfigurationFile;
 import com.ontimize.jee.server.dao.jdbc.OntimizeJdbcDaoSupport;
 
-public class HotelServiceExtraDao {
+public class HotelServiceExtraDao extends OntimizeJdbcDaoSupport  {
 
 	@Repository("HotelServiceDao")
 	@Lazy
