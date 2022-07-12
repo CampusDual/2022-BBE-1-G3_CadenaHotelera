@@ -14,23 +14,10 @@
 		<Column>htl_id</Column>
 	</UpdateKeys>
 	<Queries>
-		<Query id="relacionHotelExtra">
-			<Sentence>
-   <![CDATA[
-     SELECT
-      #COLUMNS#
-     FROM
-      PUBLIC.OFFER_CANDIDATES OC
-     INNER JOIN PUBLIC.OFFER O ON
-      OC.OFFER_ID = O.ID
-     INNER JOIN PUBLIC.CANDIDATE C ON
-      OC.CANDIDATE_ID = C.ID
-     INNER JOIN PUBLIC.OFFER_STATUS OS ON
-      O.OFFER_STATUS = OS.ID
-     #WHERE#
-   ]]>
+	<Query id="relacionHotelExtra">
+		<Sentence>
+
    </Sentence>
 		</Query>
 	</Queries>
 </JdbcEntitySetup>
-0" encoding="UTF-8"?>
