@@ -6,6 +6,8 @@ public class ErrorMessage {
 		
 	 public static String CREATION_ERROR_DUPLICATED_FIELD = CREATION_ERROR+"- El registro ya existe";
 	 
+	 public static String CREATION_ERROR_MISSING_FK = CREATION_ERROR+"- No existe la referencia necesaria en otra tabla";
+	 
 	 
 	 public static String UPDATE_ERROR = "Error de actualización ";
 	 
@@ -13,7 +15,9 @@ public class ErrorMessage {
 	 
 	 public static String UPDATE_ERROR_DUPLICATED_FIELD = UPDATE_ERROR+"- No es posible duplicar un registro";
 	 
-	 public static String UPDATE_ERROR_REQUIRED_FIELDS = UPDATE_ERROR+" - No es psoible eliminar campos obligatorios";
+	 public static String UPDATE_ERROR_REQUIRED_FIELDS = UPDATE_ERROR+"- No es psoible eliminar campos obligatorios";
+	 
+	 public static String UPDATE_ERROR_MISSING_FK = UPDATE_ERROR+"- No existe la referencia necesaria en otra tabla";
 	 
 	 
      public static String DELETE_ERROR = "Error de eliminación ";

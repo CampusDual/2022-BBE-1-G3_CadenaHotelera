@@ -100,7 +100,7 @@ public class FeatureService implements IFeatureService{
 		
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			ValidateFields.required(keyMap, HotelDao.ATTR_ID);
+			ValidateFields.required(keyMap, FeatureDao.ATTR_ID);
 
 			EntityResult auxEntity = this.daoHelper.query(this.featureDao,
 					EntityResultTools.keysvalues(FeatureDao.ATTR_ID, keyMap.get(FeatureDao.ATTR_ID)),
