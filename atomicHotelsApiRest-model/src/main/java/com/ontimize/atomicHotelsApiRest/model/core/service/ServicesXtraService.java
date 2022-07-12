@@ -12,6 +12,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.SQLWarningException;
 import org.springframework.stereotype.Service;
 
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IFeatureService;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IServicesXtraService;
 import com.ontimize.jee.common.dto.EntityResult;
@@ -23,6 +24,7 @@ import com.ontimize.atomicHotelsApiRest.model.core.dao.FeatureDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.ServicesXtraDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
 
 @Service("ServicesXtraService")
 @Lazy
@@ -45,13 +47,20 @@ public class ServicesXtraService implements IServicesXtraService{
 		
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
+
+	//		ValidateFields.required(attrMap, ServicesXtraDao.ATTR_DESCRIPTION);
+			ValidateFields.emptyField(attrMap, ServicesXtraDao.ATTR_NAME);
+		//	ValidateFields.emptyFields(attrMap);
 			resultado = this.daoHelper.insert(this.servicesXtraDao, attrMap);
 			resultado.setMessage("Servicio extra registrado correctamente.");
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong("Error al crear el servicio extra - El servicio ya existe.");
 		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong("Error al crear el servicio extra - Falta algún campo obligatorio.");
-		} catch (Exception e) {
+		} catch (MissingFieldsException e) {
+			resultado = new EntityResultWrong(e.getMessage());
+		}
+		catch (Exception e) {
 			resultado = new EntityResultWrong("Error al registrar el servicio extra.");
 		}
 

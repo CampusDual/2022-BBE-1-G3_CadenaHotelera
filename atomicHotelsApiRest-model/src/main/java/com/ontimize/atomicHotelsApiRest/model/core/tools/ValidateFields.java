@@ -104,7 +104,7 @@ public class ValidateFields {
 			return 1; // error
 		}
 	}
-	
+	/*
 	public static void emptyFields(Map<String, Object> keyMap) throws InvalidFieldsValuesException{
 		for(String key:keyMap.keySet()) {
 			if(key.isEmpty()) {
@@ -112,5 +112,37 @@ public class ValidateFields {
 			}
 		}
 	}
+*/
+	
+	/**Comprueba que no existe ningún campo que sea nulo, no se encuentre, o se halle formado por espacios en blanco
+	 * 
+	 * @param keyMap	-> Hashmap de clave/valor
+	 * @param fields    -> Dato o datos (de nuestra BD), que ingresamos para su comprobación.
+	 * @throws MissingFieldsException -> Mensaje de error arrojado según los criterios indicados
+	 */
+	public static void emptyFields(Map<String, Object> keyMap, String... fields) throws MissingFieldsException {
+		for (String field : fields) {
+			emptyField(keyMap, field);
+		}
+	}
+
+	public static void emptyField(Map<String, Object> keyMap, String field) throws MissingFieldsException {
+		if (!keyMap.containsKey(field)) {
+			throw new MissingFieldsException("Falta el campo " + field);
+		}
+		if (keyMap.get(field) == null) {
+			throw new MissingFieldsException("El campo " + field + " es nulo");
+		}
+		if (keyMap.get(field).toString().trim().length() == 0) {
+			throw new MissingFieldsException("El campo " + field + " no puede contener sólo espacios en blanco");
+		}
+	}
+	
+	/*
+	 * Para extraer precio
+/($[0-9,]+(.[0-9]{2})?)/
+Los precios vienen en una variedad de formatos que pueden contener decimales, comas y símbolos de moneda. 
+Esta expresión regular puede comprobar todos estos diferentes formatos para sacar el precio de cualquier cadena.
+	 */
 
 }
