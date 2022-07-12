@@ -1,10 +1,7 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
+import java.awt.print.Book;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,8 +56,13 @@ public class BookingService implements IBookingService {
 	public EntityResult bookingInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			ValidateFields.required(attrMap, BookingDao.ATTR_START, BookingDao.ATTR_END, BookingDao.ATTR_ROOM_ID);
-			int validateRange = ValidateFields.dataRange(attrMap.get(BookingDao.ATTR_START), attrMap.get(BookingDao.ATTR_END));
+			ValidateFields.required(attrMap, BookingDao.ATTR_START, BookingDao.ATTR_END, BookingDao.ATTR_ROOM_ID,
+					BookingDao.ATTR_CUSTOMER_ID);
+			ValidateFields.restricted(attrMap, BookingDao.ATTR_CHECKIN, BookingDao.ATTR_CHECKOUT,
+					BookingDao.ATTR_CANCELED, BookingDao.ATTR_CREATED);
+
+			int validateRange = ValidateFields.dataRange(attrMap.get(BookingDao.ATTR_START),
+					attrMap.get(BookingDao.ATTR_END));
 			switch (validateRange) {
 			case 1:
 				resultado = new EntityResultWrong("Checkin no puede ser posterior a checkout");
@@ -78,7 +80,6 @@ public class BookingService implements IBookingService {
 					resultado = new EntityResultWrong("La habitación ya está reservada en esa franja de fechas.");
 				}
 			}
-
 		} catch (EntityResultRequiredException | MissingFieldsException | InvalidFieldsValuesException e) {
 			System.err.println(e.getMessage());
 			resultado = new EntityResultWrong(e.getMessage());
@@ -92,6 +93,8 @@ public class BookingService implements IBookingService {
 			throws OntimizeJEERuntimeException {
 		try {
 			ValidateFields.required(keyMap, BookingDao.ATTR_ID);
+			ValidateFields.restricted(attrMap, BookingDao.ATTR_CHECKIN, BookingDao.ATTR_CHECKOUT,
+					BookingDao.ATTR_CANCELED, BookingDao.ATTR_CREATED);
 			EntityResult subConsulta = bookingQuery(
 					EntityResultTools.keysvalues(BookingDao.ATTR_ID, keyMap.get(BookingDao.ATTR_ID)),
 					EntityResultTools.attributes(BookingDao.ATTR_CANCELED, BookingDao.ATTR_CHECKOUT));

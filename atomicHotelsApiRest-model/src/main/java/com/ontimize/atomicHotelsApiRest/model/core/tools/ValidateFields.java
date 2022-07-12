@@ -13,7 +13,13 @@ public class ValidateFields {
 
 	public ValidateFields() {
 	}
-
+	
+	/**
+	 * Comprueba si existe las claves facilitadas en el HashMap, y lanza excepción si no existe o si es null.
+	 * @param keyMap HashMap de claves/valores 
+	 * @param fields claves a validar
+	 * @throws MissingFieldsException Excepción lanzada ante la primera clave que no encuentre.
+	 */
 	public static void required(Map<String, Object> keyMap, String... fields) throws MissingFieldsException {
 		for (String field : fields) {
 			if (!keyMap.containsKey(field)) {
@@ -24,7 +30,18 @@ public class ValidateFields {
 			}
 		}
 	}
-
+	
+	/**
+	 * Elimina campos restringidos del HashMap
+	 * @param keyMap HashMap a actualizar
+	 * @param fields campos a eliminar
+	 */
+	public static void restricted(Map<String, Object> keyMap, String... fields){
+		for (String field : fields) {
+			keyMap.remove(field);
+		}
+	}
+	
 	/**
 	 * Convierte un fecha en string a Date con formato "yyyy-MM-dd".
 	 * 

@@ -156,8 +156,8 @@ public class RoomService implements IRoomService {
 			auxKeyMap.put(BookingDao.ATTR_ROOM_ID, keyMap.get(RoomDao.ATTR_ID));
 		}
 		if (keyMap.containsKey(RoomDao.ATTR_HOTEL_ID)) {
-			auxKeyMap.put(BookingDao.ATTR_ROOM_ID, keyMap.get(RoomDao.ATTR_ID));
-		} // comprobar filtro id hotel en reservas
+			auxKeyMap.put(RoomDao.ATTR_HOTEL_ID, keyMap.get(RoomDao.ATTR_HOTEL_ID));
+		} //TODO comprobar filtro id hotel en reservas
 
 		List<Object> bookedRoomsIdList = roomsBookedInRange((String) keyMap.get(BookingDao.ATTR_START),
 				(String) keyMap.get(BookingDao.ATTR_END), auxKeyMap);
