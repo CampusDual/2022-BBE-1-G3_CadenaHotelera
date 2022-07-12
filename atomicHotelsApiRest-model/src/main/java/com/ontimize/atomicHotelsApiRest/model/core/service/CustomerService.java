@@ -10,11 +10,15 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.SQLWarningException;
 import org.springframework.stereotype.Service;
 
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.ICustomerService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.FeatureDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
@@ -36,66 +40,84 @@ public class CustomerService implements ICustomerService{
 
  @Override
  public EntityResult customerInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
-		
-	 EntityResult resultado = new EntityResultMapImpl();
-		try {
-			resultado = this.daoHelper.insert(this.customerDao, attrMap);
-			resultado.setMessage("Customer registrado");
-		} catch (DuplicateKeyException e) {
-			resultado = new EntityResultWrong("Error al crear Customer - El registro ya existe");
-		} catch (DataIntegrityViolationException e) {
-			resultado = new EntityResultWrong("Error al crear Customer - Falta algún campo obligatorio");
-		} catch (Exception e) {
-			resultado = new EntityResultWrong("Error al registrar Customer");
-		}
+	 
+		EntityResult resultado = new EntityResultMapImpl();
 
+		try {
+
+			ValidateFields.required(attrMap, CustomerDao.ATTR_NAME, CustomerDao.ATTR_SURNAMES, CustomerDao.ATTR_DNI,
+					CustomerDao.ATTR_NATIONALITY,CustomerDao.ATTR_PHONE,CustomerDao.ATTR_CREDITCARD, CustomerDao.ATTR_VALID_DATE);
+			
+			resultado = this.daoHelper.insert(this.customerDao, attrMap);
+
+			resultado.setMessage("Customer registrado");
+
+		} catch (MissingFieldsException e) {
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());	
+			
+		} catch (DuplicateKeyException e) {
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+
+		} catch (Exception e) {
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
+		}
+		
 		return resultado;
+		
  }
 
  @Override
  public EntityResult customerUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
    throws OntimizeJEERuntimeException {
-	 EntityResult resultado = new EntityResultMapImpl();
+	 
+		EntityResult resultado = new EntityResultMapImpl();
 		try {
+			ValidateFields.required(keyMap, CustomerDao.ATTR_ID);
 			resultado = this.daoHelper.update(this.customerDao, attrMap, keyMap);
-			if(resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
-				resultado = new EntityResultWrong("Error al actualizar Customer - El regsitro que pretende actualizar no existe.");	
+			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
+				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
+			} else {
+				resultado.setMessage("Customer actualizado");
 			}
+		} catch (MissingFieldsException e) {
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + e.getMessage());
 		} catch (DuplicateKeyException e) {
-			resultado = new EntityResultWrong("Error al actualizar Customer - No es posible duplicar un registro");
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
 		} catch (DataIntegrityViolationException e) {
-			resultado = new EntityResultWrong("Error al actualizar Customer - Falta algún campo obligatorio");
-		} catch (SQLWarningException e) {
-			resultado = new EntityResultWrong("Error al actualizar Customer - "+e.getMessage());
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
 		} catch (Exception e) {
-			resultado = new EntityResultWrong("Error al actualizar Customer");
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR);
 		}
 		return resultado; 
  }
 
  @Override
  public EntityResult customerDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
-	 EntityResult resultado = new EntityResultMapImpl();		
+	 
+	 EntityResult resultado = new EntityResultMapImpl();
 		try {
-			if (keyMap.containsKey(CustomerDao.ATTR_ID)) {
-				EntityResult auxEntity = this.daoHelper.query(this.customerDao,
-						EntityResultTools.keysvalues(CustomerDao.ATTR_ID, keyMap.get(RoomDao.ATTR_ID)),
-						EntityResultTools.attributes(CustomerDao.ATTR_ID));
-				if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
-					resultado = new EntityResultWrong("Error al eliminar Customer - El Customer a eliminar no existe");
-				} else {
-					resultado = this.daoHelper.delete(this.customerDao, keyMap); 
-					resultado.setMessage("Customer eliminado");
-				}
-			}else {
-				resultado = new EntityResultWrong("Error al eliminar Customer - Falta el cst_id (PK) del Customer a eliminar");
+			ValidateFields.required(keyMap, CustomerDao.ATTR_ID);
+
+			EntityResult auxEntity = this.daoHelper.query(this.customerDao,
+					EntityResultTools.keysvalues(CustomerDao.ATTR_ID, keyMap.get(CustomerDao.ATTR_ID)),
+					EntityResultTools.attributes(CustomerDao.ATTR_ID));
+			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
+				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
+			} else {
+				resultado = this.daoHelper.delete(this.customerDao, keyMap);
+				resultado.setMessage("Customer eliminado");
 			}
-		}catch(DataIntegrityViolationException e) {
-			resultado = new EntityResultWrong("Error al eliminar Customer - Está referenciado en alguna otra tabla (FK)");
+		} catch (MissingFieldsException e) {
+			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + e.getMessage());
+		} catch (DataIntegrityViolationException e) {
+			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
 		} catch (Exception e) {
-			resultado = new EntityResultWrong("Error al eliminar Customer");
+			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR);
 		}
-		return resultado; 
+		return resultado;
 	
  }
 

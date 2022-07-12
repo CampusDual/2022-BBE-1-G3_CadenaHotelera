@@ -52,7 +52,7 @@ public class FeatureService implements IFeatureService{
 			
 			resultado = this.daoHelper.insert(this.featureDao, attrMap);
 
-			resultado.setMessage("Hotel registrado");
+			resultado.setMessage("Feature registrada");
 
 		} catch (MissingFieldsException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());
