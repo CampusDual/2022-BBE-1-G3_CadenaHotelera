@@ -104,5 +104,13 @@ public class ValidateFields {
 			return 1; // error
 		}
 	}
+	
+	public static void emptyFields(Map<String, Object> keyMap) throws InvalidFieldsValuesException{
+		for(String key:keyMap.keySet()) {
+			if(key.isEmpty()) {
+				throw new InvalidFieldsValuesException("No es posible guardar Strings vacíos");
+			}
+		}
+	}
 
 }

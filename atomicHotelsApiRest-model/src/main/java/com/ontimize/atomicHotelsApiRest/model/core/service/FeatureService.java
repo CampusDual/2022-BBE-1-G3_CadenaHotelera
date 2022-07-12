@@ -12,6 +12,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.SQLWarningException;
 import org.springframework.stereotype.Service;
 
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IFeatureService;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
@@ -21,6 +22,8 @@ import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.FeatureDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
 
 @Service("FeatureService")
 @Lazy
@@ -42,15 +45,23 @@ public class FeatureService implements IFeatureService{
 	public EntityResult featureInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 		
 		EntityResult resultado = new EntityResultMapImpl();
+
 		try {
+
+			ValidateFields.required(attrMap, HotelDao.ATTR_NAME);
+			
 			resultado = this.daoHelper.insert(this.featureDao, attrMap);
-			resultado.setMessage("Feature registrada");
+
+			resultado.setMessage("Hotel registrado");
+
+		} catch (MissingFieldsException e) {
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());
+			
 		} catch (DuplicateKeyException e) {
-			resultado = new EntityResultWrong("Error al crear Feature - El registro ya existe");
-		} catch (DataIntegrityViolationException e) {
-			resultado = new EntityResultWrong("Error al crear Feature - Falta algún campo obligatorio");
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+
 		} catch (Exception e) {
-			resultado = new EntityResultWrong("Error al registrar Feature");
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
 		}
 
 		return resultado;
@@ -59,24 +70,27 @@ public class FeatureService implements IFeatureService{
 	@Override
 	public EntityResult featureUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
+		
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			
+			ValidateFields.required(keyMap, FeatureDao.ATTR_ID);
 			resultado = this.daoHelper.update(this.featureDao, attrMap, keyMap);
-			if(resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
-				resultado = new EntityResultWrong("Error al actualizar Feature - El regsitro que pretende actualizar no existe.");		
-			}else {
+			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
+				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
+			} else {
 				resultado.setMessage("Feature actualizada");
-			}			
-			
+			}
+		} catch (MissingFieldsException e) {
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + e.getMessage());
 		} catch (DuplicateKeyException e) {
-			resultado = new EntityResultWrong("Error al actualizar Feature - No es posible duplicar un registro");
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
 		} catch (DataIntegrityViolationException e) {
-			resultado = new EntityResultWrong("Error al actualizar Feature - Falta algún campo obligatorio");
-		} catch (SQLWarningException e) {
-			resultado = new EntityResultWrong("Error al actualizar Feature - "+e.getMessage());
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
 		} catch (Exception e) {
-			resultado = new EntityResultWrong("Error al actualizar Feature");
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR);
 		}
 		return resultado; 
 	}
@@ -84,26 +98,25 @@ public class FeatureService implements IFeatureService{
 	@Override
 	public EntityResult featureDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 		
-		EntityResult resultado = new EntityResultMapImpl();		
+		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			if (keyMap.containsKey(FeatureDao.ATTR_ID)) {
-				EntityResult auxEntity = this.daoHelper.query(this.featureDao,
-						EntityResultTools.keysvalues(FeatureDao.ATTR_ID, keyMap.get(FeatureDao.ATTR_ID)),
-						EntityResultTools.attributes(FeatureDao.ATTR_ID));
-				if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
-					resultado = new EntityResultWrong("Error al eliminar Feature - La Feature a eliminar no existe");
-				} else {
-					resultado = this.daoHelper.delete(this.featureDao, keyMap);
-					resultado.setMessage("Feature eliminada");
-				}
-			}else {
-				resultado = new EntityResultWrong("Error al eliminar Feature - Falta el ftr_id (PK) de la Feature a eliminar");
+			ValidateFields.required(keyMap, HotelDao.ATTR_ID);
+
+			EntityResult auxEntity = this.daoHelper.query(this.featureDao,
+					EntityResultTools.keysvalues(FeatureDao.ATTR_ID, keyMap.get(FeatureDao.ATTR_ID)),
+					EntityResultTools.attributes(FeatureDao.ATTR_ID));
+			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
+				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
+			} else {
+				resultado = this.daoHelper.delete(this.featureDao, keyMap);
+				resultado.setMessage("Feature eliminada");
 			}
-		}catch(DataIntegrityViolationException e) {
-			resultado = new EntityResultWrong("Error al eliminar Feature - Está referenciada en alguna otra tabla (FK)");
+		} catch (MissingFieldsException e) {
+			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + e.getMessage());
+		} catch (DataIntegrityViolationException e) {
+			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
 		} catch (Exception e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong("Error al eliminar Feature");
+			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR);
 		}
 		return resultado;
 	}

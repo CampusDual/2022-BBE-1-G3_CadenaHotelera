@@ -14,6 +14,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.SQLWarningException;
 import org.springframework.stereotype.Service;
 
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IHotelService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
@@ -54,14 +55,19 @@ public class HotelService implements IHotelService {
 
 			ValidateFields.required(attrMap, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET, HotelDao.ATTR_CITY,
 					HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY);
-
+			
+			//ValidateFields.emptyFields(attrMap);
+			
 			resultado = this.daoHelper.insert(this.hotelDao, attrMap);
 
 			resultado.setMessage("Hotel registrado");
 
 		} catch (MissingFieldsException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());
-
+			
+//		}catch(InvalidFieldsValuesException e) {
+//			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());	
+			
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 
