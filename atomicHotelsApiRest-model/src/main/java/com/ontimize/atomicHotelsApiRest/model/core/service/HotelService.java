@@ -14,10 +14,13 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.SQLWarningException;
 import org.springframework.stereotype.Service;
 
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IHotelService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomTypeDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
@@ -48,16 +51,22 @@ public class HotelService implements IHotelService {
 		EntityResult resultado = new EntityResultMapImpl();
 
 		try {
+
+			ValidateFields.required(attrMap, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET, HotelDao.ATTR_CITY,
+					HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY);
+
 			resultado = this.daoHelper.insert(this.hotelDao, attrMap);
+
 			resultado.setMessage("Hotel registrado");
+
+		} catch (MissingFieldsException e) {
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());
+
 		} catch (DuplicateKeyException e) {
-			resultado = new EntityResultWrong("Error al crear Hotel - El registro ya existe");
-		
-		} catch (DataIntegrityViolationException e) {
-			resultado = new EntityResultWrong("Error al crear Hotel - Falta algún campo obligatorio");
-		
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+
 		} catch (Exception e) {
-			resultado = new EntityResultWrong("Error al registrar Hotel");
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
 		}
 
 		// OPCION A (comprobando si el registro ya existe)
@@ -111,51 +120,50 @@ public class HotelService implements IHotelService {
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
+			ValidateFields.required(keyMap, HotelDao.ATTR_ID);
 			resultado = this.daoHelper.update(this.hotelDao, attrMap, keyMap);
-			if(resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
-				resultado = new EntityResultWrong("Error al actualizar Hotel - El regsitro que pretende actualizar no existe.");			
-			}else {
-			resultado.setMessage("Hotel actualizado");
+			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
+				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
+			} else {
+				resultado.setMessage("Hotel actualizado");
 			}
-		
+		} catch (MissingFieldsException e) {
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + e.getMessage());
 		} catch (DuplicateKeyException e) {
 			e.printStackTrace();
-			resultado = new EntityResultWrong("Error al actualizar Hotel - No es posible duplicar un registro");		
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
 		} catch (DataIntegrityViolationException e) {
 			e.printStackTrace();
-			resultado = new EntityResultWrong("Error al actualizar Hotel - Falta algún campo obligatorio");
-		} catch (SQLWarningException e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong("Error al actualizar Hotel - "+e.getMessage());
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
 		} catch (Exception e) {
 			e.printStackTrace();
-			resultado = new EntityResultWrong("Error al actualizar Hotel");
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR);
 		}
 		return resultado;
 	}
 
 	@Override
 	public EntityResult hotelDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
-		
-		EntityResult resultado = new EntityResultMapImpl();		
+
+		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			if (keyMap.containsKey(HotelDao.ATTR_ID)) {
-				EntityResult auxEntity = this.daoHelper.query(this.hotelDao,
-						EntityResultTools.keysvalues(HotelDao.ATTR_ID, keyMap.get(HotelDao.ATTR_ID)),
-						EntityResultTools.attributes(HotelDao.ATTR_ID));
-				if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
-					resultado = new EntityResultWrong("Error al eliminar Hotel - El Hotel a eliminar no existe");
-				} else {
-					resultado = this.daoHelper.delete(this.hotelDao, keyMap);
-					resultado.setMessage("Hotel eliminado");
-				}
-			}else {
-				resultado = new EntityResultWrong("Error al eliminar Hotel - Falta el htl_id (PK) del Hotel a eliminar");
+			ValidateFields.required(keyMap, HotelDao.ATTR_ID);
+
+			EntityResult auxEntity = this.daoHelper.query(this.hotelDao,
+					EntityResultTools.keysvalues(HotelDao.ATTR_ID, keyMap.get(HotelDao.ATTR_ID)),
+					EntityResultTools.attributes(HotelDao.ATTR_ID));
+			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
+				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
+			} else {
+				resultado = this.daoHelper.delete(this.hotelDao, keyMap);
+				resultado.setMessage("Hotel eliminado");
 			}
-		}catch(DataIntegrityViolationException e) {
-			resultado = new EntityResultWrong("Error al eliminar Hotel - Está referenciado en alguna otra tabla (FK)");
+		} catch (MissingFieldsException e) {
+			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + e.getMessage());
+		} catch (DataIntegrityViolationException e) {
+			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
 		} catch (Exception e) {
-			resultado = new EntityResultWrong("Error al eliminar Hotel");
+			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR);
 		}
 		return resultado;
 	}
@@ -169,5 +177,6 @@ public class HotelService implements IHotelService {
 				"queryHotel");
 		return queryRes;
 	}
+
 
 }
