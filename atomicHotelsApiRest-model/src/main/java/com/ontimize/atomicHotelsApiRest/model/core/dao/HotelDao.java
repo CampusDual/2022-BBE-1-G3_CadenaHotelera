@@ -11,6 +11,8 @@ import com.ontimize.jee.server.dao.jdbc.OntimizeJdbcDaoSupport;
 @ConfigurationFile(configurationFile = "dao/HotelDao.xml", configurationFilePlaceholder = "dao/placeholders.properties")
 public class HotelDao extends OntimizeJdbcDaoSupport {
 	
+	//Consulta fantasma??
+	
 	public static final String TAG = "htl_";
 	public static final String ATTR_ID = TAG+"id";
 	public static final String ATTR_NAME = TAG+"name";

@@ -2,4 +2,4 @@ netstat -aon | findstr :3333 en mi caso ->lista las conexiones activas por puert
 
 taskkill /pid XXXX /F introducimos el PID y matamos el proceso
 
-probandoooo
+probandoooo probandooo2
