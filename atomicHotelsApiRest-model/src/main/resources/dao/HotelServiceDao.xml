@@ -11,15 +11,15 @@ catalog="" schema="${mainschema}" table="hotels_services" datasource="mainDataSo
 		<Column>htl_id</Column>
 	</UpdateKeys>
 	<Queries>
-	<Query id="serviceshotel">
+	<Query id="queryhotelservice">
 	<Sentence>
 	<![CDATA[
 		Select 
 		#COLUMNS#
 		From 
-		public.hotels_services inner join public.hotels using(htl_id)
-		inner join public.services using(htl_id)
-		#where# 		
+		hotels_services inner join hotels using(htl_id)
+		inner join services using(srv_id)
+		#WHERE# 		
 	]]>
 	</Sentence>
 	</Query>

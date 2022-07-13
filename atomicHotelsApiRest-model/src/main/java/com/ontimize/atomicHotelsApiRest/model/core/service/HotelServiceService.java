@@ -38,6 +38,11 @@ public class HotelServiceService implements IHotelServiceService{
 			throws OntimizeJEERuntimeException {
 		return this.daoHelper.query(this.hotelserviceDao, keyMap, attrList);
 	}
+	@Override
+	public EntityResult hotelServiceInfoQuery(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException {
+		return this.daoHelper.query(this.hotelserviceDao, keyMap, attrList, "queryhotelservice");
+	}
 
 	@Override
 	public EntityResult hotelServiceInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException { 

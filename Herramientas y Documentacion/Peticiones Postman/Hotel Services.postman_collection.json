@@ -135,6 +135,50 @@
 			"response": []
 		},
 		{
+			"name": "-R Hotel Services_personalizada",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":\r\n        {\r\n         \"htl_id\":3 \r\n        },\r\n        \"columns\":[\"htl_name\",\"srv_name\"]\r\n\r\n\r\n        \r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/hotelservice/hotelServiceInfo/search",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"hotelservice",
+						"hotelServiceInfo",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "-U Hotel Services",
 			"request": {
 				"auth": {
