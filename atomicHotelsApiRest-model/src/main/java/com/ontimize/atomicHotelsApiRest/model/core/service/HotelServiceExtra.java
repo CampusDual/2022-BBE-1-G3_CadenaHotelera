@@ -53,6 +53,18 @@ public class HotelServiceExtra implements IHotelServiceExtraService {
 	}
 	
 	@Override
+	public EntityResult hotelServiceExtraInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException, MissingFieldsException 
+	{
+	try{
+			ValidateFields.required(attrMap, HotelServiceExtraDao.ATTR_ID_HTL, HotelServiceExtraDao.ATTR_ID_SXT);
+			System.err.println(attrMap.entrySet());
+			return this.daoHelper.insert(this.hotelServiceExtraDao, attrMap);
+		} catch (MissingFieldsException e) {
+			return new EntityResultWrong(e.getMessage());
+		}
+	}
+	
+/*	@Override
 	public EntityResult hotelServiceExtraInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException, MissingFieldsException{
 	try {
 			ValidateFields.required(attrMap, HotelServiceExtraDao.ATTR_ID_HTL, HotelServiceExtraDao.ATTR_ID_SXT);
@@ -68,7 +80,7 @@ public class HotelServiceExtra implements IHotelServiceExtraService {
 			return new EntityResultWrong(e.getMessage());
 		}
 		return null;
-	}
+	}*/
 	
 	@Override
 	public EntityResult hotelServiceExtraUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)

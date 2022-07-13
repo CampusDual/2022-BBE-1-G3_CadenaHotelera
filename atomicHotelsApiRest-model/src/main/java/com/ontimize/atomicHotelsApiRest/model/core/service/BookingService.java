@@ -68,13 +68,14 @@ public class BookingService implements IBookingService {
 			case 1:
 				resultado = new EntityResultWrong("Checkin no puede ser posterior a checkout");
 				break;
+				
 			case 2:
 				resultado = new EntityResultWrong("Checkin no puede ser anterior a hoy");
 				break;
 
 			case 0:
-				if (roomService.isRoomUnbookedgInRangeQuery((String) attrMap.get(BookingDao.ATTR_CHECKIN),
-						(String) attrMap.get(BookingDao.ATTR_CHECKOUT),
+				if (roomService.isRoomUnbookedgInRange((String) attrMap.get(BookingDao.ATTR_START),
+						(String) attrMap.get(BookingDao.ATTR_END),
 						(Integer) attrMap.get(BookingDao.ATTR_ROOM_ID))) {
 					resultado = this.daoHelper.insert(this.bookingDao, attrMap);
 				} else {
