@@ -23,6 +23,6 @@ public class BookingDao extends OntimizeJdbcDaoSupport {
 	public static final String ATTR_ROOM_ID = TAG +"rm_id";
 	public static final String NON_ATTR_ACTION = "action";
 	public enum Status{CONFIRMED,IN_PROGRESS,COMPLETED,CANCELED}
-	public enum Action{CHECK_IN,CHECK_OUT,CANCEL}
+	public enum Action{CHECKIN,CHECKOUT,CANCEL}
 
 }
