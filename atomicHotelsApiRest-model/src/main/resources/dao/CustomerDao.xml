@@ -9,4 +9,20 @@ catalog="" schema="${mainschema}" table="customers" datasource="mainDataSource" 
 		<Column>cst_id</Column>
 	</UpdateKeys>
 	<GeneratedKey>cst_id</GeneratedKey>	
+	<Queries>
+		<Query id="queryAgreementEmails">
+			<Sentence>
+				<![CDATA[
+					SELECT
+					#COLUMNS#
+					FROM
+					customers
+					WHERE 
+					mailagreement is true
+					)					     					     
+				]]>
+			</Sentence>
+				
+		</Query>
+	</Queries>
 </JdbcEntitySetup>
