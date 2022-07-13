@@ -162,7 +162,7 @@ public class RoomService implements IRoomService {
 		ValidateFields.required(keyMap, BookingDao.ATTR_START, BookingDao.ATTR_END);
 
 		if (ValidateFields.dataRange(keyMap.get(BookingDao.ATTR_START), keyMap.get(BookingDao.ATTR_END)) == 1) {
-			throw new InvalidFieldsValuesException(ErrorMessage.DATA_RANGE_REVERSE);
+			throw new InvalidFieldsValuesException(ErrorMessage.DATA_START_BEFORE_TODAY);
 		}
 
 		Map<String, Object> auxKeyMap = new HashMap<String, Object>();

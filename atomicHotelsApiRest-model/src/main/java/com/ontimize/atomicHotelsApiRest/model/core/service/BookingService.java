@@ -71,7 +71,7 @@ public class BookingService implements IBookingService {
 					resultado = new EntityResultWrong("La habitación ya está reservada en esa franja de fechas.");
 				}
 			} else {
-				resultado = new EntityResultWrong(ErrorMessage.DATA_RANGE_REVERSE);
+				resultado = new EntityResultWrong(ErrorMessage.DATA_START_BEFORE_TODAY);
 			}
 		} catch (EntityResultRequiredException | MissingFieldsException | InvalidFieldsValuesException e) {
 			System.err.println(e.getMessage());

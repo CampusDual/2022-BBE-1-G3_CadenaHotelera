@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d7ac54da-521a-42ed-83e9-a0d20035b2a2",
+		"_postman_id": "0ecd89f4-274f-4dc5-a0d7-8461ffdb9532",
 		"name": "Bookings",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -12,7 +12,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"data\": {\r\n        \"bkg_stb_id\": 1,\r\n        \"bkg_cst_id\": 2,\r\n        \"bkg_rm_id\":6,        \r\n        \"bkg_checkin\": \"2022-01-04\",\r\n        \"bkg_checkout\": \"2023-01-19\"\r\n    }\r\n}",
+					"raw": "{\r\n    \"data\": {\r\n        \"bkg_stb_id\": 1,\r\n        \"bkg_cst_id\": 2,\r\n        \"bkg_rm_id\":6,        \r\n        \"bkg_start\": \"2022-08-12\",\r\n        \"bkg_end\": \"2023-01-19\"\r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -41,7 +41,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\":{\r\n        \"bkg_stb_id\": 1\r\n    },\r\n    \"columns\": \r\n        [\"bkg_stb_id\",\r\n        \"bkg_cst_id\",\r\n        \"bkg_rm_id\",\r\n        \"bkg_observations\",\r\n        \"bkg_checkin\",\r\n        \"bkg_checkout\"]    \r\n}",
+					"raw": "{\r\n    \"filter\":{\r\n        \"bkg_id\": 4\r\n    },\r\n    \"columns\": \r\n        [\"bkg_id\",\r\n        \"bkg_cst_id\",\r\n        \"bkg_rm_id\",\r\n        \"bkg_observations\",\r\n        \"bkg_start\",\r\n        \"bkg_end\",\r\n        \"bkg_checkin\",\r\n        \"bkg_checkout\",\r\n        \"bkg_canceled\",\r\n        \"bkg_created\"]    \r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -71,7 +71,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"columns\": \r\n        [\"bkg_stb_id\",\r\n        \"bkg_cst_id\",\r\n        \"bkg_rm_id\",\r\n        \"bkg_observations\",\r\n        \"bkg_checkin\",\r\n        \"bkg_checkout\"]    \r\n}",
+					"raw": "{\r\n \"columns\": \r\n        [\"bkg_id\",\r\n        \"bkg_cst_id\",\r\n        \"bkg_rm_id\",\r\n        \"bkg_observations\",\r\n        \"bkg_start\",\r\n        \"bkg_end\",\r\n        \"bkg_checkin\",\r\n        \"bkg_checkout\",\r\n        \"bkg_canceled\",\r\n        \"bkg_created\"] \r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -95,7 +95,37 @@
 			"response": []
 		},
 		{
-			"name": "-U booking",
+			"name": "-R all booking canceled (//TODO)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"status\": \"CANCELED\"\r\n    },\r\n    \"columns\": \r\n        [\"bkg_id\",\r\n        \"bkg_cst_id\",\r\n        \"bkg_rm_id\",\r\n        \"bkg_observations\",\r\n        \"bkg_start\",\r\n        \"bkg_end\",\r\n        \"bkg_checkin\",\r\n        \"bkg_checkout\",\r\n        \"bkg_canceled\",\r\n        \"bkg_created\"]    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookings/booking/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookings",
+						"booking",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-U bookingAction CHECKIN",
 			"event": [
 				{
 					"listen": "test",
@@ -112,7 +142,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\": {\r\n     \"bkg_id\": 1\r\n    },\r\n    \"data\": {\r\n        \"bkg_stb_id\": 4\r\n    }    \r\n}",
+					"raw": "{\r\n    \"filter\": {\r\n     \"bkg_id\": 1\r\n    },\r\n    \"data\": {\r\n        \"action\": \"CHECKIN\"\r\n    }    \r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -120,7 +150,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:33333/bookings/booking",
+					"raw": "http://localhost:33333/bookings/bookingAction",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -128,7 +158,87 @@
 					"port": "33333",
 					"path": [
 						"bookings",
-						"booking"
+						"bookingAction"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-U bookingAction CHECKOUT",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"bkg_id\": 4\r\n    },\r\n    \"data\": {\r\n        \"action\": \"CHECKOUT\"\r\n    }    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookings/bookingAction",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookings",
+						"bookingAction"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-U bookingAction CANCEL",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"bkg_id\": 1\r\n    },\r\n    \"data\": {\r\n        \"action\": \"CANCEL\"\r\n    }    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookings/bookingAction",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookings",
+						"bookingAction"
 					]
 				}
 			},
@@ -181,7 +291,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"columns\": \r\n        [\"bkg_stb_id\",\r\n        \"bkg_cst_id\",\r\n        \"bkg_rm_id\",\r\n        \"bkg_observations\",\r\n        \"bkg_checkin\",\r\n        \"bkg_checkout\",\r\n        \"stb_name\",\r\n        \"cst_name\",\r\n        \"cst_surnames\",\r\n        \"cst_email\",\r\n        \"cst_phone\",\r\n        \"rm_number\",        \r\n        \"htl_id\",\r\n        \"htl_name\",\r\n        \"rmt_name\"       \r\n        ]    \r\n}",
+					"raw": "{\r\n    \"columns\": \r\n        [\"bkg_id\",\r\n        \"bkg_cst_id\",\r\n        \"bkg_rm_id\",\r\n        \"bkg_observations\",\r\n        \"bkg_start\",\r\n        \"bkg_end\",\r\n        \"bkg_checkin\",\r\n        \"bkg_checkout\",\r\n        \"bkg_canceled\",\r\n        \"bkg_created\",\r\n        \"cst_name\",\r\n        \"cst_surnames\",\r\n        \"cst_email\",\r\n        \"cst_phone\",\r\n        \"rm_number\",        \r\n        \"htl_id\",\r\n        \"htl_name\",\r\n        \"rmt_name\"       \r\n        ]    \r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -211,7 +321,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\":{\r\n        \"start_date\": \"2022-01-05\",\r\n        \"end_date\": \"2023-01-20\"\r\n        \r\n    },\r\n    \"columns\": \r\n        [\"bkg_id\",\r\n        \"bkg_rm_id\",\r\n        \"bkg_stb_id\",\r\n        \"bkg_cst_id\",        \r\n        \"bkg_observations\",\r\n        \"bkg_checkin\",\r\n        \"bkg_checkout\",\r\n        \"bkg_checkin\",\r\n        \"stb_name\",\r\n        \"rm_id\",\r\n        \"rm_htl_id\",\r\n        \"rm_rmt_id\"]\r\n\r\n}",
+					"raw": "{\r\n    \"filter\":{\r\n        \"bkg_start\": \"2022-01-05\",\r\n        \"bkg_rm_id\":3,        \r\n        \"bkg_end\": \"2025-01-20\"\r\n        \r\n    },\r\n    \"columns\": \r\n        [\"bkg_id\",\r\n        \"bkg_rm_id\",\r\n        \"bkg_cst_id\",        \r\n        \"bkg_observations\",\r\n        \"bkg_start\",\r\n        \"bkg_end\",\r\n        \"bkg_checkin\",\r\n        \"bkg_checkout\",\r\n        \"bkg_canceled\",\r\n        \"rm_id\",\r\n        \"rm_htl_id\",\r\n        \"rm_rmt_id\"]\r\n\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -241,7 +351,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\":{\r\n        \"start_date\": \"2022-01-05\",\r\n        \"end_date\": \"2023-01-20\"\r\n    },\r\n    \"columns\": \r\n        [\"bkg_rm_id\"]\r\n\r\n}",
+					"raw": "{\r\n    \"filter\":{\r\n        \"bkg_start\": \"2022-01-05\",\r\n        \"bkg_end\": \"2023-01-20\"\r\n    },\r\n    \"columns\": \r\n        [\"bkg_id\",\"bkg_rm_id\",\"bkg_canceled\"]\r\n\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"

@@ -27,7 +27,8 @@ public class ErrorMessage {
 	
 	 
 //ERRORES VARIOS	 
-	public static final String DATA_RANGE_REVERSE = "La fecha de inicio no puede ser posterior a la fecha de fin)";	 
+	public static final String DATA_RANGE_REVERSE = "La fecha de inicio no puede ser posterior a la fecha de fin";	 
+	public static final String DATA_START_BEFORE_TODAY = "La fecha de inicio no puede anterior a hoy";	 
 	public static final String REQUIRED_FIELDS = "Faltan campos requeridos";
 	public static final String INVALID_ACTION = "Acción no válida";
 }

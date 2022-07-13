@@ -102,7 +102,7 @@ public class ValidateFields {
 			}
 			return 0;
 		} else {
-			throw new InvalidFieldsValuesException("Fecha de inicio no puede ser superior a fecha de fin");
+			throw new InvalidFieldsValuesException(ErrorMessage.DATA_RANGE_REVERSE);
 		}
 	}
 	/*
