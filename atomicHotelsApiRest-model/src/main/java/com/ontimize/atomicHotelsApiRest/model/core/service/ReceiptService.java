@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IReceiptService;
-import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.ReceiptDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
@@ -21,12 +21,12 @@ import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
 import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 
-@Service("HotelService")
+@Service("ReceiptService")
 @Lazy
 public class ReceiptService implements IReceiptService{
 	
 	@Autowired
-	private HotelDao hotelDao;
+	private ReceiptDao receiptDao;
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
 
@@ -34,25 +34,31 @@ public class ReceiptService implements IReceiptService{
 	@Override
 	public EntityResult recepitQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
-		// TODO Auto-generated method stub
-		return null;
+		EntityResult resultado = this.daoHelper.query(this.receiptDao, keyMap, attrList);
+		return resultado;
 	}
 
 	@Override
 	public EntityResult recepitInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			ValidateFields.required(attrMap, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET, HotelDao.ATTR_CITY,
-					HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY);			
-			//ValidateFields.emptyFields(attrMap);			
-			resultado = this.daoHelper.insert(this.hotelDao, attrMap);
-			resultado.setMessage("Hotel registrado");
+			
+			ValidateFields.required(attrMap, ReceiptDao.ATTR_BOOKING_ID); 	
+			
+			//TODO Hacer lo de gerearla en cancelada!!! Y calcular el total!!
+			
+			resultado = this.daoHelper.insert(this.receiptDao, attrMap);
+			resultado.setMessage("Receipt registrada");
 
 		} catch (MissingFieldsException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());
 			
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+			
+		} catch (DataIntegrityViolationException e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);
 
 		} catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
@@ -65,12 +71,12 @@ public class ReceiptService implements IReceiptService{
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			ValidateFields.required(keyMap, HotelDao.ATTR_ID);
-			resultado = this.daoHelper.update(this.hotelDao, attrMap, keyMap);
+			ValidateFields.required(keyMap, ReceiptDao.ATTR_ID);
+			resultado = this.daoHelper.update(this.receiptDao, attrMap, keyMap);
 			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
 				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
 			} else {
-				resultado.setMessage("Hotel actualizado");
+				resultado.setMessage("Receipt actualizada");
 			}
 		} catch (MissingFieldsException e) {
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + e.getMessage());
@@ -79,7 +85,7 @@ public class ReceiptService implements IReceiptService{
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
 		} catch (DataIntegrityViolationException e) {
 			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FK+" / "+ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR);
@@ -91,16 +97,16 @@ public class ReceiptService implements IReceiptService{
 	public EntityResult recepitDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			ValidateFields.required(keyMap, HotelDao.ATTR_ID);
+			ValidateFields.required(keyMap, ReceiptDao.ATTR_ID);
 
-			EntityResult auxEntity = this.daoHelper.query(this.hotelDao,
-					EntityResultTools.keysvalues(HotelDao.ATTR_ID, keyMap.get(HotelDao.ATTR_ID)),
-					EntityResultTools.attributes(HotelDao.ATTR_ID));
+			EntityResult auxEntity = this.daoHelper.query(this.receiptDao,
+					EntityResultTools.keysvalues(ReceiptDao.ATTR_ID, keyMap.get(ReceiptDao.ATTR_ID)),
+					EntityResultTools.attributes(ReceiptDao.ATTR_ID));
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
 				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
 			} else {
-				resultado = this.daoHelper.delete(this.hotelDao, keyMap);
-				resultado.setMessage("Hotel eliminado");
+				resultado = this.daoHelper.delete(this.receiptDao, keyMap);
+				resultado.setMessage("Receipt eliminada");
 			}
 		} catch (MissingFieldsException e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + e.getMessage());
