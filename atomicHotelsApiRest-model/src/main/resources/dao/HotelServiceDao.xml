@@ -10,5 +10,5 @@ catalog="" schema="${mainschema}" table="hotels_services" datasource="mainDataSo
 		<Column>srv_id</Column>
 		<Column>htl_id</Column>
 	</UpdateKeys>
-	
+
 </JdbcEntitySetup>
