@@ -162,7 +162,7 @@ public class RoomService implements IRoomService {
 		ValidateFields.required(keyMap, BookingDao.ATTR_START, BookingDao.ATTR_END);
 
 		if (ValidateFields.dataRange(keyMap.get(BookingDao.ATTR_START), keyMap.get(BookingDao.ATTR_END)) == 1) {
-			throw new InvalidFieldsValuesException("Checkin no puede ser posterior a checkout");
+			throw new InvalidFieldsValuesException(ErrorMessage.DATA_RANGE_REVERSE);
 		}
 
 		Map<String, Object> auxKeyMap = new HashMap<String, Object>();
@@ -201,28 +201,26 @@ public class RoomService implements IRoomService {
 	 * @throws EntityResultRequiredException
 	 * @throws InvalidFieldsValuesException
 	 */
-	public List<Object> roomsBookedInRange(String startDate, String endDate, Map<String, Object> bookingKeyMap)
-			throws OntimizeJEERuntimeException, EntityResultRequiredException, InvalidFieldsValuesException {
-		ValidateFields.dataRange(startDate, endDate);
+	public List<Object> roomsBookedInRange(Object startDate, Object endDate, Map<String, Object> bookingKeyMap)
+			throws OntimizeJEERuntimeException, EntityResultRequiredException, InvalidFieldsValuesException {	
+		
+		ValidateFields.dataRange(startDate, endDate);		
 		bookingKeyMap.put(BookingDao.ATTR_START, startDate);
 		bookingKeyMap.put(BookingDao.ATTR_END, endDate);
-//		// omite reservas con estados cancelados
-//		BasicExpression bookingStatusFilter = new BasicExpression(new BasicField(BookingDao.ATTR_STATUS_ID),
-//				BasicOperator.NOT_EQUAL_OP, BookingDao.STATUS_CANCELED);
-//		EntityResultExtraTools.putBasicExpression(bookingKeyMap, bookingStatusFilter);
+		bookingKeyMap.put(BookingDao.ATTR_CANCELED, null);
+		
 		EntityResult bookedRoomsER = bookingService.bookingsInRangeQuery(bookingKeyMap,
 				EntityResultTools.attributes(BookingDao.ATTR_ROOM_ID));
-		if (bookedRoomsER.isWrong() || bookedRoomsER.isEmpty()) {
-//			if (bookedRoomsER.isWrong()) {
-			throw new EntityResultRequiredException();
+		System.err.println(bookedRoomsER);
+		if (bookedRoomsER.isWrong()) {
+			throw new EntityResultRequiredException(ErrorMessage.RESULT_REQUIRED + " - " + bookedRoomsER.getMessage());
 		}
 		return EntityResultExtraTools.listFromColumn(bookedRoomsER, BookingDao.ATTR_ROOM_ID);
 	}
 
-	public List<Object> roomsBookedgInRange(String startDate, String endDate)
-			throws OntimizeJEERuntimeException, EntityResultRequiredException, InvalidFieldsValuesException {
-		Map<String, Object> bookingKeyMap = new HashMap<>();
-		return roomsBookedInRange(startDate, endDate, bookingKeyMap);
+	public List<Object> roomsBookedgInRange(Object startDate, Object endDate)
+			throws OntimizeJEERuntimeException, EntityResultRequiredException, InvalidFieldsValuesException {		
+		return roomsBookedInRange(startDate, endDate, new HashMap<>());
 	}
 
 	/**
@@ -237,11 +235,11 @@ public class RoomService implements IRoomService {
 	 * @throws MissingFieldsException
 	 */
 	@Override
-	public boolean isRoomUnbookedgInRange(String startDate, String endDate, Integer roomId)
+	public boolean isRoomUnbookedgInRange(Object startDate, Object endDate, Object roomId)
 			throws OntimizeJEERuntimeException, EntityResultRequiredException, InvalidFieldsValuesException,
 			MissingFieldsException {
 		if (startDate == null || endDate == null || roomId == null) {
-			throw new MissingFieldsException("Faltan campos requeridos");
+			throw new MissingFieldsException(ErrorMessage.REQUIRED_FIELDS);
 		}
 		Map<String, Object> keyMap = new HashMap<String, Object>();
 		keyMap.put(BookingDao.ATTR_ROOM_ID, roomId);

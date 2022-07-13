@@ -15,6 +15,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.service.IRoomService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultExtraTools;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.EntityResultRequiredException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
@@ -60,33 +61,22 @@ public class BookingService implements IBookingService {
 			ValidateFields.required(attrMap, BookingDao.ATTR_START, BookingDao.ATTR_END, BookingDao.ATTR_ROOM_ID,
 					BookingDao.ATTR_CUSTOMER_ID);
 			ValidateFields.restricted(attrMap, BookingDao.ATTR_CHECKIN, BookingDao.ATTR_CHECKOUT,
-					BookingDao.ATTR_CANCELED, BookingDao.ATTR_CREATED);
-
-			int validateRange = ValidateFields.dataRange(attrMap.get(BookingDao.ATTR_START),
-					attrMap.get(BookingDao.ATTR_END));
-			switch (validateRange) {
-			case 1:
-				resultado = new EntityResultWrong("Checkin no puede ser posterior a checkout");
-				break;
-				
-			case 2:
-				resultado = new EntityResultWrong("Checkin no puede ser anterior a hoy");
-				break;
-
-			case 0:
-				if (roomService.isRoomUnbookedgInRange((String) attrMap.get(BookingDao.ATTR_START),
-						(String) attrMap.get(BookingDao.ATTR_END),
-						(Integer) attrMap.get(BookingDao.ATTR_ROOM_ID))) {
+					BookingDao.ATTR_CANCELED, BookingDao.ATTR_CREATED);			
+			
+			if (ValidateFields.dataRange(attrMap.get(BookingDao.ATTR_START), attrMap.get(BookingDao.ATTR_END)) == 0) {			
+				if (roomService.isRoomUnbookedgInRange(attrMap.get(BookingDao.ATTR_START),
+						attrMap.get(BookingDao.ATTR_END), attrMap.get(BookingDao.ATTR_ROOM_ID))) {
 					resultado = this.daoHelper.insert(this.bookingDao, attrMap);
 				} else {
 					resultado = new EntityResultWrong("La habitación ya está reservada en esa franja de fechas.");
 				}
+			} else {
+				resultado = new EntityResultWrong(ErrorMessage.DATA_RANGE_REVERSE);
 			}
 		} catch (EntityResultRequiredException | MissingFieldsException | InvalidFieldsValuesException e) {
 			System.err.println(e.getMessage());
 			resultado = new EntityResultWrong(e.getMessage());
 		}
-
 		return resultado;
 	}
 
@@ -97,35 +87,35 @@ public class BookingService implements IBookingService {
 		try {
 			ValidateFields.required(attrMap, BookingDao.ATTR_ID);
 			ValidateFields.required(keyMap, BookingDao.NON_ATTR_ACTION);
-			ValidateFields.restricted(keyMap, BookingDao.ATTR_ID, BookingDao.ATTR_CUSTOMER_ID, BookingDao.ATTR_CHECKIN, BookingDao.ATTR_CHECKOUT,
-					BookingDao.ATTR_CANCELED, BookingDao.ATTR_CREATED);
-			
+			ValidateFields.restricted(keyMap, BookingDao.ATTR_ID, BookingDao.ATTR_CUSTOMER_ID, BookingDao.ATTR_CHECKIN,
+					BookingDao.ATTR_CHECKOUT, BookingDao.ATTR_CANCELED, BookingDao.ATTR_CREATED);
+
 			BookingDao.Status status = getBookingStatus(attrMap.get(BookingDao.ATTR_ID));
 			switch (status) {
-			
+
 			case CANCELED:
 				resultadoER = new EntityResultWrong("No se pueden modificar reservas canceladas");
 				break;
-				
+
 			case COMPLETED:
 				resultadoER = new EntityResultWrong("No se pueden modificar reservas finalizadas");
 				break;
-				
+
 			case IN_PROGRESS:
 				if (keyMap.get(BookingDao.NON_ATTR_ACTION).equals(BookingDao.Action.CHECK_OUT)) {
 					keyMap.put(BookingDao.ATTR_CHECKOUT, new Date());
 				}
 				resultadoER = this.daoHelper.update(this.bookingDao, attrMap, keyMap);
 				break;
-				
+
 			case CONFIRMED:
 				if (keyMap.get(BookingDao.NON_ATTR_ACTION).equals(BookingDao.Action.CHECK_IN)) {
 					keyMap.put(BookingDao.ATTR_CHECKIN, new Date());
-				}else if (keyMap.get(BookingDao.NON_ATTR_ACTION).equals(BookingDao.Action.CANCEL)) { 
+				} else if (keyMap.get(BookingDao.NON_ATTR_ACTION).equals(BookingDao.Action.CANCEL)) {
 					keyMap.put(BookingDao.ATTR_CANCELED, new Date());
 				}
 				resultadoER = this.daoHelper.update(this.bookingDao, attrMap, keyMap);
-				break;		
+				break;
 			}
 		} catch (MissingFieldsException | EntityResultRequiredException e) {
 			resultadoER = new EntityResultWrong(e.getMessage());
