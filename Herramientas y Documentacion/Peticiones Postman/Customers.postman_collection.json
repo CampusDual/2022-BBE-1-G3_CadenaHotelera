@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "a7274b27-2e58-4a13-a339-1318273e4bba",
+		"_postman_id": "5bea3a54-93a9-4685-b581-062fa45d69bf",
 		"name": "Customers",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -137,6 +137,51 @@
 		},
 		{
 			"name": "-R mail",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \"columns\": [\"cst_name\", \"cst_surname\", \"cst_email\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/customers/customer/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"customers",
+						"customer",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R Listado mail consentimiento",
 			"request": {
 				"auth": {
 					"type": "basic",

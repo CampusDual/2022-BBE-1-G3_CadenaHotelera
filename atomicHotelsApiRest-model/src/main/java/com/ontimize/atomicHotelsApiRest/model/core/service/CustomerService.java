@@ -129,7 +129,7 @@ public class CustomerService implements ICustomerService{
  
  @Override
 	public EntityResult mailAgreementQuery(Map<String, Object> keyMap, List<String> attrList)
-			throws OntimizeJEERuntimeException, MissingFieldsException, EntityResultRequiredException, InvalidFieldsValuesException {
+			throws OntimizeJEERuntimeException {
 		EntityResult resultado = this.daoHelper.query(this.customerDao, keyMap, attrList, "queryAgreementEmails");
 		return resultado;
 	}
