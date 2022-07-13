@@ -50,8 +50,8 @@ public class ServicesXtraService implements IServicesXtraService{
 		
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			ValidateFields.required(attrMap, ServicesXtraDao.ATTR_NAME);
-			
+//			ValidateFields.required(attrMap, ServicesXtraDao.ATTR_NAME);
+			ValidateFields.emptyFields(attrMap, ServicesXtraDao.ATTR_NAME);
 			resultado = this.daoHelper.insert(this.servicesXtraDao, attrMap);
 			resultado.setMessage("ServiceXtra registrado");
 
@@ -74,7 +74,8 @@ public class ServicesXtraService implements IServicesXtraService{
 		
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			ValidateFields.required(keyMap, ServicesXtraDao.ATTR_ID);
+//			ValidateFields.required(keyMap, ServicesXtraDao.ATTR_ID);
+			ValidateFields.emptyFields(attrMap, ServicesXtraDao.ATTR_ID);
 			resultado = this.daoHelper.update(this.servicesXtraDao, attrMap, keyMap);
 			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
 				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
@@ -98,8 +99,8 @@ public class ServicesXtraService implements IServicesXtraService{
 		
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			ValidateFields.required(keyMap, ServicesXtraDao.ATTR_ID);
-
+//			ValidateFields.required(keyMap, ServicesXtraDao.ATTR_ID);
+			ValidateFields.emptyFields(keyMap, ServicesXtraDao.ATTR_ID);
 			EntityResult auxEntity = this.daoHelper.query(this.servicesXtraDao,
 					EntityResultTools.keysvalues(ServicesXtraDao.ATTR_ID, keyMap.get(ServicesXtraDao.ATTR_ID)),
 					EntityResultTools.attributes(ServicesXtraDao.ATTR_ID));
