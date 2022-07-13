@@ -207,11 +207,12 @@ public class RoomService implements IRoomService {
 		ValidateFields.dataRange(startDate, endDate);		
 		bookingKeyMap.put(BookingDao.ATTR_START, startDate);
 		bookingKeyMap.put(BookingDao.ATTR_END, endDate);
-		bookingKeyMap.put(BookingDao.ATTR_CANCELED, null);
+		BasicExpression notCancelled = new BasicExpression(new BasicField(BookingDao.ATTR_CANCELED), BasicOperator.NULL_OP, null);	
+		EntityResultExtraTools.putBasicExpression(bookingKeyMap, notCancelled);
 		
 		EntityResult bookedRoomsER = bookingService.bookingsInRangeQuery(bookingKeyMap,
 				EntityResultTools.attributes(BookingDao.ATTR_ROOM_ID));
-		System.err.println(bookedRoomsER);
+		
 		if (bookedRoomsER.isWrong()) {
 			throw new EntityResultRequiredException(ErrorMessage.RESULT_REQUIRED + " - " + bookedRoomsER.getMessage());
 		}

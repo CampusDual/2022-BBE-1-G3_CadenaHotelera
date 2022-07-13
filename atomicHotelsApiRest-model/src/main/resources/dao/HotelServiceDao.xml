@@ -10,5 +10,19 @@ catalog="" schema="${mainschema}" table="hotels_services" datasource="mainDataSo
 		<Column>srv_id</Column>
 		<Column>htl_id</Column>
 	</UpdateKeys>
+	<Queries>
+	<Query id="queryhotelservice">
+	<Sentence>
+	<![CDATA[
+		Select 
+		#COLUMNS#
+		From 
+		hotels_services inner join hotels using(htl_id)
+		inner join services using(srv_id)
+		#WHERE# 		
+	]]>
+	</Sentence>
+	</Query>
+	</Queries>
 
 </JdbcEntitySetup>

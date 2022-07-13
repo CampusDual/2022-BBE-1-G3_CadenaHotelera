@@ -99,8 +99,8 @@ public class HotelServiceExtraService implements IHotelServiceExtraService {
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + e.getMessage());
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
-		} catch (DataIntegrityViolationException e) {
-			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FK);
+		} catch (DataIntegrityViolationException e) {//Puede ser que se meta una FK que no exista o se le ponga null al precio cuando no se debería permitir
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FK+" / "+ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
 		} catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR);
 		}
@@ -127,8 +127,6 @@ public class HotelServiceExtraService implements IHotelServiceExtraService {
 			}
 		} catch (MissingFieldsException e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + e.getMessage());
-		} catch (DataIntegrityViolationException e) {
-			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
 		} catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR);
 		}
