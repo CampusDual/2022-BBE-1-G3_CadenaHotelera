@@ -25,5 +25,15 @@ public class ErrorMessage {
 	 public static String DELETE_ERROR_MISSING_FIELD = DELETE_ERROR+"- El regsitro que pretende eliminar no existe.";
 	 
 	 public static String DELETE_ERROR_FOREING_KEY = DELETE_ERROR+"- Está referenciado en alguna otra tabla (FK)";
+	 
+	 
+	 public static String SUBQUERY_ERROR = "Error de subconsulta  ";
+	 
+	 public static String RESULT_REQUIRED = SUBQUERY_ERROR + "- Datos requeridos no encontrados";
+	 
+	 
+	 public static String DATA_RANGE_REVERSE = "La fecha de inicio no puede ser posterior a la fecha de fin)";
+	 
+	 public static String REQUIRED_FIELDS = "Faltan campos requeridos";
 
 }
