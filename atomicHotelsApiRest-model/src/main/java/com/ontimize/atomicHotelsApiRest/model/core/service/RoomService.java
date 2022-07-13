@@ -160,10 +160,10 @@ public class RoomService implements IRoomService {
 		EntityResult resultado;
 
 		ValidateFields.required(keyMap, BookingDao.ATTR_START, BookingDao.ATTR_END);
-
-		if (ValidateFields.dataRange(keyMap.get(BookingDao.ATTR_START), keyMap.get(BookingDao.ATTR_END)) == 1) {
-			throw new InvalidFieldsValuesException(ErrorMessage.DATA_START_BEFORE_TODAY);
-		}
+		ValidateFields.dataRange(keyMap.get(BookingDao.ATTR_START), keyMap.get(BookingDao.ATTR_END));
+//		if (ValidateFields.dataRange(keyMap.get(BookingDao.ATTR_START), keyMap.get(BookingDao.ATTR_END)) == 1) {
+//			throw new InvalidFieldsValuesException(ErrorMessage.DATA_START_BEFORE_TODAY);
+//		}
 
 		Map<String, Object> auxKeyMap = new HashMap<String, Object>();
 		if (keyMap.containsKey(RoomDao.ATTR_ID)) {
@@ -171,8 +171,8 @@ public class RoomService implements IRoomService {
 		}
 		if (keyMap.containsKey(RoomDao.ATTR_HOTEL_ID)) {
 			auxKeyMap.put(RoomDao.ATTR_HOTEL_ID, keyMap.get(RoomDao.ATTR_HOTEL_ID));
-		} // TODO comprobar filtro id hotel en reservas
-
+		} 
+		
 		List<Object> bookedRoomsIdList = roomsBookedInRange((String) keyMap.get(BookingDao.ATTR_START),
 				(String) keyMap.get(BookingDao.ATTR_END), auxKeyMap);
 

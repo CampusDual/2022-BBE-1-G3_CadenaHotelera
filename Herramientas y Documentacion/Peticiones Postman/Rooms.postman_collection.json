@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "b91ae23d-dd71-4a98-84f1-cf6d47efa5fc",
+		"_postman_id": "c4a077a4-bb5c-4eff-bd44-f905b4425c06",
 		"name": "Rooms",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -301,7 +301,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\":{\r\n        \"start_date\": \"2022-01-05\",\r\n        \"end_date\": \"2023-01-20\"\r\n    },\r\n   \"columns\": [\"rm_id\",\"rm_htl_id\",\"rm_number\",\"rm_square_meters\",\"rm_rmt_id\",\"rm_status\", \"rm_htl_id\",\"rm_number\",\"rm_square_meters\",\"rm_rmt_id\",\"rm_status\",\"rmt_id\",\"rmt_name\",\"rmt_description\",\"rmt_price\",\"rmt_bdc_id\",\"htl_name\"]\r\n}",
+					"raw": "{\r\n    \"filter\":{\r\n        \"bkg_start\": \"2022-08-05\",\r\n        \"bkg_end\": \"2023-01-20\"\r\n    },\r\n   \"columns\": [\"rm_id\",\"rm_htl_id\",\"rm_number\",\"rm_square_meters\",\"rm_rmt_id\",\"rm_status\", \"rm_htl_id\",\"rm_number\",\"rm_square_meters\",\"rm_rmt_id\",\"rm_status\",\"rmt_id\",\"rmt_name\",\"rmt_description\",\"rmt_price\",\"rmt_bdc_id\",\"htl_name\"]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -346,7 +346,52 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\":{\r\n        \"start_date\": \"2022-01-05\",\r\n        \"end_date\": \"2023-01-20\"\r\n    },\r\n  \"columns\": [\"rm_id\"]\r\n}",
+					"raw": "{\r\n    \"filter\":{\r\n        \"bkg_start\": \"2022-08-05\",\r\n        \"bkg_end\": \"2023-01-20\"\r\n    },\r\n  \"columns\": [\"rm_id\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/rooms/roomsUnbookedInRange/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"rooms",
+						"roomsUnbookedInRange",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R 3roomsUnbookedgInRange Copy",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"bkg_start\": \"2022-08-05\",\r\n        \"bkg_end\": \"2023-01-20\",\r\n        \"htl_id\": 3\r\n    },\r\n   \"columns\": [\"rm_id\",\"rm_htl_id\",\"rm_number\",\"rm_square_meters\",\"rm_rmt_id\",\"rm_status\", \"rm_htl_id\",\"rm_number\",\"rm_square_meters\",\"rm_rmt_id\",\"rm_status\",\"rmt_id\",\"rmt_name\",\"rmt_description\",\"rmt_price\",\"rmt_bdc_id\",\"htl_name\"]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
