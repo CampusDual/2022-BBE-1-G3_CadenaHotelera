@@ -24,4 +24,5 @@ catalog="" schema="${mainschema}" table="hotels_services" datasource="mainDataSo
 	</Sentence>
 	</Query>
 	</Queries>
+
 </JdbcEntitySetup>
