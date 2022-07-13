@@ -91,17 +91,18 @@ public class ValidateFields {
 	 * 
 	 * @param startDate fecha de inicio
 	 * @param endDate   fecha de fin
-	 * @return 0: fechas correctas - 1: error fecha inicio superior a fecha fin - 2:
-	 *         fechas correctas, fecha inicio inferior a hoy *
+	 * @return 0: fechas correctas - 1:
+	 *         fechas correctas, fecha inicio inferior a hoy (consulta a pasado) 
+	 * @throws InvalidFieldsValuesException  error fecha inicio superior a fecha fin 
 	 */
-	public static int dataRange(Date startDate, Date endDate) {
+	public static int dataRange(Date startDate, Date endDate) throws InvalidFieldsValuesException {
 		if (startDate.compareTo(endDate) < 0) {
 			if (startDate.compareTo(new Date()) < 0) {
-				return 2;
+				return 1;
 			}
 			return 0;
 		} else {
-			return 1; // error
+			throw new InvalidFieldsValuesException("Fecha de inicio no puede ser superior a fecha de fin");
 		}
 	}
 	/*
