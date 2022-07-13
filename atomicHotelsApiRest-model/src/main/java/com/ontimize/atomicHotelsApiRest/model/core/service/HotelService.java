@@ -49,17 +49,13 @@ public class HotelService implements IHotelService {
 
 	@Override
 	public EntityResult hotelInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
+		
 		EntityResult resultado = new EntityResultMapImpl();
-
 		try {
-
 			ValidateFields.required(attrMap, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET, HotelDao.ATTR_CITY,
-					HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY);
-			
-			//ValidateFields.emptyFields(attrMap);
-			
+					HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY);			
+			//ValidateFields.emptyFields(attrMap);			
 			resultado = this.daoHelper.insert(this.hotelDao, attrMap);
-
 			resultado.setMessage("Hotel registrado");
 
 		} catch (MissingFieldsException e) {
