@@ -61,9 +61,9 @@ public class BookingService implements IBookingService {
 			ValidateFields.required(attrMap, BookingDao.ATTR_START, BookingDao.ATTR_END, BookingDao.ATTR_ROOM_ID,
 					BookingDao.ATTR_CUSTOMER_ID);
 			ValidateFields.restricted(attrMap, BookingDao.ATTR_CHECKIN, BookingDao.ATTR_CHECKOUT,
-					BookingDao.ATTR_CANCELED, BookingDao.ATTR_CREATED);			
-			
-			if (ValidateFields.dataRange(attrMap.get(BookingDao.ATTR_START), attrMap.get(BookingDao.ATTR_END)) == 0) {			
+					BookingDao.ATTR_CANCELED, BookingDao.ATTR_CREATED);
+
+			if (ValidateFields.dataRange(attrMap.get(BookingDao.ATTR_START), attrMap.get(BookingDao.ATTR_END)) == 0) {
 				if (roomService.isRoomUnbookedgInRange(attrMap.get(BookingDao.ATTR_START),
 						attrMap.get(BookingDao.ATTR_END), attrMap.get(BookingDao.ATTR_ROOM_ID))) {
 					resultado = this.daoHelper.insert(this.bookingDao, attrMap);
@@ -80,19 +80,30 @@ public class BookingService implements IBookingService {
 		return resultado;
 	}
 
+	/**
+	 * 
+	 */
 	@Override
 	public EntityResult bookingActionUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
-		EntityResult resultadoER = new EntityResultWrong("Acción no válida");
+		EntityResult resultadoER = new EntityResultWrong(ErrorMessage.INVALID_ACTION);
 		try {
-			ValidateFields.required(attrMap, BookingDao.ATTR_ID);
-			ValidateFields.required(keyMap, BookingDao.NON_ATTR_ACTION);
-			ValidateFields.restricted(keyMap, BookingDao.ATTR_ID, BookingDao.ATTR_CUSTOMER_ID, BookingDao.ATTR_CHECKIN,
+			ValidateFields.required(keyMap, BookingDao.ATTR_ID);
+			ValidateFields.required(attrMap, BookingDao.NON_ATTR_ACTION);
+			ValidateFields.restricted(attrMap, BookingDao.ATTR_ID, BookingDao.ATTR_CUSTOMER_ID, BookingDao.ATTR_CHECKIN,
 					BookingDao.ATTR_CHECKOUT, BookingDao.ATTR_CANCELED, BookingDao.ATTR_CREATED);
+			BookingDao.Status status = getBookingStatus(keyMap.get(BookingDao.ATTR_ID));
 
-			BookingDao.Status status = getBookingStatus(attrMap.get(BookingDao.ATTR_ID));
+			BookingDao.Action action;
+			try {
+				action = BookingDao.Action.valueOf((String) attrMap.get(BookingDao.NON_ATTR_ACTION));
+				attrMap.remove(BookingDao.NON_ATTR_ACTION);
+			} catch (IllegalArgumentException e) {
+				throw new InvalidFieldsValuesException(
+						ErrorMessage.INVALID_ACTION + " - " + attrMap.get(BookingDao.NON_ATTR_ACTION));
+			}
+
 			switch (status) {
-
 			case CANCELED:
 				resultadoER = new EntityResultWrong("No se pueden modificar reservas canceladas");
 				break;
@@ -102,22 +113,32 @@ public class BookingService implements IBookingService {
 				break;
 
 			case IN_PROGRESS:
-				if (keyMap.get(BookingDao.NON_ATTR_ACTION).equals(BookingDao.Action.CHECK_OUT)) {
-					keyMap.put(BookingDao.ATTR_CHECKOUT, new Date());
+				if (action == BookingDao.Action.CHECKOUT) {
+					resultadoER = this.daoHelper.update(this.bookingDao,
+							EntityResultTools.keysvalues(BookingDao.ATTR_CHECKOUT, new Date()), keyMap);
+				} else if (action == BookingDao.Action.CHECKIN) {
+					resultadoER = new EntityResultWrong("El checkin ya se ha realizado");
+				} else if (action == BookingDao.Action.CANCEL) {
+					resultadoER = new EntityResultWrong("No se puede cancelar una reserva en proceso");
 				}
-				resultadoER = this.daoHelper.update(this.bookingDao, attrMap, keyMap);
 				break;
 
 			case CONFIRMED:
-				if (keyMap.get(BookingDao.NON_ATTR_ACTION).equals(BookingDao.Action.CHECK_IN)) {
-					keyMap.put(BookingDao.ATTR_CHECKIN, new Date());
-				} else if (keyMap.get(BookingDao.NON_ATTR_ACTION).equals(BookingDao.Action.CANCEL)) {
-					keyMap.put(BookingDao.ATTR_CANCELED, new Date());
+				if (action == BookingDao.Action.CHECKIN) {
+					resultadoER = this.daoHelper.update(this.bookingDao,
+							EntityResultTools.keysvalues(BookingDao.ATTR_CHECKIN, new Date()), keyMap);
+				} else if (action == BookingDao.Action.CANCEL) {
+					resultadoER = this.daoHelper.update(this.bookingDao,
+							EntityResultTools.keysvalues(BookingDao.ATTR_CANCELED, new Date()), keyMap);
+				} else if (action == BookingDao.Action.CHECKOUT) {
+					resultadoER = new EntityResultWrong(
+							"Para realizar el checkout, primero debe realizarse el checkin");
 				}
-				resultadoER = this.daoHelper.update(this.bookingDao, attrMap, keyMap);
 				break;
 			}
-		} catch (MissingFieldsException | EntityResultRequiredException e) {
+
+		} catch (MissingFieldsException | EntityResultRequiredException | InvalidFieldsValuesException e) {
+			System.err.println(e.getMessage());
 			resultadoER = new EntityResultWrong(e.getMessage());
 		}
 		return resultadoER;
@@ -145,7 +166,6 @@ public class BookingService implements IBookingService {
 	public EntityResult bookingsInRangeInfoQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		try {
-
 			bookingsInRangeBuilder(keyMap, attrList);
 			return this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryInfoBooking");
 		} catch (MissingFieldsException | InvalidFieldsValuesException e) {
@@ -207,6 +227,10 @@ public class BookingService implements IBookingService {
 
 	}
 
+//	public BookingDao.Status getBookingStatus(EntityResult consultaER) throws EntityResultRequiredException {
+//		
+//	}
+//	
 	public BookingDao.Status getBookingStatus(Object bookingId) throws EntityResultRequiredException {
 		Map<String, Object> keyMap = new HashMap<>();
 		keyMap.put(BookingDao.ATTR_ID, bookingId);
@@ -216,16 +240,17 @@ public class BookingService implements IBookingService {
 		attrList.add(BookingDao.ATTR_END);
 		attrList.add(BookingDao.ATTR_CHECKIN);
 		attrList.add(BookingDao.ATTR_CHECKOUT);
+		attrList.add(BookingDao.ATTR_CANCELED);
 		attrList.add(BookingDao.ATTR_CREATED);
 
 		EntityResult consultaER = this.daoHelper.query(this.bookingDao, keyMap, attrList);
-		System.err.println(consultaER);
+
 		if (consultaER.calculateRecordNumber() == 1) {
-			if (consultaER.get(BookingDao.ATTR_CANCELED) != null) {
+			if (consultaER.getRecordValues(0).get(BookingDao.ATTR_CANCELED) != null) {
 				return BookingDao.Status.CANCELED;
-			} else if (consultaER.get(BookingDao.ATTR_CHECKOUT) != null) {
+			} else if (consultaER.getRecordValues(0).get(BookingDao.ATTR_CHECKOUT) != null) {
 				return BookingDao.Status.COMPLETED;
-			} else if (consultaER.get(BookingDao.ATTR_CHECKIN) != null) {
+			} else if (consultaER.getRecordValues(0).get(BookingDao.ATTR_CHECKIN) != null) {
 				return BookingDao.Status.IN_PROGRESS;
 			} else {
 				return BookingDao.Status.CONFIRMED;
