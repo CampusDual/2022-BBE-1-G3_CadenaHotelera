@@ -128,24 +128,10 @@ public class CustomerService implements ICustomerService{
  }
  
  @Override
-	public EntityResult mailAgreement(Map<String, Object> keyMap, List<String> attrList)
+	public EntityResult mailAgreementQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException, MissingFieldsException, EntityResultRequiredException, InvalidFieldsValuesException {
 		EntityResult resultado = this.daoHelper.query(this.customerDao, keyMap, attrList, "queryAgreementEmails");
 		return resultado;
 	}
- /*
- public EntityResult mailAgreement(Map<String, Object> attrMap) throws OntimizeJEERuntimeException, MissingFieldsException, EntityResultRequiredException,
-	InvalidFieldsValuesException {
-	 
  
-		EntityResult resultado = new EntityResultMapImpl();
-		
-		try {
-			ValidateFields.emptyFields(attrMap, CustomerDao.ATTR_EMAIL);
-		}
-		
-		
-	}
-*/
-
 }

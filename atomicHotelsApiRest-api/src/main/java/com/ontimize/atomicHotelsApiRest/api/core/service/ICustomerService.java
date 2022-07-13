@@ -15,6 +15,6 @@ public interface ICustomerService {
 	public EntityResult customerInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException;
 	public EntityResult customerUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
 	public EntityResult customerDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
-	public EntityResult mailAgreement(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException,MissingFieldsException, EntityResultRequiredException, InvalidFieldsValuesException;
+	public EntityResult mailAgreementQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException,MissingFieldsException, EntityResultRequiredException, InvalidFieldsValuesException;
 
 }
