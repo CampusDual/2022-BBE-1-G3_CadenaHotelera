@@ -22,7 +22,7 @@ public class ErrorMessage {
 	 
      public static String DELETE_ERROR = "Error de eliminación ";
 	 
-	 public static String DELETE_ERROR_MISSING_FIELD = DELETE_ERROR+"- El regsitro que pretende eliminar no existe.";
+	 public static String DELETE_ERROR_MISSING_FIELD = DELETE_ERROR+"- El registro que pretende eliminar no existe.";
 	 
 	 public static String DELETE_ERROR_FOREING_KEY = DELETE_ERROR+"- Está referenciado en alguna otra tabla (FK)";
 	 
