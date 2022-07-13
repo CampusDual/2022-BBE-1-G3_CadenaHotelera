@@ -203,9 +203,9 @@ public class RoomService implements IRoomService {
 	 */
 	public List<Object> roomsBookedInRange(String startDate, String endDate, Map<String, Object> bookingKeyMap)
 			throws OntimizeJEERuntimeException, EntityResultRequiredException, InvalidFieldsValuesException {
+		ValidateFields.dataRange(startDate, endDate);
 		bookingKeyMap.put(BookingDao.ATTR_START, startDate);
 		bookingKeyMap.put(BookingDao.ATTR_END, endDate);
-
 //		// omite reservas con estados cancelados
 //		BasicExpression bookingStatusFilter = new BasicExpression(new BasicField(BookingDao.ATTR_STATUS_ID),
 //				BasicOperator.NOT_EQUAL_OP, BookingDao.STATUS_CANCELED);
@@ -237,7 +237,7 @@ public class RoomService implements IRoomService {
 	 * @throws MissingFieldsException
 	 */
 	@Override
-	public boolean isRoomUnbookedgInRangeQuery(String startDate, String endDate, Integer roomId)
+	public boolean isRoomUnbookedgInRange(String startDate, String endDate, Integer roomId)
 			throws OntimizeJEERuntimeException, EntityResultRequiredException, InvalidFieldsValuesException,
 			MissingFieldsException {
 		if (startDate == null || endDate == null || roomId == null) {
