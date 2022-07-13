@@ -135,7 +135,7 @@ public class ValidateFields {
 			throw new MissingFieldsException("El campo " + field + " es nulo");
 		}
 		if (keyMap.get(field).toString().trim().length() == 0) {
-			throw new MissingFieldsException("El campo " + field + " no puede contener sólo espacios en blanco");
+			throw new MissingFieldsException("El campo " + field + " no puede contener sólo espacios en blanco.");
 		}
 	}
 	
@@ -145,5 +145,15 @@ public class ValidateFields {
 Los precios vienen en una variedad de formatos que pueden contener decimales, comas y símbolos de moneda. 
 Esta expresión regular puede comprobar todos estos diferentes formatos para sacar el precio de cualquier cadena.
 	 */
+
+	public static void formatprice(Object object) throws NumberFormatException {
+		String pre = ""+object;
+		String comprueba = pre.substring(pre.indexOf(".")+1);
+		if(comprueba.length()>2) {
+			throw new NumberFormatException("Introduce solo 2 decimales");
+		}
+		
+	}
+
 
 }

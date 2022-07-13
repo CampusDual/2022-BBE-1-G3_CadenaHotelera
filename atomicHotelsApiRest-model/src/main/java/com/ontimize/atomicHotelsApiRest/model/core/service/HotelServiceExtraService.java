@@ -1,5 +1,6 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
@@ -54,11 +56,14 @@ public class HotelServiceExtraService implements IHotelServiceExtraService {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
 
-			ValidateFields.required(attrMap, HotelServiceExtraDao.ATTR_ID_HTL, HotelServiceExtraDao.ATTR_ID_SXT,
-					HotelServiceExtraDao.ATTR_PRECIO);
+			ValidateFields.required(attrMap, HotelServiceExtraDao.ATTR_ID_HTL, HotelServiceExtraDao.ATTR_ID_SXT, HotelServiceExtraDao.ATTR_PRECIO);
+			ValidateFields.formatprice(attrMap.get(HotelServiceExtraDao.ATTR_PRECIO));
 			resultado = this.daoHelper.insert(this.hotelServiceExtraDao, attrMap);
 			resultado.setMessage("HotelSeriveExtra registrada");
-
+		
+		}
+		catch(NumberFormatException e) {
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR  +e.getMessage());
 		} catch (MissingFieldsException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());
 		} catch (DuplicateKeyException e) {
@@ -67,7 +72,7 @@ public class HotelServiceExtraService implements IHotelServiceExtraService {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);
 		} catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
-		}
+		} 
 
 		return resultado;
 	}
@@ -79,14 +84,18 @@ public class HotelServiceExtraService implements IHotelServiceExtraService {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
 			ValidateFields.required(keyMap, HotelServiceExtraDao.ATTR_ID_SXT, HotelServiceExtraDao.ATTR_ID_HTL);
+			ValidateFields.formatprice(attrMap.get(HotelServiceExtraDao.ATTR_PRECIO));
 			resultado = this.daoHelper.update(this.hotelServiceExtraDao, attrMap, keyMap);
 			System.err.println(resultado);
 			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
 				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
 			} else {
 				resultado.setMessage("Service Extra actualizado");
-			}
-		} catch (MissingFieldsException e) {
+				}
+		}
+		catch(NumberFormatException e) {
+				resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR  +e.getMessage());
+		}catch (MissingFieldsException e) {
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + e.getMessage());
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
