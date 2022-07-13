@@ -202,7 +202,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n \"columns\": [\"cst_name\", \"cst_surname\", \"cst_email\"]\r\n}",
+					"raw": "{\r\n \"columns\": [\"cst_id\",\"cst_name\", \"cst_surnames\", \"cst_nationality\", \"cst_phone\", \"cst_email\"]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -210,7 +210,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:33333/customers/customer/search",
+					"raw": "http://localhost:33333/customers/mailAgreement/search",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -218,7 +218,7 @@
 					"port": "33333",
 					"path": [
 						"customers",
-						"customer",
+						"mailAgreement",
 						"search"
 					]
 				}
