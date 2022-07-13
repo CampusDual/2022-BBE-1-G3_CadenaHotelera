@@ -135,7 +135,7 @@ public class ValidateFields {
 			throw new MissingFieldsException("El campo " + field + " es nulo");
 		}
 		if (keyMap.get(field).toString().trim().length() == 0) {
-			throw new MissingFieldsException("El campo " + field + " no puede contener sólo espacios en blanco");
+			throw new MissingFieldsException("El campo " + field + " no puede contener sólo espacios en blanco.");
 		}
 	}
 	

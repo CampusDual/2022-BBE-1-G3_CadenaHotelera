@@ -51,7 +51,7 @@ public class ServicesXtraService implements IServicesXtraService{
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
 //			ValidateFields.required(attrMap, ServicesXtraDao.ATTR_NAME);
-			ValidateFields.emptyFields(attrMap, ServicesXtraDao.ATTR_NAME);
+			ValidateFields.emptyFields(attrMap, ServicesXtraDao.ATTR_NAME, ServicesXtraDao.ATTR_DESCRIPTION);
 			resultado = this.daoHelper.insert(this.servicesXtraDao, attrMap);
 			resultado.setMessage("ServiceXtra registrado");
 
