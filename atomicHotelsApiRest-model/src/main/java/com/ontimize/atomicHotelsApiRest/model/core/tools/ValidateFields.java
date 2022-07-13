@@ -146,4 +146,14 @@ Los precios vienen en una variedad de formatos que pueden contener decimales, co
 Esta expresión regular puede comprobar todos estos diferentes formatos para sacar el precio de cualquier cadena.
 	 */
 
+	public static void formatprice(Object object) throws NumberFormatException {
+		String pre = ""+object;
+		String comprueba = pre.substring(pre.indexOf(".")+1);
+		if(comprueba.length()>2) {
+			throw new NumberFormatException("Introduce solo 2 decimales");
+		}
+		
+	}
+
+
 }
