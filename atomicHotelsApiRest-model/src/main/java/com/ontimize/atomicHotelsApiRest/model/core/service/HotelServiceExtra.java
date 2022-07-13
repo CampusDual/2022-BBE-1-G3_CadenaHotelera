@@ -18,8 +18,10 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsExcepti
 import com.ontimize.atomicHotelsApiRest.api.core.service.IHotelServiceExtraService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelServiceExtraDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomTypeFeatureDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.ServicesXtraDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
@@ -55,13 +57,32 @@ public class HotelServiceExtra implements IHotelServiceExtraService {
 	@Override
 	public EntityResult hotelServiceExtraInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException, MissingFieldsException 
 	{
-	try{
-			ValidateFields.required(attrMap, HotelServiceExtraDao.ATTR_ID_HTL, HotelServiceExtraDao.ATTR_ID_SXT);
-			System.err.println(attrMap.entrySet());
-			return this.daoHelper.insert(this.hotelServiceExtraDao, attrMap);
-		} catch (MissingFieldsException e) {
-			return new EntityResultWrong(e.getMessage());
-		}
+//	try{
+//			ValidateFields.required(attrMap, HotelServiceExtraDao.ATTR_ID_HTL, HotelServiceExtraDao.ATTR_ID_SXT);
+//			System.err.println(attrMap.entrySet());
+//			return this.daoHelper.insert(this.hotelServiceExtraDao, attrMap);
+//		} catch (MissingFieldsException e) {
+//			return new EntityResultWrong(e.getMessage());
+//		}
+	
+	EntityResult resultado = new EntityResultMapImpl();
+	try {
+		
+		ValidateFields.required(attrMap, HotelServiceExtraDao.ATTR_ID_HTL, HotelServiceExtraDao.ATTR_ID_SXT);	
+		resultado = this.daoHelper.insert(this.hotelServiceExtraDao, attrMap);	
+		resultado.setMessage("HotelSeriveExtra registrada");
+
+	} catch (MissingFieldsException e) {
+		resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());			
+	} catch (DuplicateKeyException e) {
+		resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+	}catch (DataIntegrityViolationException e) {
+		resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);		
+	} catch (Exception e) {
+		resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
+	}
+	
+	return resultado;
 	}
 	
 /*	@Override
