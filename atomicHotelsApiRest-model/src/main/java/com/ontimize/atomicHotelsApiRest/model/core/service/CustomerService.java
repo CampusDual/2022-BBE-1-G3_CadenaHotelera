@@ -160,4 +160,19 @@ public class CustomerService implements ICustomerService {
 		EntityResultExtraTools.putBasicExpression(keyMap, expresion);				
 		return this.daoHelper.query(this.customerDao, keyMap, attrList);
 	}
+	
+	/**Método para comprobar que los datos del atributo país, concuerden con los de la tabla countries
+	 * 
+	 */
+/*	@Override
+	public EntityResult checkCountryQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException {
+		EntityResult resultado = this.daoHelper.query(this.customerDao, keyMap, attrList, "queryCheckCountry");
+		return resultado;
+
+		
+		//mirar atributo country cuando se cambie customers
+		ValidateFields.emptyField(attrList, CustomerDao.ATTR_COUNTRY);
+	
+	}
+*/
 }
