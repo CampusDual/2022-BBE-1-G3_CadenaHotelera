@@ -198,12 +198,17 @@ CREATE TABLE public.creditcard (
 
 -- DROP TABLE public.customers_creditcard;
 
-CREATE table customers_creditcard (
-cst_id int4 not null unique primary key,
-crd_id int4 not null unique,
-foreign key(cst_id) references public.customers(cst_id),
-foreign key(crd_id) references public.creditcard(crd_id)
+CREATE TABLE public.customers_creditcard (
+	cst_id int4 NOT NULL,
+	crd_id int4 NOT NULL,
+	CONSTRAINT customers_creditcard_crd_id_key UNIQUE (crd_id)
 );
+
+
+-- public.customers_creditcard foreign keys
+
+ALTER TABLE public.customers_creditcard ADD CONSTRAINT customers_creditcard_crd_id_fkey FOREIGN KEY (crd_id) REFERENCES public.creditcard(crd_id);
+ALTER TABLE public.customers_creditcard ADD CONSTRAINT customers_creditcard_cst_id_fkey FOREIGN KEY (cst_id) REFERENCES public.customers(cst_id);
 
 --DROP TABLE public.bookings_services_extra;
 CREATE TABLE public.bookings_services_extra(
