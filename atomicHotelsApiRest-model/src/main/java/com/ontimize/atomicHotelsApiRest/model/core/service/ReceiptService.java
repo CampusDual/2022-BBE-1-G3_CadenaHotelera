@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.text.Keymap;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -17,6 +19,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.service.IReceiptService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.ReceiptDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomTypeDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
@@ -50,11 +53,8 @@ public class ReceiptService implements IReceiptService {
 	public EntityResult totalHabitacionQuery(Map<String, Object> keyMap, List<String> attrList) {
 
 		EntityResult resultado = new EntityResultMapImpl();
-
-		try {
-			
+		try {		
 			ValidateFields.required(keyMap, BookingDao.ATTR_ID);
-//			ValidateFields.restricted(keyMap, BookingDao.ATTR_ID);
 			resultado = this.daoHelper.query(this.receiptDao, keyMap, attrList, "queryRecibo");
 
 		} catch (MissingFieldsException e) {
@@ -75,11 +75,28 @@ public class ReceiptService implements IReceiptService {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
 
-			ValidateFields.required(attrMap, ReceiptDao.ATTR_BOOKING_ID);
+			ValidateFields.required(attrMap, BookingDao.ATTR_ID);
 
-			if (bookingService.getBookingStatus(attrMap.get(ReceiptDao.ATTR_BOOKING_ID))
+			if (bookingService.getBookingStatus(attrMap.get(BookingDao.ATTR_ID))
 					.equals(BookingDao.Status.COMPLETED)) {
+				
 				// TODO Y calcular el total!!
+				List<String> lista = new ArrayList<String>();
+				lista.add(BookingDao.ATTR_ID);
+				lista.add(RoomTypeDao.ATTR_PRICE);
+				lista.add(ReceiptDao.ATTR_DIAS);
+				
+				EntityResult habitacion = this.totalHabitacionQuery(attrMap,lista);
+		
+				Map reserva = (Map) habitacion.getRecordValues(0).get(BookingDao.ATTR_ID);
+				int r =(int)reserva.get(BookingDao.ATTR_ID);
+				long precio = (long) habitacion.getRecordValues(0).get(RoomTypeDao.ATTR_PRICE);
+				int dias = (int) habitacion.getRecordValues(0).get(ReceiptDao.ATTR_DIAS);
+				
+				
+				long total = dias*precio;
+				
+				attrMap.put(ReceiptDao.ATTR_TOTAL_ROOM, total);
 
 				resultado = this.daoHelper.insert(this.receiptDao, attrMap);
 				resultado.setMessage("Receipt registrada");
