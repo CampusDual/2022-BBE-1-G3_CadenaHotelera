@@ -28,16 +28,16 @@ import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 
 @Service("ReceiptService")
 @Lazy
-public class ReceiptService implements IReceiptService{
-	
+public class ReceiptService implements IReceiptService {
+
 	@Autowired
 	private ReceiptDao receiptDao;
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
-	
+
 	@Autowired
 	private BookingService bookingService;
-	
+
 //	@Override
 //	public EntityResult totalHabitacionQuery(Map<String, Object> keysValues, List<String> attrList) {
 //		EntityResult queryRes = this.daoHelper.query(this.receiptDao,
@@ -45,10 +45,22 @@ public class ReceiptService implements IReceiptService{
 //				EntityResultTools.attributes(ReceiptDao.ATTR_BOOKING_ID,"queryRecibo");
 //		return queryRes;
 //	}
-	
+
 	@Override
 	public EntityResult totalHabitacionQuery(Map<String, Object> keyMap, List<String> attrList) {
-		return this.daoHelper.query(this.receiptDao, keyMap, attrList, "queryRecibo");
+
+		EntityResult resultado = new EntityResultMapImpl();
+
+		try {
+			
+			ValidateFields.required(keyMap, BookingDao.ATTR_ID);
+//			ValidateFields.restricted(keyMap, BookingDao.ATTR_ID);
+			resultado = this.daoHelper.query(this.receiptDao, keyMap, attrList, "queryRecibo");
+
+		} catch (MissingFieldsException e) {
+			resultado = new EntityResultWrong(e.getMessage());
+		}
+		return resultado;
 	}
 
 	@Override
@@ -62,27 +74,29 @@ public class ReceiptService implements IReceiptService{
 	public EntityResult receiptInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			
-			ValidateFields.required(attrMap, ReceiptDao.ATTR_BOOKING_ID); 	
-			
-			if(bookingService.getBookingStatus(attrMap.get(ReceiptDao.ATTR_BOOKING_ID)).equals(BookingDao.Status.COMPLETED)) {
-				//TODO  Y calcular el total!!
-				
+
+			ValidateFields.required(attrMap, ReceiptDao.ATTR_BOOKING_ID);
+
+			if (bookingService.getBookingStatus(attrMap.get(ReceiptDao.ATTR_BOOKING_ID))
+					.equals(BookingDao.Status.COMPLETED)) {
+				// TODO Y calcular el total!!
+
 				resultado = this.daoHelper.insert(this.receiptDao, attrMap);
 				resultado.setMessage("Receipt registrada");
-			
-			}else {
-				resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + "- No se puede generar un recibo de una reserva que no está completada");
+
+			} else {
+				resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR
+						+ "- No se puede generar un recibo de una reserva que no está completada");
 			}
-		}catch(EntityResultRequiredException e) {
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR +"-"+ e.getMessage());
-			
+		} catch (EntityResultRequiredException e) {
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + "-" + e.getMessage());
+
 		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR  +"-"+ e.getMessage());
-			
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + "-" + e.getMessage());
+
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
-			
+
 		} catch (DataIntegrityViolationException e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);
@@ -113,7 +127,8 @@ public class ReceiptService implements IReceiptService{
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
 		} catch (DataIntegrityViolationException e) {
 			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FK+" / "+ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
+			resultado = new EntityResultWrong(
+					ErrorMessage.UPDATE_ERROR_MISSING_FK + " / " + ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR);
@@ -145,7 +160,7 @@ public class ReceiptService implements IReceiptService{
 		}
 		return resultado;
 	}
-	
+
 //	public BookingDao.Status getBookingStatus(Object bookingId) throws EntityResultRequiredException {
 //		Map<String, Object> keyMap = new HashMap<>();
 //		keyMap.put(BookingDao.ATTR_ID, bookingId);
