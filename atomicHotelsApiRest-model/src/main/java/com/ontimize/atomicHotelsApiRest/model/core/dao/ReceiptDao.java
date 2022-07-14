@@ -16,4 +16,5 @@ public class ReceiptDao extends OntimizeJdbcDaoSupport{
 	public static final String ATTR_DATE = TAG+"date";
 	public static final String ATTR_BOOKING_ID = TAG+"bkg_id";
 	public static final String ATTR_TOTAL = TAG+"total";
+	public static final String ATTR_DIAS = TAG+"dias";
 }
