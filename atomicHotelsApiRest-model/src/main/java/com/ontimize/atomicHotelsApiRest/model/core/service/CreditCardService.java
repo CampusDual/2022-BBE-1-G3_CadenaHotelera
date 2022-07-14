@@ -71,8 +71,8 @@ public class CreditCardService implements ICreditCardService{
 			ValidateFields.required(keyMap,CreditCardDao.ATTR_ID);
 
 			EntityResult auxEntity = this.daoHelper.query(this.creditCardDao,
-					EntityResultTools.keysvalues(CreditCardDao.ATTR_ID, keyMap.get(CreditCardDao.ATTR_ID),CustomerDao.ATTR_ID, keyMap.get(CustomerDao.ATTR_ID)),
-					EntityResultTools.attributes(CreditCardDao.ATTR_ID,CustomerDao.ATTR_ID));
+					EntityResultTools.keysvalues(CreditCardDao.ATTR_ID, keyMap.get(CreditCardDao.ATTR_ID)),
+					EntityResultTools.attributes(CreditCardDao.ATTR_ID));
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
 				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
 			} else {
