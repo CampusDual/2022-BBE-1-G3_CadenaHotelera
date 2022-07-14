@@ -45,7 +45,7 @@ public class RoomService implements IRoomService {
 	@Override
 	public EntityResult roomQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
-		EntityResult resultado = this.daoHelper.query(this.roomDao, keyMap, attrList);
+		EntityResult resultado = this.daoHelper.query(this.roomDao, keyMap, attrList, "queryEnabledRooms");
 		return resultado;
 	}
 
