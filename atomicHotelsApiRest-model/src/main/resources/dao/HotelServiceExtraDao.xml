@@ -6,13 +6,12 @@
 	catalog="" schema="${mainschema}" table="hotels_services_extra"
 	datasource="mainDataSource" sqlhandler="dbSQLStatementHandler">
 	<DeleteKeys>
-		<Column>sxt_id</Column>
-		<Column>htl_id</Column>
+		<Column>hsx_id</Column>
 	</DeleteKeys>
 	<UpdateKeys>
-		<Column>sxt_id</Column>
-		<Column>htl_id</Column>
+		<Column>hsx_id</Column>
 	</UpdateKeys>
+		<GeneratedKey>hsx_id</GeneratedKey>
 	<Queries>
 	<Query id="relacionHotelExtra">
 		<Sentence>

@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IHotelServiceExtraService;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.FeatureDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelServiceExtraDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomDao;
@@ -59,7 +60,7 @@ public class HotelServiceExtraService implements IHotelServiceExtraService {
 			ValidateFields.required(attrMap, HotelServiceExtraDao.ATTR_ID_HTL, HotelServiceExtraDao.ATTR_ID_SXT, HotelServiceExtraDao.ATTR_PRECIO);
 			ValidateFields.formatprice(attrMap.get(HotelServiceExtraDao.ATTR_PRECIO));
 			resultado = this.daoHelper.insert(this.hotelServiceExtraDao, attrMap);
-			resultado.setMessage("HotelSeriveExtra registrada");
+			resultado.setMessage("HotelServiceExtra registrado");
 		
 		}
 		catch(NumberFormatException e) {
@@ -73,7 +74,6 @@ public class HotelServiceExtraService implements IHotelServiceExtraService {
 		} catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
 		} 
-
 		return resultado;
 	}
 
@@ -83,12 +83,11 @@ public class HotelServiceExtraService implements IHotelServiceExtraService {
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			ValidateFields.required(keyMap, HotelServiceExtraDao.ATTR_ID_SXT, HotelServiceExtraDao.ATTR_ID_HTL);
+			ValidateFields.required(keyMap, HotelServiceExtraDao.ATTR_ID_HSX);
 			ValidateFields.formatprice(attrMap.get(HotelServiceExtraDao.ATTR_PRECIO));
-			resultado = this.daoHelper.update(this.hotelServiceExtraDao, attrMap, keyMap);
-			System.err.println(resultado);
+			resultado = this.daoHelper.update(this.hotelServiceExtraDao, attrMap, keyMap);;
 			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
-				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
+					resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
 			} else {
 				resultado.setMessage("Service Extra actualizado");
 				}
@@ -112,13 +111,10 @@ public class HotelServiceExtraService implements IHotelServiceExtraService {
 
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			ValidateFields.required(keyMap, HotelServiceExtraDao.ATTR_ID_HTL, HotelServiceExtraDao.ATTR_ID_SXT);
+			ValidateFields.required(keyMap, HotelServiceExtraDao.ATTR_ID_HSX);
 			EntityResult auxEntity = this.daoHelper.query(this.hotelServiceExtraDao,
-					EntityResultTools.keysvalues(HotelServiceExtraDao.ATTR_ID_HTL,
-							keyMap.get(HotelServiceExtraDao.ATTR_ID_HTL), HotelServiceExtraDao.ATTR_ID_SXT,
-							keyMap.get(HotelServiceExtraDao.ATTR_ID_SXT)),
-					EntityResultTools.attributes(HotelServiceExtraDao.ATTR_ID_HTL, HotelServiceExtraDao.ATTR_ID_SXT));
-			System.err.println(auxEntity.entrySet());
+					EntityResultTools.keysvalues(HotelServiceExtraDao.ATTR_ID_HSX, keyMap.get(HotelServiceExtraDao.ATTR_ID_HSX)),
+					EntityResultTools.attributes(HotelServiceExtraDao.ATTR_ID_HSX));
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
 				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
 			} else {
