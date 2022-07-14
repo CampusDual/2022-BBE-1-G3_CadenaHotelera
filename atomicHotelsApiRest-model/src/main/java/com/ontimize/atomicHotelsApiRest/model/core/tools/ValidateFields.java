@@ -140,10 +140,7 @@ public class ValidateFields {
 	}
 	
 	/*
-	 * Para extraer precio
-/($[0-9,]+(.[0-9]{2})?)/
-Los precios vienen en una variedad de formatos que pueden contener decimales, comas y símbolos de moneda. 
-Esta expresión regular puede comprobar todos estos diferentes formatos para sacar el precio de cualquier cadena.
+	 * comprueba que un formato de precio tenga como maximo 2 decimales
 	 */
 
 	public static void formatprice(Object object) throws NumberFormatException {
