@@ -27,6 +27,7 @@ import org.springframework.dao.DuplicateKeyException;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomDao;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
@@ -50,9 +51,15 @@ class testRoomService {
 		@Test
 		@DisplayName("Clave duplicada")
 		void when_already_exist() {
-			when(daoHelper.insert(any(),anyMap())).thenThrow(DuplicateKeyException.class);		
-			EntityResult entityResult = service.roomInsert(new HashMap<>());
+			when(daoHelper.insert(any(),anyMap())).thenThrow(DuplicateKeyException.class);
+			Map<String, Object> attrMap = new HashMap<>() {{
+				put(RoomDao.ATTR_HOTEL_ID,1);
+				put(RoomDao.ATTR_NUMBER,1);			
+			}};			
+			EntityResult entityResult = service.roomInsert(attrMap);
+//			EntityResult entityResult = service.roomInsert(new HashMap<>());
 			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(),entityResult.getMessage());
+			assertEquals(entityResult.getMessage(), ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 
 		}
 
