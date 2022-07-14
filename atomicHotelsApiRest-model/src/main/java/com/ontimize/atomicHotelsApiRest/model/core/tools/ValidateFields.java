@@ -3,6 +3,7 @@ package com.ontimize.atomicHotelsApiRest.model.core.tools;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
@@ -39,6 +40,17 @@ public class ValidateFields {
 	public static void restricted(Map<String, Object> keyMap, String... fields){
 		for (String field : fields) {
 			keyMap.remove(field);
+		}
+	}
+	
+	/**
+	 * Elimina campos restringidos de la lista
+	 * @param keyMap HashMap a actualizar
+	 * @param fields campos a eliminar
+	 */
+	public static void restricted(List<String> attrList, String... fields){
+		for (String field : fields) {
+			attrList.remove(field);
 		}
 	}
 	

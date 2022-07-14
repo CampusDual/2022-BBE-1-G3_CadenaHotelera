@@ -1,5 +1,6 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -19,9 +20,14 @@ import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.FeatureDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomDao;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultExtraTools;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
+import com.ontimize.jee.common.db.SQLStatementBuilder;
+import com.ontimize.jee.common.db.SQLStatementBuilder.BasicExpression;
+import com.ontimize.jee.common.db.SQLStatementBuilder.BasicField;
+import com.ontimize.jee.common.db.SQLStatementBuilder.BasicOperator;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
@@ -30,52 +36,57 @@ import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 
 @Service("CustomerService")
 @Lazy
-public class CustomerService implements ICustomerService{
+public class CustomerService implements ICustomerService {
 
- @Autowired private CustomerDao customerDao;
- @Autowired private DefaultOntimizeDaoHelper daoHelper;
- 
- @Override
- public EntityResult customerQuery(Map<String, Object> keyMap, List<String> attrList)
-   throws OntimizeJEERuntimeException {
-  return this.daoHelper.query(this.customerDao, keyMap, attrList);
- }
+	@Autowired
+	private CustomerDao customerDao;
+	@Autowired
+	private DefaultOntimizeDaoHelper daoHelper;
 
- @Override
- public EntityResult customerInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
-	 
+	@Override
+	public EntityResult customerQuery(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException {
+		return this.daoHelper.query(this.customerDao, keyMap, attrList);
+	}
+
+	@Override
+	public EntityResult customerInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
+
 		EntityResult resultado = new EntityResultMapImpl();
 
 		try {
 
-	//		ValidateFields.emptyFields(attrMap, CustomerDao.ATTR_NAME, CustomerDao.ATTR_SURNAMES, CustomerDao.ATTR_DNI,
-	//				CustomerDao.ATTR_NATIONALITY,CustomerDao.ATTR_PHONE,CustomerDao.ATTR_CREDITCARD, CustomerDao.ATTR_VALID_DATE);
-		
+			// ValidateFields.emptyFields(attrMap, CustomerDao.ATTR_NAME,
+			// CustomerDao.ATTR_SURNAMES, CustomerDao.ATTR_DNI,
+			// CustomerDao.ATTR_NATIONALITY,CustomerDao.ATTR_PHONE,CustomerDao.ATTR_CREDITCARD,
+			// CustomerDao.ATTR_VALID_DATE);
+
 			ValidateFields.emptyFields(attrMap, CustomerDao.ATTR_NAME, CustomerDao.ATTR_SURNAMES, CustomerDao.ATTR_DNI,
-					CustomerDao.ATTR_NATIONALITY,CustomerDao.ATTR_PHONE,CustomerDao.ATTR_CREDITCARD, CustomerDao.ATTR_VALID_DATE);
-			
+					CustomerDao.ATTR_NATIONALITY, CustomerDao.ATTR_PHONE, CustomerDao.ATTR_CREDITCARD,
+					CustomerDao.ATTR_VALID_DATE);
+
 			resultado = this.daoHelper.insert(this.customerDao, attrMap);
 
 			resultado.setMessage("Customer registrado");
 
 		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());	
-			
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());
+
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 
 		} catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
 		}
-		
-		return resultado;
-		
- }
 
- @Override
- public EntityResult customerUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
-   throws OntimizeJEERuntimeException {
-	 
+		return resultado;
+
+	}
+
+	@Override
+	public EntityResult customerUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
+			throws OntimizeJEERuntimeException {
+
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
 			ValidateFields.required(keyMap, CustomerDao.ATTR_ID);
@@ -97,13 +108,13 @@ public class CustomerService implements ICustomerService{
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR);
 		}
-		return resultado; 
- }
+		return resultado;
+	}
 
- @Override
- public EntityResult customerDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
-	 
-	 EntityResult resultado = new EntityResultMapImpl();
+	@Override
+	public EntityResult customerDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
+
+		EntityResult resultado = new EntityResultMapImpl();
 		try {
 			ValidateFields.required(keyMap, CustomerDao.ATTR_ID);
 
@@ -124,14 +135,24 @@ public class CustomerService implements ICustomerService{
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR);
 		}
 		return resultado;
-	
- }
- 
- @Override
+
+	}
+
+	@Override
 	public EntityResult mailAgreementQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = this.daoHelper.query(this.customerDao, keyMap, attrList, "queryAgreementEmails");
 		return resultado;
 	}
- 
+	
+	@Override
+	public EntityResult mailAgreement2Query(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException {
+		ValidateFields.restricted(attrList, CustomerDao.ATTR_CREDITCARD,CustomerDao.ATTR_PHONE);
+		
+		BasicField mailAgreement = new BasicField(CustomerDao.ATTR_MAIL_AGREEMENT);
+		BasicExpression expresion = new BasicExpression(mailAgreement, BasicOperator.EQUAL_OP, true);				
+		EntityResultExtraTools.putBasicExpression(keyMap, expresion);				
+		return this.daoHelper.query(this.customerDao, keyMap, attrList);
+	}
 }

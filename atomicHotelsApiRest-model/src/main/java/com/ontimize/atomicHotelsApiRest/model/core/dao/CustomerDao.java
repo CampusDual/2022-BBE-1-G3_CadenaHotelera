@@ -23,5 +23,7 @@ public class CustomerDao extends OntimizeJdbcDaoSupport {
 	public static final String ATTR_PHONE = TAG+"phone";
 	public static final String ATTR_CREDITCARD = TAG+"creditcard";
 	public static final String ATTR_VALID_DATE = TAG+"valid_date";
+//	public static final String ATTR_MAIL_AGREEMENT = TAG+"mailagreement";
+	public static final String ATTR_MAIL_AGREEMENT = "mailagreement";
 
 }
