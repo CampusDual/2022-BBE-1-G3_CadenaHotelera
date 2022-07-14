@@ -22,7 +22,19 @@ catalog="" schema="${mainschema}" table="customers" datasource="mainDataSource" 
 					#WHERE_CONCAT#						     					     
 				]]>
 			</Sentence>
-				
 		</Query>
+<!-- falta modificar customers (BG-141) 		<Query id="queryCheckCountry"> -->
+<!-- 			<Sentence> -->
+<!-- 				<![CDATA[ -->
+<!-- 					SELECT -->
+<!-- 					#COLUMNS# -->
+<!-- 					FROM -->
+<!-- 					customers -->
+<!-- 					WHERE  -->
+<!-- 					country	 -->
+<!-- 					#WHERE_CONCAT#						     					      -->
+<!-- 				]]> -->
+<!-- 			</Sentence> -->
+<!-- 		</Query> -->
 	</Queries>
 </JdbcEntitySetup>
