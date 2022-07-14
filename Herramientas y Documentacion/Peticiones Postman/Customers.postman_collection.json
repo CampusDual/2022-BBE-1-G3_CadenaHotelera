@@ -136,7 +136,7 @@
 			"response": []
 		},
 		{
-			"name": "-R mail",
+			"name": "-R mails",
 			"request": {
 				"auth": {
 					"type": "basic",
@@ -157,7 +157,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n \"columns\": [\"cst_name\", \"cst_surname\", \"cst_email\"]\r\n}",
+					"raw": "{\r\n \"columns\": [\"cst_name\", \"cst_surnames\", \"cst_email\"]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -181,7 +181,97 @@
 			"response": []
 		},
 		{
-			"name": "-R Listado mail consentimiento",
+			"name": "-R mail individual consentimiento",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"mailAgreement\": true,\r\n        \"cst_id\":9\r\n    },\r\n \"columns\": [\"cst_name\", \"cst_surnames\", \"cst_email\", \"mailAgreement\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/customers/mailAgreement/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"customers",
+						"mailAgreement",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R lista mail consentimiento filtrando con postman",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"mailAgreement\": true\r\n    },\r\n    \"columns\": [\"cst_name\", \"cst_surnames\", \"cst_email\", \"mailAgreement\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/customers/customer/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"customers",
+						"customer",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R lista mail consentimiento filtrando con método",
 			"request": {
 				"auth": {
 					"type": "basic",

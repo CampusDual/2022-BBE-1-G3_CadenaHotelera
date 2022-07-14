@@ -16,7 +16,7 @@ public interface ICustomerService {
 	public EntityResult customerUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
 	public EntityResult customerDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
 	public EntityResult mailAgreementQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
-	EntityResult mailAgreement2Query(Map<String, Object> keyMap, List<String> attrList)
+	public EntityResult mailAgreementBasicExpressionQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException;
 
 }

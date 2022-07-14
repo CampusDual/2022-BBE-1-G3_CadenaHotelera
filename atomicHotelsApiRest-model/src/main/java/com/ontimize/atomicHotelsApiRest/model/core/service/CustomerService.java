@@ -137,7 +137,12 @@ public class CustomerService implements ICustomerService {
 		return resultado;
 
 	}
-
+ 
+/**
+ * Creamos dos métodos para leer, mostrar y restringir mails de customers.
+ * En el primero llamamos al método alojado en la Interfaz y lo sobreescribimos, para posteriormente realizar lo dispuesto en el xml.
+ * En el segundo, validamos con el restricted de la clase ValidateFields, y creamos una basicExpression en la que indicamos que el campo mailAgreement, debe ser true	
+ */
 	@Override
 	public EntityResult mailAgreementQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
@@ -146,7 +151,7 @@ public class CustomerService implements ICustomerService {
 	}
 	
 	@Override
-	public EntityResult mailAgreement2Query(Map<String, Object> keyMap, List<String> attrList)
+	public EntityResult mailAgreementBasicExpressionQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		ValidateFields.restricted(attrList, CustomerDao.ATTR_CREDITCARD,CustomerDao.ATTR_PHONE);
 		

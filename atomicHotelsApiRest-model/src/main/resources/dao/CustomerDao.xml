@@ -18,7 +18,8 @@ catalog="" schema="${mainschema}" table="customers" datasource="mainDataSource" 
 					FROM
 					customers
 					WHERE 
-					mailagreement is true					     					     
+					mailagreement is true	
+					#WHERE_CONCAT#						     					     
 				]]>
 			</Sentence>
 				
