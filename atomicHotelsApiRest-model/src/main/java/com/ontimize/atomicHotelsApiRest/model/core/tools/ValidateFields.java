@@ -11,7 +11,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesE
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 
 public class ValidateFields {
-	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"){{setLenient(false);}};;
 
 	public ValidateFields() {
 	}

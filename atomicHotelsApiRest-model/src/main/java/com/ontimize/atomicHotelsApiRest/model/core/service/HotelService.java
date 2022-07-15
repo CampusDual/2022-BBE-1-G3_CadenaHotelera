@@ -67,9 +67,10 @@ public class HotelService implements IHotelService {
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 
-		} catch (Exception e) {
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
-		}
+		} 
+//		catch (Exception e) {
+//			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
+//		}
 
 		// OPCION A (comprobando si el registro ya existe)
 //		if (attrMap.containsKey(HotelDao.ATTR_NAME)) {

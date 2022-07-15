@@ -335,13 +335,12 @@ class HotelServiceTest {
 					put(HotelDao.ATTR_IS_OPEN, 1);
 				}
 			};
-			try (MockedStatic<ValidateFields> vf = Mockito.mockStatic(ValidateFields.class)) {
-				vf.when(() -> ValidateFields.required(anyMap(), anyString())).thenThrow(MissingFieldsException.class);
+			//try (MockedStatic<ValidateFields> vf = Mockito.mockStatic(ValidateFields.class)) {
+				//vf.when(() -> ValidateFields.required(anyMap(), anyString())).thenThrow(MissingFieldsException.class);
 				EntityResult entityResult = service.hotelInsert(attrMap);
 				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-				assertEquals(entityResult.getMessage(),
-						ErrorMessage.CREATION_ERROR + "El campo " + HotelDao.ATTR_NAME + " es nulo");
-			}
+				assertEquals(ErrorMessage.CREATION_ERROR + "El campo " + HotelDao.ATTR_NAME + " es nulo",entityResult.getMessage());
+			//}
 
 //			doThrow().when(ValidateFields.required(anyMap(), anyString())).thenThrow(MissingFieldsException.class);
 //			when(daoHelper.insert(any(),anyMap())).thenThrow(new MissingFieldsException("El campo " + HotelDao.ATTR_NAME + " es nulo"));
