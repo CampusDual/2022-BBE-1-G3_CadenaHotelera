@@ -12,4 +12,21 @@
 		<Column>bsx_id</Column>
 	</UpdateKeys>
 		<GeneratedKey>bsx_id</GeneratedKey>
+		 <Queries>
+  <Query id="booking_inprocess">
+   <Sentence>
+   <![CDATA[
+		SELECT 
+		#COLUMNS#
+		FROM bookings_services_extra bse 
+		INNER JOIN bookings b ON bse.bsx_bkg_id = b.bkg_id 
+		WHERE b.bkg_canceled != null OR bse.bsx_date >= b.bkg_checkin 
+		AND bse.bsx_date <= b.bkg_checkout 
+   ]]>
+   </Sentence>
+  </Query>
+ </Queries>
+		
+		
+		
 </JdbcEntitySetup>

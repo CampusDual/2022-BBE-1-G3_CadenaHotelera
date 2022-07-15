@@ -47,11 +47,11 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
 
-			ValidateFields.required(attrMap,BookingServiceExtraDao.ATTR_ID_SXT,BookingServiceExtraDao.ATTR_ID_BKG, BookingServiceExtraDao.ATTR_ID_UNITS);
-			ValidateFields.formatprice(attrMap.get(BookingServiceExtraDao.ATTR_PRECIO));
-			resultado = this.daoHelper.insert(this.bookingServiceExtraDao, attrMap);
-			resultado.setMessage("HotelServiceExtra registrado");
-		
+				ValidateFields.required(attrMap,BookingServiceExtraDao.ATTR_ID_SXT,BookingServiceExtraDao.ATTR_ID_BKG, BookingServiceExtraDao.ATTR_ID_UNITS);
+				ValidateFields.formatprice(attrMap.get(BookingServiceExtraDao.ATTR_PRECIO));
+				resultado = this.daoHelper.insert(this.bookingServiceExtraDao, attrMap);
+				resultado.setMessage("Reserva (booking) ServiceExtra registrado");
+				
 		}
 		catch(NumberFormatException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR  +e.getMessage());
@@ -63,17 +63,20 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);
 		} catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
-		} 
+		}
 		return resultado;
 	}
 
-
-	@Override
+/*
+ * * Comprobar que un recibo ha sido o no facturado.
+ */
+/*	@Override
 	public EntityResult bookingServiceExtraUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			ValidateFields.required(keyMap, BookingServiceExtraDao.ATTR_ID_SXT);
+			
+			ValidateFields.required(keyMap, BookingServiceExtraDao.ATTR_ID_BKGHSX);
 			ValidateFields.formatprice(attrMap.get(BookingServiceExtraDao.ATTR_PRECIO));
 			resultado = this.daoHelper.update(this.bookingServiceExtraDao, attrMap, keyMap);;
 			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
@@ -94,7 +97,7 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR);
 		}
 		return resultado;
-	}
+	}*/
 
 	@Override
 	public EntityResult bookingServiceExtraDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
@@ -109,14 +112,28 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
 			} else {
 				resultado = this.daoHelper.delete(this.bookingServiceExtraDao, keyMap);
-				resultado.setMessage("Reserva "+ keyMap.get(BookingServiceExtraDao.ATTR_ID_BKG) + "Servicio Extra eliminado.");
+				resultado.setMessage(" Servicio "+keyMap.get(BookingServiceExtraDao.ATTR_ID_BKGHSX) + "  Extra eliminado.");
 			}
 		} catch (MissingFieldsException e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + e.getMessage());
+		} catch (DataIntegrityViolationException e) {
+			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
 		} catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR);
 		}
 		return resultado;
 	}
+
+	@Override
+	/*
+	 * RETURNS devuelve las reservas en progreso.
+	 */
+	public EntityResult bookingInProgressQuery(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException {
+		return this.daoHelper.query(this.bookingServiceExtraDao, keyMap, attrList,"booking_inprocess");
+		
+	}
+	
+	
 
 }
