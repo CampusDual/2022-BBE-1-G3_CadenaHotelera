@@ -36,6 +36,8 @@ public class ReceiptService implements IReceiptService {
 	@Autowired
 	private ReceiptDao receiptDao;
 	@Autowired
+	private BookingDao bookingDao;
+	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
 
 	@Autowired
@@ -55,7 +57,7 @@ public class ReceiptService implements IReceiptService {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {		
 			ValidateFields.required(keyMap, BookingDao.ATTR_ID);
-			resultado = this.daoHelper.query(this.receiptDao, keyMap, attrList, "queryRecibo");
+			resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryDiasPrecioUnitario");
 
 		} catch (MissingFieldsException e) {
 			resultado = new EntityResultWrong(e.getMessage());
@@ -74,10 +76,10 @@ public class ReceiptService implements IReceiptService {
 	public EntityResult receiptInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
+			//TODO restringir que meta solo ese y ninguno más
+			ValidateFields.required(attrMap, ReceiptDao.ATTR_BOOKING_ID);
 
-			ValidateFields.required(attrMap, BookingDao.ATTR_ID);
-
-			if (bookingService.getBookingStatus(attrMap.get(BookingDao.ATTR_ID))
+			if (bookingService.getBookingStatus(attrMap.get(ReceiptDao.ATTR_BOOKING_ID))
 					.equals(BookingDao.Status.COMPLETED)) {
 				
 				// TODO Y calcular el total!!
@@ -86,10 +88,14 @@ public class ReceiptService implements IReceiptService {
 				lista.add(RoomTypeDao.ATTR_PRICE);
 				lista.add(ReceiptDao.ATTR_DIAS);
 				
-				EntityResult habitacion = this.totalHabitacionQuery(attrMap,lista);
+				Object a = attrMap.get(ReceiptDao.ATTR_BOOKING_ID);
+				
+				Map<String, Object> idBooking = new HashMap<String, Object>();
+				idBooking.put(BookingDao.ATTR_ID,a);				
+				
+				EntityResult habitacion = this.totalHabitacionQuery(idBooking,lista);
 		
-				Map reserva = (Map) habitacion.getRecordValues(0).get(BookingDao.ATTR_ID);
-				int r =(int)reserva.get(BookingDao.ATTR_ID);
+				int reserva =(int)habitacion.getRecordValues(0).get(BookingDao.ATTR_ID);
 				long precio = (long) habitacion.getRecordValues(0).get(RoomTypeDao.ATTR_PRICE);
 				int dias = (int) habitacion.getRecordValues(0).get(ReceiptDao.ATTR_DIAS);
 				

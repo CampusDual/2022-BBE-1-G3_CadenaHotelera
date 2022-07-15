@@ -14,8 +14,7 @@ catalog="" schema="${mainschema}" table="receipts" datasource="mainDataSource" s
    <Sentence>
    <![CDATA[
      SELECT bkg_id, rmt_price, (bkg_end - bkg_start) AS rcp_dias 
-     FROM PUBLIC.receipts LEFT JOIN public.bookings  ON rcp_bkg_id = bkg_id 
-     LEFT JOIN public.rooms ON bkg_rm_id = rm_id 
+     FROM public.bookings LEFT JOIN public.rooms ON bkg_rm_id = rm_id 
      LEFT JOIN public.room_types ON rmt_id = rm_rmt_id
      #WHERE#
    ]]>
