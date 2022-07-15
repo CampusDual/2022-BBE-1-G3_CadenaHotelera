@@ -1,5 +1,6 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +19,7 @@ import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
 import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.BedComboDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.CreditCardDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
@@ -46,7 +48,8 @@ public class CreditCardService implements ICreditCardService{
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
 			
-			ValidateFields.required(attrMap, CreditCardDao.ATTR_NUMBER, CreditCardDao.ATTR_DATE_EXPIRY);	
+			ValidateFields.required(attrMap, CreditCardDao.ATTR_NUMBER, CreditCardDao.ATTR_DATE_EXPIRY);
+			ValidateFields.invalidCreditCard((long)attrMap.get(CreditCardDao.ATTR_NUMBER));
 			resultado = this.daoHelper.insert(this.creditCardDao, attrMap);	
 			resultado.setMessage("Tarjeta registrada");
 
@@ -56,8 +59,11 @@ public class CreditCardService implements ICreditCardService{
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 		}catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);		
-		} catch (Exception e) {
+		}catch (NumberFormatException e) {
+			resultado =new EntityResultWrong(ErrorMessage.INVALID_NUMBER_CREDITCARD);
+		}catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
+		e.printStackTrace();
 		}
 		
 		return resultado;
@@ -69,7 +75,6 @@ public class CreditCardService implements ICreditCardService{
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
 			ValidateFields.required(keyMap,CreditCardDao.ATTR_ID);
-
 			EntityResult auxEntity = this.daoHelper.query(this.creditCardDao,
 					EntityResultTools.keysvalues(CreditCardDao.ATTR_ID, keyMap.get(CreditCardDao.ATTR_ID)),
 					EntityResultTools.attributes(CreditCardDao.ATTR_ID));
@@ -81,7 +86,9 @@ public class CreditCardService implements ICreditCardService{
 			}
 		} catch (MissingFieldsException e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + e.getMessage());
-		} catch (Exception e) {
+		}catch (DataIntegrityViolationException e) {
+			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
+		}catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR);
 		}

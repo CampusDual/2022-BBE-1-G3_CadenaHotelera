@@ -1,5 +1,6 @@
 package com.ontimize.atomicHotelsApiRest.model.core.tools;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -164,9 +165,12 @@ public class ValidateFields {
 		
 	}
 	
-	/*
+	/**
 	 * comprueba que un numero sea negativo o mayor que 0 si lo es lanza excepcion
+	 * @param numero
+	 * @throws NumberFormatException  error si es menor o igual  0
 	 */
+	 
 	
 	public static void NegativeNotAllowed(int n) throws NumberFormatException{
 		if(n<=0) {
@@ -174,9 +178,26 @@ public class ValidateFields {
 		}
 	}
 	
-	
-	
+
+	/**
+	 * 
+	 * @param int n
+	 * @throws NumberFormatException  si es mayor de 16  o menor de 13
+	 */
+	public static void invalidCreditCard(long n) throws NumberFormatException{
+		  try {
+			  final int LONGITUD_MAXIMA_TARJETA_CREDITO = 16;
+			  final int LONGITUD_MINIMA_TARJETA_CREDITO = 13;
+			  String numero=Long.toString(n);
+			 if( numero.length() < LONGITUD_MINIMA_TARJETA_CREDITO || numero.length() > LONGITUD_MAXIMA_TARJETA_CREDITO){
+	        	  throw new NumberFormatException();
+	          }
+		  	}catch(java.lang.ClassCastException e) {
+		  		throw new NumberFormatException();
+		  	}
+          }
+	}
 	
 
 
-}
+
