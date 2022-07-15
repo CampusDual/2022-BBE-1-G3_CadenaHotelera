@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ontimize.atomicHotelsApiRest.api.core.service.IHotelServiceExtraService;
-import com.ontimize.atomicHotelsApiRest.api.core.service.IHotelServiceService;
 import com.ontimize.jee.server.rest.ORestController;
 
 @RestController 

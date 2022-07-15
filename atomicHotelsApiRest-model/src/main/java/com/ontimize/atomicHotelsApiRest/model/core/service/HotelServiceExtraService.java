@@ -1,29 +1,17 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlAttachmentRef;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Service;
-
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IHotelServiceExtraService;
-import com.ontimize.atomicHotelsApiRest.model.core.dao.FeatureDao;
-import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelServiceExtraDao;
-import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomDao;
-import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomTypeFeatureDao;
-import com.ontimize.atomicHotelsApiRest.model.core.dao.ServicesXtraDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
@@ -32,7 +20,6 @@ import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
 import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
-import com.ontimize.jee.server.dao.IOntimizeDaoSupport;
 
 @Service("HotelServiceExtraService")
 @Lazy
