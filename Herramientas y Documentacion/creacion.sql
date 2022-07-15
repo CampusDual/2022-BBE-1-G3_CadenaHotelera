@@ -163,6 +163,7 @@ rcp_days INTEGER,
 rcp_total_room NUMERIC(7,2),
 rcp_total NUMERIC(7,2),
 FOREIGN KEY(rcp_bkg_id) REFERENCES bookings(bkg_id)
+UNIQUE(rcp_bkg_id)
 );
 
 --BG - 144

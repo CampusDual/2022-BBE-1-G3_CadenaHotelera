@@ -45,16 +45,6 @@ public class ReceiptService implements IReceiptService {
 	@Autowired
 	private BookingService bookingService;
 
-//	@Override
-//	public EntityResult totalHabitacionQuery(Map<String, Object> keysValues, List<String> attrList) {
-//		EntityResult queryRes = this.daoHelper.query(this.receiptDao,
-//				EntityResultTools.keysvalues(ReceiptDao.ATTR_BOOKING_ID, keysValues.get(ReceiptDao.ATTR_BOOKING_ID)),
-//				EntityResultTools.attributes(ReceiptDao.ATTR_BOOKING_ID,"queryRecibo");
-//		return queryRes;
-//	}
-
-
-
 	@Override
 	public EntityResult receiptQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
