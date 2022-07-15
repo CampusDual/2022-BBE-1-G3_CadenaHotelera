@@ -1,7 +1,5 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.jdbc.SQLWarningException;
 import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
@@ -74,9 +71,9 @@ public class ServiceService implements IServiceService{
 			ValidateFields.required(keyMap, ServiceDao.ATTR_ID);
 			resultado = this.daoHelper.update(this.serviceDao, attrMap, keyMap);
 			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
-				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
+					resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
 			} else {
-				resultado.setMessage("Service actualizado");
+					resultado.setMessage("Service actualizado");
 			}
 		} catch (MissingFieldsException e) {
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + e.getMessage());
