@@ -127,5 +127,10 @@ public class RoomTypeService implements IRoomTypeService {
 	public EntityResult infoQuery(Map<String, Object> keyMap, List<String> attrList) {
 		return this.daoHelper.query(this.roomTypeDao, keyMap, attrList, "queryRoomTypes");
 	}
+	
+	@Override
+	public EntityResult infoRoomFeaturesQuery(Map<String, Object> keyMap, List<String> attrList) {
+		return this.daoHelper.query(this.roomTypeDao, keyMap, attrList, "queryRoomFeaturesTypes");
+	}
 
 }
