@@ -163,6 +163,21 @@ public class ValidateFields {
 		}
 		
 	}
+	
+	/*
+	 * comprueba que un numero sea negativo si lo es lanza excepcion
+	 */
+	
+	public static void NegativeNotAllowed(int n) throws NumberFormatException{
+		int numero=n;
+		if(numero<=0) {
+			throw new NumberFormatException("Numero negativo no permitido");
+		}
+	}
+	
+	
+	
+	
 
 
 }

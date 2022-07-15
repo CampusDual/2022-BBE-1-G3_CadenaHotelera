@@ -45,6 +45,7 @@ public class BedComboService implements IBedComboService{
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
 			ValidateFields.required(attrMap,BedComboDao.ATTR_NAME,BedComboDao.ATTR_SLOTS);
+			ValidateFields.NegativeNotAllowed((int) attrMap.get(BedComboDao.ATTR_SLOTS));
 			resultado=this.daoHelper.insert(this.bedComboDao, attrMap);
 			resultado.setMessage("Tipo de cama insertado");
 		} catch (MissingFieldsException e) {
@@ -52,6 +53,9 @@ public class BedComboService implements IBedComboService{
 			
 		}catch (DuplicateKeyException e) {
 			resultado =new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+		}
+		catch (NumberFormatException e) {
+			resultado =new EntityResultWrong(e.getMessage());
 		}
 		catch(Exception e) {
 			resultado=new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
