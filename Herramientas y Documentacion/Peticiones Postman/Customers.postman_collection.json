@@ -202,7 +202,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\":{\r\n        \"mailAgreement\": true,\r\n        \"cst_id\":9\r\n    },\r\n \"columns\": [\"cst_name\", \"cst_surnames\", \"cst_email\", \"mailAgreement\"]\r\n}",
+					"raw": "{\r\n    \"filter\":{\r\n        \"cst_id\":3\r\n    },\r\n \"columns\": [\"cst_name\", \"cst_surnames\", \"cst_email\", \"mailAgreement\"]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"

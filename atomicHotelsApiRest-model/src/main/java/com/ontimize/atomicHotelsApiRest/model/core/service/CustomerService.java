@@ -1,6 +1,8 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -166,13 +168,25 @@ public class CustomerService implements ICustomerService {
 	 */
 /*	@Override
 	public EntityResult checkCountryQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException {
-		EntityResult resultado = this.daoHelper.query(this.customerDao, keyMap, attrList, "queryCheckCountry");
-		return resultado;
+		EntityResult resultado = new EntityResultMapImpl();
+		try{
+			List<String> attrlist = Arrays.asList(CustomerDao.ATTR_COUNTRY);
+			Map<String, Object> col = new HashMap<>();
+			col.put(CustomerDao.ATTR_COUNTRY, attrMap.get(CustomerDao.ATTR_COUNTRY));
+			EntityResult country= this.daoHelper.query(this.customerDao, col, attrlist);
+			
+			if(country!= )
+		
+					
+		}
+		
+//		EntityResult resultado = this.daoHelper.query(this.customerDao, keyMap, attrList, "queryCheckCountry");
+//		return resultado;
 
 		
 		//mirar atributo country cuando se cambie customers
-		ValidateFields.emptyField(attrList, CustomerDao.ATTR_COUNTRY);
+	//	ValidateFields.emptyField(attrList, CustomerDao.ATTR_COUNTRY);
 	
-	}
-*/
+	}	*/
+
 }
