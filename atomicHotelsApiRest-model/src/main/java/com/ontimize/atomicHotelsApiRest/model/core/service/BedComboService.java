@@ -55,7 +55,7 @@ public class BedComboService implements IBedComboService{
 			resultado =new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 		}
 		catch (NumberFormatException e) {
-			resultado =new EntityResultWrong(e.getMessage());
+			resultado =new EntityResultWrong(ErrorMessage.NEGATIVE_OR_CERO_NOT_ALLOWED);
 		}
 		catch(Exception e) {
 			resultado=new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
@@ -69,6 +69,7 @@ public class BedComboService implements IBedComboService{
 		EntityResult resultado=new EntityResultMapImpl();
 		try {
 			ValidateFields.required(keyMap, BedComboDao.ATTR_ID);
+			ValidateFields.NegativeNotAllowed((int) attrMap.get(BedComboDao.ATTR_SLOTS));
 			resultado=this.daoHelper.update(bedComboDao, attrMap, keyMap);
 			if(resultado.getCode()==EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
 				resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD); 
@@ -83,6 +84,8 @@ public class BedComboService implements IBedComboService{
 			}catch( DataIntegrityViolationException e){
 				e.printStackTrace();
 				resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
+			}catch (NumberFormatException e) {
+				resultado =new EntityResultWrong(ErrorMessage.NEGATIVE_OR_CERO_NOT_ALLOWED);
 			}catch(Exception e){
 				e.printStackTrace();
 				resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR);

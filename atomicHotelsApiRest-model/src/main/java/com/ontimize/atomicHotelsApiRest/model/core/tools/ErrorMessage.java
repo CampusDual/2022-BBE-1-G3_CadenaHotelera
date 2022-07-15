@@ -31,4 +31,5 @@ public class ErrorMessage {
 	public static final String DATA_START_BEFORE_TODAY = "La fecha de inicio no puede ser anterior a hoy";	 
 	public static final String REQUIRED_FIELDS = "Faltan campos requeridos";
 	public static final String INVALID_ACTION = "Acción no válida";
+	public static final String NEGATIVE_OR_CERO_NOT_ALLOWED="Número igual o menor a 0 no permitido";
 }
