@@ -275,7 +275,7 @@ public class BookingService implements IBookingService {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {		
 			ValidateFields.required(keyMap, BookingDao.ATTR_ID);
-			resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryDiasPrecioUnitario");
+			resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryDiasPrecioUnitarioHabitacion");
 
 		} catch (MissingFieldsException e) {
 			resultado = new EntityResultWrong(e.getMessage());

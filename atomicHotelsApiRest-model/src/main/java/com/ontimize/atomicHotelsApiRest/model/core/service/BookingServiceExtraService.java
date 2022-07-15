@@ -47,7 +47,7 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
 
-			ValidateFields.required(attrMap,BookingServiceExtraDao.ATTR_ID_HSX,BookingServiceExtraDao.ATTR_ID_BKG, BookingServiceExtraDao.ATTR_ID_UNITS);
+			ValidateFields.required(attrMap,BookingServiceExtraDao.ATTR_ID_SXT,BookingServiceExtraDao.ATTR_ID_BKG, BookingServiceExtraDao.ATTR_ID_UNITS);
 			ValidateFields.formatprice(attrMap.get(BookingServiceExtraDao.ATTR_PRECIO));
 			resultado = this.daoHelper.insert(this.bookingServiceExtraDao, attrMap);
 			resultado.setMessage("HotelServiceExtra registrado");
@@ -73,7 +73,7 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			ValidateFields.required(keyMap, BookingServiceExtraDao.ATTR_ID_HSX);
+			ValidateFields.required(keyMap, BookingServiceExtraDao.ATTR_ID_SXT);
 			ValidateFields.formatprice(attrMap.get(BookingServiceExtraDao.ATTR_PRECIO));
 			resultado = this.daoHelper.update(this.bookingServiceExtraDao, attrMap, keyMap);;
 			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
