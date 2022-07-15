@@ -1,9 +1,11 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Date;
 
 import javax.swing.text.Keymap;
 
@@ -43,28 +45,6 @@ public class ReceiptService implements IReceiptService {
 	@Autowired
 	private BookingService bookingService;
 
-//	@Override
-//	public EntityResult totalHabitacionQuery(Map<String, Object> keysValues, List<String> attrList) {
-//		EntityResult queryRes = this.daoHelper.query(this.receiptDao,
-//				EntityResultTools.keysvalues(ReceiptDao.ATTR_BOOKING_ID, keysValues.get(ReceiptDao.ATTR_BOOKING_ID)),
-//				EntityResultTools.attributes(ReceiptDao.ATTR_BOOKING_ID,"queryRecibo");
-//		return queryRes;
-//	}
-
-	@Override
-	public EntityResult totalHabitacionQuery(Map<String, Object> keyMap, List<String> attrList) {
-
-		EntityResult resultado = new EntityResultMapImpl();
-		try {		
-			ValidateFields.required(keyMap, BookingDao.ATTR_ID);
-			resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryDiasPrecioUnitario");
-
-		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(e.getMessage());
-		}
-		return resultado;
-	}
-
 	@Override
 	public EntityResult receiptQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
@@ -82,7 +62,7 @@ public class ReceiptService implements IReceiptService {
 			if (bookingService.getBookingStatus(attrMap.get(ReceiptDao.ATTR_BOOKING_ID))
 					.equals(BookingDao.Status.COMPLETED)) {
 				
-				// TODO Y calcular el total!!
+				//Cálculo del precio total de la habitación
 				List<String> lista = new ArrayList<String>();
 				lista.add(BookingDao.ATTR_ID);
 				lista.add(RoomTypeDao.ATTR_PRICE);
@@ -93,16 +73,20 @@ public class ReceiptService implements IReceiptService {
 				Map<String, Object> idBooking = new HashMap<String, Object>();
 				idBooking.put(BookingDao.ATTR_ID,a);				
 				
-				EntityResult habitacion = this.totalHabitacionQuery(idBooking,lista);
+				EntityResult habitacion = bookingService.bookingDaysUnitaryRoomPriceQuery(idBooking,lista);
 		
 				int reserva =(int)habitacion.getRecordValues(0).get(BookingDao.ATTR_ID);
-				long precio = (long) habitacion.getRecordValues(0).get(RoomTypeDao.ATTR_PRICE);
+				BigDecimal precio = (BigDecimal) habitacion.getRecordValues(0).get(RoomTypeDao.ATTR_PRICE);
 				int dias = (int) habitacion.getRecordValues(0).get(ReceiptDao.ATTR_DIAS);
 				
 				
-				long total = dias*precio;
+				BigDecimal total = precio.multiply(new BigDecimal(dias)); 
 				
 				attrMap.put(ReceiptDao.ATTR_TOTAL_ROOM, total);
+				attrMap.put(ReceiptDao.ATTR_DIAS, dias);
+				
+				//Cálculo del precio total de los servcios extras
+				//TODO 
 
 				resultado = this.daoHelper.insert(this.receiptDao, attrMap);
 				resultado.setMessage("Receipt registrada");

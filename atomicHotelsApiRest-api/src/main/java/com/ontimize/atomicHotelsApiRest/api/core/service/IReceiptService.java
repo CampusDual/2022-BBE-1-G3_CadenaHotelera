@@ -12,6 +12,5 @@ public interface IReceiptService {
 	 public EntityResult receiptInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException;
 	 public EntityResult receiptUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
 	 public EntityResult receiptDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
-	 public EntityResult totalHabitacionQuery(Map<String, Object> keysValues, List<String> attrList);
 
 }
