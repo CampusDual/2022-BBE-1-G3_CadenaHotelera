@@ -179,25 +179,21 @@ public class ValidateFields {
 	}
 	
 
-	/**
-	 * 
-	 * @param int n
-	 * @throws NumberFormatException  si es mayor de 16  o menor de 13
-	 */
-	public static void invalidCreditCard(long n) throws NumberFormatException{
-		  try {
-			  final int LONGITUD_MAXIMA_TARJETA_CREDITO = 16;
-			  final int LONGITUD_MINIMA_TARJETA_CREDITO = 13;
-			  String numero=Long.toString(n);
-			 if( numero.length() < LONGITUD_MINIMA_TARJETA_CREDITO || numero.length() > LONGITUD_MAXIMA_TARJETA_CREDITO){
-	        	  throw new NumberFormatException();
-	          }
-		  	}catch(java.lang.ClassCastException e) {
-		  		throw new NumberFormatException();
-		  	}
-          }
-	}
+
 	
+public static void invalidCreditCard(long n) throws NumberFormatException{
+	  try {
+		  final int LONGITUD_MAXIMA_TARJETA_CREDITO = 16;
+		  final int LONGITUD_MINIMA_TARJETA_CREDITO = 13;
+		  String numero=Long.toString(n);
+		 if( numero.length() < LONGITUD_MINIMA_TARJETA_CREDITO || numero.length() > LONGITUD_MAXIMA_TARJETA_CREDITO){
+      	  throw new NumberFormatException();
+        }
+	  	}catch(java.lang.ClassCastException e) {
+	  		throw new NumberFormatException();
+	  	}
+    }
+}
 
 
 

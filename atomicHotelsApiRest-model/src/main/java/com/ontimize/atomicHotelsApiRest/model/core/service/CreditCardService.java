@@ -49,7 +49,7 @@ public class CreditCardService implements ICreditCardService{
 		try {
 			
 			ValidateFields.required(attrMap, CreditCardDao.ATTR_NUMBER, CreditCardDao.ATTR_DATE_EXPIRY);
-			ValidateFields.invalidCreditCard((long)attrMap.get(CreditCardDao.ATTR_NUMBER));
+			ValidateFields.invalidCreditCard(((Number)(attrMap.get(CreditCardDao.ATTR_NUMBER))).longValue());
 			resultado = this.daoHelper.insert(this.creditCardDao, attrMap);	
 			resultado.setMessage("Tarjeta registrada");
 
