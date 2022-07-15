@@ -40,7 +40,7 @@ catalog="" schema="${mainschema}" table="bookings" datasource="mainDataSource" s
 		<Query id="queryDiasPrecioUnitario">
    <Sentence>
    <![CDATA[
-     SELECT bkg_id, rmt_price, (bkg_end - bkg_start) AS rcp_dias 
+     SELECT bkg_id, rmt_price, (bkg_end - bkg_start) AS rcp_days 
      FROM public.bookings LEFT JOIN public.rooms ON bkg_rm_id = rm_id 
      LEFT JOIN public.room_types ON rmt_id = rm_rmt_id
      #WHERE#

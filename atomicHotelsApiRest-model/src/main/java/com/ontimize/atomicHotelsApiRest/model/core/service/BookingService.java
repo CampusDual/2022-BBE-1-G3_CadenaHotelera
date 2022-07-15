@@ -261,5 +261,26 @@ public class BookingService implements IBookingService {
 		}
 
 	}
+	
+	/**
+	 * Dado un bkg_id devuelve los días de esa reserva y el precio diario de la habitación
+	 * 
+	 * @param keyMap
+	 * @param attrList
+	 * @throws OntimizeJEERuntimeException
+	 */
+	@Override
+	public EntityResult bookingDaysUnitaryRoomPriceQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException{
+
+		EntityResult resultado = new EntityResultMapImpl();
+		try {		
+			ValidateFields.required(keyMap, BookingDao.ATTR_ID);
+			resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryDiasPrecioUnitario");
+
+		} catch (MissingFieldsException e) {
+			resultado = new EntityResultWrong(e.getMessage());
+		}
+		return resultado;
+	}
 
 }
