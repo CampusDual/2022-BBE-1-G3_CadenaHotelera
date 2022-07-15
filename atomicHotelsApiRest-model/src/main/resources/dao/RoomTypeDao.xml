@@ -26,9 +26,9 @@
 				    SELECT
 				     	#COLUMNS#
 				    FROM
-				     	room_types 
-				     	INNER JOIN room_types_features ON room_types_features.rmt_id = room_types.rmt_id
-				     	INNER JOIN features ON features.ftr_id = room_types_features.ftr_id
+				     	room_types
+				    LEFT JOIN room_types_features USING(rmt_id)
+				    LEFT JOIN features USING(ftr_id)
 				    #WHERE#
 			    ]]>
 			</Sentence>
