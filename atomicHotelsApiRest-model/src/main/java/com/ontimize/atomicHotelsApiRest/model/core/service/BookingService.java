@@ -267,6 +267,7 @@ public class BookingService implements IBookingService {
 	 * 
 	 * @param keyMap
 	 * @param attrList
+	 * @return EntityResult
 	 * @throws OntimizeJEERuntimeException
 	 */
 	@Override
@@ -278,7 +279,7 @@ public class BookingService implements IBookingService {
 			resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryDiasPrecioUnitarioHabitacion");
 
 		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = new EntityResultWrong(ErrorMessage.RESULT_REQUIRED+e.getMessage());
 		}
 		return resultado;
 	}

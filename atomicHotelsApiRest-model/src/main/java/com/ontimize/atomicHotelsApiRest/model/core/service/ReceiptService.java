@@ -40,27 +40,15 @@ public class ReceiptService implements IReceiptService {
 	private ReceiptDao receiptDao;
 
 	@Autowired
-	private BookingDao bookingDao;
-
-	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
 
 	@Autowired
 	private BookingService bookingService;
+	
+	@Autowired
+	private BookingServiceExtraService bookingServiceExtraService;
 
-	@Override
-	public EntityResult bookingExtraServicePriceAundUnitsQuery(Map<String, Object> keyMap, List<String> attrList)
-			throws OntimizeJEERuntimeException {
-
-		EntityResult resultado = new EntityResultMapImpl();
-		try {
-			ValidateFields.required(keyMap, BookingDao.ATTR_ID);
-			resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryServciosExtraPrecioUnidades");
-		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(e.getMessage());
-		}
-		return resultado;
-	}
+	
 
 	@Override
 	public EntityResult receiptQuery(Map<String, Object> keyMap, List<String> attrList)
@@ -79,42 +67,59 @@ public class ReceiptService implements IReceiptService {
 			if (bookingService.getBookingStatus(attrMap.get(ReceiptDao.ATTR_BOOKING_ID))
 					.equals(BookingDao.Status.COMPLETED)) {
 
-				Object a = attrMap.get(ReceiptDao.ATTR_BOOKING_ID);
-				Map<String, Object> idBooking = new HashMap<String, Object>();
-				idBooking.put(BookingDao.ATTR_ID, a);
+				Object reservaEnRecibo = attrMap.get(ReceiptDao.ATTR_BOOKING_ID);
+				Map<String, Object> bkg_id = new HashMap<String, Object>();
+				bkg_id.put(BookingDao.ATTR_ID, reservaEnRecibo);
+				
+				Map<String, Object> bsx_bkg_id = new HashMap<String, Object>();
+				bsx_bkg_id.put(BookingServiceExtraDao.ATTR_ID_BKG, reservaEnRecibo);
 
 				// Cálculo del precio total de la habitación
-				List<String> lista = new ArrayList<String>();
-				lista.add(BookingDao.ATTR_ID);
-				lista.add(RoomTypeDao.ATTR_PRICE);
-				lista.add(ReceiptDao.ATTR_DIAS);
+				List<String> reciboHabitacion = new ArrayList<String>();
+				reciboHabitacion.add(BookingDao.ATTR_ID);
+				reciboHabitacion.add(RoomTypeDao.ATTR_PRICE);
+				reciboHabitacion.add(ReceiptDao.ATTR_DIAS);
 
-				EntityResult habitacion = bookingService.bookingDaysUnitaryRoomPriceQuery(idBooking, lista);
+				EntityResult habitacion = bookingService.bookingDaysUnitaryRoomPriceQuery(bkg_id, reciboHabitacion);
 
-				int reserva = (int) habitacion.getRecordValues(0).get(BookingDao.ATTR_ID);
-				BigDecimal precio = (BigDecimal) habitacion.getRecordValues(0).get(RoomTypeDao.ATTR_PRICE);
+				int reservaHabitacion = (int) habitacion.getRecordValues(0).get(BookingDao.ATTR_ID);
+				BigDecimal precioHabitacion = (BigDecimal) habitacion.getRecordValues(0).get(RoomTypeDao.ATTR_PRICE);
 				int dias = (int) habitacion.getRecordValues(0).get(ReceiptDao.ATTR_DIAS);
 
-				BigDecimal total = precio.multiply(new BigDecimal(dias));
+				BigDecimal totalHabitacion = precioHabitacion.multiply(new BigDecimal(dias));
 
-				attrMap.put(ReceiptDao.ATTR_TOTAL_ROOM, total);
+				attrMap.put(ReceiptDao.ATTR_TOTAL_ROOM, totalHabitacion);
 				attrMap.put(ReceiptDao.ATTR_DIAS, dias);
 
 				// Cálculo del precio total de los servcios extras
-				List<String> lista2 = new ArrayList<String>();
-				lista.add(BookingDao.ATTR_ID);
-				lista.add(BookingServiceExtraDao.ATTR_PRECIO);
-				lista.add(BookingServiceExtraDao.ATTR_ID_UNITS);
+				List<String> reciboServiciosExtra = new ArrayList<String>();
+				reciboServiciosExtra.add(BookingServiceExtraDao.ATTR_ID_BKG);
+				reciboServiciosExtra.add(BookingServiceExtraDao.ATTR_PRECIO);
+				reciboServiciosExtra.add(BookingServiceExtraDao.ATTR_ID_UNITS);
+				reciboServiciosExtra.add("total");
 
-				EntityResult servicios = bookingExtraServicePriceAundUnitsQuery(idBooking, lista2);
+				EntityResult servicios = bookingServiceExtraService.bookingExtraServicePriceUnitsTotalQuery(bsx_bkg_id, reciboServiciosExtra);
 
-				int reserva2 = (int) servicios.getRecordValues(0).get(BookingDao.ATTR_ID);
-				BigDecimal precio2 = (BigDecimal) servicios.getRecordValues(0).get(BookingServiceExtraDao.ATTR_PRECIO);
-				int dias2 = (int) servicios.getRecordValues(0).get(BookingServiceExtraDao.ATTR_ID_UNITS);
+				BigDecimal totalTodosServiciosExtra = new BigDecimal(0);
 
-				BigDecimal total2 = precio2.multiply(new BigDecimal(dias2));
+				for (int i = 0; i < servicios.calculateRecordNumber(); i++) {
+					
+					int reservaServiciosExtra = (int) servicios.getRecordValues(i).get(BookingServiceExtraDao.ATTR_ID_BKG);
+					BigDecimal precioServicioExtra = (BigDecimal) servicios.getRecordValues(i)
+							.get(BookingServiceExtraDao.ATTR_PRECIO);
+					int unidadesServicioExtra = (int) servicios.getRecordValues(i)
+							.get(BookingServiceExtraDao.ATTR_ID_UNITS);
+
+					BigDecimal totalServicioExtra = precioServicioExtra.multiply(new BigDecimal(unidadesServicioExtra));
+					totalTodosServiciosExtra=totalTodosServiciosExtra.add(totalServicioExtra);
+
+				}
+
+				attrMap.put(ReceiptDao.ATTR_TOTAL_SERVICES, totalTodosServiciosExtra);
 				
-				attrMap.put(ReceiptDao.ATTR_TOTAL_SERVICES, total2);
+				//Total del recibo
+				BigDecimal superTotal = totalHabitacion.add(totalTodosServiciosExtra);
+				attrMap.put(ReceiptDao.ATTR_TOTAL, superTotal);
 
 				resultado = this.daoHelper.insert(this.receiptDao, attrMap);
 				resultado.setMessage("Receipt registrada");

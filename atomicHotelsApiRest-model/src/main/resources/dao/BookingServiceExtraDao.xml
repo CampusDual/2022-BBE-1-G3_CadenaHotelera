@@ -25,6 +25,15 @@
    ]]>
    </Sentence>
   </Query>
+  <Query id="queryServciosExtraPrecioUnidadesTotal">
+   <Sentence>
+   <![CDATA[
+     SELECT bsx_bkg_id, bsx_units, bsx_precio,(bsx_units*bsx_precio) AS total
+     FROM public.bookings_services_extra
+     #WHERE#
+   ]]>
+   </Sentence>
+  </Query>
  </Queries>
 		
 		

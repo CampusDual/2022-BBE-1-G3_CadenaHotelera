@@ -46,15 +46,6 @@ catalog="" schema="${mainschema}" table="bookings" datasource="mainDataSource" s
      #WHERE#
    ]]>
    </Sentence>
-  </Query>	
-  <Query id="queryServciosExtraPrecioUnidades">
-   <Sentence>
-   <![CDATA[
-     SELECT bkg_id, bsx_units, bsx_precio 
-     FROM public.bookings LEFT JOIN public.bookings_services_extra ON bkg_rm_id = bkg_id 
-     #WHERE#
-   ]]>
-   </Sentence>
-  </Query>	
+  </Query>		
 	</Queries>			
 </JdbcEntitySetup>
