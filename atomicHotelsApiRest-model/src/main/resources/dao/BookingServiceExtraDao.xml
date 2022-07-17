@@ -34,8 +34,14 @@
    ]]>
    </Sentence>
   </Query>
- </Queries>
-		
-		
-		
+  <Query id="queryServciosExtraNombreDescripcionUnidadesPrecioFecha">
+   <Sentence>
+   <![CDATA[
+     SELECT sxt_name, sxt_description, bsx_units, bsx_precio, bsx_date  
+     FROM bookings_services_extra LEFT JOIN servicesxtra ON bsx_sxt_id =sxt_id
+     #WHERE#
+   ]]>
+   </Sentence>
+  </Query>
+ </Queries>		
 </JdbcEntitySetup>

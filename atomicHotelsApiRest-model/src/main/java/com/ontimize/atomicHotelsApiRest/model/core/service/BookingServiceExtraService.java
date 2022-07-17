@@ -158,6 +158,30 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 		return resultado;
 	}
 	
+	@Override
+	/**
+	 * Dado un bsx_bkg_id devuelve los servcios extra de la reserva (nombre, descripcion, unidades, precio y fecha)
+	 * 
+	 * @param keyMap
+	 * @param attrList
+	 * @return EntityResult
+	 * @throws OntimizeJEERuntimeException
+	 */
+	public EntityResult ExtraServicesNameDescriptionUnitsPriceDateQuery(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException {
+
+		EntityResult resultado = new EntityResultMapImpl();
+		
+		try {
+			ValidateFields.required(keyMap, BookingServiceExtraDao.ATTR_ID_BKG);
+			resultado = this.daoHelper.query(this.bookingServiceExtraDao, keyMap, attrList,
+					"queryServciosExtraNombreDescripcionUnidadesPrecioFecha");
+		} catch (MissingFieldsException e) {
+			resultado = new EntityResultWrong(ErrorMessage.RESULT_REQUIRED+e.getMessage());
+		}
+		return resultado;
+	}
+	
 	
 
 }

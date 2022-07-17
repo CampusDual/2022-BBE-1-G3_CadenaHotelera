@@ -1,0 +1,233 @@
+{
+	"info": {
+		"_postman_id": "36dbf129-bad3-47d7-8005-e0664eacced8",
+		"name": "Receipts",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "C -receipt",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n    \"data\": {\r\n        \"rcp_bkg_id\": 15\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/receipts/receipt",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"receipts",
+						"receipt"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "R - reserva - precio -dias",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"filter\":{\r\n    \"bkg_id\":4\r\n},\r\n    \"columns\": [\"algo\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookings/bookingDaysUnitaryRoomPrice/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookings",
+						"bookingDaysUnitaryRoomPrice",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "R - reserva - precioServicio - unidades",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"filter\":{\r\n    \"bsx_bkg_id\":3\r\n},\r\n    \"columns\": [\"algo\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/receipts/bookingExtraServicePriceUnitsTotal/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"receipts",
+						"bookingExtraServicePriceUnitsTotal",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "R - servicioExtra - nombre - descripción - precio - unidades -fecha",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"filter\":{\r\n    \"bsx_bkg_id\":4\r\n},\r\n    \"columns\": [\"algo\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookingserviceextra/ExtraServicesNameDescriptionUnitsPriceDate/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookingserviceextra",
+						"ExtraServicesNameDescriptionUnitsPriceDate",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "R- recibo completo",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"filter\":{\r\n    \"rcp_id\":11\r\n},\r\n\"columns\":[\"rcp_id\",\"rcp_total\",\"servicios\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/receipts/completeReceipt/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"receipts",
+						"completeReceipt",
+						"search"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

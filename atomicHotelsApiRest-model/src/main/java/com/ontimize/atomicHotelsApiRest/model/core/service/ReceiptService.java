@@ -23,6 +23,7 @@ import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingServiceExtraDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.ReceiptDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomTypeDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.ServicesXtraDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
@@ -54,6 +55,43 @@ public class ReceiptService implements IReceiptService {
 	public EntityResult receiptQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = this.daoHelper.query(this.receiptDao, keyMap, attrList);
+		return resultado;
+	}
+	
+	@Override
+	public EntityResult completeReceiptQuery(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException {
+		
+		EntityResult resultado = new EntityResultMapImpl();
+		try {
+		ValidateFields.required(keyMap, ReceiptDao.ATTR_ID);
+		
+		//Datos Servicios extras
+		List<String> listaServiciosExtra = new ArrayList<String>();
+
+		listaServiciosExtra.add(ServicesXtraDao.ATTR_NAME);
+		listaServiciosExtra.add(ServicesXtraDao.ATTR_DESCRIPTION);
+		listaServiciosExtra.add(BookingServiceExtraDao.ATTR_ID_UNITS);
+		listaServiciosExtra.add(BookingServiceExtraDao.ATTR_PRECIO);
+		listaServiciosExtra.add(BookingServiceExtraDao.ATTR_DATE);
+				
+			
+		//El resultado de esto se añade dentro del resultado de la siguente
+		EntityResult serviciosExtra = bookingServiceExtraService.ExtraServicesNameDescriptionUnitsPriceDateQuery(keyMap, listaServiciosExtra);
+//		serviciosExtra.get(listaServiciosExtra);
+		
+		resultado = this.daoHelper.query(this.receiptDao, keyMap, attrList);
+		
+//		Map<Map<String,Object>,String> s = new HashMap<Map<String,Object>,String>();
+//		s.put(keyMap, "servicios");
+	
+//		resultado.addRecord(s,1);
+		
+		resultado.getRecordValues(0).put(keyMap, "serviciosExtra");
+		
+		}catch(MissingFieldsException e) {
+			resultado=new EntityResultWrong(ErrorMessage.RESULT_REQUIRED+e.getMessage());
+		}
 		return resultado;
 	}
 
