@@ -221,7 +221,7 @@ public class ValidateFields {
 			final int LONGITUD_MINIMA_TARJETA_CREDITO = 13;
 			String numero = Long.toString(n);
 			if (numero.length() < LONGITUD_MINIMA_TARJETA_CREDITO
-					|| numero.length() > LONGITUD_MAXIMA_TARJETA_CREDITO||n<=0) {
+					|| numero.length() > LONGITUD_MAXIMA_TARJETA_CREDITO) {
 				throw new NumberFormatException();
 			}
 		} catch (java.lang.ClassCastException e) {
@@ -272,7 +272,9 @@ public static void checkMail(String mail)throws InvalidFieldsValuesException {
         String regex="^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(-[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
         Pattern pat = Pattern.compile(regex);
         Matcher mat = pat.matcher(mail);
-        if (!mat.matches()) {
+        if (mat.matches()) {
+        	
+        } else {
         	throw new InvalidFieldsValuesException(ErrorMessage.INVALID_MAIL);
         }
     }

@@ -108,7 +108,7 @@ public class BedComboServiceTest {
 			HashMap<String, Object> keyMap = new HashMap<>() {
 				{
 					put(bedComboDao.ATTR_ID, random);
-				}
+				} 
 			};
 			List<String> attrList = Arrays.asList(BedComboDao.ATTR_ID, BedComboDao.ATTR_NAME, BedComboDao.ATTR_SLOTS);
 			when(daoHelper.query(any(), anyMap(), anyList())).thenReturn(getSpecificHotelData(keyMap, attrList));
