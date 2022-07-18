@@ -91,8 +91,7 @@ public class BookingService implements IBookingService {
 		try {
 			ValidateFields.required(keyMap, BookingDao.ATTR_ID);
 			ValidateFields.required(attrMap, BookingDao.NON_ATTR_ACTION);
-//			ValidateFields.restricted(attrMap, BookingDao.ATTR_ID, BookingDao.ATTR_CUSTOMER_ID, BookingDao.ATTR_CHECKIN,
-//					BookingDao.ATTR_CHECKOUT, BookingDao.ATTR_CANCELED, BookingDao.ATTR_CREATED);
+			
 			BookingDao.Status status = getBookingStatus(keyMap.get(BookingDao.ATTR_ID));
 
 			BookingDao.Action action;
