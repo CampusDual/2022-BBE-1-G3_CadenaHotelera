@@ -185,7 +185,7 @@ class ValidateFieldsTest {
 			Date today = new Date();;
 			Calendar c = Calendar.getInstance();
 			c.setTime(today);
-			c.add(Calendar.DATE, 2);
+			c.add(Calendar.DATE, 2000);
 			try {
 				assertEquals(0, ValidateFields.dataRange(today, c.getTime()));
 			} catch (InvalidFieldsValuesException e) {
@@ -199,7 +199,7 @@ class ValidateFieldsTest {
 			Date today = new Date();;
 			Calendar c = Calendar.getInstance();
 			c.setTime(today);
-			c.add(Calendar.DATE, -1);	
+			c.add(Calendar.DATE, -2000);	
 			try {
 				assertEquals(1, ValidateFields.dataRange(c.getTime(),today));
 			} catch (InvalidFieldsValuesException e) {
@@ -213,7 +213,7 @@ class ValidateFieldsTest {
 			Date today = new Date();;
 			Calendar c = Calendar.getInstance();
 			c.setTime(today);
-			c.add(Calendar.DATE, -1);	
+			c.add(Calendar.DATE, -2000);	
 			assertThrows(InvalidFieldsValuesException.class, () -> ValidateFields.dataRange(today,c.getTime()));
 		}
 		
@@ -281,7 +281,7 @@ class ValidateFieldsTest {
 		
 		@ParameterizedTest
 		@DisplayName("Campos Double - válidos")
-		@ValueSource(doubles = { 1, 4, 2.33, 11234.48, 0.95, 01.14, 0,  Double.MAX_VALUE })
+		@ValueSource(doubles = { 1, 4, 2.33, 11234.48, 0.95, 01.14, 0})
 		void testFormatpriceDoublesOK(Double numeros) {
 			assertDoesNotThrow(() -> ValidateFields.formatprice(numeros));
 		}
@@ -301,17 +301,62 @@ class ValidateFieldsTest {
 		}
 		
 		@ParameterizedTest
-		@DisplayName("Campos Double - NO válidos")
-		@ValueSource(strings = {  "4.12345", "000000.000000", "123123343434", "1.99000",  "albaricoque" })
-		void testFormatpriceStringssKO(String numeros) {
+		@DisplayName("Campos String - NO válidos")
+		@ValueSource(strings = {  "4.12345", "000000.000000", "123123343434", "1.99000",  "albaricoque", "?", "%", ".", " "})
+		void testFormatpriceStringsKO(String numeros) {		
 			assertThrows(NumberFormatException.class, () -> ValidateFields.formatprice(numeros));
-		}		
+			assertThrows(Exception.class, () -> ValidateFields.formatprice(numeros));
+		}	
+		
+		@Test
+		@DisplayName("Campos Otro Tipo - NO válidos")		
+		void testFormatpriceTypesKO() {
+			assertThrows(NumberFormatException.class, () -> ValidateFields.formatprice(null));
+			assertThrows(NumberFormatException.class, () -> ValidateFields.formatprice(new Date()));
+			assertThrows(NumberFormatException.class, () -> ValidateFields.formatprice(new EntityResultWrong()));
+		}	
 	}
 
+	@Nested
+	@DisplayName("Test for credit card")
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	public class CreditCard{
+		@ParameterizedTest
+		@DisplayName("Numeros - Válidos")
+		@ValueSource(longs = {  1000_1000_1000_1000L, 1234123412341234L, 1300_0000_0000_0L, 1400_0000_0000_00L, 1500_0000_0000_000L, 1600_0000_0000_0000L})
+		void testFormatpriceDoublesOK(Long numeros) {
+			assertDoesNotThrow(() -> ValidateFields.invalidCreditCard(numeros));
+		}
+		
+		@ParameterizedTest
+		@DisplayName("Numeros - NO Válidos")
+		@ValueSource(longs = {  10, 1200_0000_0000L, 1700_0000_0000_0000_0L, 0000_0000_0000_0001L, -1400_0000_0000_00L})
+		void testFormatpriceDoublesKO(Long numeros) {
+			assertThrows(NumberFormatException.class, () -> ValidateFields.invalidCreditCard(numeros));
+		}
+	}
+	
 //
 //	@Test
 //	void testNegativeNotAllowed() {
 //		fail("Not yet implemented");
 //	}
-
+	@Nested
+	@DisplayName("Test for emails")
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	public class Emails{
+		
+		@ParameterizedTest
+		@DisplayName("Emails - Válidos")
+		@ValueSource(strings= {  "asdasd@asdasdas.es", "enunlugardelamancha@hotmail.com", "a@a.pt", "a.a@a.eu", "1233.232@2323.223sad.233.com", "alex8@gmail.com"})
+		void testFormatpriceDoublesOK(String email) {
+			assertDoesNotThrow(() -> ValidateFields.checkMail(email));
+		}
+		@ParameterizedTest
+		@DisplayName("Emails - NO Válidos")
+		@ValueSource(strings= {  "asdasd@asdasdas.e", "com", "15565", "@todoloquepuedas.com", "hansolo@.es","coma@asdasd@sd.es"})
+		void testFormatpriceDoublesKO(String email) {
+			assertThrows(InvalidFieldsValuesException.class, () -> ValidateFields.checkMail(email));
+		}
+	}
 }
