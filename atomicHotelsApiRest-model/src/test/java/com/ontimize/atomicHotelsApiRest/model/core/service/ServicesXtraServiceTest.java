@@ -34,7 +34,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
-import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.ServicesXtraDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
@@ -90,7 +89,7 @@ class ServicesXtraServiceTest {
 		
 		@Test
 		@DisplayName("Obtain all data from ServicesXtra table using a personalized query")
-		void when_queryOnlyWithAllColumns_return_allHotelsData_fromPersonalizedQuery() {
+		void when_queryOnlyWithAllColumns_return_allServicesXtraData_fromPersonalizedQuery() {
 			HashMap<String, Object> keyMap = new HashMap<>() {
 				{
 					put(ServicesXtraDao.ATTR_ID, 2);
@@ -110,7 +109,7 @@ class ServicesXtraServiceTest {
 		void when_queryAllColumnsNotExisting_return_empty() {
 			HashMap<String, Object> keyMap = new HashMap<>() {
 				{
-					put(HotelDao.ATTR_ID, 5);
+					put(ServicesXtraDao.ATTR_ID, 5);
 				}
 			};
 			List<String> attrList = Arrays.asList(ServicesXtraDao.ATTR_ID, ServicesXtraDao.ATTR_NAME, ServicesXtraDao.ATTR_DESCRIPTION);
@@ -231,7 +230,7 @@ class ServicesXtraServiceTest {
 				{
 					put(ServicesXtraDao.ATTR_ID, 1);
 					put(ServicesXtraDao.ATTR_NAME, "paseacanes");
-					put(HotelDao.ATTR_DESCRIPTION, "Servicio extra a registrar");
+					put(ServicesXtraDao.ATTR_DESCRIPTION, "Servicio extra a registrar");
 				}
 			};
 			EntityResult resultado = new EntityResultMapImpl();
@@ -251,7 +250,7 @@ class ServicesXtraServiceTest {
 				{
 					put(ServicesXtraDao.ATTR_ID, 1);
 					put(ServicesXtraDao.ATTR_NAME, "paseacanes");
-					put(HotelDao.ATTR_DESCRIPTION, "Este Servicio extra ya estaría registrado");
+					put(ServicesXtraDao.ATTR_DESCRIPTION, "Este Servicio extra ya estaría registrado");
 				}
 			};
 			when(daoHelper.insert(any(), anyMap())).thenThrow(DuplicateKeyException.class);
@@ -288,7 +287,7 @@ class ServicesXtraServiceTest {
 		void when_servicesXtra_insert_is_succsessfull() {
 			Map<String, Object> attrMap = new HashMap<>() {
 				{
-					put(HotelDao.ATTR_ID, 1);
+					put(ServicesXtraDao.ATTR_ID, 1);
 				}
 			};
 			Map<String, Object> keyMap = new HashMap<>() {
@@ -306,7 +305,7 @@ class ServicesXtraServiceTest {
 			when(daoHelper.update(any(), anyMap(), anyMap())).thenReturn(resultado);
 			EntityResult entityResult = service.servicesXtraUpdate(attrMap, keyMap);
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-			assertEquals(entityResult.getMessage(), "Hotel actualizado");
+			assertEquals(entityResult.getMessage(), "Servicio extra actualizado");
 		}
 
 		@Test
@@ -314,13 +313,13 @@ class ServicesXtraServiceTest {
 		void when_already_exist() {
 			Map<String, Object> attrMap = new HashMap<>() {
 				{
-					put(HotelDao.ATTR_ID, 2);
+					put(ServicesXtraDao.ATTR_ID, 2);
 				}
 			};
 			Map<String, Object> keyMap = new HashMap<>() {
 				{
 					put(ServicesXtraDao.ATTR_ID, 2);// ???
-					put(ServicesXtraDao.ATTR_NAME, "paseahumanos");// Este hotel ya existe
+					put(ServicesXtraDao.ATTR_NAME, "paseahumanos");// Este servicio extra ya existe
 					put(ServicesXtraDao.ATTR_DESCRIPTION, "servicio actualizado");
 				}
 			};
@@ -335,19 +334,11 @@ class ServicesXtraServiceTest {
 //		void when_unable_insert() {
 //			when(daoHelper.insert(any(),anyMap())).thenThrow(MissingFieldsException.class);
 //			Map<String, Object> attrMap = new HashMap<>() {{
-//				put(HotelDao.ATTR_ID, 1);
-////                put(HotelDao.ATTR_NAME, "Hotel 23");
-////                put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 1");
-//                put(HotelDao.ATTR_CITY, "Vigo");
-//                put(HotelDao.ATTR_CP, "36211");
-//                put(HotelDao.ATTR_STATE, "Galicia");
-//                put(HotelDao.ATTR_COUNTRY, "Spain");
-//                put(HotelDao.ATTR_PHONE, "+34 986 111 111");
-//                put(HotelDao.ATTR_EMAIL, "hotel1@atomicHotels.com");
-//                put(HotelDao.ATTR_DESCRIPTION, "Faltan campos no nullables");
-//                put(HotelDao.ATTR_IS_OPEN, 1);	
+//				put(ServicesXtraDao.ATTR_ID, 1);
+////            put(ServicesXtraDao.ATTR_NAME, "Servicio extra 23");
+//              put(ServicesXtraDao.ATTR_DESCRIPTION, "xxx");
 //			}};			
-//			EntityResult entityResult = service.hotelInsert(attrMap);
+//			EntityResult entityResult = service.servicesXtraInsert(attrMap);
 //			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
 //    		assertEquals(entityResult.getMessage(), ErrorMessage.CREATION_ERROR+e.getMessage());
 //    	}
