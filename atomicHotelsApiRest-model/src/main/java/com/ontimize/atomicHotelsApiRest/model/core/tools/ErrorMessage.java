@@ -6,7 +6,7 @@ public class ErrorMessage {
 	public static final String CREATION_ERROR = "Error de creación ";		
 	public static final String CREATION_ERROR_DUPLICATED_FIELD = CREATION_ERROR+"- El registro ya existe";	 
 	public static final String CREATION_ERROR_MISSING_FK = CREATION_ERROR+"- No existe la referencia necesaria en otra tabla";
-	 
+	public static final String INVALID_MAIL="Campo mail no es correcto"; 
 	 
 //ERRORES DE UPDATE
 	public static final String UPDATE_ERROR = "Error de actualización ";	 
@@ -34,5 +34,5 @@ public class ErrorMessage {
 	public static final String INVALID_ACTION = "Acción no válida";
 	public static final String NEGATIVE_OR_CERO_NOT_ALLOWED="Número igual o menor a 0 no permitido";
 	public static final String INVALID_NUMBER_CREDITCARD="Número de tarejeta no válido";
-	public static final String INVALID_MAIL="Campo mail no es correcto";
+	
 }
