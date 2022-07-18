@@ -246,39 +246,37 @@ public class ValidateFields {
 /*
 public static void checkMail(String mail)throws InvalidFieldsValuesException {
 	String regex="^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(-[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-//	return mail.matches(regex);
+
 	
 
-//	Pattern pattern = Pattern.compile("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(-[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+	Pattern pattern = Pattern.compile("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(-[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
 
-//    Matcher mather = pattern.matcher(mail);
+    Matcher mather = pattern.matcher(mail);
 
-//    if (mather.find() == true) {
+    if (mather.find() == true) {
 //    if (mail.matches(regex))	{
 //    	
-//    } else {
-//    	throw new InvalidFieldsValuesException(ErrorMessage.INVALID_MAIL);
-//    }
+    } else {
+    	throw new InvalidFieldsValuesException(ErrorMessage.INVALID_MAIL);
+    }
 
-	Pattern pat = Pattern.compile(regex);
-	Matcher mat = pat.matcher(mail);
-	if (mat.matches()){​​​​​​
-		System.out.print("");
-	}​​​​​​else{
-		System.out.print("");
-	}
+	
+	 * Pattern pat = Pattern.compile(regex); Matcher mat = pat.matcher(mail); if
+	 * (mat.matches()){​​​​​​ System.out.print(""); }​​​​​​else{
+	 * System.out.print(""); }
+	 
 }
 */
 	
-	public static void checkMail(String mail)throws InvalidFieldsValuesException {
+	public static void checkMail(String mail) throws InvalidFieldsValuesException {
         String regex="^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(-[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
         Pattern pat = Pattern.compile(regex);
         Matcher mat = pat.matcher(mail);
         if (mat.matches()) {
-
+        	
         } else {
- 
+        	throw new InvalidFieldsValuesException(ErrorMessage.INVALID_MAIL);
         }
     }
 }
-//​​​​​​throw new InvalidFieldsValuesException(ErrorMessage.INVALID_MAIL);
+
