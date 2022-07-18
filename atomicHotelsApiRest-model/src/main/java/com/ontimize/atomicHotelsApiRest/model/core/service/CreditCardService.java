@@ -12,6 +12,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.ICreditCardService;
 import com.ontimize.jee.common.dto.EntityResult;
@@ -49,7 +50,10 @@ public class CreditCardService implements ICreditCardService{
 		try {
 			
 			ValidateFields.required(attrMap, CreditCardDao.ATTR_NUMBER, CreditCardDao.ATTR_DATE_EXPIRY);
+			ValidateFields.NegativeNotAllowed(((Number)( attrMap.get(CreditCardDao.ATTR_NUMBER))).longValue());
 			ValidateFields.invalidCreditCard(((Number)(attrMap.get(CreditCardDao.ATTR_NUMBER))).longValue());
+			
+			ValidateFields.validDateExpiry((String) attrMap.get(CreditCardDao.ATTR_DATE_EXPIRY));
 			resultado = this.daoHelper.insert(this.creditCardDao, attrMap);	
 			resultado.setMessage("Tarjeta registrada");
 
@@ -61,6 +65,8 @@ public class CreditCardService implements ICreditCardService{
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);		
 		}catch (NumberFormatException e) {
 			resultado =new EntityResultWrong(ErrorMessage.INVALID_NUMBER_CREDITCARD);
+		}catch (InvalidFieldsValuesException e) {
+				resultado =new EntityResultWrong(ErrorMessage.DATA_EXPIRY_BEFORE_TODAY);
 		}catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
 		e.printStackTrace();

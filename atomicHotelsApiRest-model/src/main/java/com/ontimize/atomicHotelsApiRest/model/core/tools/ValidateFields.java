@@ -13,7 +13,6 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsExcepti
 
 public class ValidateFields {
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"){{setLenient(false);}};;
-
 	public ValidateFields() {
 	}
 	
@@ -182,6 +181,11 @@ public class ValidateFields {
 	 */
 	 
 	
+	public static void NegativeNotAllowed(long n) throws NumberFormatException{
+		if(n<=0) {
+			throw new NumberFormatException();
+		}
+	}
 	public static void NegativeNotAllowed(int n) throws NumberFormatException{
 		if(n<=0) {
 			throw new NumberFormatException();
@@ -215,8 +219,9 @@ public static void invalidCreditCard(long n) throws NumberFormatException{
  * @return 0: fechas correctas 
  * @throws InvalidFieldsValuesException  error hoy superior a fecha fin 
  */
-public static int validDateExpiry(Date expiry) throws InvalidFieldsValuesException {
-		if (expiry.compareTo(new Date()) > 0) {
+public static int validDateExpiry(String expiry) throws InvalidFieldsValuesException {
+		Date expirity=stringToDate(expiry);
+		if (expirity.compareTo(new Date()) > 0) {
 		return 0;
 		}else {
 		throw new InvalidFieldsValuesException(ErrorMessage.DATA_EXPIRY_BEFORE_TODAY);
