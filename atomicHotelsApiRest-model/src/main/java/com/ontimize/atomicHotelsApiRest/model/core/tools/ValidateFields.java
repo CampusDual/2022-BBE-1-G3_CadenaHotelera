@@ -218,6 +218,7 @@ public class ValidateFields {
 		}
 	}
 
+
 	public static void emptyField(Map<String, Object> keyMap, String field) throws MissingFieldsException {
 		if (!keyMap.containsKey(field)) {
 			throw new MissingFieldsException("Falta el campo " + field);
@@ -362,9 +363,7 @@ public class ValidateFields {
 	public static void isString(Map<String, Object> keyMap, String... fields) throws InvalidFieldsValuesException {
 		for (String field : fields) {
 			try {
-			String i = (String) keyMap.get(field);
-			}catch(NullPointerException e) {
-				e.printStackTrace();
+			String i = (String) keyMap.get(field);//No salta nunca el NullPointerException
 			}catch(ClassCastException e) {
 				throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE+ " - "+field);
 			}
