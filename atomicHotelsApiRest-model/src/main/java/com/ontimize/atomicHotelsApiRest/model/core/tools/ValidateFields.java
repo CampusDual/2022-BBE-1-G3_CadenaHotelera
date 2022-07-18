@@ -3,6 +3,7 @@ package com.ontimize.atomicHotelsApiRest.model.core.tools;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,15 @@ public class ValidateFields {
 		for (String field : fields) {
 			keyMap.remove(field);
 		}
+	}
+	
+	/**
+	 * Elimina todos los campos a excepción de las claves especificadas
+	 * @param keyMap HashMap donde se eliminan las claves
+	 * @param fields Claves a persistir.
+	 */
+	public static void onlyThis(Map<String, Object> keyMap, String... fields) {
+		keyMap.keySet().retainAll(Arrays.asList(fields));
 	}
 	
 	/**
