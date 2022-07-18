@@ -17,7 +17,7 @@ public class ValidateFields {
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"){{setLenient(false);}};;
 	public ValidateFields() {
 	}
-	
+	 
 	/**
 	 * Comprueba si existe las claves facilitadas en el HashMap, y lanza excepción si no existe o si es null.
 	 * @param keyMap HashMap de claves/valores 
@@ -206,7 +206,7 @@ public static void invalidCreditCard(long n) throws NumberFormatException{
 		  final int LONGITUD_MAXIMA_TARJETA_CREDITO = 16;
 		  final int LONGITUD_MINIMA_TARJETA_CREDITO = 13;
 		  String numero=Long.toString(n);
-		 if( numero.length() < LONGITUD_MINIMA_TARJETA_CREDITO || numero.length() > LONGITUD_MAXIMA_TARJETA_CREDITO){
+		 if( numero.length() < LONGITUD_MINIMA_TARJETA_CREDITO || numero.length() > LONGITUD_MAXIMA_TARJETA_CREDITO||n<=0){
       	  throw new NumberFormatException();
         }
 	  	}catch(java.lang.ClassCastException e) {

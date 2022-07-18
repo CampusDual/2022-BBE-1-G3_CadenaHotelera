@@ -3,6 +3,7 @@ package com.ontimize.atomicHotelsApiRest.model.core.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,8 +11,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DuplicateKeyException;
@@ -24,8 +27,7 @@ import com.ontimize.atomicHotelsApiRest.model.core.dao.BedComboDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
 
-@Service("BedComboService")
-@Lazy
+@ExtendWith(MockitoExtension.class)
 public class BedComboServiceTest {
 
 	@Mock
@@ -41,11 +43,11 @@ public class BedComboServiceTest {
 
 	// @Mock/@Autowired/@InjectMocks
 	MissingFieldsException e;
-
+ 
 	@Nested
 	@DisplayName("Test for BedCombo inserts")
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	public class InsertQuery {
+	class InsertQuery {
 
 		@Test
 		@DisplayName("Insert BedCombo")
@@ -61,7 +63,7 @@ public class BedComboServiceTest {
 			resultado.addRecord(attrMap);
 			resultado.setCode(EntityResult.OPERATION_SUCCESSFUL);
 			resultado.setMessage("Tipo de cama insertado");
-			when(daoHelper.insert(any(), anyMap())).thenReturn(resultado);
+			doReturn(resultado).when(daoHelper).insert(any(),anyMap());
 			EntityResult entityResult = service.bedComboInsert(attrMap);
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
 			assertEquals(entityResult.getMessage(), "Tipo de cama insertado");
@@ -125,7 +127,7 @@ public class BedComboServiceTest {
 			};
 				EntityResult entityResult = service.bedComboInsert(attrMap);
 				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-				assertEquals(ErrorMessage.NEGATIVE_OR_CERO_NOT_ALLOWED + "El campo " + BedComboDao.ATTR_SLOTS + " es negativo",entityResult.getMessage());
+				assertEquals(ErrorMessage.NEGATIVE_OR_CERO_NOT_ALLOWED ,entityResult.getMessage());
 
 		}
 	}
