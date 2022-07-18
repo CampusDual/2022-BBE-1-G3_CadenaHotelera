@@ -96,29 +96,26 @@ public class BedComboServiceTest {
 			};
 			List<String> attrList = Arrays.asList(BedComboDao.ATTR_ID, BedComboDao.ATTR_NAME, BedComboDao.ATTR_SLOTS);
 			when(daoHelper.query(any(), anyMap(), anyList())).thenReturn(getSpecificHotelData(keyMap, attrList));
-			EntityResult entityResult = service.hotelQuery(new HashMap<>(), new ArrayList<>());
+			EntityResult entityResult = service.bedComboQuery(new HashMap<>(), new ArrayList<>());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
 			assertEquals(0, entityResult.calculateRecordNumber());
 		}
 
-		@ParameterizedTest(name = "Obtain data with htl_id -> {1}")
+		@ParameterizedTest(name = "Obtain data with bdc_id -> {1}")
 		@MethodSource("randomIDGenerator")
-		@DisplayName("Obtain all data columns from hotels table when htl_id is random")
+		@DisplayName("Obtain all data columns from BedCombo table when bdc_id is random")
 		void when_queryAllColumnsWithRandomValue_return_specificData(int random) {
 			HashMap<String, Object> keyMap = new HashMap<>() {
 				{
-					put(HotelDao.ATTR_ID, random);
+					put(bedComboDao.ATTR_ID, random);
 				}
 			};
-			List<String> attrList = Arrays.asList(HotelDao.ATTR_ID, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET,
-					HotelDao.ATTR_CITY, HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY,
-					HotelDao.ATTR_PHONE, HotelDao.ATTR_PHONE, HotelDao.ATTR_EMAIL, HotelDao.ATTR_DESCRIPTION,
-					HotelDao.ATTR_IS_OPEN);
+			List<String> attrList = Arrays.asList(BedComboDao.ATTR_ID, BedComboDao.ATTR_NAME, BedComboDao.ATTR_SLOTS);
 			when(daoHelper.query(any(), anyMap(), anyList())).thenReturn(getSpecificHotelData(keyMap, attrList));
-			EntityResult entityResult = service.hotelQuery(new HashMap<>(), new ArrayList<>());
+			EntityResult entityResult = service.bedComboQuery(new HashMap<>(), new ArrayList<>());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
 			assertEquals(1, entityResult.calculateRecordNumber());
-			assertEquals(random, entityResult.getRecordValues(0).get(HotelDao.ATTR_ID));
+			assertEquals(random, entityResult.getRecordValues(0).get(BedComboDao.ATTR_ID));
 		}
 
 		public EntityResult getAllBedComboData() {
@@ -130,7 +127,6 @@ public class BedComboServiceTest {
 					put(BedComboDao.ATTR_ID, 1);
 					put(BedComboDao.ATTR_NAME, "Cama simple");
 					put(BedComboDao.ATTR_SLOTS, 1);
-
 				}
 			});
 			er.addRecord(new HashMap<String, Object>() {
@@ -138,7 +134,6 @@ public class BedComboServiceTest {
 					put(BedComboDao.ATTR_ID, 2);
 					put(BedComboDao.ATTR_NAME, "Cama doble");
 					put(BedComboDao.ATTR_SLOTS, 2);
-
 				}
 			});
 			er.addRecord(new HashMap<String, Object>() {
@@ -146,7 +141,6 @@ public class BedComboServiceTest {
 					put(BedComboDao.ATTR_ID, 1);
 					put(BedComboDao.ATTR_NAME, "Cama Triple");
 					put(BedComboDao.ATTR_SLOTS, 3);
-
 				}
 			});
 			er.setCode(EntityResult.OPERATION_SUCCESSFUL);
@@ -155,20 +149,16 @@ public class BedComboServiceTest {
 					put(BedComboDao.ATTR_ID, Types.INTEGER);
 					put(BedComboDao.ATTR_NAME, Types.VARCHAR);
 					put(BedComboDao.ATTR_SLOTS, Types.INTEGER);
-				
 				}
 			});
 			return er;
 		}
 
 		public EntityResult getSpecificHotelData(Map<String, Object> keyValues, List<String> attributes) {
-			EntityResult allData = this.getAllHotelsData();
+			EntityResult allData = this.getAllBedComboData();
 			int recordIndex = allData.getRecordIndex(keyValues);
 			HashMap<String, Object> recordValues = (HashMap) allData.getRecordValues(recordIndex);
-			List<String> columnList = Arrays.asList(HotelDao.ATTR_ID, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET,
-					HotelDao.ATTR_CITY, HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY,
-					HotelDao.ATTR_PHONE, HotelDao.ATTR_PHONE, HotelDao.ATTR_EMAIL, HotelDao.ATTR_DESCRIPTION,
-					HotelDao.ATTR_IS_OPEN);
+			List<String> columnList = Arrays.asList(BedComboDao.ATTR_ID, BedComboDao.ATTR_NAME, BedComboDao.ATTR_SLOTS);
 			EntityResult er = new EntityResultMapImpl(columnList);
 			if (recordValues != null) {
 				er.addRecord(recordValues);
@@ -176,17 +166,9 @@ public class BedComboServiceTest {
 			er.setCode(EntityResult.OPERATION_SUCCESSFUL);
 			er.setColumnSQLTypes(new HashMap<String, Number>() {
 				{
-					put(HotelDao.ATTR_ID, Types.INTEGER);
-					put(HotelDao.ATTR_NAME, Types.VARCHAR);
-					put(HotelDao.ATTR_STREET, Types.VARCHAR);
-					put(HotelDao.ATTR_CITY, Types.VARCHAR);
-					put(HotelDao.ATTR_CP, Types.VARCHAR);
-					put(HotelDao.ATTR_STATE, Types.VARCHAR);
-					put(HotelDao.ATTR_COUNTRY, Types.VARCHAR);
-					put(HotelDao.ATTR_PHONE, Types.VARCHAR);
-					put(HotelDao.ATTR_EMAIL, Types.VARCHAR);
-					put(HotelDao.ATTR_DESCRIPTION, Types.VARCHAR);
-					put(HotelDao.ATTR_IS_OPEN, Types.BINARY);
+					put(BedComboDao.ATTR_ID, Types.INTEGER);
+					put(BedComboDao.ATTR_NAME, Types.VARCHAR);
+					put(BedComboDao.ATTR_SLOTS, Types.INTEGER);
 				}
 			});
 			return er;
