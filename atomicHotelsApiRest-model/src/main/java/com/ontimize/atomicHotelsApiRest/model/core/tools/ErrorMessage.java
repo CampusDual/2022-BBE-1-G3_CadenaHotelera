@@ -10,7 +10,7 @@ public class ErrorMessage {
 	 
 //ERRORES DE UPDATE
 	public static final String UPDATE_ERROR = "Error de actualización ";	 
-	public static final String UPDATE_ERROR_MISSING_FIELD = UPDATE_ERROR+"- El regsitro que pretende actualizar no existe.";	
+	public static final String UPDATE_ERROR_MISSING_FIELD = UPDATE_ERROR+"- El registro que pretende actualizar no existe.";	
 	public static final String UPDATE_ERROR_DUPLICATED_FIELD = UPDATE_ERROR+"- No es posible duplicar un registro";	 
 	public static final String UPDATE_ERROR_REQUIRED_FIELDS = UPDATE_ERROR+"- No es posible eliminar campos obligatorios";	 
 	public static final String UPDATE_ERROR_MISSING_FK = UPDATE_ERROR+"- No existe la referencia necesaria en otra tabla";
@@ -34,4 +34,5 @@ public class ErrorMessage {
 	public static final String INVALID_ACTION = "Acción no válida";
 	public static final String NEGATIVE_OR_CERO_NOT_ALLOWED="Número igual o menor a 0 no permitido";
 	public static final String INVALID_NUMBER_CREDITCARD="Número de tarejeta no válido";
+	public static final String INVALID_MAIL="Campo mail no es correcto";
 }
