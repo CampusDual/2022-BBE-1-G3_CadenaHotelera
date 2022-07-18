@@ -55,7 +55,7 @@ public class HotelService implements IHotelService {
 		try {
 			ValidateFields.required(attrMap, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET, HotelDao.ATTR_CITY,
 					HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY);
-			ValidateFields.checkMail(HotelDao.ATTR_EMAIL);
+			ValidateFields.checkMail((String) attrMap.get(HotelDao.ATTR_EMAIL));// Para obtener el valor introducido, attrMap.get, sino, valida simplemente el nombre que le damos al campo, no el valor 
 			//ValidateFields.emptyFields(attrMap);			
 			resultado = this.daoHelper.insert(this.hotelDao, attrMap);
 			resultado.setMessage("Hotel registrado");

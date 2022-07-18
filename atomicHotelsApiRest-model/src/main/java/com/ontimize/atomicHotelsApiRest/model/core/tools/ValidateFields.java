@@ -273,9 +273,7 @@ public static void checkMail(String mail)throws InvalidFieldsValuesException {
         String regex="^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(-[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
         Pattern pat = Pattern.compile(regex);
         Matcher mat = pat.matcher(mail);
-        if (mat.matches()) {
-        	
-        } else {
+        if (!mat.matches()) {
         	throw new InvalidFieldsValuesException(ErrorMessage.INVALID_MAIL);
         }
     }
