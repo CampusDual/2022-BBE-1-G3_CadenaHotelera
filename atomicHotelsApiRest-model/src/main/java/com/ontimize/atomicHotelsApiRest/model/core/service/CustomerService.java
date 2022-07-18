@@ -66,6 +66,8 @@ public class CustomerService implements ICustomerService {
 			ValidateFields.emptyFields(attrMap, CustomerDao.ATTR_NAME, CustomerDao.ATTR_SURNAMES, CustomerDao.ATTR_DNI,
 					CustomerDao.ATTR_NATIONALITY, CustomerDao.ATTR_PHONE, CustomerDao.ATTR_CREDITCARD,
 					CustomerDao.ATTR_VALID_DATE);
+			
+			ValidateFields.checkMail(CustomerDao.ATTR_EMAIL);
 
 			resultado = this.daoHelper.insert(this.customerDao, attrMap);
 

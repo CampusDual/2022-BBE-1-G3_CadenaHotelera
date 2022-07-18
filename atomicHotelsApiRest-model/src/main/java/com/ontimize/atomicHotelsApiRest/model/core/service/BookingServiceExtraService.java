@@ -175,7 +175,7 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 		try {
 			ValidateFields.required(keyMap, BookingServiceExtraDao.ATTR_ID_BKG);
 			resultado = this.daoHelper.query(this.bookingServiceExtraDao, keyMap, attrList,
-					"queryServciosExtraNombreDescripcionUnidadesPrecioFecha");
+					"queryServiciosExtraNombreDescripcionUnidadesPrecioFecha");
 		} catch (MissingFieldsException e) {
 			resultado = new EntityResultWrong(ErrorMessage.RESULT_REQUIRED+e.getMessage());
 		}

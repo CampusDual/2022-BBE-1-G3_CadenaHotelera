@@ -34,7 +34,7 @@
    ]]>
    </Sentence>
   </Query>
-  <Query id="queryServciosExtraNombreDescripcionUnidadesPrecioFecha">
+  <Query id="queryServiciosExtraNombreDescripcionUnidadesPrecioFecha">
    <Sentence>
    <![CDATA[
      SELECT sxt_name, sxt_description, bsx_units, bsx_precio, bsx_date  

@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
@@ -226,6 +228,23 @@ public static int validDateExpiry(String expiry) throws InvalidFieldsValuesExcep
 		}else {
 		throw new InvalidFieldsValuesException(ErrorMessage.DATA_EXPIRY_BEFORE_TODAY);
 	}
+}
+
+public static int checkMail(String mail)throws InvalidFieldsValuesException {
+//	String regex="^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(-[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+//	return mail.matches(regex);
+	
+	
+	//Con void:
+	Pattern pattern = Pattern.compile("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(-[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+
+    Matcher mather = pattern.matcher(mail);
+
+    if (mather.find() == true) {
+    	return 0;
+    } else {
+    	throw new InvalidFieldsValuesException(ErrorMessage.INVALID_MAIL);
+    }
 }
 
 }
