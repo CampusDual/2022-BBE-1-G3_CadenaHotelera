@@ -246,7 +246,13 @@ public class RoomService implements IRoomService {
 		keyMap.put(BookingDao.ATTR_ROOM_ID, roomId);
 		List<Object> bookedRoomsIdList = roomsBookedInRange(startDate, endDate, keyMap);
 		return bookedRoomsIdList.isEmpty();
-
 	}
+	
+
+	@Override
+	public EntityResult infoHotelFeaturesQuery(Map<String, Object> keyMap, List<String> attrList) {
+		return this.daoHelper.query(this.roomDao, keyMap, attrList, "queryHotelFeaturesTypes");
+	}
+
 
 }

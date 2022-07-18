@@ -17,5 +17,5 @@ public interface IRoomService {
 	public EntityResult roomsUnbookedInRangeQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
 	public boolean isRoomUnbookedgInRange(Object startDate, Object endDate, Object roomId) throws OntimizeJEERuntimeException, EntityResultRequiredException, InvalidFieldsValuesException, MissingFieldsException;
 	public EntityResult roomInfoQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
-
+	public EntityResult infoHotelFeaturesQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
 }
