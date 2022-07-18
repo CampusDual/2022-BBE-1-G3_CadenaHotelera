@@ -150,11 +150,6 @@ class ValidateFieldsTest {
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	public class Dates {
 
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd") {
-			{
-				setLenient(false);
-			}
-		};
 
 		@ParameterizedTest()
 		@DisplayName("Fechas válida")
@@ -334,6 +329,43 @@ class ValidateFieldsTest {
 		void testFormatpriceDoublesKO(Long numeros) {
 			assertThrows(NumberFormatException.class, () -> ValidateFields.invalidCreditCard(numeros));
 		}
+		
+		@Test
+		@DisplayName("Fechas Expiración - Válidas")		
+		void testValidDateExpiryOK() {
+			Date today = new Date();;
+			Calendar c = Calendar.getInstance();
+			c.setTime(today);
+			c.add(Calendar.DATE, 2000);						
+			List<String> fechas = new ArrayList<>() {
+				{
+					add(today.toString());
+					add(c.toString());
+				}
+			};
+			for(String fecha: fechas) {
+				assertDoesNotThrow(() -> ValidateFields.validDateExpiry(fecha),fecha);			
+			}
+		}
+		
+		@Test
+		@DisplayName("Fechas Expiración - NO Válidas")		
+		void testValidDateExpiryKO() {
+			Date today = new Date();;
+			Calendar c = Calendar.getInstance();
+			c.setTime(today);
+			c.add(Calendar.DATE, -2000);						
+			List<String> fechas = new ArrayList<>() {
+				{
+					add(today.toString());
+					add(c.toString());
+					add("albaricoque");
+				}
+			};
+			for(String fecha: fechas) {
+				assertThrows(InvalidFieldsValuesException.class,() -> ValidateFields.validDateExpiry(fecha),fecha);			
+			}
+		}
 	}
 	
 //
@@ -358,5 +390,6 @@ class ValidateFieldsTest {
 		void testFormatpriceDoublesKO(String email) {
 			assertThrows(InvalidFieldsValuesException.class, () -> ValidateFields.checkMail(email));
 		}
+		
 	}
 }
