@@ -56,85 +56,87 @@ public class ReceiptService implements IReceiptService {
 		return resultado;
 	}
 
-	@Override
-	public EntityResult completeReceiptQuery(Map<String, Object> keyMap, List<String> attrList)
-			throws OntimizeJEERuntimeException {
-
-//		EntityResult aaa = new EntityResultMapImpl();
-
-		EntityResult resultado = new EntityResultMapImpl();
-
-		try {
-			ValidateFields.required(keyMap, ReceiptDao.ATTR_ID);
-			ValidateFields.onlyThis(keyMap, ReceiptDao.ATTR_ID);
-
-			List<String> lista = new ArrayList<String>();
-			lista.add(ReceiptDao.ATTR_BOOKING_ID);
-			lista.add(ReceiptDao.ATTR_DATE);
-			lista.add(ReceiptDao.ATTR_DIAS);
-			lista.add(ReceiptDao.ATTR_TOTAL_ROOM);
-			lista.add(ReceiptDao.ATTR_TOTAL_SERVICES);
-			lista.add(ReceiptDao.ATTR_TOTAL);
-
-			resultado = this.daoHelper.query(this.receiptDao, keyMap, lista);
-			
-			// Datos Servicios extras			
-			Map<String, Object> keyMapServciosExtra = new HashMap<String, Object>();
-			keyMapServciosExtra.put(BookingServiceExtraDao.ATTR_ID_BKG, resultado.getRecordValues(0).get(ReceiptDao.ATTR_BOOKING_ID));
-
-			List<String> listaServiciosExtra = new ArrayList<String>();
-			listaServiciosExtra.add(ServicesXtraDao.ATTR_NAME);
-			listaServiciosExtra.add(ServicesXtraDao.ATTR_DESCRIPTION);
-			listaServiciosExtra.add(BookingServiceExtraDao.ATTR_ID_UNITS);
-			listaServiciosExtra.add(BookingServiceExtraDao.ATTR_PRECIO);
-			listaServiciosExtra.add(BookingServiceExtraDao.ATTR_DATE);
-
-			// El resultado de esto se añade dentro del resultado de la siguente
-			EntityResult serviciosExtra = bookingServiceExtraService
-					.ExtraServicesNameDescriptionUnitsPriceDateQuery(keyMapServciosExtra, listaServiciosExtra);
-			
-//			Map<String, Object> servicios = new HashMap<String, Object>();
+//	@Override
+//	public EntityResult completeReceiptQuery(Map<String, Object> keyMap, List<String> attrList)
+//			throws OntimizeJEERuntimeException {
+//
+////		EntityResult aaa = new EntityResultMapImpl();
+//
+//		EntityResult resultado = new EntityResultMapImpl();
+//
+//		try {
+//			ValidateFields.required(keyMap, ReceiptDao.ATTR_ID);
+//			ValidateFields.onlyThis(keyMap, ReceiptDao.ATTR_ID);
+//
+//			List<String> lista = new ArrayList<String>();
+//			lista.add(ReceiptDao.ATTR_BOOKING_ID);
+//			lista.add(ReceiptDao.ATTR_DATE);
+//			lista.add(ReceiptDao.ATTR_DIAS);
+//			lista.add(ReceiptDao.ATTR_TOTAL_ROOM);
+//			lista.add(ReceiptDao.ATTR_TOTAL_SERVICES);
+//			lista.add(ReceiptDao.ATTR_TOTAL);
+//
+//			resultado = this.daoHelper.query(this.receiptDao, keyMap, lista);
+//			
+//			// Datos Servicios extras			
+//			Map<String, Object> keyMapServciosExtra = new HashMap<String, Object>();
+//			keyMapServciosExtra.put(BookingServiceExtraDao.ATTR_ID_BKG, resultado.getRecordValues(0).get(ReceiptDao.ATTR_BOOKING_ID));
+//
+//			List<String> listaServiciosExtra = new ArrayList<String>();
+//			listaServiciosExtra.add(ServicesXtraDao.ATTR_NAME);
+//			listaServiciosExtra.add(ServicesXtraDao.ATTR_DESCRIPTION);
+//			listaServiciosExtra.add(BookingServiceExtraDao.ATTR_ID_UNITS);
+//			listaServiciosExtra.add(BookingServiceExtraDao.ATTR_PRECIO);
+//			listaServiciosExtra.add(BookingServiceExtraDao.ATTR_DATE);
+//
+//			// El resultado de esto se añade dentro del resultado de la siguente
+//			EntityResult serviciosExtra = bookingServiceExtraService
+//					.ExtraServicesNameDescriptionUnitsPriceDateQuery(keyMapServciosExtra, listaServiciosExtra);
+//			
+////			Map<String, Object> servicios = new HashMap<String, Object>();
+////			for (int i = 0; i < serviciosExtra.calculateRecordNumber(); i++) {
+////				Object servicio = serviciosExtra.getRecordValues(i);
+////				servicios.put("servicioExtra", servicio);
+////			}
+//			
+//			List<Object> servicios = new ArrayList<Object>();
 //			for (int i = 0; i < serviciosExtra.calculateRecordNumber(); i++) {
 //				Object servicio = serviciosExtra.getRecordValues(i);
-//				servicios.put("servicioExtra", servicio);
+//				servicios.add(servicio);
 //			}
-			
-			List<Object> servicios = new ArrayList<Object>();
-			for (int i = 0; i < serviciosExtra.calculateRecordNumber(); i++) {
-				Object servicio = serviciosExtra.getRecordValues(i);
-				servicios.add(servicio);
-			}
-			
-
-//			for (int i = 0; i < serviciosExtra.calculateRecordNumber(); i++) {
-//				resultado.addRecord(serviciosExtra.getRecordValues(i));
-//			}
-			
-//			 resultado.addRecord(servicios);
-
-//			aaa = EntityResultTools.doUnionAll(resultado,serviciosExtra);
-
-//			resultado.addRecord(servicios, 0);
-			
-			resultado.put("serviciosExtra",servicios);
-			
-					
-//			resultado.put(servicios.get(keyMapServciosExtra),"serviciosExtra");
-
-//			resultado.putAll(servicios);
-
-		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(ErrorMessage.RESULT_REQUIRED + e.getMessage());
-		}
-		return resultado;
-	}
+//			
+//
+////			for (int i = 0; i < serviciosExtra.calculateRecordNumber(); i++) {
+////				resultado.addRecord(serviciosExtra.getRecordValues(i));
+////			}
+//			
+////			 resultado.addRecord(servicios);
+//
+////			aaa = EntityResultTools.doUnionAll(resultado,serviciosExtra);
+//
+////			resultado.addRecord(servicios, 0);
+//			
+//			resultado.put("serviciosExtra",servicios);
+//			
+//					
+////			resultado.put(servicios.get(keyMapServciosExtra),"serviciosExtra");
+//
+////			resultado.putAll(servicios);
+//
+//		} catch (MissingFieldsException e) {
+//			resultado = new EntityResultWrong(ErrorMessage.RESULT_REQUIRED + e.getMessage());
+//		}
+//		return resultado;
+//	}
 
 	@Override
 	public EntityResult receiptInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			// TODO restringir que meta solo ese y ninguno más
+
 			ValidateFields.required(attrMap, ReceiptDao.ATTR_BOOKING_ID);
+			ValidateFields.onlyThis(attrMap, ReceiptDao.ATTR_BOOKING_ID);
+			ValidateFields.isInt(attrMap, ReceiptDao.ATTR_BOOKING_ID);
 
 			if (bookingService.getBookingStatus(attrMap.get(ReceiptDao.ATTR_BOOKING_ID))
 					.equals(BookingDao.Status.COMPLETED)) {
@@ -207,7 +209,10 @@ public class ReceiptService implements IReceiptService {
 
 		} catch (MissingFieldsException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + "-" + e.getMessage());
-
+		
+		}catch(ClassCastException e) {
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + "-" +ErrorMessage.WRONG_TYPE);
+			
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 
@@ -222,33 +227,33 @@ public class ReceiptService implements IReceiptService {
 		return resultado;
 	}
 
-	@Override
-	public EntityResult receiptUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
-			throws OntimizeJEERuntimeException {
-		EntityResult resultado = new EntityResultMapImpl();
-		try {
-			ValidateFields.required(keyMap, ReceiptDao.ATTR_ID);
-			resultado = this.daoHelper.update(this.receiptDao, attrMap, keyMap);
-			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
-				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
-			} else {
-				resultado.setMessage("Receipt actualizada");
-			}
-		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + e.getMessage());
-		} catch (DuplicateKeyException e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
-		} catch (DataIntegrityViolationException e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(
-					ErrorMessage.UPDATE_ERROR_MISSING_FK + " / " + ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
-		} catch (Exception e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR);
-		}
-		return resultado;
-	}
+//	@Override
+//	public EntityResult receiptUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
+//			throws OntimizeJEERuntimeException {
+//		EntityResult resultado = new EntityResultMapImpl();
+//		try {
+//			ValidateFields.required(keyMap, ReceiptDao.ATTR_ID);
+//			resultado = this.daoHelper.update(this.receiptDao, attrMap, keyMap);
+//			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
+//				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
+//			} else {
+//				resultado.setMessage("Receipt actualizada");
+//			}
+//		} catch (MissingFieldsException e) {
+//			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + e.getMessage());
+//		} catch (DuplicateKeyException e) {
+//			e.printStackTrace();
+//			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
+//		} catch (DataIntegrityViolationException e) {
+//			e.printStackTrace();
+//			resultado = new EntityResultWrong(
+//					ErrorMessage.UPDATE_ERROR_MISSING_FK + " / " + ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR);
+//		}
+//		return resultado;
+//	}
 
 	@Override
 	public EntityResult receiptDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
