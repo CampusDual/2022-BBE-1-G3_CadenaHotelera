@@ -206,7 +206,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"filter\":{\r\n    \"rcp_id\":11\r\n},\r\n\"columns\":[\"rcp_id\",\"rcp_total\",\"servicios\"]\r\n}",
+					"raw": "{\"filter\":{\r\n    \"rcp_id\":11\r\n},\r\n\"columns\":[\"rcp_id\",\"rcp_total\",\"serviciosExtra\"]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -223,6 +223,51 @@
 					"path": [
 						"receipts",
 						"completeReceipt",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "R -recibo",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"filter\":{\r\n    \"rcp_id\":12\r\n},\r\n\"columns\":[\"rcp_id\",\"rcp_date\",\"rcp_bkg_id\",\"rcp_total_services\",\"rcp_days\",\"rcp_total_room\",\"rcp_total\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/receipts/receipt/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"receipts",
+						"receipt",
 						"search"
 					]
 				}

@@ -277,5 +277,11 @@ public static void checkMail(String mail)throws InvalidFieldsValuesException {
         	throw new InvalidFieldsValuesException(ErrorMessage.INVALID_MAIL);
         }
     }
+	
+	public static void isInt(Map<String, Object> keyMap, String... fields) throws ClassCastException{
+		for (String field : fields) {
+			Integer i = (int)keyMap.get(field);			
+		}
+	}
 }
 
