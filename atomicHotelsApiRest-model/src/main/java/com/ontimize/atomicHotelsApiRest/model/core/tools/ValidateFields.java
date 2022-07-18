@@ -22,11 +22,7 @@ public class ValidateFields {
 
 	public ValidateFields() {
 	}
-<<<<<<< HEAD
-	 
-=======
 
->>>>>>> 001f989a114b1d0cec30ea057b21f9281cae01b5
 	/**
 	 * Comprueba si existe las claves facilitadas en el HashMap, y lanza excepción
 	 * si no existe o si es null.
@@ -218,7 +214,7 @@ public class ValidateFields {
 	 * @param numero
 	 * @throws NumberFormatException error si es menor a 13 o mayor de 16 digitos
 	 */
-<<<<<<< HEAD
+
 	
 public static void invalidCreditCard(long n) throws NumberFormatException{
 	  try {
@@ -232,22 +228,7 @@ public static void invalidCreditCard(long n) throws NumberFormatException{
 	  		throw new NumberFormatException();
 	  	}
     }
-=======
->>>>>>> 001f989a114b1d0cec30ea057b21f9281cae01b5
 
-	public static void invalidCreditCard(long n) throws NumberFormatException {
-		try {
-			final int LONGITUD_MAXIMA_TARJETA_CREDITO = 16;
-			final int LONGITUD_MINIMA_TARJETA_CREDITO = 13;
-			String numero = Long.toString(n);
-			if (numero.length() < LONGITUD_MINIMA_TARJETA_CREDITO
-					|| numero.length() > LONGITUD_MAXIMA_TARJETA_CREDITO) {
-				throw new NumberFormatException();
-			}
-		} catch (java.lang.ClassCastException e) {
-			throw new NumberFormatException();
-		}
-	}
 
 	/**
 	 * 
