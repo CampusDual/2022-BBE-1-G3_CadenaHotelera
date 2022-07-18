@@ -45,11 +45,9 @@ public class ReceiptService implements IReceiptService {
 
 	@Autowired
 	private BookingService bookingService;
-	
+
 	@Autowired
 	private BookingServiceExtraService bookingServiceExtraService;
-
-	
 
 	@Override
 	public EntityResult receiptQuery(Map<String, Object> keyMap, List<String> attrList)
@@ -57,40 +55,76 @@ public class ReceiptService implements IReceiptService {
 		EntityResult resultado = this.daoHelper.query(this.receiptDao, keyMap, attrList);
 		return resultado;
 	}
-	
+
 	@Override
 	public EntityResult completeReceiptQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
-		
-		EntityResult resultado = new EntityResultMapImpl();
-		try {
-		ValidateFields.required(keyMap, ReceiptDao.ATTR_ID);
-		
-		//Datos Servicios extras
-		List<String> listaServiciosExtra = new ArrayList<String>();
 
-		listaServiciosExtra.add(ServicesXtraDao.ATTR_NAME);
-		listaServiciosExtra.add(ServicesXtraDao.ATTR_DESCRIPTION);
-		listaServiciosExtra.add(BookingServiceExtraDao.ATTR_ID_UNITS);
-		listaServiciosExtra.add(BookingServiceExtraDao.ATTR_PRECIO);
-		listaServiciosExtra.add(BookingServiceExtraDao.ATTR_DATE);
-				
+//		EntityResult aaa = new EntityResultMapImpl();
+
+		EntityResult resultado = new EntityResultMapImpl();
+
+		try {
+			ValidateFields.required(keyMap, ReceiptDao.ATTR_ID);
+			ValidateFields.onlyThis(keyMap, ReceiptDao.ATTR_ID);
+
+			List<String> lista = new ArrayList<String>();
+			lista.add(ReceiptDao.ATTR_BOOKING_ID);
+			lista.add(ReceiptDao.ATTR_DATE);
+			lista.add(ReceiptDao.ATTR_DIAS);
+			lista.add(ReceiptDao.ATTR_TOTAL_ROOM);
+			lista.add(ReceiptDao.ATTR_TOTAL_SERVICES);
+			lista.add(ReceiptDao.ATTR_TOTAL);
+
+			resultado = this.daoHelper.query(this.receiptDao, keyMap, lista);
 			
-		//El resultado de esto se añade dentro del resultado de la siguente
-		EntityResult serviciosExtra = bookingServiceExtraService.ExtraServicesNameDescriptionUnitsPriceDateQuery(keyMap, listaServiciosExtra);
-//		serviciosExtra.get(listaServiciosExtra);
-		
-		resultado = this.daoHelper.query(this.receiptDao, keyMap, attrList);
-		
-//		Map<Map<String,Object>,String> s = new HashMap<Map<String,Object>,String>();
-//		s.put(keyMap, "servicios");
-	
-//		resultado.addRecord(s,1);
-		
-		resultado.getRecordValues(0).put(keyMap, "serviciosExtra");
-		
-		}catch(MissingFieldsException e) {
-			resultado=new EntityResultWrong(ErrorMessage.RESULT_REQUIRED+e.getMessage());
+			// Datos Servicios extras			
+			Map<String, Object> keyMapServciosExtra = new HashMap<String, Object>();
+			keyMapServciosExtra.put(BookingServiceExtraDao.ATTR_ID_BKG, resultado.getRecordValues(0).get(ReceiptDao.ATTR_BOOKING_ID));
+
+			List<String> listaServiciosExtra = new ArrayList<String>();
+			listaServiciosExtra.add(ServicesXtraDao.ATTR_NAME);
+			listaServiciosExtra.add(ServicesXtraDao.ATTR_DESCRIPTION);
+			listaServiciosExtra.add(BookingServiceExtraDao.ATTR_ID_UNITS);
+			listaServiciosExtra.add(BookingServiceExtraDao.ATTR_PRECIO);
+			listaServiciosExtra.add(BookingServiceExtraDao.ATTR_DATE);
+
+			// El resultado de esto se añade dentro del resultado de la siguente
+			EntityResult serviciosExtra = bookingServiceExtraService
+					.ExtraServicesNameDescriptionUnitsPriceDateQuery(keyMapServciosExtra, listaServiciosExtra);
+			
+//			Map<String, Object> servicios = new HashMap<String, Object>();
+//			for (int i = 0; i < serviciosExtra.calculateRecordNumber(); i++) {
+//				Object servicio = serviciosExtra.getRecordValues(i);
+//				servicios.put("servicioExtra", servicio);
+//			}
+			
+			List<Object> servicios = new ArrayList<Object>();
+			for (int i = 0; i < serviciosExtra.calculateRecordNumber(); i++) {
+				Object servicio = serviciosExtra.getRecordValues(i);
+				servicios.add(servicio);
+			}
+			
+
+//			for (int i = 0; i < serviciosExtra.calculateRecordNumber(); i++) {
+//				resultado.addRecord(serviciosExtra.getRecordValues(i));
+//			}
+			
+//			 resultado.addRecord(servicios);
+
+//			aaa = EntityResultTools.doUnionAll(resultado,serviciosExtra);
+
+//			resultado.addRecord(servicios, 0);
+			
+			resultado.put("serviciosExtra",servicios);
+			
+					
+//			resultado.put(servicios.get(keyMapServciosExtra),"serviciosExtra");
+
+//			resultado.putAll(servicios);
+
+		} catch (MissingFieldsException e) {
+			resultado = new EntityResultWrong(ErrorMessage.RESULT_REQUIRED + e.getMessage());
 		}
 		return resultado;
 	}
@@ -108,7 +142,7 @@ public class ReceiptService implements IReceiptService {
 				Object reservaEnRecibo = attrMap.get(ReceiptDao.ATTR_BOOKING_ID);
 				Map<String, Object> bkg_id = new HashMap<String, Object>();
 				bkg_id.put(BookingDao.ATTR_ID, reservaEnRecibo);
-				
+
 				Map<String, Object> bsx_bkg_id = new HashMap<String, Object>();
 				bsx_bkg_id.put(BookingServiceExtraDao.ATTR_ID_BKG, reservaEnRecibo);
 
@@ -136,26 +170,28 @@ public class ReceiptService implements IReceiptService {
 				reciboServiciosExtra.add(BookingServiceExtraDao.ATTR_ID_UNITS);
 				reciboServiciosExtra.add("total");
 
-				EntityResult servicios = bookingServiceExtraService.bookingExtraServicePriceUnitsTotalQuery(bsx_bkg_id, reciboServiciosExtra);
+				EntityResult servicios = bookingServiceExtraService.bookingExtraServicePriceUnitsTotalQuery(bsx_bkg_id,
+						reciboServiciosExtra);
 
 				BigDecimal totalTodosServiciosExtra = new BigDecimal(0);
 
 				for (int i = 0; i < servicios.calculateRecordNumber(); i++) {
-					
-					int reservaServiciosExtra = (int) servicios.getRecordValues(i).get(BookingServiceExtraDao.ATTR_ID_BKG);
+
+					int reservaServiciosExtra = (int) servicios.getRecordValues(i)
+							.get(BookingServiceExtraDao.ATTR_ID_BKG);
 					BigDecimal precioServicioExtra = (BigDecimal) servicios.getRecordValues(i)
 							.get(BookingServiceExtraDao.ATTR_PRECIO);
 					int unidadesServicioExtra = (int) servicios.getRecordValues(i)
 							.get(BookingServiceExtraDao.ATTR_ID_UNITS);
 
 					BigDecimal totalServicioExtra = precioServicioExtra.multiply(new BigDecimal(unidadesServicioExtra));
-					totalTodosServiciosExtra=totalTodosServiciosExtra.add(totalServicioExtra);
+					totalTodosServiciosExtra = totalTodosServiciosExtra.add(totalServicioExtra);
 
 				}
 
 				attrMap.put(ReceiptDao.ATTR_TOTAL_SERVICES, totalTodosServiciosExtra);
-				
-				//Total del recibo
+
+				// Total del recibo
 				BigDecimal superTotal = totalHabitacion.add(totalTodosServiciosExtra);
 				attrMap.put(ReceiptDao.ATTR_TOTAL, superTotal);
 
