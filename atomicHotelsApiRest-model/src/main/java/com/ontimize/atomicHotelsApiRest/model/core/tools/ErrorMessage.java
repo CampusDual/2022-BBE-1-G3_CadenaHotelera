@@ -6,7 +6,7 @@ public class ErrorMessage {
 	public static final String CREATION_ERROR = "Error de creación ";		
 	public static final String CREATION_ERROR_DUPLICATED_FIELD = CREATION_ERROR+"- El registro ya existe";	 
 	public static final String CREATION_ERROR_MISSING_FK = CREATION_ERROR+"- No existe la referencia necesaria en otra tabla";
-	public static final String INVALID_MAIL= CREATION_ERROR+"Campo mail no es correcto"; 
+	public static final String INVALID_MAIL= "Campo mail no es correcto"; 
 	 
 //ERRORES DE UPDATE
 	public static final String UPDATE_ERROR = "Error de actualización ";	 
