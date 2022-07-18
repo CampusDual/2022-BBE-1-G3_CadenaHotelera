@@ -189,7 +189,11 @@ public class ValidateFields {
 	}
 	
 
-
+	/**
+	 * comprueba que un numero tenga 13 a 16 digitos  si no lo es lanza excepcion
+	 * @param numero
+	 * @throws NumberFormatException  error si es menor a 13 o mayor de 16 digitos
+	 */
 	
 public static void invalidCreditCard(long n) throws NumberFormatException{
 	  try {
@@ -203,7 +207,21 @@ public static void invalidCreditCard(long n) throws NumberFormatException{
 	  		throw new NumberFormatException();
 	  	}
     }
+
+
+/**
+ * 
+ * @param expirey mes y dia de 
+ * @return 0: fechas correctas 
+ * @throws InvalidFieldsValuesException  error hoy superior a fecha fin 
+ */
+public static int validDateExpiry(Date expiry) throws InvalidFieldsValuesException {
+		if (expiry.compareTo(new Date()) > 0) {
+		return 0;
+		}else {
+		throw new InvalidFieldsValuesException(ErrorMessage.DATA_EXPIRY_BEFORE_TODAY);
+	}
 }
 
-
+}
 
