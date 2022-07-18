@@ -2,8 +2,10 @@ package com.ontimize.atomicHotelsApiRest.model.core.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
@@ -16,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,6 +55,11 @@ class BookingServiceTest {
 	@Autowired
 	ValidateFields vf;
 
+//	@BeforeEach
+//	void setUp(){
+//		this.service = new BookingService();
+//		
+//	}
 //	@Test
 //	void testBookingQuery() {
 //		//
@@ -84,19 +92,22 @@ class BookingServiceTest {
 
 	@Test
 	@DisplayName("Maps de entrada válidos")
-	void testBookingActionUpdateOK() {		
+	void testBookingActionUpdateOK() {
 
 		EntityResult entityResult = service.bookingActionUpdate(getAttrMapOK(), getKeyMapOk());
-		assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode(),entityResult.getMessage());				
-			try {
-				doReturn(BookingDao.Status.CANCELED).when(serviceMock.getBookingStatus(getKeyMapOk().get(BookingDao.ATTR_ID)));
-			} catch (EntityResultRequiredException e) {
-				fail(e.toString());
-			}
-			
+		assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode(), entityResult.getMessage());
+		try {
+			doReturn(BookingDao.Status.CANCELED).when(serviceMock.getBookingStatus(any()));
+//			doReturn(BookingDao.Status.CANCELED).when(serviceMock.getBookingStatus(any()));
+			entityResult = service.bookingActionUpdate(getAttrMapOK(), getKeyMapOk());
+			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+		} catch (EntityResultRequiredException e) {
+			fail(e.toString());
+		}
+
 //			when(serviceMock.getBookingStatus(getKeyMapOk().get(BookingDao.ATTR_ID))).thenReturn(BookingDao.Status.CANCELED);
 //			when(service.getBookingStatus(getKeyMapOk().get(BookingDao.ATTR_ID))).thenThrow(MissingFieldsException.class);
-		
+
 	}
 
 	@Test
@@ -139,18 +150,19 @@ class BookingServiceTest {
 //	}
 //
 
-	
-	@Test
-	void testGetBookingStatus() {
-		List<String> columnList = Arrays.asList(BookingDao.ATTR_START,BookingDao.ATTR_END,BookingDao.ATTR_CHECKIN,BookingDao.ATTR_CHECKOUT,BookingDao.ATTR_CANCELED,BookingDao.ATTR_CREATED);
-		EntityResult erCancel = new EntityResultMapImpl(columnList);
-		erCancel.addRecord(new HashMap<String,Object>(){{
-			 put(BookingDao.ATTR_START, tools.getYesterdayString());		 
-		 }});
-				
-		
-		fail("Not yet implemented");
-	}
+//	@Test
+//	void testGetBookingStatus() {
+//		List<String> columnList = Arrays.asList(BookingDao.ATTR_START, BookingDao.ATTR_END, BookingDao.ATTR_CHECKIN,
+//				BookingDao.ATTR_CHECKOUT, BookingDao.ATTR_CANCELED, BookingDao.ATTR_CREATED);
+//		EntityResult erCancel = new EntityResultMapImpl(columnList);
+//		erCancel.addRecord(new HashMap<String, Object>() {
+//			{
+//				put(BookingDao.ATTR_START, tools.getYesterdayString());
+//			}
+//		});
+//
+//		fail("Not yet implemented");
+//	}
 //
 //	@Test
 //	void testBookingDaysUnitaryRoomPriceQuery() {
