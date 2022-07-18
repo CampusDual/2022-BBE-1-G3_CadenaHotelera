@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "49bd9ed9-47b3-40ac-ae79-d4b683ec1169",
+		"_postman_id": "aa452a0e-3f30-4524-9750-470d6e3653f9",
 		"name": "CreditCard",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -203,7 +203,7 @@
 			"response": []
 		},
 		{
-			"name": "-D roomTypes",
+			"name": "-D creditCard",
 			"event": [
 				{
 					"listen": "test",
