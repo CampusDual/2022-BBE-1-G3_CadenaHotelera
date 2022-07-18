@@ -14,7 +14,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesE
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 
 public class ValidateFields {
-	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd") {
+	public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd") {
 		{
 			setLenient(false);
 		}
@@ -215,20 +215,19 @@ public class ValidateFields {
 	 * @throws NumberFormatException error si es menor a 13 o mayor de 16 digitos
 	 */
 
-	
-public static void invalidCreditCard(long n) throws NumberFormatException{
-	  try {
-		  final int LONGITUD_MAXIMA_TARJETA_CREDITO = 16;
-		  final int LONGITUD_MINIMA_TARJETA_CREDITO = 13;
-		  String numero=Long.toString(n);
-		 if( numero.length() < LONGITUD_MINIMA_TARJETA_CREDITO || numero.length() > LONGITUD_MAXIMA_TARJETA_CREDITO||n<=0){
-      	  throw new NumberFormatException();
-        }
-	  	}catch(java.lang.ClassCastException e) {
-	  		throw new NumberFormatException();
-	  	}
-    }
-
+	public static void invalidCreditCard(long n) throws NumberFormatException {
+		try {
+			final int LONGITUD_MAXIMA_TARJETA_CREDITO = 16;
+			final int LONGITUD_MINIMA_TARJETA_CREDITO = 13;
+			String numero = Long.toString(n);
+			if (numero.length() < LONGITUD_MINIMA_TARJETA_CREDITO
+					|| numero.length() > LONGITUD_MAXIMA_TARJETA_CREDITO||n<=0) {
+				throw new NumberFormatException();
+			}
+		} catch (java.lang.ClassCastException e) {
+			throw new NumberFormatException();
+		}
+	}
 
 	/**
 	 * 
