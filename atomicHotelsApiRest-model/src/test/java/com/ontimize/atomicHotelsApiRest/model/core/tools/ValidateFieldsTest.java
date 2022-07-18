@@ -6,7 +6,10 @@ import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -128,40 +131,83 @@ class ValidateFieldsTest {
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	public class Dates {
 
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd") {{setLenient(false);}};
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd") {
+			{
+				setLenient(false);
+			}
+		};
 
 		@ParameterizedTest()
-		@DisplayName("Fechas válida")	
+		@DisplayName("Fechas válida")
 		@ValueSource(strings = { "2021-01-01", "1998-03-11", "2021-01-01" })
 		void testStringToDateOK(String fecha) {
-			assertDoesNotThrow(() ->ValidateFields.stringToDate(fecha));
+			assertDoesNotThrow(() -> ValidateFields.stringToDate(fecha));
 		}
 
 		@ParameterizedTest()
-		@DisplayName("Fechas NO válida")	
+		@DisplayName("Fechas NO válida")
 		@ValueSource(strings = { "2021-13-32", "cosas", "01-01-2022", "01/01/2022" })
 		void testStringToDateKO(String fecha) {
-			assertThrows(Exception.class,() -> ValidateFields.stringToDate(fecha));			
-			assertThrows(InvalidFieldsValuesException.class,() -> ValidateFields.stringToDate(fecha));			
+			assertThrows(Exception.class, () -> ValidateFields.stringToDate(fecha));
+			assertThrows(InvalidFieldsValuesException.class, () -> ValidateFields.stringToDate(fecha));
 		}
-		
-		
-		
-		
-		@Test
-		void testDataRangeStringString() {
-			fail("Not yet implemented");
+
+		@ParameterizedTest()
+		@DisplayName("Fechas null o vacía")
+		@NullAndEmptySource
+		void testStringToDateNullEmpty(String fecha) {
+			assertThrows(Exception.class, () -> ValidateFields.stringToDate(fecha));
+			assertThrows(InvalidFieldsValuesException.class, () -> ValidateFields.stringToDate(fecha));
 		}
 
 		@Test
-		void testDataRangeObjectObject() {
-			fail("Not yet implemented");
+		@DisplayName("Fecha inicio y Fin Válidas")
+		void testDataRangeDateDateOK(){
+			Date today = new Date();;
+			Calendar c = Calendar.getInstance();
+			c.setTime(today);
+			c.add(Calendar.DATE, 1);
+			try {
+				assertEquals(0, ValidateFields.dataRange(today, c.getTime()));
+			} catch (InvalidFieldsValuesException e) {
+				fail();
+			}
+		}
+		
+		@Test
+		@DisplayName("Fecha inicio Pasada y Fin Válidas")
+		void testDataRangeDateDatePastOK() {
+			Date today = new Date();;
+			Calendar c = Calendar.getInstance();
+			c.setTime(today);
+			c.add(Calendar.DATE, -1);	
+			try {
+				assertEquals(1, ValidateFields.dataRange(c.getTime(),today));
+			} catch (InvalidFieldsValuesException e) {
+				fail();
+			}
 		}
 
 		@Test
-		void testDataRangeDateDate() {
-			fail("Not yet implemented");
+		@DisplayName("Fecha inicio superior a Fin (NO Válidas)")
+		void testDataRangeDateDatePastKO(){
+			Date today = new Date();;
+			Calendar c = Calendar.getInstance();
+			c.setTime(today);
+			c.add(Calendar.DATE, -1);	
+			assertThrows(InvalidFieldsValuesException.class, () -> ValidateFields.dataRange(today,c.getTime()));
 		}
+		
+//		@Test
+//		void testDataRangeStringString() {
+//			fail("Not yet implemented");
+//		}
+//
+//		@Test
+//		void testDataRangeObjectObject() {
+//			fail("Not yet implemented");
+//		}
+
 	}
 
 //	@Test

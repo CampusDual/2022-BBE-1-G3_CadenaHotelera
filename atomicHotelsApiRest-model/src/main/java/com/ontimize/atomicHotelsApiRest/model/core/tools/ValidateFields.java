@@ -66,7 +66,7 @@ public class ValidateFields {
 		Date resultado;
 		try {
 			resultado = dateFormat.parse(fecha);
-		} catch (ParseException e) {
+		} catch (ParseException | NullPointerException e) {
 			throw new InvalidFieldsValuesException(
 					"Formato de fecha no válido (" + fecha + ") se requiere " + dateFormat.getDateFormatSymbols());
 		}
