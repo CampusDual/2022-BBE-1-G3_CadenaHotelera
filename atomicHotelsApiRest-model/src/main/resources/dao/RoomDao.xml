@@ -78,7 +78,8 @@
 				     	rooms
 				    LEFT JOIN hotels ON htl_id = rm_htl_id
 				    LEFT JOIN room_types_features ON rmt_id= rm_rmt_id
-				    LEFT JOIN room_types ON rmt_id= rm_rmt_id
+				    LEFT JOIN room_types ON rmt_bdc_id= rm_rmt_id
+				    LEFT JOIN features USING (ftr_id)
 				    #WHERE#
 			    ]]>
 			</Sentence>

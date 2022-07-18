@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "c4a077a4-bb5c-4eff-bd44-f905b4425c06",
+		"_postman_id": "436701b9-c44f-49bc-b661-a57f683c8f98",
 		"name": "Rooms",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -274,6 +274,50 @@
 						"rooms",
 						"roomInfo",
 						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "- R rooms features by hotel",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"htl_id\": 1\r\n    },\r\n    \"columns\": [\"htl_id\",\"htl_name\",\"htl_city\",\"htl_postal_code\",\"htl_state\",\"htl_country\",\"htl_phone\",\"htl_email\", \"htl_description\",\"htl_is_open\", \"rm_id\", \"rm_number\", \"rm_square_meters\", \"rm_status\", \"rmt_name\", \"rmt_description\", \"rmt_price\", \"ftr_id\", \"ftr_description\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/rooms/queryHotelFeaturesTypes/info",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"rooms",
+						"queryHotelFeaturesTypes",
+						"info"
 					]
 				}
 			},
