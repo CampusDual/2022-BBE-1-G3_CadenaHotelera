@@ -42,9 +42,6 @@ public class HotelService implements IHotelService {
 	public EntityResult hotelQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = this.daoHelper.query(this.hotelDao, keyMap, attrList);
-		// System.out.println("keyMap:" + keyMap.toString()); // TODO eliminar
-		// System.out.println("attrList:" + attrList.toString());// TODO eliminar
-//		resultado.setMessage("mensaje cambiado"); // TODO eliminar
 		return resultado;
 	}
 
