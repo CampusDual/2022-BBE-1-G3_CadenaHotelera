@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -177,26 +178,29 @@ class ValidateFieldsTest {
 		@Test
 		@DisplayName("Fecha inicio y Fin Válidas")
 		void testDataRangeDateDateOK(){
-			Date today = new Date();;
-			Calendar c = Calendar.getInstance();
-			c.setTime(today);
-			c.add(Calendar.DATE, 2000);
+			Calendar today = Calendar.getInstance();			
+			today.setTime(new Date());
+			today.add(Calendar.MINUTE, 1);
+			Calendar c = Calendar.getInstance();			
+			c.setTime(new Date());
+			c.add(Calendar.DATE, 2);		
 			try {
-				assertEquals(0, ValidateFields.dataRange(today, c.getTime()));
-			} catch (InvalidFieldsValuesException e) {
-				fail();
+				assertEquals(0, ValidateFields.dataRange(today.getTime(), c.getTime()));
+			} catch (InvalidFieldsValuesException e) {				
 			}
 		}
 		
 		@Test
 		@DisplayName("Fecha inicio Pasada y Fin Válidas")
 		void testDataRangeDateDatePastOK() {
-			Date today = new Date();;
+			Calendar today = Calendar.getInstance();			
+			today.setTime(new Date());
+			today.add(Calendar.MINUTE, 1);
 			Calendar c = Calendar.getInstance();
-			c.setTime(today);
-			c.add(Calendar.DATE, -2000);	
+			c.setTime(new Date());
+			c.add(Calendar.DATE, -2);	
 			try {
-				assertEquals(1, ValidateFields.dataRange(c.getTime(),today));
+				assertEquals(1, ValidateFields.dataRange(c.getTime(),today.getTime()));
 			} catch (InvalidFieldsValuesException e) {
 				fail();
 			}
@@ -205,11 +209,13 @@ class ValidateFieldsTest {
 		@Test
 		@DisplayName("Fecha inicio superior a Fin (NO Válidas)")
 		void testDataRangeDateDatePastKO(){
-			Date today = new Date();;
+			Calendar today = Calendar.getInstance();			
+			today.setTime(new Date());
+			today.add(Calendar.MINUTE, 1);
 			Calendar c = Calendar.getInstance();
-			c.setTime(today);
+			c.setTime(new Date());
 			c.add(Calendar.DATE, -2000);	
-			assertThrows(InvalidFieldsValuesException.class, () -> ValidateFields.dataRange(today,c.getTime()));
+			assertThrows(InvalidFieldsValuesException.class, () -> ValidateFields.dataRange(today.getTime(),c.getTime()));
 		}
 		
 //		@Test
@@ -219,13 +225,15 @@ class ValidateFieldsTest {
 //
 		@Test
 		void testDataRangeObjectObjectOk() {
-			Date today = new Date();;
+			Calendar today = Calendar.getInstance();			
+			today.setTime(new Date());
+			today.add(Calendar.MINUTE, 1);
 			Calendar c = Calendar.getInstance();
-			c.setTime(today);
+			c.setTime(new Date());
 			c.add(Calendar.DATE, 1);
 			
 			assertDoesNotThrow(()->ValidateFields.dataRange((Object) "2022-01-01", (Object) "2022-01-03"));			
-			assertDoesNotThrow(()->ValidateFields.dataRange((Object) today, (Object) c.getTime()));			
+			assertDoesNotThrow(()->ValidateFields.dataRange((Object) today.getTime(), (Object) c.getTime()));			
 		}
 		
 		@Test
@@ -332,15 +340,14 @@ class ValidateFieldsTest {
 		
 		@Test
 		@DisplayName("Fechas Expiración - Válidas")		
-		void testValidDateExpiryOK() {
-			Date today = new Date();;
+		void testValidDateExpiryOK() {			
 			Calendar c = Calendar.getInstance();
-			c.setTime(today);
+			c.setTime(new Date());
 			c.add(Calendar.DATE, 2000);						
 			List<String> fechas = new ArrayList<>() {
 				{
-					add(today.toString());
-					add(c.toString());
+					add(ValidateFields.dateFormat.format(c.getTime()));
+					add("2095-11-11");
 				}
 			};
 			for(String fecha: fechas) {
@@ -351,14 +358,16 @@ class ValidateFieldsTest {
 		@Test
 		@DisplayName("Fechas Expiración - NO Válidas")		
 		void testValidDateExpiryKO() {
-			Date today = new Date();;
+			Calendar today = Calendar.getInstance();			
+			today.setTime(new Date());
+			today.add(Calendar.MILLISECOND, 10);
 			Calendar c = Calendar.getInstance();
-			c.setTime(today);
-			c.add(Calendar.DATE, -2000);						
+			c.setTime(new Date());
+			c.add(Calendar.DATE, -1);						
 			List<String> fechas = new ArrayList<>() {
 				{
-					add(today.toString());
-					add(c.toString());
+					add(ValidateFields.dateFormat.format(today.getTime()));
+					add(ValidateFields.dateFormat.format(c.getTime()));
 					add("albaricoque");
 				}
 			};
@@ -384,6 +393,7 @@ class ValidateFieldsTest {
 		void testFormatpriceDoublesOK(String email) {
 			assertDoesNotThrow(() -> ValidateFields.checkMail(email));
 		}
+		
 		@ParameterizedTest
 		@DisplayName("Emails - NO Válidos")
 		@ValueSource(strings= {  "asdasd@asdasdas.e", "com", "15565", "@todoloquepuedas.com", "hansolo@.es","coma@asdasd@sd.es"})
