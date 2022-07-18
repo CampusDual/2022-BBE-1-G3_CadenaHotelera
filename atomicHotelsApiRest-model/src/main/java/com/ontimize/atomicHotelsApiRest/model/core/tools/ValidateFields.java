@@ -11,6 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingColumnsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 
 public class ValidateFields {
@@ -44,6 +45,48 @@ public class ValidateFields {
 	}
 
 	/**
+	 * Comprueba si de todas las claves facilitadas, al menos una se encuentra en el
+	 * HashMap con su correspondiente valor
+	 * 
+	 * @param keyMap
+	 * @param fields
+	 * @throws MissingFieldsException
+	 */
+	public static void atLeastOneRequired(Map<String, Object> keyMap, String... fields) throws MissingFieldsException {
+		int contador = 0;
+		for (String field : fields) {
+			if (keyMap.containsKey(field) && keyMap.get(field) != null) {
+				contador++;
+			}
+		}
+		if (contador <= 0) {
+			throw new MissingFieldsException();
+		}
+	}
+
+	/**
+	 * Comprueba si alguno de los elementos está en la lista
+	 * 
+	 * @param attrList
+	 * @param fields
+	 * @throws MissingFieldsException
+	 */
+	public static void atLeastOneRequired(List<String> attrList, String... fields) throws MissingColumnsException {
+		int contador = 0;
+		for (int i = 0; i < attrList.size(); i++) {
+			for (String field : fields) {
+				if (attrList.get(i).equals(field)) {
+					contador++;
+				}
+			}
+		}
+		if (contador <= 0) {
+			throw new MissingColumnsException();
+		}
+
+	}
+
+	/**
 	 * Elimina campos restringidos del HashMap
 	 * 
 	 * @param keyMap HashMap a actualizar
@@ -63,6 +106,17 @@ public class ValidateFields {
 	 */
 	public static void onlyThis(Map<String, Object> keyMap, String... fields) {
 		keyMap.keySet().retainAll(Arrays.asList(fields));
+	}
+	
+	
+	/**
+	 * Elimina todos los elementos de una lista a excepción de los especificadas
+	 * 
+	 * @param list List donde se eliminan las claves
+	 * @param fields elementos a persistir.
+	 */
+	public static void onlyThis(List<String> list, String... fields) {
+		list.retainAll(Arrays.asList(fields));
 	}
 
 	/**
@@ -243,46 +297,140 @@ public class ValidateFields {
 			throw new InvalidFieldsValuesException(ErrorMessage.DATA_EXPIRY_BEFORE_TODAY);
 		}
 	}
-/*
-public static void checkMail(String mail)throws InvalidFieldsValuesException {
-	String regex="^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(-[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-
-	
-
-	Pattern pattern = Pattern.compile("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(-[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
-
-    Matcher mather = pattern.matcher(mail);
-
-    if (mather.find() == true) {
-//    if (mail.matches(regex))	{
-//    	
-    } else {
-    	throw new InvalidFieldsValuesException(ErrorMessage.INVALID_MAIL);
-    }
-
-	
+	/*
+	 * public static void checkMail(String mail)throws InvalidFieldsValuesException
+	 * { String regex=
+	 * "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(-[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+	 * 
+	 * 
+	 * 
+	 * Pattern pattern = Pattern.compile(
+	 * "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(-[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"
+	 * );
+	 * 
+	 * Matcher mather = pattern.matcher(mail);
+	 * 
+	 * if (mather.find() == true) { // if (mail.matches(regex)) { // } else { throw
+	 * new InvalidFieldsValuesException(ErrorMessage.INVALID_MAIL); }
+	 * 
+	 * 
 	 * Pattern pat = Pattern.compile(regex); Matcher mat = pat.matcher(mail); if
 	 * (mat.matches()){​​​​​​ System.out.print(""); }​​​​​​else{
 	 * System.out.print(""); }
-	 
-}
-*/
-	
+	 * 
+	 * }
+	 */
+
 	public static void checkMail(String mail) throws InvalidFieldsValuesException {
-        String regex="^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(-[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-        Pattern pat = Pattern.compile(regex);
-        Matcher mat = pat.matcher(mail);
-        if (mat.matches()) {
-        	
-        } else {
-        	throw new InvalidFieldsValuesException(ErrorMessage.INVALID_MAIL);
-        }
-    }
-	
-	public static void isInt(Map<String, Object> keyMap, String... fields) throws ClassCastException{
+		String regex = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(-[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+		Pattern pat = Pattern.compile(regex);
+		Matcher mat = pat.matcher(mail);
+		if (mat.matches()) {
+
+		} else {
+			throw new InvalidFieldsValuesException(ErrorMessage.INVALID_MAIL);
+		}
+	}
+
+	/**
+	 * Castea los valores de un keyMap a int si es posible.
+	 * 
+	 * @param keyMap
+	 * @param fields
+	 * @throws ClassCastException
+	 */
+	public static void isInt(Map<String, Object> keyMap, String... fields) throws InvalidFieldsValuesException {
 		for (String field : fields) {
-			Integer i = (int)keyMap.get(field);			
+			try {
+			int i = (int) keyMap.get(field);
+			}catch(NullPointerException e) {
+				e.printStackTrace();
+			}catch(ClassCastException e) {
+				throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE+ " - "+field);
+			}
+		}
+	}
+	
+	//TODO validador pendiente
+	/**
+	 * Castea los valores de un keyMap a String si es posible.
+	 * 
+	 * @param keyMap
+	 * @param fields
+	 * @throws ClassCastException
+	 */
+	public static void isString(Map<String, Object> keyMap, String... fields) throws InvalidFieldsValuesException {
+		for (String field : fields) {
+			try {
+			String i = (String) keyMap.get(field);
+			}catch(NullPointerException e) {
+				e.printStackTrace();
+			}catch(ClassCastException e) {
+				throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE+ " - "+field);
+			}
+		}
+	}
+	
+	
+	//TODO validador pendiente
+	/**
+	 * Castea los valores de un keyMap a Date si es posible.
+	 * 
+	 * @param keyMap
+	 * @param fields
+	 * @throws ClassCastException
+	 */
+	public static void isDate(Map<String, Object> keyMap, String... fields) throws InvalidFieldsValuesException {
+		for (String field : fields) {
+			try {
+			Date i = (Date) keyMap.get(field);
+			}catch(NullPointerException e) {
+				e.printStackTrace();
+			}catch(ClassCastException e) {
+				throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE+ " - "+field);
+			}
+		}
+	}
+	
+	
+	//TODO validador pendiente
+	/**
+	 * Castea los valores de un keyMap a long si es posible.
+	 * 
+	 * @param keyMap
+	 * @param fields
+	 * @throws ClassCastException
+	 */
+	public static void islong(Map<String, Object> keyMap, String... fields) throws InvalidFieldsValuesException {
+		for (String field : fields) {
+			try {
+			long i = (long) keyMap.get(field);
+			}catch(NullPointerException e) {
+				e.printStackTrace();
+			}catch(ClassCastException e) {
+				throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE+ " - "+field);
+			}
+		}
+	}
+	
+	
+	//TODO validador pendiente
+	/**
+	 * Castea los valores de un keyMap a BigDecimal si es posible.
+	 * 
+	 * @param keyMap
+	 * @param fields
+	 * @throws ClassCastException
+	 */
+	public static void isBigDecimal(Map<String, Object> keyMap, String... fields) throws InvalidFieldsValuesException {
+		for (String field : fields) {
+			try {
+			BigDecimal i = (BigDecimal) keyMap.get(field);
+			}catch(NullPointerException e) {
+				e.printStackTrace();
+			}catch(ClassCastException e) {
+				throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE+ " - "+field);
+			}
 		}
 	}
 }
-

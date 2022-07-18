@@ -16,6 +16,8 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.EntityResultRequiredException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingColumnsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IReceiptService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
@@ -52,7 +54,33 @@ public class ReceiptService implements IReceiptService {
 	@Override
 	public EntityResult receiptQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
-		EntityResult resultado = this.daoHelper.query(this.receiptDao, keyMap, attrList);
+		EntityResult resultado = new EntityResultMapImpl();
+
+		try {
+			
+			ValidateFields.atLeastOneRequired(keyMap, ReceiptDao.ATTR_ID,ReceiptDao.ATTR_BOOKING_ID,ReceiptDao.ATTR_DATE,ReceiptDao.ATTR_TOTAL_SERVICES,ReceiptDao.ATTR_DIAS,ReceiptDao.ATTR_TOTAL_ROOM,ReceiptDao.ATTR_TOTAL);
+			ValidateFields.onlyThis(keyMap, ReceiptDao.ATTR_ID,ReceiptDao.ATTR_BOOKING_ID,ReceiptDao.ATTR_DATE,ReceiptDao.ATTR_TOTAL_SERVICES,ReceiptDao.ATTR_DIAS,ReceiptDao.ATTR_TOTAL_ROOM,ReceiptDao.ATTR_TOTAL);
+			ValidateFields.isInt(keyMap,ReceiptDao.ATTR_ID,ReceiptDao.ATTR_BOOKING_ID,ReceiptDao.ATTR_DIAS);
+			ValidateFields.isDate(keyMap,ReceiptDao.ATTR_DATE);
+			ValidateFields.isBigDecimal(keyMap,ReceiptDao.ATTR_TOTAL_SERVICES,ReceiptDao.ATTR_TOTAL_ROOM,ReceiptDao.ATTR_TOTAL);
+			
+			ValidateFields.atLeastOneRequired(attrList, ReceiptDao.ATTR_ID,ReceiptDao.ATTR_BOOKING_ID,ReceiptDao.ATTR_DATE,ReceiptDao.ATTR_TOTAL_SERVICES,ReceiptDao.ATTR_DIAS,ReceiptDao.ATTR_TOTAL_ROOM,ReceiptDao.ATTR_TOTAL);
+			ValidateFields.onlyThis(attrList, ReceiptDao.ATTR_ID,ReceiptDao.ATTR_BOOKING_ID,ReceiptDao.ATTR_DATE,ReceiptDao.ATTR_TOTAL_SERVICES,ReceiptDao.ATTR_DIAS,ReceiptDao.ATTR_TOTAL_ROOM,ReceiptDao.ATTR_TOTAL);
+			
+			resultado = this.daoHelper.query(this.receiptDao, keyMap, attrList);
+		}catch(MissingFieldsException e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.REQUIRED_FIELDS);
+		}catch(MissingColumnsException e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.REQUIRED_COLUMNS);
+		}catch(InvalidFieldsValuesException e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(e.getMessage());
+		}
 		return resultado;
 	}
 
@@ -209,10 +237,10 @@ public class ReceiptService implements IReceiptService {
 
 		} catch (MissingFieldsException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + "-" + e.getMessage());
-		
-		}catch(ClassCastException e) {
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + "-" +ErrorMessage.WRONG_TYPE);
-			
+
+		} catch (InvalidFieldsValuesException e) {
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + "-" + e.getMessage());
+
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 
@@ -260,6 +288,8 @@ public class ReceiptService implements IReceiptService {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
 			ValidateFields.required(keyMap, ReceiptDao.ATTR_ID);
+			ValidateFields.onlyThis(keyMap, ReceiptDao.ATTR_BOOKING_ID);
+			ValidateFields.isInt(keyMap, ReceiptDao.ATTR_BOOKING_ID);
 
 			EntityResult auxEntity = this.daoHelper.query(this.receiptDao,
 					EntityResultTools.keysvalues(ReceiptDao.ATTR_ID, keyMap.get(ReceiptDao.ATTR_ID)),
@@ -272,6 +302,8 @@ public class ReceiptService implements IReceiptService {
 			}
 		} catch (MissingFieldsException e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + e.getMessage());
+		} catch (ClassCastException e) {
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + "-" + ErrorMessage.WRONG_TYPE);
 		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
 		} catch (Exception e) {

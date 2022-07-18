@@ -45,34 +45,35 @@ class HotelServiceExtraServiceTest {
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	public class InsertQuery {
 
-		@Test
-		@DisplayName("Insert HotelServiceExtraService")
-		void when_hotelServiceExtraService_insert_is_succsessfull() {
-			Map<String, Object> attrMap = new HashMap<>() {
-				/**
-				 * 
-				 */
-				private static final long serialVersionUID = 1L;
-
-				{
-					put(BedComboDao.ATTR_ID, 1);
-					put(BedComboDao.ATTR_NAME, "Cama real para 2");
-					put(BedComboDao.ATTR_SLOTS, 8);
-				}
-			};
-			EntityResult resultado = new EntityResultMapImpl();
-			resultado.addRecord(attrMap);
-			resultado.setCode(EntityResult.OPERATION_SUCCESSFUL);
-			resultado.setMessage("Tipo de cama insertado");
-			when(daoHelper.insert(any(), anyMap())).thenReturn(resultado);
-			EntityResult entityResult = service.bedComboInsert(attrMap);
-			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-			assertEquals(entityResult.getMessage(), "Tipo de cama insertado");
-		}
+//		@Test
+//		@DisplayName("Insert HotelServiceExtraService")
+//		void when_hotelServiceExtraService_insert_is_succsessfull() {
+//			Map<String, Object> attrMap = new HashMap<>() {
+//				/**
+//				 * 
+//				 */
+//				private static final long serialVersionUID = 1L;
+//
+//				{
+//					put(BedComboDao.ATTR_ID, 1);
+//					put(BedComboDao.ATTR_NAME, "Cama real para 2");
+//					put(BedComboDao.ATTR_SLOTS, 8);
+//				}
+//			};
+//			EntityResult resultado = new EntityResultMapImpl();
+//			resultado.addRecord(attrMap);
+//			resultado.setCode(EntityResult.OPERATION_SUCCESSFUL);
+//			resultado.setMessage("Tipo de cama insertado");
+//			when(daoHelper.insert(any(), anyMap())).thenReturn(resultado);
+//			EntityResult entityResult = service.bedComboInsert(attrMap);
+//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
+//			assertEquals(entityResult.getMessage(), "Tipo de cama insertado");
+//		}
 		
 	@Test
 	void test() {
 		fail("Not yet implemented");
 	}
 
+	}
 }
