@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IHotelService;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomTypeDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
@@ -48,12 +49,13 @@ public class HotelService implements IHotelService {
 	}
 
 	@Override
-	public EntityResult hotelInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
+	public EntityResult hotelInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException{
 		
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
 			ValidateFields.required(attrMap, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET, HotelDao.ATTR_CITY,
-					HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY);			
+					HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY);
+			ValidateFields.checkMail(HotelDao.ATTR_EMAIL);
 			//ValidateFields.emptyFields(attrMap);			
 			resultado = this.daoHelper.insert(this.hotelDao, attrMap);
 			resultado.setMessage("Hotel registrado");
@@ -61,8 +63,8 @@ public class HotelService implements IHotelService {
 		} catch (MissingFieldsException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());
 			
-//		}catch(InvalidFieldsValuesException e) {
-//			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());	
+		}catch(InvalidFieldsValuesException e) {
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());	
 			
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);

@@ -104,7 +104,8 @@ class HotelServiceTest {
 					HotelDao.ATTR_CITY, HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY,
 					HotelDao.ATTR_PHONE, HotelDao.ATTR_PHONE, HotelDao.ATTR_EMAIL, HotelDao.ATTR_DESCRIPTION,
 					HotelDao.ATTR_IS_OPEN);
-			doReturn(getSpecificHotelData(keyMap, attrList)).when(daoHelper).query(any(), anyMap(), anyList());
+			
+			doReturn(getSpecificHotelData(keyMap, attrList)).when(daoHelper).query(any(), anyMap(), anyList(),anyString());
 			EntityResult entityResult = service.hotelDataQuery(new HashMap<>(), new ArrayList<>());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
 			assertEquals(1, entityResult.calculateRecordNumber());

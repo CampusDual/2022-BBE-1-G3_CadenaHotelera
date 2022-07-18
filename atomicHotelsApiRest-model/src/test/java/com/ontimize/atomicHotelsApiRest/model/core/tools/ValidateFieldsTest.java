@@ -59,6 +59,25 @@ class ValidateFieldsTest {
 		};
 	}
 
+	Map<String, Object> getKeyMapWithEmptyValues() {
+		return new HashMap<>() {
+			{
+				put("campo1", "");
+				put("campo2", "");
+				put("campo3", "");
+			}
+		};
+	}
+	
+	Map<String, Object> getKeyMapWithEmptyNullEmptyValues() {
+		return new HashMap<>() {
+			{
+				put("campo1", new String());
+				put("campo2", null);
+				put("campo3", "");
+			}
+		};
+	}
 	@Nested
 	@DisplayName("Test for required()")
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -166,7 +185,7 @@ class ValidateFieldsTest {
 			Date today = new Date();;
 			Calendar c = Calendar.getInstance();
 			c.setTime(today);
-			c.add(Calendar.DATE, 1);
+			c.add(Calendar.DATE, 2);
 			try {
 				assertEquals(0, ValidateFields.dataRange(today, c.getTime()));
 			} catch (InvalidFieldsValuesException e) {
@@ -203,27 +222,92 @@ class ValidateFieldsTest {
 //			fail("Not yet implemented");
 //		}
 //
-//		@Test
-//		void testDataRangeObjectObject() {
-//			fail("Not yet implemented");
-//		}
+		@Test
+		void testDataRangeObjectObjectOk() {
+			Date today = new Date();;
+			Calendar c = Calendar.getInstance();
+			c.setTime(today);
+			c.add(Calendar.DATE, 1);
+			
+			assertDoesNotThrow(()->ValidateFields.dataRange((Object) "2022-01-01", (Object) "2022-01-03"));			
+			assertDoesNotThrow(()->ValidateFields.dataRange((Object) today, (Object) c.getTime()));			
+		}
+		
+		@Test
+		void testDataRangeObjectObjectKO() {
+			assertThrows(InvalidFieldsValuesException.class, () -> ValidateFields.dataRange((Object) "2022-10-01",(Object) new Date()));						
+		}
 
 	}
+	
 
-//	@Test
-//	void testEmptyFields() {
-//		fail("Not yet implemented");
-//	}
-//
-//	@Test
-//	void testEmptyField() {
-//		fail("Not yet implemented");
-//	}
-//
-//	@Test
-//	void testFormatprice() {
-//		fail("Not yet implemented");
-//	}
+	@Nested
+	@DisplayName("Test for empty fields")
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	public class Emptys{
+		
+		@ParameterizedTest()
+		@DisplayName("Campos válidos")		
+		@ValueSource(strings = { "campo1", "campo2", "campo3"})
+		void testEmptyFieldOK(String valor) {
+			assertDoesNotThrow(() -> ValidateFields.emptyField(getKeyMap(),valor));
+		}
+		
+		@ParameterizedTest()
+		@DisplayName("Campos NO válidos")
+		@ValueSource(strings = { "campo1", "campo2", "campo3", "campo999" })
+		void testEmptyFieldKo(String valor) {								
+			assertThrows(MissingFieldsException.class, () -> ValidateFields.emptyField(getKeyMapWithEmptyNullEmptyValues(),valor));								
+		}
+		
+		@Test
+		@DisplayName("Varios Campos entrada válidos")		
+		void testEmptyFieldsOK() {
+			assertDoesNotThrow(() -> ValidateFields.emptyFields(getKeyMap(),"campo1", "campo2", "campo3"));
+		}
+		
+		@Test
+		@DisplayName("Varios Campos entrada NO válidos")		
+		void testEmptyFieldsKO() {
+			assertThrows(MissingFieldsException.class, () -> ValidateFields.emptyFields(getKeyMapWithEmptyNullEmptyValues(),"campo1", "campo2", "campo3", "campo999"));
+		}
+	
+	}
+
+	@Nested
+	@DisplayName("Test for Prices")
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	public class Prices{
+		
+		@ParameterizedTest
+		@DisplayName("Campos Double - válidos")
+		@ValueSource(doubles = { 1, 4, 2.33, 11234.48, 0.95, 01.14, 0,  Double.MAX_VALUE })
+		void testFormatpriceDoublesOK(Double numeros) {
+			assertDoesNotThrow(() -> ValidateFields.formatprice(numeros));
+		}
+		
+		@ParameterizedTest
+		@DisplayName("Campos String - válidos")
+		@ValueSource(strings = { "1", "4", "2.33", "11234.48", "0.95", "01.14", "0000000" })
+		void testFormatpriceStringsOK(String numeros) {
+			assertDoesNotThrow(() -> ValidateFields.formatprice(numeros));
+		}
+		
+		@ParameterizedTest
+		@DisplayName("Campos Double - NO válidos")
+		@ValueSource(doubles = {  4.12345, 123123343434D, 0001.999,  (Double.MAX_VALUE + 1) })
+		void testFormatpriceDoublesKO(Double numeros) {
+			assertThrows(NumberFormatException.class, () -> ValidateFields.formatprice(numeros));
+		}
+		
+		@ParameterizedTest
+		@DisplayName("Campos Double - NO válidos")
+		@ValueSource(strings = {  "4.12345", "000000.000000", "123123343434", "1.99000",  "albaricoque" })
+		void testFormatpriceStringssKO(String numeros) {
+			assertThrows(NumberFormatException.class, () -> ValidateFields.formatprice(numeros));
+		}		
+	}
+
 //
 //	@Test
 //	void testNegativeNotAllowed() {
