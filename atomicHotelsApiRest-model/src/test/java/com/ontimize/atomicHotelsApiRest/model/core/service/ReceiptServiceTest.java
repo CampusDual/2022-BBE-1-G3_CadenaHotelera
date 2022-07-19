@@ -375,6 +375,19 @@ class ReceiptServiceTest {
 		return er;
 	}
 		
+		EntityResult confirmedER() {
+			List<String> columnList = Arrays.asList(BookingDao.ATTR_ID, RoomTypeDao.ATTR_PRICE,ReceiptDao.ATTR_DIAS);
+			EntityResult er = new EntityResultMapImpl(columnList);
+			er.addRecord(new HashMap<String, Object>() {
+				{
+					put(BookingDao.ATTR_CHECKIN, null);
+					put(BookingDao.ATTR_CHECKOUT, null);
+					put(BookingDao.ATTR_CANCELED, null);
+				}
+			});
+			return er;
+		}
+		
 		
 //		public EntityResult getSpecificBookingRoomPriceDaysData(Map<String, Object> keyValues, List<String> attributes) {
 //			EntityResult allData = this.getAllBookingsRoomPriceDaysData();
