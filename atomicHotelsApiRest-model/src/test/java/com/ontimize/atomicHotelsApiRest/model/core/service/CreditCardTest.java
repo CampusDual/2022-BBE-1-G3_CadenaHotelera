@@ -45,7 +45,7 @@ public class CreditCardTest {
 	DefaultOntimizeDaoHelper daoHelper;
 
 	@InjectMocks
-	CreditCardDao service;
+	CreditCardService service;
 
 	@Autowired
 	CreditCardDao creditCardDao;
