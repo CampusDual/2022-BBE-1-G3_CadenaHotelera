@@ -374,6 +374,48 @@ class ReceiptServiceTest {
 		});
 		return er;
 	}
+		
+		
+//		public EntityResult getSpecificBookingRoomPriceDaysData(Map<String, Object> keyValues, List<String> attributes) {
+//			EntityResult allData = this.getAllBookingsRoomPriceDaysData();
+//			int recordIndex = allData.getRecordIndex(keyValues);
+//			HashMap<String, Object> recordValues = (HashMap) allData.getRecordValues(recordIndex);
+//			List<String> columnList = Arrays.asList(BookingDao.ATTR_ID, RoomTypeDao.ATTR_PRICE,ReceiptDao.ATTR_DIAS);
+//			EntityResult er = new EntityResultMapImpl(columnList);
+//			if (recordValues != null) {
+//				er.addRecord(recordValues);
+//			}
+//			er.setCode(EntityResult.OPERATION_SUCCESSFUL);
+//			er.setColumnSQLTypes(new HashMap<String, Number>() {
+//				{
+//					put(BookingDao.ATTR_ID, Types.INTEGER);
+//					put(RoomTypeDao.ATTR_PRICE, Types.NUMERIC);
+//					put(ReceiptDao.ATTR_DIAS, Types.INTEGER);
+//				}
+//			});
+//			return er;
+//		}
+//			
+//			public EntityResult getAllBookingsRoomPriceDaysData() {
+//			List<String> columnList = Arrays.asList(BookingDao.ATTR_ID, RoomTypeDao.ATTR_PRICE,ReceiptDao.ATTR_DIAS);
+//			EntityResult er = new EntityResultMapImpl(columnList);
+//			er.addRecord(new HashMap<String, Object>() {
+//				{
+//					put(BookingDao.ATTR_ID, 1);
+//					put(RoomTypeDao.ATTR_PRICE, 20.21);
+//					put(ReceiptDao.ATTR_DIAS, 3);
+//				}
+//			});
+//			
+//			er.setCode(EntityResult.OPERATION_SUCCESSFUL);
+//			er.setColumnSQLTypes(new HashMap<String, Number>() {
+//				{
+//					put(ReceiptDao.ATTR_ID, Types.INTEGER);
+//					put(RoomTypeDao.ATTR_PRICE, Types.NUMERIC);
+//				}
+//			});
+//			return er;
+//		}
 
 //
 //	@Nested
