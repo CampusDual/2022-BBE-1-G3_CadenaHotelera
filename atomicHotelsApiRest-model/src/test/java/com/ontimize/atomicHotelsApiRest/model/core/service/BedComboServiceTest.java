@@ -283,7 +283,7 @@ public class BedComboServiceTest {
 				{
 					put(BedComboDao.ATTR_ID, 1);
 				}
-			};
+			}; 
 			Map<String, Object> keyMap = new HashMap<>() {
 				{
 					put(BedComboDao.ATTR_ID, 1);
@@ -291,11 +291,6 @@ public class BedComboServiceTest {
 					put(BedComboDao.ATTR_SLOTS, 6);
 				}
 			};
-			EntityResult resultado = new EntityResultMapImpl();
-			resultado.addRecord(keyMap);
-			resultado.setCode(EntityResult.OPERATION_SUCCESSFUL);
-			resultado.setMessage("Tipo de cama actualizado");
-
 			when(daoHelper.update(any(), anyMap(), anyMap())).thenReturn(resultado);
 			EntityResult entityResult = service.bedComboUpdate(attrMap, keyMap);
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
@@ -307,7 +302,9 @@ public class BedComboServiceTest {
 		void when_already_exist() {
 			Map<String, Object> attrMap = new HashMap<>() {
 				{
-					put(HotelDao.ATTR_ID, 1);
+					put(BedComboDao.ATTR_ID, 1);
+					put(BedComboDao.ATTR_NAME, "Cama simple");
+					put(BedComboDao.ATTR_SLOTS, 1);
 				}
 			};
 			Map<String, Object> keyMap = new HashMap<>() {
@@ -324,4 +321,36 @@ public class BedComboServiceTest {
 		}
 	
 	}
+	@Nested
+	@DisplayName("Test for BedCombo delete")
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	class deleteQuery {
+
+		@Test
+		@DisplayName("Delete BedCombo")
+		void when_bedCombo_delete_is_succsessfull() {
+			Map<String, Object> attrMap = new HashMap<>() {
+				
+					{
+						put(BedComboDao.ATTR_ID, 1);
+						put(BedComboDao.ATTR_NAME, "Cama simple");
+						put(BedComboDao.ATTR_SLOTS, 1);
+					}
+				
+			};
+		
+			
+			EntityResult resultado = new EntityResultMapImpl();
+			resultado.addRecord(attrMap);
+			resultado.setCode(EntityResult.OPERATION_SUCCESSFUL);
+			resultado.setMessage("Tipo de cama borrado");
+			doReturn(resultado).when(daoHelper).delete(any(),anyMap());
+			EntityResult entityResult = service.bedComboDelete(attrMap);
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
+			assertEquals(entityResult.getMessage(), "Tipo de cama borrada");
+		}
+
+		
+	}
+	
 	}

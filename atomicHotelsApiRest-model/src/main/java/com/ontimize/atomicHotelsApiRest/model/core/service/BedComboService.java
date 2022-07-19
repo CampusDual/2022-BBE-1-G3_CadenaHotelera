@@ -34,12 +34,12 @@ public class BedComboService implements IBedComboService{
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
 
-	@Override
+	@Override 
 	public EntityResult bedComboQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		return this.daoHelper.query(this.bedComboDao, keyMap, attrList);
 	}
-	
+	 
 	@Override
 	public EntityResult bedComboInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
