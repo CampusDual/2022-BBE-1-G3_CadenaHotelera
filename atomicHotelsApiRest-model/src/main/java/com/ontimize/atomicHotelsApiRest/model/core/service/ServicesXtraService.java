@@ -50,13 +50,13 @@ public class ServicesXtraService implements IServicesXtraService{
 		
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-//			ValidateFields.required(attrMap, ServicesXtraDao.ATTR_NAME);
-			ValidateFields.emptyFields(attrMap, ServicesXtraDao.ATTR_NAME, ServicesXtraDao.ATTR_DESCRIPTION);
+			ValidateFields.required(attrMap, ServicesXtraDao.ATTR_NAME);
+//			ValidateFields.emptyFields(attrMap, ServicesXtraDao.ATTR_NAME, ServicesXtraDao.ATTR_DESCRIPTION);
 			resultado = this.daoHelper.insert(this.servicesXtraDao, attrMap);
 			resultado.setMessage("ServiceXtra registrado");
 
 		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());	
+			resultado = new EntityResultWrong(ErrorMessage.REQUIRED_FIELDS);	
 			
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
@@ -74,8 +74,8 @@ public class ServicesXtraService implements IServicesXtraService{
 		
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-//			ValidateFields.required(attrMap, ServicesXtraDao.ATTR_ID);
-			ValidateFields.emptyFields(attrMap, ServicesXtraDao.ATTR_ID);
+			ValidateFields.required(attrMap, ServicesXtraDao.ATTR_ID);
+//			ValidateFields.emptyFields(attrMap, ServicesXtraDao.ATTR_ID);
 			resultado = this.daoHelper.update(this.servicesXtraDao, attrMap, keyMap);
 			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
 				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);

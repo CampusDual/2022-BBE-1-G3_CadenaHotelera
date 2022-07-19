@@ -269,10 +269,14 @@ class ServicesXtraServiceTest {
 					put(ServicesXtraDao.ATTR_DESCRIPTION, "Faltan campos no nullables");
 				}
 			};
+			try (MockedStatic<ValidateFields> vf = Mockito.mockStatic(ValidateFields.class)) {
+				vf.when(() -> ValidateFields.required(anyMap(), anyString())).thenThrow(MissingFieldsException.class);
+			}
 //				when(daoHelper.insert(any(), anyMap())).thenThrow(MissingFieldsException.class);
 				EntityResult entityResult = service.servicesXtraInsert(attrMap);
 				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-				assertEquals(ErrorMessage.CREATION_ERROR + "El campo " + ServicesXtraDao.ATTR_NAME + " es nulo",entityResult.getMessage());
+				assertEquals(entityResult.getMessage(), ErrorMessage.REQUIRED_FIELDS);
+		//		assertEquals(ErrorMessage.CREATION_ERROR + "El campo " + ServicesXtraDao.ATTR_NAME + " es nulo",entityResult.getMessage());
 		}
 	}
 
@@ -355,17 +359,46 @@ class ServicesXtraServiceTest {
 		void when_field_is_empty_null_update() {
     		Map<String, Object> attrMap = new HashMap<>() {
 				{
-					put(ServicesXtraDao.ATTR_ID, 1);
+					put(ServicesXtraDao.ATTR_ID, null);
 				}
 			};
 			Map<String, Object> keyMap = new HashMap<>() {
 				{
 					put(ServicesXtraDao.ATTR_ID, 1);
+					put(ServicesXtraDao.ATTR_NAME, "campo");
+					put(ServicesXtraDao.ATTR_DESCRIPTION, "Faltan campos no nullables");
+				}
+			};
+			try (MockedStatic<ValidateFields> vf = Mockito.mockStatic(ValidateFields.class)) {
+				vf.when(() -> ValidateFields.required(anyMap(), anyString())).thenThrow(MissingFieldsException.class);
+			}
+//				when(daoHelper.update(any(), anyMap(), anyMap())).thenThrow(MissingFieldsException.class);
+				EntityResult entityResult = service.servicesXtraUpdate(attrMap, keyMap);
+				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+				assertEquals(entityResult.getMessage(), ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
+		}
+    	
+    	@Test
+		@DisplayName("Required Fields")			
+		void when_field_data_is_not_correct() {
+    		Map<String, Object> attrMap = new HashMap<>() {
+				{
+					put(ServicesXtraDao.ATTR_ID, 1);
+				}
+			};
+			Map<String, Object> keyMap = new HashMap<>() {
+				{
+					put(ServicesXtraDao.ATTR_ID,1 );
 					put(ServicesXtraDao.ATTR_NAME, "");
 					put(ServicesXtraDao.ATTR_DESCRIPTION, "Faltan campos no nullables");
 				}
 			};
-			
+			/*
+			 * try (MockedStatic<ValidateFields> vf =
+			 * Mockito.mockStatic(ValidateFields.class)) { vf.when(() ->
+			 * ValidateFields.required(anyMap(),
+			 * anyString())).thenThrow(MissingFieldsException.class); }
+			 */
 				when(daoHelper.update(any(), anyMap(), anyMap())).thenThrow(DataIntegrityViolationException.class);
 				EntityResult entityResult = service.servicesXtraUpdate(attrMap, keyMap);
 				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
@@ -373,32 +406,7 @@ class ServicesXtraServiceTest {
 		}
 
 	}
-	/*
-	 * @Nested
-	@DisplayName("Test for ServicesXtra inserts")
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	public class InsertQuery {
 
-		@Test
-		@DisplayName("Insert ServicesXtra")
-		void when_ServicesXtra_insert_is_succsessfull() {
-			Map<String, Object> attrMap = new HashMap<>() {
-				{
-					put(ServicesXtraDao.ATTR_ID, 1);
-					put(ServicesXtraDao.ATTR_NAME, "paseacanes");
-					put(ServicesXtraDao.ATTR_DESCRIPTION, "Servicio extra a registrar");
-				}
-			};
-			EntityResult resultado = new EntityResultMapImpl();
-			resultado.addRecord(attrMap);
-			resultado.setCode(EntityResult.OPERATION_SUCCESSFUL);
-			resultado.setMessage("Servicio extra registrado");
-			when(daoHelper.insert(any(), anyMap())).thenReturn(resultado);
-			EntityResult entityResult = service.servicesXtraInsert(attrMap);
-			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-			assertEquals(entityResult.getMessage(), "ServiceXtra registrado");
-		}
-	 */
 	@Nested
 	@DisplayName("Test for servicesXtra delete")
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -433,14 +441,22 @@ class ServicesXtraServiceTest {
 		@Test
 		@DisplayName("Missing Fields")			//emptyField o required?¿?¿? cuál ponemos. La excepción DataIntegrityViolationException de update, ya estaría comprobada en este test
 		void when_field_is_empty_null_delete() {
-    		Map<String, Object> attrMap = new HashMap<>() {
+    		
+			/*
+			 * try (MockedStatic<ValidateFields> vf = Mockito.mockStatic(ValidateFields.class)) {
+//      vf.when(() -> ValidateFields.required(anyMap(), anyString())).thenThrow(MissingFieldsException.class);}
+//      when(daoHelper.insert(any(), anyMap())).thenThrow(MissingFieldsException.class);
+			 */
+			
+			Map<String, Object> attrMap = new HashMap<>() {
 				{
 					put(ServicesXtraDao.ATTR_NAME, "loco");
 					
 				}
 			};
-
-//				when(daoHelper.delete(any(), anyMap())).thenThrow(MissingFieldsException.class);
+				try (MockedStatic<ValidateFields> vf = Mockito.mockStatic(ValidateFields.class)) {
+					vf.when(() -> ValidateFields.required(anyMap(), anyString())).thenThrow(MissingFieldsException.class);
+				}
 				EntityResult entityResult = service.servicesXtraDelete(attrMap);
 				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
 				assertEquals(entityResult.getMessage(), ErrorMessage.REQUIRED_FIELDS);
