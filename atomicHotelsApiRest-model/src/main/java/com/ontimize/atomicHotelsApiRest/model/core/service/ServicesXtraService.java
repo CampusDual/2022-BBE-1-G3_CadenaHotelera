@@ -69,12 +69,12 @@ public class ServicesXtraService implements IServicesXtraService{
 	}
 
 	@Override
-	public EntityResult servicesXtraUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
+	public EntityResult servicesXtraUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)		//attrMap filtro, keymap nuevo valor a actualizar
 			throws OntimizeJEERuntimeException {
 		
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-//			ValidateFields.required(keyMap, ServicesXtraDao.ATTR_ID);
+//			ValidateFields.required(attrMap, ServicesXtraDao.ATTR_ID);
 			ValidateFields.emptyFields(attrMap, ServicesXtraDao.ATTR_ID);
 			resultado = this.daoHelper.update(this.servicesXtraDao, attrMap, keyMap);
 			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
@@ -83,7 +83,7 @@ public class ServicesXtraService implements IServicesXtraService{
 				resultado.setMessage("ServiceXtra actualizado");
 			}
 		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + e.getMessage());
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
 		} catch (DataIntegrityViolationException e) {
@@ -95,12 +95,12 @@ public class ServicesXtraService implements IServicesXtraService{
 	}
 
 	@Override
-	public EntityResult servicesXtraDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
+	public EntityResult servicesXtraDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {			//El filtro del where del postman		
 		
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-//			ValidateFields.required(keyMap, ServicesXtraDao.ATTR_ID);
-			ValidateFields.emptyFields(keyMap, ServicesXtraDao.ATTR_ID);
+			ValidateFields.required(keyMap, ServicesXtraDao.ATTR_ID);
+//			ValidateFields.emptyFields(keyMap, ServicesXtraDao.ATTR_ID);
 			EntityResult auxEntity = this.daoHelper.query(this.servicesXtraDao,
 					EntityResultTools.keysvalues(ServicesXtraDao.ATTR_ID, keyMap.get(ServicesXtraDao.ATTR_ID)),
 					EntityResultTools.attributes(ServicesXtraDao.ATTR_ID));
@@ -111,9 +111,7 @@ public class ServicesXtraService implements IServicesXtraService{
 				resultado.setMessage("ServiceXtra eliminado");
 			}
 		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + e.getMessage());
-		} catch (DataIntegrityViolationException e) {
-			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
+			resultado = new EntityResultWrong(ErrorMessage.REQUIRED_FIELDS);
 		} catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR);
 		}
