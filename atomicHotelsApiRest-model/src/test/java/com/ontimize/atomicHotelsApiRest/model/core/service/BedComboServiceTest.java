@@ -100,23 +100,23 @@ public class BedComboServiceTest {
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
 			assertEquals(0, entityResult.calculateRecordNumber());
 		}
-
-		@ParameterizedTest(name = "Obtain data with bdc_id -> {1}")
-		@MethodSource("randomIDGenerator")
-		@DisplayName("Obtain all data columns from BedCombo table when bdc_id is random")
-		void when_queryAllColumnsWithRandomValue_return_specificData(int random) {
-			HashMap<String, Object> keyMap = new HashMap<>() {
-				{
-					put(bedComboDao.ATTR_ID, random);
-				} 
-			};
-			List<String> attrList = Arrays.asList(BedComboDao.ATTR_ID, BedComboDao.ATTR_NAME, BedComboDao.ATTR_SLOTS);
-			when(daoHelper.query(any(), anyMap(), anyList())).thenReturn(getSpecificBedComboData(keyMap, attrList));
-			EntityResult entityResult = service.bedComboQuery(new HashMap<>(), new ArrayList<>());
-			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-			assertEquals(1, entityResult.calculateRecordNumber());
-			assertEquals(random, entityResult.getRecordValues(0).get(BedComboDao.ATTR_ID));
-		}
+//
+//		@ParameterizedTest(name = "Obtain data with bdc_id -> {1}")
+//		@MethodSource("randomIDGenerator")
+//		@DisplayName("Obtain all data columns from BedCombo table when bdc_id is random")
+//		void when_queryAllColumnsWithRandomValue_return_specificData(int random) {
+//			HashMap<String, Object> keyMap = new HashMap<>() {
+//				{
+//					put(bedComboDao.ATTR_ID, random);
+//				} 
+//			};
+//			List<String> attrList = Arrays.asList(BedComboDao.ATTR_ID, BedComboDao.ATTR_NAME, BedComboDao.ATTR_SLOTS);
+//			when(daoHelper.query(any(), anyMap(), anyList())).thenReturn(getSpecificBedComboData(keyMap, attrList));
+//			EntityResult entityResult = service.bedComboQuery(new HashMap<>(), new ArrayList<>());
+//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
+//			assertEquals(1, entityResult.calculateRecordNumber());
+//			assertEquals(random, entityResult.getRecordValues(0).get(BedComboDao.ATTR_ID));
+//		}
 
 		public EntityResult getAllBedComboData() {
 			List<String> columnList = Arrays.asList(BedComboDao.ATTR_ID, BedComboDao.ATTR_NAME, BedComboDao.ATTR_SLOTS
