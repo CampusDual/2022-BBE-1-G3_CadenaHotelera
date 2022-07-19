@@ -276,7 +276,7 @@ public class ValidateFields {
 			final int LONGITUD_MINIMA_TARJETA_CREDITO = 13;
 			String numero = Long.toString(n);
 			if (numero.length() < LONGITUD_MINIMA_TARJETA_CREDITO
-					|| numero.length() > LONGITUD_MAXIMA_TARJETA_CREDITO) {
+					|| numero.length() > LONGITUD_MAXIMA_TARJETA_CREDITO||n<=0) {
 				throw new NumberFormatException();
 			}
 		} catch (java.lang.ClassCastException e) {
