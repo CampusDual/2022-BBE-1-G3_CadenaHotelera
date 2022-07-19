@@ -1,6 +1,7 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -235,14 +236,15 @@ public class BookingService implements IBookingService {
 		Map<String, Object> keyMap = new HashMap<>();
 		keyMap.put(BookingDao.ATTR_ID, bookingId);
 
-		List<String> attrList = new ArrayList<>();
-		attrList.add(BookingDao.ATTR_START);
-		attrList.add(BookingDao.ATTR_END);
-		attrList.add(BookingDao.ATTR_CHECKIN);
-		attrList.add(BookingDao.ATTR_CHECKOUT);
-		attrList.add(BookingDao.ATTR_CANCELED);
-		attrList.add(BookingDao.ATTR_CREATED);
-
+//		List<String> attrList = new ArrayList<>();
+//		attrList.add(BookingDao.ATTR_START);
+//		attrList.add(BookingDao.ATTR_END);
+//		attrList.add(BookingDao.ATTR_CHECKIN);
+//		attrList.add(BookingDao.ATTR_CHECKOUT);
+//		attrList.add(BookingDao.ATTR_CANCELED);
+//		attrList.add(BookingDao.ATTR_CREATED);
+		List<String> attrList = Arrays.asList(BookingDao.ATTR_CHECKIN,
+				BookingDao.ATTR_CHECKOUT, BookingDao.ATTR_CANCELED);
 		EntityResult consultaER = this.daoHelper.query(this.bookingDao, keyMap, attrList);
 
 		if (consultaER.calculateRecordNumber() == 1) {
