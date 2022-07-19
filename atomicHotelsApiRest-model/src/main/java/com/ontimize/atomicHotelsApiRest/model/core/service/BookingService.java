@@ -93,7 +93,6 @@ public class BookingService implements IBookingService {
 			ValidateFields.required(keyMap, BookingDao.ATTR_ID);
 			ValidateFields.required(attrMap, BookingDao.NON_ATTR_ACTION);
 			
-			BookingDao.Status status = getBookingStatus(keyMap.get(BookingDao.ATTR_ID));
 
 			BookingDao.Action action;
 			try {
@@ -104,6 +103,8 @@ public class BookingService implements IBookingService {
 						ErrorMessage.INVALID_ACTION + " - " + attrMap.get(BookingDao.NON_ATTR_ACTION));
 			}
 
+			BookingDao.Status status = getBookingStatus(keyMap.get(BookingDao.ATTR_ID));
+			
 			switch (status) {
 			case CANCELED:
 				resultadoER = new EntityResultWrong("No se pueden modificar reservas canceladas");

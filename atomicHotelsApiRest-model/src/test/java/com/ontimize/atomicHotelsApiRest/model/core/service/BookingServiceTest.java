@@ -93,6 +93,12 @@ class BookingServiceTest {
 
 		entityResult = service.bookingActionUpdate(getAttrMapActionCheckIn(), emptyMap()); 		
 		assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+
+		entityResult = service.bookingActionUpdate(emptyMap(), emptyMap()); 		
+		assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+
+		entityResult = service.bookingActionUpdate(getAttrMapActionCancelKO(), getKeyMapOk());		
+		assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
 		
 	}
 	
@@ -130,7 +136,7 @@ class BookingServiceTest {
 
 			doReturn(confirmedER()).when(daoHelper).query(any(), anyMap(), anyList());// estado del registro
 			doReturn(getOkER()).when(daoHelper).update(any(), anyMap(), anyMap());
-			entityResult = service.bookingActionUpdate(getAttrMapActionCancel(), getKeyMapOk()); // Action
+			entityResult = service.bookingActionUpdate(getAttrMapActionCheckIn(), getKeyMapOk()); // Action
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode(), entityResult.getMessage());
 
 			doReturn(inProgressER()).when(daoHelper).query(any(), anyMap(), anyList());// estado del registro
@@ -444,6 +450,13 @@ class BookingServiceTest {
 		return new HashMap<>() {
 			{
 				put(BookingDao.NON_ATTR_ACTION, "CANCEL");
+			}
+		};
+	}
+	Map<String, Object> getAttrMapActionCancelKO() {
+		return new HashMap<>() {
+			{
+				put(BookingDao.NON_ATTR_ACTION, "CANCELKO");
 			}
 		};
 	}
