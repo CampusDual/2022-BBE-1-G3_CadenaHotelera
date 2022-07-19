@@ -27,13 +27,18 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.EntityResultRequiredException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingServiceExtraDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.ReceiptDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomTypeDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
@@ -47,10 +52,10 @@ class ReceiptServiceTest {
 
 	@Mock
 	DefaultOntimizeDaoHelper daoHelper;
-	
+
 	@Mock
 	BookingService bookingServiceMock;
-	
+
 	@Mock
 	BookingServiceExtraService bookingServiceExtraServiceMock;
 
@@ -59,191 +64,195 @@ class ReceiptServiceTest {
 
 	@Autowired
 	ReceiptDao receiptDao;
-	
+
 	@Autowired
 	BookingDao bookingDao;
-	
+
 	@Autowired
 	ValidateFields vf;
 
-	// @Mock/@Autowired/@InjectMocks
-	MissingFieldsException e;
+	@Nested
+	@DisplayName("Test for Receipt queries")
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	public class ReceiptQuery {
 
-//	@Nested
-//	@DisplayName("Test for Receipt queries")
-//	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-//	public class ReceiptQuery {
-//
-//		@Test
-//		@DisplayName("Obtain all data from Receipt table")
-//		void when_queryOnlyWithAllColumns_return_allHotelsData() {
-//			doReturn(getAllHotelsData()).when(daoHelper).query(any(), anyMap(), anyList());
-//			EntityResult entityResult = service.hotelQuery(new HashMap<>(), new ArrayList<>());
-//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-//			assertEquals(3, entityResult.calculateRecordNumber());
-//		}
-//
-//		@Test
-//		@DisplayName("Obtain all data columns from hotels table when htl_id is -> 2")
-//		void when_queryAllColumns_return_specificData() {
-//			HashMap<String, Object> keyMap = new HashMap<>() {
-//				{
-//					put(HotelDao.ATTR_ID, 2);
-//				}
-//			};
-//			List<String> attrList = Arrays.asList(HotelDao.ATTR_ID, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET,
-//					HotelDao.ATTR_CITY, HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY,
-//					HotelDao.ATTR_PHONE, HotelDao.ATTR_PHONE, HotelDao.ATTR_EMAIL, HotelDao.ATTR_DESCRIPTION,
-//					HotelDao.ATTR_IS_OPEN);
-//			doReturn(getSpecificHotelData(keyMap, attrList)).when(daoHelper).query(any(), anyMap(), anyList());
-//			EntityResult entityResult = service.hotelQuery(new HashMap<>(), new ArrayList<>());
-//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-//			assertEquals(1, entityResult.calculateRecordNumber());
-//			assertEquals(2, entityResult.getRecordValues(0).get(HotelDao.ATTR_ID));
-//		}
-//
-//		@Test
-//		@DisplayName("Obtain all data from Hotel table using a personalized query")
-//		void when_queryOnlyWithAllColumns_return_allHotelsData_fromPersonalizedQuery() {
-//			HashMap<String, Object> keyMap = new HashMap<>() {
-//				{
-//					put(HotelDao.ATTR_ID, 2);
-//				}
-//			};
-//			List<String> attrList = Arrays.asList(HotelDao.ATTR_ID, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET,
-//					HotelDao.ATTR_CITY, HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY,
-//					HotelDao.ATTR_PHONE, HotelDao.ATTR_PHONE, HotelDao.ATTR_EMAIL, HotelDao.ATTR_DESCRIPTION,
-//					HotelDao.ATTR_IS_OPEN);
-//			
-//			doReturn(getSpecificHotelData(keyMap, attrList)).when(daoHelper).query(any(), anyMap(), anyList(),anyString());
-//			EntityResult entityResult = service.hotelDataQuery(new HashMap<>(), new ArrayList<>());
-//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-//			assertEquals(1, entityResult.calculateRecordNumber());
-//			assertEquals(2, entityResult.getRecordValues(0).get(HotelDao.ATTR_ID));
-//		}
-//
-//		@Test
-//		@DisplayName("Obtain all data columns from hotels table when htl_id not exist")
-//		void when_queryAllColumnsNotExisting_return_empty() {
-//			HashMap<String, Object> keyMap = new HashMap<>() {
-//				{
-//					put(HotelDao.ATTR_ID, 5);
-//				}
-//			};
-//			List<String> attrList = Arrays.asList(HotelDao.ATTR_ID, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET,
-//					HotelDao.ATTR_CITY, HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY,
-//					HotelDao.ATTR_PHONE, HotelDao.ATTR_PHONE, HotelDao.ATTR_EMAIL, HotelDao.ATTR_DESCRIPTION,
-//					HotelDao.ATTR_IS_OPEN);
-//			when(daoHelper.query(any(), anyMap(), anyList())).thenReturn(getSpecificHotelData(keyMap, attrList));
-//			EntityResult entityResult = service.hotelQuery(new HashMap<>(), new ArrayList<>());
-//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-//			assertEquals(0, entityResult.calculateRecordNumber());
-//		}
-//
-//		@ParameterizedTest(name = "Obtain data with htl_id -> {1}")
-//		@MethodSource("randomIDGenerator")
-//		@DisplayName("Obtain all data columns from hotels table when htl_id is random")
-//		void when_queryAllColumnsWithRandomValue_return_specificData(int random) {
-//			HashMap<String, Object> keyMap = new HashMap<>() {
-//				{
-//					put(HotelDao.ATTR_ID, random);
-//				}
-//			};
-//			List<String> attrList = Arrays.asList(HotelDao.ATTR_ID, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET,
-//					HotelDao.ATTR_CITY, HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY,
-//					HotelDao.ATTR_PHONE, HotelDao.ATTR_PHONE, HotelDao.ATTR_EMAIL, HotelDao.ATTR_DESCRIPTION,
-//					HotelDao.ATTR_IS_OPEN);
-//			when(daoHelper.query(any(), anyMap(), anyList())).thenReturn(getSpecificHotelData(keyMap, attrList));
-//			EntityResult entityResult = service.hotelQuery(new HashMap<>(), new ArrayList<>());
-//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-//			assertEquals(1, entityResult.calculateRecordNumber());
-//			assertEquals(random, entityResult.getRecordValues(0).get(HotelDao.ATTR_ID));
-//		}
-//
-//		public EntityResult getAllReceiptsData() {
-//			List<String> columnList = Arrays.asList(ReceiptDao.ATTR_ID, ReceiptDao.ATTR_BOOKING_ID,ReceiptDao.ATTR_DATE,ReceiptDao.ATTR_DIAS,ReceiptDao.ATTR_TOTAL_ROOM,ReceiptDao.ATTR_TOTAL_SERVICES,ReceiptDao.ATTR_TOTAL);
-//			EntityResult er = new EntityResultMapImpl(columnList);
-//			er.addRecord(new HashMap<String, Object>() {
-//				{
-//					put(ReceiptDao.ATTR_ID, 1);
-//					put(ReceiptDao.ATTR_BOOKING_ID, 2);
-//					put(ReceiptDao.ATTR_DATE, LocalDateTime.now());
-//					put(ReceiptDao.ATTR_DIAS, 3);
-//					put(ReceiptDao.ATTR_TOTAL_ROOM, 200.15);
-//					put(ReceiptDao.ATTR_TOTAL_SERVICES, 300.15);
-//					put(ReceiptDao.ATTR_TOTAL, 500.30);
-//				}
-//			});
-//			er.addRecord(new HashMap<String, Object>() {
-//				{
-//					put(ReceiptDao.ATTR_ID, 2);
-//					put(ReceiptDao.ATTR_BOOKING_ID, 4);
-//					put(ReceiptDao.ATTR_DATE, LocalDateTime.now());
-//					put(ReceiptDao.ATTR_DIAS, 3);
-//					put(ReceiptDao.ATTR_TOTAL_ROOM, 200.15);
-//					put(ReceiptDao.ATTR_TOTAL_SERVICES, 300.15);
-//					put(ReceiptDao.ATTR_TOTAL, 500.30);
-//				}
-//			});
-//			er.addRecord(new HashMap<String, Object>() {
-//				{
-//					put(ReceiptDao.ATTR_ID, 3);
-//					put(ReceiptDao.ATTR_BOOKING_ID, );
-//					put(ReceiptDao.ATTR_DATE, LocalDateTime.now());
-//					put(ReceiptDao.ATTR_DIAS, 3);
-//					put(ReceiptDao.ATTR_TOTAL_ROOM, 200.15);
-//					put(ReceiptDao.ATTR_TOTAL_SERVICES, 300.15);
-//					put(ReceiptDao.ATTR_TOTAL, 500.30);
-//				}
-//			});
-//			er.setCode(EntityResult.OPERATION_SUCCESSFUL);
-//			er.setColumnSQLTypes(new HashMap<String, Number>() {
-//				{
-//					put(ReceiptDao.ATTR_ID, Types.INTEGER);
-//					put(ReceiptDao.ATTR_BOOKING_ID, Types.INTEGER);
-//					put(ReceiptDao.ATTR_DATE, Types.TIMESTAMP);
-//					put(ReceiptDao.ATTR_DIAS, Types.INTEGER);
-//					put(ReceiptDao.ATTR_TOTAL_ROOM, Types.NUMERIC);
-//					put(ReceiptDao.ATTR_TOTAL_SERVICES, Types.NUMERIC);
-//					put(ReceiptDao.ATTR_TOTAL, Types.NUMERIC);
-//				}
-//			});
-//			return er;
-//		}
-//
-//		public EntityResult getSpecificHotelData(Map<String, Object> keyValues, List<String> attributes) {
-//			EntityResult allData = this.getAllReceiptsData();
-//			int recordIndex = allData.getRecordIndex(keyValues);
-//			HashMap<String, Object> recordValues = (HashMap) allData.getRecordValues(recordIndex);
-//			List<String> columnList = Arrays.asList(ReceiptDao.ATTR_ID, ReceiptDao.ATTR_BOOKING_ID,ReceiptDao.ATTR_DATE,ReceiptDao.ATTR_DIAS,ReceiptDao.ATTR_TOTAL_ROOM,ReceiptDao.ATTR_TOTAL_SERVICES,ReceiptDao.ATTR_TOTAL);
-//			EntityResult er = new EntityResultMapImpl(columnList);
-//			if (recordValues != null) {
-//				er.addRecord(recordValues);
-//			}
-//			er.setCode(EntityResult.OPERATION_SUCCESSFUL);
-//			er.setColumnSQLTypes(new HashMap<String, Number>() {
-//				{
-//					put(ReceiptDao.ATTR_ID, Types.INTEGER);
-//					put(ReceiptDao.ATTR_BOOKING_ID, Types.INTEGER);
-//					put(ReceiptDao.ATTR_DATE, Types.TIMESTAMP);
-//					put(ReceiptDao.ATTR_DIAS, Types.INTEGER);
-//					put(ReceiptDao.ATTR_TOTAL_ROOM, Types.NUMERIC);
-//					put(ReceiptDao.ATTR_TOTAL_SERVICES, Types.NUMERIC);
-//					put(ReceiptDao.ATTR_TOTAL, Types.NUMERIC);
-//				}
-//			});
-//			return er;
-//		}
-//
-//		List<Integer> randomIDGenerator() {
-//			List<Integer> list = new ArrayList<>();
-//			for (int i = 0; i < 5; i++) {
-//				list.add(ThreadLocalRandom.current().nextInt(1, 4));
-//			}
-//			return list;
-//		}
-//
-//	}
+
+		@Test
+		@DisplayName("Obtain all data columns from receipts table when rcp_id is -> 2")
+		void when_queryAllColumns_return_specificData() {
+			Map<String, Object> keyMap = new HashMap() {
+				{
+					put(ReceiptDao.ATTR_ID, 2);
+				}
+			};
+			List<String> attrList = Arrays.asList(ReceiptDao.ATTR_ID, ReceiptDao.ATTR_BOOKING_ID,ReceiptDao.ATTR_DATE,ReceiptDao.ATTR_DIAS,ReceiptDao.ATTR_TOTAL_ROOM,ReceiptDao.ATTR_TOTAL_SERVICES,ReceiptDao.ATTR_TOTAL);
+			when(daoHelper.query(any(), anyMap(), anyList())).thenReturn(getSpecificReceiptData(keyMap, attrList));
+			EntityResult entityResult = service.receiptQuery(keyMap,attrList);
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
+			assertEquals(1, entityResult.calculateRecordNumber());
+			assertEquals(2, entityResult.getRecordValues(0).get(ReceiptDao.ATTR_ID));
+		}
+
+		@Test
+		@DisplayName("Obtain all data columns from receipts table when rcp_id not exist")
+		void when_queryAllColumnsNotExisting_return_empty() {
+			HashMap<String, Object> keyMap = new HashMap<>() {
+				{
+					put(ReceiptDao.ATTR_ID, 5);
+				}
+			};
+			List<String> attrList = Arrays.asList(ReceiptDao.ATTR_ID, ReceiptDao.ATTR_BOOKING_ID,ReceiptDao.ATTR_DATE,ReceiptDao.ATTR_DIAS,ReceiptDao.ATTR_TOTAL_ROOM,ReceiptDao.ATTR_TOTAL_SERVICES,ReceiptDao.ATTR_TOTAL);
+			when(daoHelper.query(any(), anyMap(), anyList())).thenReturn(getSpecificReceiptData(keyMap, attrList));
+			EntityResult entityResult = service.receiptQuery(keyMap, attrList);
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
+			assertEquals(0, entityResult.calculateRecordNumber());
+		}
+
+		@ParameterizedTest(name = "Obtain data with rcp_id -> {1}")
+		@MethodSource("randomIDGenerator")
+		@DisplayName("Obtain all data columns from receipt table when rcp_id is random")
+		void when_queryAllColumnsWithRandomValue_return_specificData(int random) {
+			HashMap<String, Object> keyMap = new HashMap<>() {
+				{
+					put(ReceiptDao.ATTR_ID, random);
+				}
+			};
+			List<String> attrList = Arrays.asList(ReceiptDao.ATTR_ID, ReceiptDao.ATTR_BOOKING_ID,ReceiptDao.ATTR_DATE,ReceiptDao.ATTR_DIAS,ReceiptDao.ATTR_TOTAL_ROOM,ReceiptDao.ATTR_TOTAL_SERVICES,ReceiptDao.ATTR_TOTAL);
+			when(daoHelper.query(any(), anyMap(), anyList())).thenReturn(getSpecificReceiptData(keyMap, attrList));
+			EntityResult entityResult = service.receiptQuery(keyMap, attrList);
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
+			assertEquals(1, entityResult.calculateRecordNumber());
+			assertEquals(random, entityResult.getRecordValues(0).get(ReceiptDao.ATTR_ID));
+		}
+		
+		@Test
+		@DisplayName("Missing Fields")
+		void when_Missings_Fields() {
+			List<String> attrList = Arrays.asList(ReceiptDao.ATTR_ID, ReceiptDao.ATTR_BOOKING_ID,ReceiptDao.ATTR_DATE,ReceiptDao.ATTR_DIAS,ReceiptDao.ATTR_TOTAL_ROOM,ReceiptDao.ATTR_TOTAL_SERVICES,ReceiptDao.ATTR_TOTAL);
+			EntityResult entityResult = service.receiptQuery(new HashMap<>(), attrList);
+			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+			assertEquals(ErrorMessage.REQUIRED_FIELDS, entityResult.getMessage());
+			assertEquals(0, entityResult.calculateRecordNumber());
+		}
+		
+		@Test
+		@DisplayName("Missing Columns")
+		void when_missing_columns() {
+			HashMap<String, Object> keyMap = new HashMap<>() {
+				{
+					put(ReceiptDao.ATTR_ID, 1);
+				}
+			};
+			EntityResult entityResult = service.receiptQuery(keyMap, new ArrayList<>());
+			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+			assertEquals(ErrorMessage.REQUIRED_COLUMNS, entityResult.getMessage());
+			assertEquals(0, entityResult.calculateRecordNumber());
+		}
+		
+
+		@Test
+		@DisplayName("Invalid Fields Value")
+		void when_invalid_fields_value() {
+			HashMap<String, Object> keyMap = new HashMap<>() {
+				{
+					put(ReceiptDao.ATTR_ID, "1");
+				}
+			};
+			List<String> attrList = Arrays.asList(ReceiptDao.ATTR_ID, ReceiptDao.ATTR_BOOKING_ID,ReceiptDao.ATTR_DATE,ReceiptDao.ATTR_DIAS,ReceiptDao.ATTR_TOTAL_ROOM,ReceiptDao.ATTR_TOTAL_SERVICES,ReceiptDao.ATTR_TOTAL);
+			EntityResult entityResult = service.receiptQuery(keyMap, attrList);
+			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+			assertEquals(ErrorMessage.WRONG_TYPE + " - "+ReceiptDao.ATTR_ID, entityResult.getMessage());
+			assertEquals(0, entityResult.calculateRecordNumber());
+		}
+
+		public EntityResult getAllReceiptsData() {
+			List<String> columnList = Arrays.asList(ReceiptDao.ATTR_ID, ReceiptDao.ATTR_BOOKING_ID,
+					ReceiptDao.ATTR_DATE, ReceiptDao.ATTR_DIAS, ReceiptDao.ATTR_TOTAL_ROOM,
+					ReceiptDao.ATTR_TOTAL_SERVICES, ReceiptDao.ATTR_TOTAL);
+			EntityResult er = new EntityResultMapImpl(columnList);
+			er.addRecord(new HashMap<String, Object>() {
+				{
+					put(ReceiptDao.ATTR_ID, 1);
+					put(ReceiptDao.ATTR_BOOKING_ID, 2);
+					put(ReceiptDao.ATTR_DATE, LocalDateTime.now());
+					put(ReceiptDao.ATTR_DIAS, 3);
+					put(ReceiptDao.ATTR_TOTAL_ROOM, 200.15);
+					put(ReceiptDao.ATTR_TOTAL_SERVICES, 300.15);
+					put(ReceiptDao.ATTR_TOTAL, 500.30);
+				}
+			});
+			er.addRecord(new HashMap<String, Object>() {
+				{
+					put(ReceiptDao.ATTR_ID, 2);
+					put(ReceiptDao.ATTR_BOOKING_ID, 4);
+					put(ReceiptDao.ATTR_DATE, LocalDateTime.now());
+					put(ReceiptDao.ATTR_DIAS, 3);
+					put(ReceiptDao.ATTR_TOTAL_ROOM, 200.15);
+					put(ReceiptDao.ATTR_TOTAL_SERVICES, 300.15);
+					put(ReceiptDao.ATTR_TOTAL, 500.30);
+				}
+			});
+			er.addRecord(new HashMap<String, Object>() {
+				{
+					put(ReceiptDao.ATTR_ID, 3);
+					put(ReceiptDao.ATTR_BOOKING_ID, 5);
+					put(ReceiptDao.ATTR_DATE, LocalDateTime.now());
+					put(ReceiptDao.ATTR_DIAS, 3);
+					put(ReceiptDao.ATTR_TOTAL_ROOM, 200.15);
+					put(ReceiptDao.ATTR_TOTAL_SERVICES, 300.15);
+					put(ReceiptDao.ATTR_TOTAL, 500.30);
+				}
+			});
+			er.setCode(EntityResult.OPERATION_SUCCESSFUL);
+			er.setColumnSQLTypes(new HashMap<String, Number>() {
+				{
+					put(ReceiptDao.ATTR_ID, Types.INTEGER);
+					put(ReceiptDao.ATTR_BOOKING_ID, Types.INTEGER);
+					put(ReceiptDao.ATTR_DATE, Types.TIMESTAMP);
+					put(ReceiptDao.ATTR_DIAS, Types.INTEGER);
+					put(ReceiptDao.ATTR_TOTAL_ROOM, Types.NUMERIC);
+					put(ReceiptDao.ATTR_TOTAL_SERVICES, Types.NUMERIC);
+					put(ReceiptDao.ATTR_TOTAL, Types.NUMERIC);
+				}
+			});
+			return er;
+		}
+
+		public EntityResult getSpecificReceiptData(Map<String, Object> keyValues, List<String> attributes) {
+			EntityResult allData = this.getAllReceiptsData();
+			int recordIndex = allData.getRecordIndex(keyValues);
+			HashMap<String, Object> recordValues = (HashMap) allData.getRecordValues(recordIndex);
+			List<String> columnList = Arrays.asList(ReceiptDao.ATTR_ID, ReceiptDao.ATTR_BOOKING_ID,
+					ReceiptDao.ATTR_DATE, ReceiptDao.ATTR_DIAS, ReceiptDao.ATTR_TOTAL_ROOM,
+					ReceiptDao.ATTR_TOTAL_SERVICES, ReceiptDao.ATTR_TOTAL);
+			EntityResult er = new EntityResultMapImpl(columnList);
+			if (recordValues != null) {
+				er.addRecord(recordValues);
+			}
+			er.setCode(EntityResult.OPERATION_SUCCESSFUL);
+			er.setColumnSQLTypes(new HashMap<String, Number>() {
+				{
+					put(ReceiptDao.ATTR_ID, Types.INTEGER);
+					put(ReceiptDao.ATTR_BOOKING_ID, Types.INTEGER);
+					put(ReceiptDao.ATTR_DATE, Types.TIMESTAMP);
+					put(ReceiptDao.ATTR_DIAS, Types.INTEGER);
+					put(ReceiptDao.ATTR_TOTAL_ROOM, Types.NUMERIC);
+					put(ReceiptDao.ATTR_TOTAL_SERVICES, Types.NUMERIC);
+					put(ReceiptDao.ATTR_TOTAL, Types.NUMERIC);
+				}
+			});
+			return er;
+		}
+
+		List<Integer> randomIDGenerator() {
+			List<Integer> list = new ArrayList<>();
+			for (int i = 0; i < 5; i++) {
+				list.add(ThreadLocalRandom.current().nextInt(1, 4));
+			}
+			return list;
+		}
+
+	}
 
 	@Nested
 	@DisplayName("Test for Receipt inserts")
@@ -268,258 +277,180 @@ class ReceiptServiceTest {
 			resultado.addRecord(attrMap);
 			resultado.setCode(EntityResult.OPERATION_SUCCESSFUL);
 			resultado.setMessage("Receipt registrada");
-			when(daoHelper.insert(any(), anyMap())).thenReturn(resultado);		
-			try {				
+			when(daoHelper.insert(any(), anyMap())).thenReturn(resultado);
+			try {
 				when(bookingServiceMock.getBookingStatus(any())).thenReturn(BookingDao.Status.COMPLETED);
-				when(bookingServiceMock.bookingDaysUnitaryRoomPriceQuery(anyMap(),anyList())).thenReturn(getAllBookingsRoomPriceDaysData());
-				when(bookingServiceExtraServiceMock.bookingExtraServicePriceUnitsTotalQuery(anyMap(),anyList())).thenReturn(getAllBookingsRoomPriceDaysData());
+				when(bookingServiceMock.bookingDaysUnitaryRoomPriceQuery(anyMap(), anyList()))
+						.thenReturn(getBookingDaysRoomPrice());
+				when(bookingServiceExtraServiceMock.bookingExtraServicePriceUnitsTotalQuery(anyMap(), anyList()))
+						.thenReturn(getBookingExtraServiceUnitsPriceTotal());
 			} catch (EntityResultRequiredException e) {
 				fail("Err");
 				e.printStackTrace();
 			}
 			EntityResult entityResult = service.receiptInsert(attrMap);
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-			assertEquals("Receipt registrada",entityResult.getMessage());
+			assertEquals("Receipt registrada", entityResult.getMessage());
 		}
+		
 
 		@Test
 		@DisplayName("Duplicated Key")
 		void when_already_exist() {
 			Map<String, Object> attrMap = new HashMap<>() {
 				{
-//					put(ReceiptDao.ATTR_ID, 1);
+					put(ReceiptDao.ATTR_ID, 1); // Si ya está guardado en la base datos
 					put(ReceiptDao.ATTR_BOOKING_ID, 2);
-//					put(ReceiptDao.ATTR_DATE, LocalDateTime.now());
-//					put(ReceiptDao.ATTR_DIAS, 3);
-//					put(ReceiptDao.ATTR_TOTAL_ROOM, 200.15);
-//					put(ReceiptDao.ATTR_TOTAL_SERVICES, 300.15);
-//					put(ReceiptDao.ATTR_TOTAL, 500.30);
+					put(ReceiptDao.ATTR_DATE, LocalDateTime.now());
+					put(ReceiptDao.ATTR_DIAS, 3);
+					put(ReceiptDao.ATTR_TOTAL_ROOM, 200.15);
+					put(ReceiptDao.ATTR_TOTAL_SERVICES, 300.15);
+					put(ReceiptDao.ATTR_TOTAL, 500.30);
 				}
 			};
+
+			try {
+				when(bookingServiceMock.getBookingStatus(any())).thenReturn(BookingDao.Status.COMPLETED);
+				when(bookingServiceMock.bookingDaysUnitaryRoomPriceQuery(anyMap(), anyList()))
+						.thenReturn(getBookingDaysRoomPrice());
+				when(bookingServiceExtraServiceMock.bookingExtraServicePriceUnitsTotalQuery(anyMap(), anyList()))
+						.thenReturn(getBookingExtraServiceUnitsPriceTotal());
+			} catch (EntityResultRequiredException e) {
+				fail("Err");
+				e.printStackTrace();
+			}
 			when(daoHelper.insert(any(), anyMap())).thenThrow(DuplicateKeyException.class);
 			EntityResult entityResult = service.receiptInsert(attrMap);
 			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-			assertEquals(entityResult.getMessage(), ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+			assertEquals(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD, entityResult.getMessage());
 		}
 
-//		@Test
-//		@DisplayName("Missing Fields")
-//		void when_unable_insert() {
-//			Map<String, Object> attrMap = new HashMap<>() {
-//				{
-//					put(HotelDao.ATTR_ID, 1);
-//					put(HotelDao.ATTR_NAME, null);
-//					put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 1");
-//					put(HotelDao.ATTR_CITY, "Vigo");
-//					put(HotelDao.ATTR_CP, "36211");
-//					put(HotelDao.ATTR_STATE, "Galicia");
-//					put(HotelDao.ATTR_COUNTRY, "Spain");
-//					put(HotelDao.ATTR_PHONE, "+34 986 111 111");
-//					put(HotelDao.ATTR_EMAIL, "hotel1@atomicHotels.com");
-//					put(HotelDao.ATTR_DESCRIPTION, "Faltan campos no nullables");
-//					put(HotelDao.ATTR_IS_OPEN, 1);
-//				}
-//			};
-//			//try (MockedStatic<ValidateFields> vf = Mockito.mockStatic(ValidateFields.class)) {
-//				//vf.when(() -> ValidateFields.required(anyMap(), anyString())).thenThrow(MissingFieldsException.class);
-//				EntityResult entityResult = service.hotelInsert(attrMap);
-//				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-//				assertEquals(ErrorMessage.CREATION_ERROR + "El campo " + HotelDao.ATTR_NAME + " es nulo",entityResult.getMessage());
-//			//}
-//
-////			doThrow().when(ValidateFields.required(anyMap(), anyString())).thenThrow(MissingFieldsException.class);
-////			when(daoHelper.insert(any(),anyMap())).thenThrow(new MissingFieldsException("El campo " + HotelDao.ATTR_NAME + " es nulo"));
-////    		entityResult = service.hotelInsert(anyMap());
-////			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-//
-//		}
-		
-		public EntityResult getSpecificBookingRoomPriceDaysData(Map<String, Object> keyValues, List<String> attributes) {
-		EntityResult allData = this.getAllBookingsRoomPriceDaysData();
-		int recordIndex = allData.getRecordIndex(keyValues);
-		HashMap<String, Object> recordValues = (HashMap) allData.getRecordValues(recordIndex);
-		List<String> columnList = Arrays.asList(BookingDao.ATTR_ID, RoomTypeDao.ATTR_PRICE,ReceiptDao.ATTR_DIAS);
-		EntityResult er = new EntityResultMapImpl(columnList);
-		if (recordValues != null) {
-			er.addRecord(recordValues);
+		@Test
+		@DisplayName("Missing Fields - Null")
+		void when_missing_fields_null() {
+			Map<String, Object> attrMap = new HashMap<>() {
+				{
+					put(ReceiptDao.ATTR_ID, 1);
+					put(ReceiptDao.ATTR_BOOKING_ID, null);
+					put(ReceiptDao.ATTR_DATE, LocalDateTime.now());
+					put(ReceiptDao.ATTR_DIAS, 3);
+					put(ReceiptDao.ATTR_TOTAL_ROOM, 200.15);
+					put(ReceiptDao.ATTR_TOTAL_SERVICES, 300.15);
+					put(ReceiptDao.ATTR_TOTAL, 500.30);
+				}
+			};
+
+			EntityResult entityResult = service.receiptInsert(attrMap);
+			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+			assertEquals(ErrorMessage.CREATION_ERROR + "-El campo " + ReceiptDao.ATTR_BOOKING_ID + " es nulo",
+					entityResult.getMessage());
+
 		}
-		er.setCode(EntityResult.OPERATION_SUCCESSFUL);
-		er.setColumnSQLTypes(new HashMap<String, Number>() {
-			{
-				put(BookingDao.ATTR_ID, Types.INTEGER);
-				put(RoomTypeDao.ATTR_PRICE, Types.NUMERIC);
-				put(ReceiptDao.ATTR_DIAS, Types.INTEGER);
+
+		@Test
+		@DisplayName("Missing Fields - No field")
+		void when_missing_fields() {
+			Map<String, Object> attrMap = new HashMap<>() {
+				{
+					put(ReceiptDao.ATTR_ID, 1);
+//					put(ReceiptDao.ATTR_BOOKING_ID, 3); //No se inserta un campo obligatorio
+					put(ReceiptDao.ATTR_DATE, LocalDateTime.now());
+					put(ReceiptDao.ATTR_DIAS, 3);
+					put(ReceiptDao.ATTR_TOTAL_ROOM, 200.15);
+					put(ReceiptDao.ATTR_TOTAL_SERVICES, 300.15);
+					put(ReceiptDao.ATTR_TOTAL, 500.30);
+				}
+			};
+
+			EntityResult entityResult = service.receiptInsert(attrMap);
+			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+			assertEquals(ErrorMessage.CREATION_ERROR + "-Falta el campo " + ReceiptDao.ATTR_BOOKING_ID,
+					entityResult.getMessage());
+
+		}
+
+		@Test
+		@DisplayName("Missing Foreing Key")
+		void when_missing_foreing_key() {
+			Map<String, Object> attrMap = new HashMap<>() {
+				{
+					put(ReceiptDao.ATTR_ID, 1);
+					put(ReceiptDao.ATTR_BOOKING_ID, 100);// Si no existe esta reserva en la tabla bookings
+					put(ReceiptDao.ATTR_DATE, LocalDateTime.now());
+					put(ReceiptDao.ATTR_DIAS, 3);
+					put(ReceiptDao.ATTR_TOTAL_ROOM, 200.15);
+					put(ReceiptDao.ATTR_TOTAL_SERVICES, 300.15);
+					put(ReceiptDao.ATTR_TOTAL, 500.30);
+				}
+			};
+
+			try {
+				when(bookingServiceMock.getBookingStatus(any())).thenReturn(BookingDao.Status.COMPLETED);
+				when(bookingServiceMock.bookingDaysUnitaryRoomPriceQuery(anyMap(), anyList()))
+						.thenReturn(getBookingDaysRoomPrice());
+				when(bookingServiceExtraServiceMock.bookingExtraServicePriceUnitsTotalQuery(anyMap(), anyList()))
+						.thenReturn(getBookingExtraServiceUnitsPriceTotal());
+			} catch (EntityResultRequiredException e) {
+				fail("Err");
+				e.printStackTrace();
 			}
-		});
-		return er;
-	}
-		
-		public EntityResult getAllBookingsRoomPriceDaysData() {
-		List<String> columnList = Arrays.asList(BookingDao.ATTR_ID, RoomTypeDao.ATTR_PRICE,ReceiptDao.ATTR_DIAS);
-		EntityResult er = new EntityResultMapImpl(columnList);
-		er.addRecord(new HashMap<String, Object>() {
-			{
-				put(BookingDao.ATTR_ID, 1);
-				put(RoomTypeDao.ATTR_PRICE, 20.21);
-				put(ReceiptDao.ATTR_DIAS, 3);
-			}
-		});
-		
-		er.setCode(EntityResult.OPERATION_SUCCESSFUL);
-		er.setColumnSQLTypes(new HashMap<String, Number>() {
-			{
-				put(ReceiptDao.ATTR_ID, Types.INTEGER);
-				put(RoomTypeDao.ATTR_PRICE, Types.NUMERIC);
-			}
-		});
-		return er;
-	}
-		
-		EntityResult confirmedER() {
-			List<String> columnList = Arrays.asList(BookingDao.ATTR_ID, RoomTypeDao.ATTR_PRICE,ReceiptDao.ATTR_DIAS);
+			when(daoHelper.insert(any(), anyMap())).thenThrow(DataIntegrityViolationException.class);
+			EntityResult entityResult = service.receiptInsert(attrMap);
+			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+			assertEquals(ErrorMessage.CREATION_ERROR_MISSING_FK, entityResult.getMessage());
+		}
+
+		EntityResult getBookingDaysRoomPrice() {
+			List<String> columnList = Arrays.asList(BookingDao.ATTR_ID, RoomTypeDao.ATTR_PRICE, ReceiptDao.ATTR_DIAS);
 			EntityResult er = new EntityResultMapImpl(columnList);
 			er.addRecord(new HashMap<String, Object>() {
 				{
-					put(BookingDao.ATTR_CHECKIN, null);
-					put(BookingDao.ATTR_CHECKOUT, null);
-					put(BookingDao.ATTR_CANCELED, null);
+					put(BookingDao.ATTR_ID, 1);
+					put(RoomTypeDao.ATTR_PRICE, 20.21);
+					put(ReceiptDao.ATTR_DIAS, 3);
 				}
 			});
 			return er;
 		}
-		
-		
-//		public EntityResult getSpecificBookingRoomPriceDaysData(Map<String, Object> keyValues, List<String> attributes) {
-//			EntityResult allData = this.getAllBookingsRoomPriceDaysData();
-//			int recordIndex = allData.getRecordIndex(keyValues);
-//			HashMap<String, Object> recordValues = (HashMap) allData.getRecordValues(recordIndex);
-//			List<String> columnList = Arrays.asList(BookingDao.ATTR_ID, RoomTypeDao.ATTR_PRICE,ReceiptDao.ATTR_DIAS);
-//			EntityResult er = new EntityResultMapImpl(columnList);
-//			if (recordValues != null) {
-//				er.addRecord(recordValues);
-//			}
-//			er.setCode(EntityResult.OPERATION_SUCCESSFUL);
-//			er.setColumnSQLTypes(new HashMap<String, Number>() {
-//				{
-//					put(BookingDao.ATTR_ID, Types.INTEGER);
-//					put(RoomTypeDao.ATTR_PRICE, Types.NUMERIC);
-//					put(ReceiptDao.ATTR_DIAS, Types.INTEGER);
-//				}
-//			});
-//			return er;
-//		}
-//			
-//			public EntityResult getAllBookingsRoomPriceDaysData() {
-//			List<String> columnList = Arrays.asList(BookingDao.ATTR_ID, RoomTypeDao.ATTR_PRICE,ReceiptDao.ATTR_DIAS);
-//			EntityResult er = new EntityResultMapImpl(columnList);
-//			er.addRecord(new HashMap<String, Object>() {
-//				{
-//					put(BookingDao.ATTR_ID, 1);
-//					put(RoomTypeDao.ATTR_PRICE, 20.21);
-//					put(ReceiptDao.ATTR_DIAS, 3);
-//				}
-//			});
-//			
-//			er.setCode(EntityResult.OPERATION_SUCCESSFUL);
-//			er.setColumnSQLTypes(new HashMap<String, Number>() {
-//				{
-//					put(ReceiptDao.ATTR_ID, Types.INTEGER);
-//					put(RoomTypeDao.ATTR_PRICE, Types.NUMERIC);
-//				}
-//			});
-//			return er;
-//		}
 
-//
-//	@Nested
-//	@DisplayName("Test for Hotel updates")
-//	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-//	public class UpdateQuery {
-//
-//		@Test
-//		@DisplayName("Update Hotel")
-//		void when_hotel_insert_is_succsessfull() {
-//			Map<String, Object> attrMap = new HashMap<>() {
-//				{
-//					put(HotelDao.ATTR_ID, 1);
-//				}
-//			};
-//			Map<String, Object> keyMap = new HashMap<>() {
-//				{
-//					put(HotelDao.ATTR_ID, 1);
-//					put(HotelDao.ATTR_NAME, "Hotel 1 actualizado");
-//					put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 1 actualizado");
-//					put(HotelDao.ATTR_CITY, "Vigo actualizado");
-//					put(HotelDao.ATTR_CP, "36211 actualizado");
-//					put(HotelDao.ATTR_STATE, "Galicia");
-//					put(HotelDao.ATTR_COUNTRY, "Spain");
-//					put(HotelDao.ATTR_PHONE, "+34 986 111 111");
-//					put(HotelDao.ATTR_EMAIL, "hotel1@atomicHotels.com");
-//					put(HotelDao.ATTR_DESCRIPTION, "Hotel actualizado");
-//					put(HotelDao.ATTR_IS_OPEN, 0);
-//				}
-//			};
-//			EntityResult resultado = new EntityResultMapImpl();
-//			resultado.addRecord(keyMap);
-//			resultado.setCode(EntityResult.OPERATION_SUCCESSFUL);
-//			resultado.setMessage("Hotel actualizado");
-//
-//			when(daoHelper.update(any(), anyMap(), anyMap())).thenReturn(resultado);
-//			EntityResult entityResult = service.hotelUpdate(attrMap, keyMap);
-//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-//			assertEquals(entityResult.getMessage(), "Hotel actualizado");
-//		}
-//
-//		@Test
-//		@DisplayName("Duplicated Key")
-//		void when_already_exist() {
-//			Map<String, Object> attrMap = new HashMap<>() {
-//				{
-//					put(HotelDao.ATTR_ID, 2);
-//				}
-//			};
-//			Map<String, Object> keyMap = new HashMap<>() {
-//				{
-//					put(HotelDao.ATTR_ID, 2);// ???
-//					put(HotelDao.ATTR_NAME, "Hotel 1");// Este hotel ya existe
-//					put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 1 actualizado");
-//					put(HotelDao.ATTR_CITY, "Vigo actualizado");
-//					put(HotelDao.ATTR_CP, "36211 actualizado");
-//					put(HotelDao.ATTR_STATE, "Galicia");
-//					put(HotelDao.ATTR_COUNTRY, "Spain");
-//					put(HotelDao.ATTR_PHONE, "+34 986 111 111");
-//					put(HotelDao.ATTR_EMAIL, "hotel1@atomicHotels.com");
-//					put(HotelDao.ATTR_DESCRIPTION, "Hotel actualizado");
-//					put(HotelDao.ATTR_IS_OPEN, 1);
-//				}
-//			};
-//			when(daoHelper.update(any(), anyMap(), anyMap())).thenThrow(DuplicateKeyException.class);
-//			EntityResult entityResult = service.hotelUpdate(attrMap, keyMap);
-//			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-//			assertEquals(entityResult.getMessage(), ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
-//		}
+		@Test
+		@DisplayName("Invalid Fields")
+		void when_invalid_fields() {
+			Map<String, Object> attrMap = new HashMap<>() {
+				{
+					put(ReceiptDao.ATTR_ID, 1);
+					put(ReceiptDao.ATTR_BOOKING_ID, "Esto debería ser un int");
+					put(ReceiptDao.ATTR_DATE, LocalDateTime.now());
+					put(ReceiptDao.ATTR_DIAS, 3);
+					put(ReceiptDao.ATTR_TOTAL_ROOM, 200.15);
+					put(ReceiptDao.ATTR_TOTAL_SERVICES, 300.15);
+					put(ReceiptDao.ATTR_TOTAL, 500.30);
+				}
+			};
 
-//    	@Test
-//		@DisplayName("Missing Fields")
-//		void when_unable_insert() {
-//			when(daoHelper.insert(any(),anyMap())).thenThrow(MissingFieldsException.class);
-//			Map<String, Object> attrMap = new HashMap<>() {{
-//				put(HotelDao.ATTR_ID, 1);
-////                put(HotelDao.ATTR_NAME, "Hotel 23");
-////                put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 1");
-//                put(HotelDao.ATTR_CITY, "Vigo");
-//                put(HotelDao.ATTR_CP, "36211");
-//                put(HotelDao.ATTR_STATE, "Galicia");
-//                put(HotelDao.ATTR_COUNTRY, "Spain");
-//                put(HotelDao.ATTR_PHONE, "+34 986 111 111");
-//                put(HotelDao.ATTR_EMAIL, "hotel1@atomicHotels.com");
-//                put(HotelDao.ATTR_DESCRIPTION, "Faltan campos no nullables");
-//                put(HotelDao.ATTR_IS_OPEN, 1);	
-//			}};			
-//			EntityResult entityResult = service.hotelInsert(attrMap);
-//			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-//    		assertEquals(entityResult.getMessage(), ErrorMessage.CREATION_ERROR+e.getMessage());
-//    	}
+			EntityResult entityResult = service.receiptInsert(attrMap);
+			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+			assertEquals(
+					ErrorMessage.CREATION_ERROR + "-" + ErrorMessage.WRONG_TYPE + " - " + ReceiptDao.ATTR_BOOKING_ID,
+					entityResult.getMessage());
+
+		}
+
+		EntityResult getBookingExtraServiceUnitsPriceTotal() {
+			List<String> columnList = Arrays.asList(BookingServiceExtraDao.ATTR_ID_BKG,
+					BookingServiceExtraDao.ATTR_ID_UNITS, BookingServiceExtraDao.ATTR_PRECIO, "total");
+			EntityResult er = new EntityResultMapImpl(columnList);
+			er.addRecord(new HashMap<String, Object>() {
+				{
+					put(BookingServiceExtraDao.ATTR_ID_BKG, 1);
+					put(BookingServiceExtraDao.ATTR_ID_UNITS, 2);
+					put(BookingServiceExtraDao.ATTR_PRECIO, 22.20);
+					put("total", 44.40);
+				}
+			});
+			return er;
+		}
+
 	}
-
+	
 }
