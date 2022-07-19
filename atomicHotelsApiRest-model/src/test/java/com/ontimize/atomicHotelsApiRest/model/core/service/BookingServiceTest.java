@@ -78,42 +78,102 @@ class BookingServiceTest {
 //	void testBookingInsert() {
 //	
 //	}
-	Map<String, Object> getKeyMapOk() {
-		return new HashMap<>() {
-			{
-				put(BookingDao.ATTR_ID, 2);
-			}
-		};
+	
+	
+	@Test
+	@DisplayName("Valores No Válidos")
+	void testBookingActionUpdateKO() {
+		EntityResult entityResult;
+		
+		entityResult = service.bookingActionUpdate(null, getKeyMapOk()); // Action		
+		assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
 	}
+	
 
-	Map<String, Object> getAttrMapOKCancel() {
-		return new HashMap<>() {
-			{
-				put(BookingDao.NON_ATTR_ACTION, "CANCEL");
-			}
-		};
-	}
+	@Test
+	@DisplayName("ACTION CANCEL")
+	void testBookingActionUpdateCancel() {
+		EntityResult entityResult;
+		Map<String, Object> attrMap  = getAttrMapActionCancel(); // ACTION
+		
+		doReturn(confirmedER()).when(daoHelper).query(any(), anyMap(), anyList());// estado del registro
+		doReturn(getOkER()).when(daoHelper).update(any(), anyMap(), anyMap());
+		entityResult = service.bookingActionUpdate(getAttrMapActionCancel(), getKeyMapOk()); // Action
+		assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode(), entityResult.getMessage());
+		
+		doReturn(inProgressER()).when(daoHelper).query(any(), anyMap(), anyList());// estado del registro
+		doReturn(getOkER()).when(daoHelper).update(any(), anyMap(), anyMap());
+		entityResult = service.bookingActionUpdate(attrMap, getKeyMapOk()); 
+		assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
 
-	public EntityResult getOkResult() {
-		EntityResult resultado = new EntityResultMapImpl();
-		resultado.setCode(EntityResult.OPERATION_SUCCESSFUL);
-		return resultado;
+		doReturn(completedER()).when(daoHelper).query(any(), anyMap(), anyList());// estado del registro
+		doReturn(getOkER()).when(daoHelper).update(any(), anyMap(), anyMap());
+		entityResult = service.bookingActionUpdate(attrMap, getKeyMapOk()); 
+		assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+
+		doReturn(confirmedER()).when(daoHelper).query(any(), anyMap(), anyList());// estado del registro
+		doReturn(getOkER()).when(daoHelper).update(any(), anyMap(), anyMap());
+		entityResult = service.bookingActionUpdate(attrMap, getKeyMapOk()); 
+		assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());			
+
 	}
 
 	@Test
-	@DisplayName("ACTION CANCEL de entrada válidos")
-	void testBookingActionUpdateCancelOK() {
+	@DisplayName("ACTION CHECKIN")
+	void testBookingActionUpdateCheckIn() {
 		EntityResult entityResult;
-
-//			doReturn(BookingDao.Status.CONFIRMED).when(spyService).getBookingStatus(any());
-		doReturn(confirmedER()).when(daoHelper).query(any(), anyMap(), anyList());//estado del registro
-		doReturn(getOkResult()).when(daoHelper).update(any(), anyMap(), anyMap());//estado al que quiero pasar
+		Map<String, Object> attrMap  = getAttrMapActionCheckIn(); // ACTION
 		
-		entityResult = service.bookingActionUpdate(getAttrMapOKCancel(), getKeyMapOk());
+		doReturn(confirmedER()).when(daoHelper).query(any(), anyMap(), anyList());// estado del registro
+		doReturn(getOkER()).when(daoHelper).update(any(), anyMap(), anyMap());
+		entityResult = service.bookingActionUpdate(getAttrMapActionCancel(), getKeyMapOk()); // Action
 		assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode(), entityResult.getMessage());
-
+		
+		doReturn(inProgressER()).when(daoHelper).query(any(), anyMap(), anyList());// estado del registro
+		doReturn(getOkER()).when(daoHelper).update(any(), anyMap(), anyMap());
+		entityResult = service.bookingActionUpdate(attrMap, getKeyMapOk()); 
+		assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+		
+		doReturn(completedER()).when(daoHelper).query(any(), anyMap(), anyList());// estado del registro
+		doReturn(getOkER()).when(daoHelper).update(any(), anyMap(), anyMap());
+		entityResult = service.bookingActionUpdate(attrMap, getKeyMapOk()); 
+		assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+		
+		doReturn(confirmedER()).when(daoHelper).query(any(), anyMap(), anyList());// estado del registro
+		doReturn(getOkER()).when(daoHelper).update(any(), anyMap(), anyMap());
+		entityResult = service.bookingActionUpdate(attrMap, getKeyMapOk()); 
+		assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());			
+		
 	}
 
+	@Test
+	@DisplayName("ACTION CHECKOUT")
+	void testBookingActionUpdateCheckout() {
+		EntityResult entityResult;
+		Map<String, Object> attrMap  = getAttrMapActionCheckout(); // ACTION
+		
+		doReturn(confirmedER()).when(daoHelper).query(any(), anyMap(), anyList());// estado del registro
+		doReturn(getOkER()).when(daoHelper).update(any(), anyMap(), anyMap());
+		entityResult = service.bookingActionUpdate(getAttrMapActionCancel(), getKeyMapOk()); // Action
+		assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+		
+		doReturn(inProgressER()).when(daoHelper).query(any(), anyMap(), anyList());// estado del registro
+		doReturn(getOkER()).when(daoHelper).update(any(), anyMap(), anyMap());
+		entityResult = service.bookingActionUpdate(attrMap, getKeyMapOk()); 
+		assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode(), entityResult.getMessage());
+		
+		doReturn(completedER()).when(daoHelper).query(any(), anyMap(), anyList());// estado del registro
+		doReturn(getOkER()).when(daoHelper).update(any(), anyMap(), anyMap());
+		entityResult = service.bookingActionUpdate(attrMap, getKeyMapOk()); 
+		assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+		
+		doReturn(confirmedER()).when(daoHelper).query(any(), anyMap(), anyList());// estado del registro
+		doReturn(getOkER()).when(daoHelper).update(any(), anyMap(), anyMap());
+		entityResult = service.bookingActionUpdate(attrMap, getKeyMapOk()); 
+		assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());			
+		
+	}
+	
 //	@Test
 //	@DisplayName("Maps de entrada no válidos")
 //	void testBookingActionUpdateKO() {
@@ -373,6 +433,41 @@ class BookingServiceTest {
 			}
 		});
 		return er;
+	}
+	Map<String, Object> getKeyMapOk() {
+		return new HashMap<>() {
+			{
+				put(BookingDao.ATTR_ID, 2);
+			}
+		};
+	}
+
+	Map<String, Object> getAttrMapActionCancel() {
+		return new HashMap<>() {
+			{
+				put(BookingDao.NON_ATTR_ACTION, "CANCEL");
+			}
+		};
+	}
+	Map<String, Object> getAttrMapActionCheckIn() {
+		return new HashMap<>() {
+			{
+				put(BookingDao.NON_ATTR_ACTION, "CHECKIN");
+			}
+		};
+	}
+	Map<String, Object> getAttrMapActionCheckout() {
+		return new HashMap<>() {
+			{
+				put(BookingDao.NON_ATTR_ACTION, "CHECKOUT");
+			}
+		};
+	}
+
+	public EntityResult getOkER() {
+		EntityResult resultado = new EntityResultMapImpl();
+		resultado.setCode(EntityResult.OPERATION_SUCCESSFUL);
+		return resultado;
 	}
 
 //
