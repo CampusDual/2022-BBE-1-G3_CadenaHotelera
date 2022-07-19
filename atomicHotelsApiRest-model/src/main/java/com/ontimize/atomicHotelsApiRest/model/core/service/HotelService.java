@@ -70,7 +70,7 @@ public class HotelService implements IHotelService {
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}
 		return resultado;
 	}
@@ -86,6 +86,7 @@ public class HotelService implements IHotelService {
 					HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY);
 			ValidateFields.onlyThis(attrMap, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET, HotelDao.ATTR_CITY,
 					HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY,HotelDao.ATTR_IS_OPEN,HotelDao.ATTR_PHONE,HotelDao.ATTR_EMAIL);
+////		TODO	if(mail está en la lista entonces hacer el check mail..,pero si no está hay nullPointerexception)
 			ValidateFields.checkMail((String) attrMap.get(HotelDao.ATTR_EMAIL));// Para obtener el valor introducido, attrMap.get, sino, valida simplemente el nombre que le damos al campo, no el valor 
 	
 			resultado = this.daoHelper.insert(this.hotelDao, attrMap);
@@ -167,7 +168,7 @@ public class HotelService implements IHotelService {
 					HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY,HotelDao.ATTR_PHONE,HotelDao.ATTR_EMAIL,HotelDao.ATTR_IS_OPEN,HotelDao.ATTR_DESCRIPTION);
 			ValidateFields.isInt(attrMap, HotelDao.ATTR_IS_OPEN);
 			
-////		TODO	if(mail está en la lista entonces hacer el check mail..)
+////		TODO	if(mail está en la lista entonces hacer el check mail..,pero si no está hay nullPointerexception)
 //			ValidateFields.checkMail((String) attrMap.get(HotelDao.ATTR_EMAIL));
 			//TODO qué pasa con no dejar que se metan cadenas vacías cuando todos los campos no son requeridos??
 			
