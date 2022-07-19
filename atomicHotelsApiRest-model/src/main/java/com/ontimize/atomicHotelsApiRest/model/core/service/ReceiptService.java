@@ -187,10 +187,10 @@ public class ReceiptService implements IReceiptService {
 				EntityResult habitacion = bookingService.bookingDaysUnitaryRoomPriceQuery(bkg_id, reciboHabitacion);
 
 				int reservaHabitacion = (int) habitacion.getRecordValues(0).get(BookingDao.ATTR_ID);
-				BigDecimal precioHabitacion = (BigDecimal) habitacion.getRecordValues(0).get(RoomTypeDao.ATTR_PRICE);
+				double precioHabitacion = (double) habitacion.getRecordValues(0).get(RoomTypeDao.ATTR_PRICE);
 				int dias = (int) habitacion.getRecordValues(0).get(ReceiptDao.ATTR_DIAS);
 
-				BigDecimal totalHabitacion = precioHabitacion.multiply(new BigDecimal(dias));
+				double totalHabitacion = precioHabitacion*dias;
 
 				attrMap.put(ReceiptDao.ATTR_TOTAL_ROOM, totalHabitacion);
 				attrMap.put(ReceiptDao.ATTR_DIAS, dias);
@@ -205,26 +205,26 @@ public class ReceiptService implements IReceiptService {
 				EntityResult servicios = bookingServiceExtraService.bookingExtraServicePriceUnitsTotalQuery(bsx_bkg_id,
 						reciboServiciosExtra);
 
-				BigDecimal totalTodosServiciosExtra = new BigDecimal(0);
+				double totalTodosServiciosExtra = 0;
 
 				for (int i = 0; i < servicios.calculateRecordNumber(); i++) {
 
 					int reservaServiciosExtra = (int) servicios.getRecordValues(i)
 							.get(BookingServiceExtraDao.ATTR_ID_BKG);
-					BigDecimal precioServicioExtra = (BigDecimal) servicios.getRecordValues(i)
+					double precioServicioExtra = (double) servicios.getRecordValues(i)
 							.get(BookingServiceExtraDao.ATTR_PRECIO);
 					int unidadesServicioExtra = (int) servicios.getRecordValues(i)
 							.get(BookingServiceExtraDao.ATTR_ID_UNITS);
 
-					BigDecimal totalServicioExtra = precioServicioExtra.multiply(new BigDecimal(unidadesServicioExtra));
-					totalTodosServiciosExtra = totalTodosServiciosExtra.add(totalServicioExtra);
+					double totalServicioExtra = precioServicioExtra*unidadesServicioExtra;
+					totalTodosServiciosExtra = totalTodosServiciosExtra+totalServicioExtra;
 
 				}
 
 				attrMap.put(ReceiptDao.ATTR_TOTAL_SERVICES, totalTodosServiciosExtra);
 
 				// Total del recibo
-				BigDecimal superTotal = totalHabitacion.add(totalTodosServiciosExtra);
+				double superTotal = totalHabitacion+totalTodosServiciosExtra;
 				attrMap.put(ReceiptDao.ATTR_TOTAL, superTotal);
 
 				resultado = this.daoHelper.insert(this.receiptDao, attrMap);

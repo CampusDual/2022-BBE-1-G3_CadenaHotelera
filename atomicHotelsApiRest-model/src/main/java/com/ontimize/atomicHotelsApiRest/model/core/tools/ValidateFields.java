@@ -429,4 +429,23 @@ public class ValidateFields {
 			}
 		}
 	}
+	
+	/**
+	 * Castea los valores de un keyMap a double si es posible.
+	 * 
+	 * @param keyMap
+	 * @param fields
+	 * @throws ClassCastException
+	 */
+	public static void isDoublel(Map<String, Object> keyMap, String... fields) throws InvalidFieldsValuesException {
+		for (String field : fields) {
+			try {
+				if (keyMap.containsKey(field)) {
+					double i = (double) keyMap.get(field);
+				}
+			} catch (ClassCastException | NullPointerException e) {
+				throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + field);
+			}
+		}
+	}
 }
