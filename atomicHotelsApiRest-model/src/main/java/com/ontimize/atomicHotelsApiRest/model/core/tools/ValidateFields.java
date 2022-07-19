@@ -437,7 +437,7 @@ public class ValidateFields {
 	 * @param fields
 	 * @throws ClassCastException
 	 */
-	public static void isDoublel(Map<String, Object> keyMap, String... fields) throws InvalidFieldsValuesException {
+	public static void isDouble(Map<String, Object> keyMap, String... fields) throws InvalidFieldsValuesException {
 		for (String field : fields) {
 			try {
 				if (keyMap.containsKey(field)) {

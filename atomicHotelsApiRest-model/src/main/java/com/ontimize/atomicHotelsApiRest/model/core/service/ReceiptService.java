@@ -64,7 +64,7 @@ public class ReceiptService implements IReceiptService {
 			//TODO estos validadores están pendientes
 //			ValidateFields.stringToDate((String)keyMap.get(ReceiptDao.ATTR_DATE));
 //			ValidateFields.isDate(keyMap,ReceiptDao.ATTR_DATE);
-//			ValidateFields.isBigDecimal(keyMap,ReceiptDao.ATTR_TOTAL_SERVICES,ReceiptDao.ATTR_TOTAL_ROOM,ReceiptDao.ATTR_TOTAL);
+			ValidateFields.isDouble(keyMap,ReceiptDao.ATTR_TOTAL_SERVICES,ReceiptDao.ATTR_TOTAL_ROOM,ReceiptDao.ATTR_TOTAL);
 			
 			ValidateFields.atLeastOneRequired(attrList, ReceiptDao.ATTR_ID,ReceiptDao.ATTR_BOOKING_ID,ReceiptDao.ATTR_DATE,ReceiptDao.ATTR_TOTAL_SERVICES,ReceiptDao.ATTR_DIAS,ReceiptDao.ATTR_TOTAL_ROOM,ReceiptDao.ATTR_TOTAL);
 			ValidateFields.onlyThis(attrList, ReceiptDao.ATTR_ID,ReceiptDao.ATTR_BOOKING_ID,ReceiptDao.ATTR_DATE,ReceiptDao.ATTR_TOTAL_SERVICES,ReceiptDao.ATTR_DIAS,ReceiptDao.ATTR_TOTAL_ROOM,ReceiptDao.ATTR_TOTAL);
