@@ -20,10 +20,13 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -33,6 +36,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsExcepti
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.Pruebas;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
@@ -43,8 +47,8 @@ class BookingServiceTest {
 	@Mock
 	DefaultOntimizeDaoHelper daoHelper;
 
-	@Mock
-	BookingService serviceMock;
+	@Spy
+	BookingService spyService;
 
 	@InjectMocks
 	BookingService service;
@@ -82,7 +86,7 @@ class BookingServiceTest {
 		};
 	}
 
-	Map<String, Object> getAttrMapOK() {
+	Map<String, Object> getAttrMapOKCancel() {
 		return new HashMap<>() {
 			{
 				put(BookingDao.NON_ATTR_ACTION, "CANCEL");
@@ -90,44 +94,44 @@ class BookingServiceTest {
 		};
 	}
 
-	@Test
-	@DisplayName("Maps de entrada válidos")
-	void testBookingActionUpdateOK() {
+	public EntityResult getOkResult() {
+		EntityResult resultado = new EntityResultMapImpl();
+		resultado.setCode(EntityResult.OPERATION_SUCCESSFUL);
+		return resultado;
+	}
 
-		EntityResult entityResult = service.bookingActionUpdate(getAttrMapOK(), getKeyMapOk());
+	@Test
+	@DisplayName("ACTION CANCEL de entrada válidos")
+	void testBookingActionUpdateCancelOK() {
+		EntityResult entityResult;
+
+//			doReturn(BookingDao.Status.CONFIRMED).when(spyService).getBookingStatus(any());
+		doReturn(confirmedER()).when(daoHelper).query(any(), anyMap(), anyList());//estado del registro
+		doReturn(getOkResult()).when(daoHelper).update(any(), anyMap(), anyMap());//estado al que quiero pasar
+		
+		entityResult = service.bookingActionUpdate(getAttrMapOKCancel(), getKeyMapOk());
 		assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode(), entityResult.getMessage());
-		try {
-			doReturn(BookingDao.Status.CANCELED).when(serviceMock.getBookingStatus(any()));
-//			doReturn(BookingDao.Status.CANCELED).when(serviceMock.getBookingStatus(any()));
-			entityResult = service.bookingActionUpdate(getAttrMapOK(), getKeyMapOk());
-			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
-		} catch (EntityResultRequiredException e) {
-			fail(e.toString());
-		}
-
-//			when(serviceMock.getBookingStatus(getKeyMapOk().get(BookingDao.ATTR_ID))).thenReturn(BookingDao.Status.CANCELED);
-//			when(service.getBookingStatus(getKeyMapOk().get(BookingDao.ATTR_ID))).thenThrow(MissingFieldsException.class);
 
 	}
 
-	@Test
-	@DisplayName("Maps de entrada no válidos")
-	void testBookingActionUpdateKO() {
-		// when(daoHelper.update(any(), anyMap(),
-		// anyMap())).thenThrow(MissingFieldsException.class);
-		EntityResult entityResult = service.bookingActionUpdate(new HashMap<String, Object>(),
-				new HashMap<String, Object>());
-		assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
-
-//		entityResult = service.bookingActionUpdate(null, null);
+//	@Test
+//	@DisplayName("Maps de entrada no válidos")
+//	void testBookingActionUpdateKO() {
+//		// when(daoHelper.update(any(), anyMap(),
+//		// anyMap())).thenThrow(MissingFieldsException.class);
+//		EntityResult entityResult = service.bookingActionUpdate(new HashMap<String, Object>(),
+//				new HashMap<String, Object>());
 //		assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
-
-		entityResult = service.bookingActionUpdate(new HashMap<String, Object>(), getKeyMapOk());
-		assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
-
-		entityResult = service.bookingActionUpdate(getAttrMapOK(), new HashMap<String, Object>());
-		assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
-	}
+//
+////		entityResult = service.bookingActionUpdate(null, null);
+////		assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+//
+//		entityResult = service.bookingActionUpdate(new HashMap<String, Object>(), getKeyMapOk());
+//		assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+//
+//		entityResult = service.bookingActionUpdate(getAttrMapOK(), new HashMap<String, Object>());
+//		assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+//	}
 
 //	@Test
 //	void testBookingDelete() {
@@ -150,19 +154,227 @@ class BookingServiceTest {
 //	}
 //
 
-//	@Test
-//	void testGetBookingStatus() {
-//		List<String> columnList = Arrays.asList(BookingDao.ATTR_START, BookingDao.ATTR_END, BookingDao.ATTR_CHECKIN,
-//				BookingDao.ATTR_CHECKOUT, BookingDao.ATTR_CANCELED, BookingDao.ATTR_CREATED);
-//		EntityResult erCancel = new EntityResultMapImpl(columnList);
-//		erCancel.addRecord(new HashMap<String, Object>() {
-//			{
-//				put(BookingDao.ATTR_START, tools.getYesterdayString());
+	@Nested
+	@DisplayName("Test for status")
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	public class Status {
+
+//		@Test
+//		@DisplayName("Estado cancelado OK")
+//		void testGetBookingStatusCanceledOK() {
+//			try {
+//				doReturn(canceledER()).when(daoHelper).query(any(), anyMap(), anyList());
+//				BookingDao.Status resultado = service.getBookingStatus(15);
+//				assertEquals(BookingDao.Status.CANCELED, resultado);
+//			} catch (EntityResultRequiredException e) {
+//				fail(e);
 //			}
-//		});
 //
-//		fail("Not yet implemented");
-//	}
+//		}
+//
+//		@Test
+//		@DisplayName("Estado completado OK")
+//		void testGetBookingStatusCompletedOK() {
+//			try {
+//				doReturn(completedER()).when(daoHelper).query(any(), anyMap(), anyList());
+//				BookingDao.Status resultado = service.getBookingStatus(15);
+//				assertEquals(BookingDao.Status.COMPLETED, resultado);
+//			} catch (EntityResultRequiredException e) {
+//				fail(e);
+//			}
+//
+//		}
+//
+//		@Test
+//		@DisplayName("Estado en progreso OK")
+//		void testGetBookingStatusInProgressOK() {
+//			try {
+//				doReturn(inProgressER()).when(daoHelper).query(any(), anyMap(), anyList());
+//				BookingDao.Status resultado = service.getBookingStatus(15);
+//				assertEquals(BookingDao.Status.IN_PROGRESS, resultado);
+//			} catch (EntityResultRequiredException e) {
+//				fail(e);
+//			}
+//
+//		}
+//
+//		@Test
+//		@DisplayName("Estado confirmado OK")
+//		void testGetBookingStatusConfirmadedOK() {
+//			try {
+//				doReturn(confirmedER()).when(daoHelper).query(any(), anyMap(), anyList());
+//				BookingDao.Status resultado = service.getBookingStatus(15);
+//				assertEquals(BookingDao.Status.CONFIRMED, resultado);
+//			} catch (EntityResultRequiredException e) {
+//				fail(e);
+//			}
+//
+//		}
+
+		@Test
+		@DisplayName("Estádo Canceled")
+		void testGetBookingStatusCanceled() {
+			try {
+				BookingDao.Status expected = BookingDao.Status.CANCELED;
+
+				doReturn(canceledER()).when(daoHelper).query(any(), anyMap(), anyList());
+				BookingDao.Status resultado = service.getBookingStatus(15);
+				assertEquals(expected, resultado);
+
+				doReturn(completedER()).when(daoHelper).query(any(), anyMap(), anyList());
+				resultado = service.getBookingStatus(15);
+				assertNotEquals(expected, resultado);
+
+				doReturn(inProgressER()).when(daoHelper).query(any(), anyMap(), anyList());
+				resultado = service.getBookingStatus(15);
+				assertNotEquals(expected, resultado);
+
+				doReturn(confirmedER()).when(daoHelper).query(any(), anyMap(), anyList());
+				resultado = service.getBookingStatus(15);
+				assertNotEquals(expected, resultado);
+
+			} catch (EntityResultRequiredException e) {
+				fail(e);
+			}
+		}
+
+		@Test
+		@DisplayName("Estádo Completed")
+		void testGetBookingStatusCompleted() {
+			try {
+				BookingDao.Status expected = BookingDao.Status.COMPLETED;
+
+				doReturn(canceledER()).when(daoHelper).query(any(), anyMap(), anyList());
+				BookingDao.Status resultado = service.getBookingStatus(15);
+				assertNotEquals(expected, resultado);
+
+				doReturn(completedER()).when(daoHelper).query(any(), anyMap(), anyList());
+				resultado = service.getBookingStatus(15);
+				assertEquals(expected, resultado);
+
+				doReturn(inProgressER()).when(daoHelper).query(any(), anyMap(), anyList());
+				resultado = service.getBookingStatus(15);
+				assertNotEquals(expected, resultado);
+
+				doReturn(confirmedER()).when(daoHelper).query(any(), anyMap(), anyList());
+				resultado = service.getBookingStatus(15);
+				assertNotEquals(expected, resultado);
+
+			} catch (EntityResultRequiredException e) {
+				fail(e);
+			}
+		}
+
+		@Test
+		@DisplayName("Estádo InProgress")
+		void testGetBookingStatusInProgress() {
+			try {
+				BookingDao.Status expected = BookingDao.Status.IN_PROGRESS;
+
+				doReturn(canceledER()).when(daoHelper).query(any(), anyMap(), anyList());
+				BookingDao.Status resultado = service.getBookingStatus(15);
+				assertNotEquals(expected, resultado);
+
+				doReturn(completedER()).when(daoHelper).query(any(), anyMap(), anyList());
+				resultado = service.getBookingStatus(15);
+				assertNotEquals(expected, resultado);
+
+				doReturn(inProgressER()).when(daoHelper).query(any(), anyMap(), anyList());
+				resultado = service.getBookingStatus(15);
+				assertEquals(expected, resultado);
+
+				doReturn(confirmedER()).when(daoHelper).query(any(), anyMap(), anyList());
+				resultado = service.getBookingStatus(15);
+				assertNotEquals(expected, resultado);
+
+			} catch (EntityResultRequiredException e) {
+				fail(e);
+			}
+		}
+
+		@Test
+		@DisplayName("Estádo Confirmed")
+		void testGetBookingStatusConfirmed() {
+			try {
+				BookingDao.Status expected = BookingDao.Status.CONFIRMED;
+
+				doReturn(canceledER()).when(daoHelper).query(any(), anyMap(), anyList());
+				BookingDao.Status resultado = service.getBookingStatus(15);
+				assertNotEquals(expected, resultado);
+
+				doReturn(completedER()).when(daoHelper).query(any(), anyMap(), anyList());
+				resultado = service.getBookingStatus(15);
+				assertNotEquals(expected, resultado);
+
+				doReturn(inProgressER()).when(daoHelper).query(any(), anyMap(), anyList());
+				resultado = service.getBookingStatus(15);
+				assertNotEquals(expected, resultado);
+
+				doReturn(confirmedER()).when(daoHelper).query(any(), anyMap(), anyList());
+				resultado = service.getBookingStatus(15);
+				assertEquals(expected, resultado);
+
+			} catch (EntityResultRequiredException e) {
+				fail(e);
+			}
+		}
+
+	}
+
+	// ER
+
+	List<String> getStatusColumnList() {
+		return Arrays.asList(BookingDao.ATTR_CHECKIN, BookingDao.ATTR_CHECKOUT, BookingDao.ATTR_CANCELED);
+	}
+
+	EntityResult canceledER() {
+		EntityResult er = new EntityResultMapImpl(getStatusColumnList());
+		er.addRecord(new HashMap<String, Object>() {
+			{
+				put(BookingDao.ATTR_CHECKIN, null);
+				put(BookingDao.ATTR_CHECKOUT, null);
+				put(BookingDao.ATTR_CANCELED, Tools.getYesterdayString());
+			}
+		});
+		return er;
+	}
+
+	EntityResult completedER() {
+		EntityResult er = new EntityResultMapImpl(getStatusColumnList());
+		er.addRecord(new HashMap<String, Object>() {
+			{
+				put(BookingDao.ATTR_CHECKIN, Tools.getYesterdayString());
+				put(BookingDao.ATTR_CHECKOUT, Tools.getTomorrowString());
+				put(BookingDao.ATTR_CANCELED, null);
+			}
+		});
+		return er;
+	}
+
+	EntityResult inProgressER() {
+		EntityResult er = new EntityResultMapImpl(getStatusColumnList());
+		er.addRecord(new HashMap<String, Object>() {
+			{
+				put(BookingDao.ATTR_CHECKIN, Tools.getYesterdayString());
+				put(BookingDao.ATTR_CHECKOUT, null);
+				put(BookingDao.ATTR_CANCELED, null);
+			}
+		});
+		return er;
+	}
+
+	EntityResult confirmedER() {
+		EntityResult er = new EntityResultMapImpl(getStatusColumnList());
+		er.addRecord(new HashMap<String, Object>() {
+			{
+				put(BookingDao.ATTR_CHECKIN, null);
+				put(BookingDao.ATTR_CHECKOUT, null);
+				put(BookingDao.ATTR_CANCELED, null);
+			}
+		});
+		return er;
+	}
+
 //
 //	@Test
 //	void testBookingDaysUnitaryRoomPriceQuery() {
