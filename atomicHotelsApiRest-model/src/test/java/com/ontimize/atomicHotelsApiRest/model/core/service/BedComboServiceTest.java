@@ -99,7 +99,7 @@ public class BedComboServiceTest {
 			EntityResult entityResult = service.bedComboQuery(new HashMap<>(), new ArrayList<>());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
 			assertEquals(0, entityResult.calculateRecordNumber());
-		}
+		} 
 //
 //		@ParameterizedTest(name = "Obtain data with bdc_id -> {1}")
 //		@MethodSource("randomIDGenerator")
@@ -291,11 +291,12 @@ public class BedComboServiceTest {
 					put(BedComboDao.ATTR_SLOTS, 6);
 				}
 			};
+			EntityResult resultado = new EntityResultMapImpl();
 			when(daoHelper.update(any(), anyMap(), anyMap())).thenReturn(resultado);
 			EntityResult entityResult = service.bedComboUpdate(attrMap, keyMap);
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
 			assertEquals(entityResult.getMessage(), "Tipo de cama actualizado");
-		}
+		} 
 
 		@Test
 		@DisplayName("Duplicated Key")
@@ -303,8 +304,7 @@ public class BedComboServiceTest {
 			Map<String, Object> attrMap = new HashMap<>() {
 				{
 					put(BedComboDao.ATTR_ID, 1);
-					put(BedComboDao.ATTR_NAME, "Cama simple");
-					put(BedComboDao.ATTR_SLOTS, 1);
+				
 				}
 			};
 			Map<String, Object> keyMap = new HashMap<>() {
@@ -333,8 +333,7 @@ public class BedComboServiceTest {
 				
 					{
 						put(BedComboDao.ATTR_ID, 1);
-						put(BedComboDao.ATTR_NAME, "Cama simple");
-						put(BedComboDao.ATTR_SLOTS, 1);
+				
 					}
 				
 			};

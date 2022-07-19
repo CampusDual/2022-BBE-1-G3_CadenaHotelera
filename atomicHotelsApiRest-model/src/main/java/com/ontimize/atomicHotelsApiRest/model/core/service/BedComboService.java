@@ -68,14 +68,14 @@ public class BedComboService implements IBedComboService{
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado=new EntityResultMapImpl();
 		try {
-			ValidateFields.required(keyMap, BedComboDao.ATTR_ID);
-			ValidateFields.NegativeNotAllowed((int) attrMap.get(BedComboDao.ATTR_SLOTS));
+			ValidateFields.required(attrMap, BedComboDao.ATTR_ID);
+			ValidateFields.NegativeNotAllowed((int) keyMap.get(BedComboDao.ATTR_SLOTS));
 			resultado=this.daoHelper.update(bedComboDao, attrMap, keyMap);
 			if(resultado.getCode()==EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
 				resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD); 
 			}else {
 				resultado.setMessage("Tipo de cama actualizado");
-			}
+			} 
 			}catch(MissingFieldsException e){
 				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR+e.getMessage());
 			}catch(DuplicateKeyException e){
