@@ -36,5 +36,6 @@ public class ErrorMessage {
 	public static final String NEGATIVE_OR_CERO_NOT_ALLOWED="Número igual o menor a 0 no permitido";
 	public static final String INVALID_NUMBER_CREDITCARD="Número de tarejeta no válido";
 	public static final String WRONG_TYPE = "Tipo incorrecto";
+	public static final String ERROR = "Error";	
 	
 }

@@ -62,6 +62,7 @@ public class ReceiptService implements IReceiptService {
 			ValidateFields.onlyThis(keyMap, ReceiptDao.ATTR_ID,ReceiptDao.ATTR_BOOKING_ID,ReceiptDao.ATTR_DATE,ReceiptDao.ATTR_TOTAL_SERVICES,ReceiptDao.ATTR_DIAS,ReceiptDao.ATTR_TOTAL_ROOM,ReceiptDao.ATTR_TOTAL);
 			ValidateFields.isInt(keyMap,ReceiptDao.ATTR_ID,ReceiptDao.ATTR_BOOKING_ID,ReceiptDao.ATTR_DIAS);
 			//TODO estos validadores están pendientes
+//			ValidateFields.stringToDate((String)keyMap.get(ReceiptDao.ATTR_DATE));
 //			ValidateFields.isDate(keyMap,ReceiptDao.ATTR_DATE);
 //			ValidateFields.isBigDecimal(keyMap,ReceiptDao.ATTR_TOTAL_SERVICES,ReceiptDao.ATTR_TOTAL_ROOM,ReceiptDao.ATTR_TOTAL);
 			
@@ -80,7 +81,7 @@ public class ReceiptService implements IReceiptService {
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}
 		return resultado;
 	}
