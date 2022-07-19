@@ -103,13 +103,13 @@ public class BedComboService implements IBedComboService{
 			EntityResult auxEntity= this.daoHelper.query(this.bedComboDao,
 					EntityResultTools.keysvalues(BedComboDao.ATTR_ID,keyMap.get(BedComboDao.ATTR_ID)),
 					EntityResultTools.attributes(BedComboDao.ATTR_ID));
-			if(auxEntity.calculateRecordNumber()==0) {
-				resultado=new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
-			}else {
+		if(auxEntity.calculateRecordNumber()==0) {
+			resultado=new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
+		}else {
 				resultado=this.daoHelper.delete(this.bedComboDao, keyMap);
 				resultado.setMessage("Tipo de cama borrada");
 				
-			}
+		}
 		}catch (MissingFieldsException e) {
 			resultado=new EntityResultWrong(ErrorMessage.DELETE_ERROR+e.getMessage());
 		}catch(DataIntegrityViolationException e) {

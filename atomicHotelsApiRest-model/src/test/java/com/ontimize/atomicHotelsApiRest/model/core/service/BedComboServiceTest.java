@@ -325,10 +325,13 @@ public class BedComboServiceTest {
 	@DisplayName("Test for BedCombo delete")
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	class deleteQuery {
-
+		
 		@Test
 		@DisplayName("Delete BedCombo")
 		void when_bedCombo_delete_is_succsessfull() {
+			
+			
+			
 			Map<String, Object> attrMap = new HashMap<>() {
 				
 					{
@@ -337,14 +340,14 @@ public class BedComboServiceTest {
 					}
 				
 			};
-		
-			
+			BedComboQuery culo=new BedComboQuery();
+			doReturn(culo.getAllBedComboData()).when(daoHelper).query(any(), anyMap(), anyList());
 			EntityResult resultado = new EntityResultMapImpl();
 			resultado.addRecord(attrMap);
 			resultado.setCode(EntityResult.OPERATION_SUCCESSFUL);
 			resultado.setMessage("Tipo de cama borrado");
 			doReturn(resultado).when(daoHelper).delete(any(),anyMap());
-			EntityResult entityResult = service.bedComboDelete(attrMap);
+			EntityResult entityResult = service.bedComboDelete(new HashMap<>());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
 			assertEquals(entityResult.getMessage(), "Tipo de cama borrada");
 		}
