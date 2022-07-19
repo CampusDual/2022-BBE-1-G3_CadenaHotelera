@@ -31,6 +31,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
@@ -247,20 +248,20 @@ class ServicesXtraServiceTest {
 		void generic_fail() {
 			Map<String, Object> attrMap = new HashMap<>() {
 				{
-					put(ServicesXtraDao.ATTR_ID, 1);
+					put(ServicesXtraDao.ATTR_ID, 105); 		
 					put(ServicesXtraDao.ATTR_NAME, "paseacaness");
-					put(ServicesXtraDao.ATTR_DESCRIPTION, "Error de creación");
+					put(ServicesXtraDao.ATTR_DESCRIPTION, 6);		//puede q salte exception ya que no está contemplado un error de cast en descripción. PENDIENTE
 				}
 			};
-			when(daoHelper.insert(any(), anyMap())).thenThrow(Exception.class);
+	//		when(daoHelper.insert(any(), anyMap())).thenThrow(Exception.class);		//?¿¿?¿??¿? Pq da error si lanzo la excepción
 			EntityResult entityResult = service.servicesXtraInsert(attrMap);
-	//		assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
 			assertEquals(entityResult.getMessage(), ErrorMessage.CREATION_ERROR);
 		}
 
 		@Test
 		@DisplayName("Missing Fields")
-		void when_unable_insert() {
+		void when_field_is_empty_null_insert() {
 			Map<String, Object> attrMap = new HashMap<>() {
 				{
 					put(ServicesXtraDao.ATTR_ID, 1);
@@ -268,11 +269,10 @@ class ServicesXtraServiceTest {
 					put(ServicesXtraDao.ATTR_DESCRIPTION, "Faltan campos no nullables");
 				}
 			};
-			
+//				when(daoHelper.insert(any(), anyMap())).thenThrow(MissingFieldsException.class);
 				EntityResult entityResult = service.servicesXtraInsert(attrMap);
 				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
 				assertEquals(ErrorMessage.CREATION_ERROR + "El campo " + ServicesXtraDao.ATTR_NAME + " es nulo",entityResult.getMessage());
-
 		}
 	}
 
@@ -283,7 +283,7 @@ class ServicesXtraServiceTest {
 
 		@Test
 		@DisplayName("Update servicesXtra")
-		void when_servicesXtra_insert_is_succsessfull() {
+		void when_servicesXtra_update_is_succsessfull() {
 			Map<String, Object> attrMap = new HashMap<>() {
 				{
 					put(ServicesXtraDao.ATTR_ID, 1);
@@ -328,19 +328,96 @@ class ServicesXtraServiceTest {
 			assertEquals(entityResult.getMessage(), ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
 		}
 
-//    	@Test
-//		@DisplayName("Missing Fields")
-//		void when_unable_insert() {
-//			when(daoHelper.insert(any(),anyMap())).thenThrow(MissingFieldsException.class);
-//			Map<String, Object> attrMap = new HashMap<>() {{
-//				put(ServicesXtraDao.ATTR_ID, 1);
-////            put(ServicesXtraDao.ATTR_NAME, "Servicio extra 23");
-//              put(ServicesXtraDao.ATTR_DESCRIPTION, "Faltan campos no nullables");
-//			}};			
-//			EntityResult entityResult = service.servicesXtraInsert(attrMap);
-//			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-//    		assertEquals(entityResult.getMessage(), ErrorMessage.CREATION_ERROR+e.getMessage());
-//    	}
-	}
+    	@Test
+		@DisplayName("Update Failure")
+    	void when_unable_update() {
+    		Map<String, Object> attrMap = new HashMap<>() {
+				{
+					put(ServicesXtraDao.ATTR_ID, 1);
+				}
+			};
+			Map<String, Object> keyMap = new HashMap<>() {
+				{
+					put(ServicesXtraDao.ATTR_ID, 1);
+					put(ServicesXtraDao.ATTR_NAME, "/&");
+					put(ServicesXtraDao.ATTR_DESCRIPTION, "actualízame");
+				}
+			};
+//			when(daoHelper.update(any(), anyMap(), anyMap())).thenThrow(Exception.class);	////?¿¿?¿??¿? Pq da error si lanzo la excepción
+			EntityResult entityResult = service.servicesXtraUpdate(attrMap, keyMap);
+			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+			assertEquals(entityResult.getMessage(), ErrorMessage.UPDATE_ERROR);
+			
+		}
+    	
+    	@Test
+		@DisplayName("Missing Fields")			//emptyField o required?¿?¿? cuál ponemos. La excepción DataIntegrityViolationException de update, ya estaría comprobada en este test
+		void when_field_is_empty_null_update() {
+    		Map<String, Object> attrMap = new HashMap<>() {
+				{
+					put(ServicesXtraDao.ATTR_ID, 1);
+				}
+			};
+			Map<String, Object> keyMap = new HashMap<>() {
+				{
+					put(ServicesXtraDao.ATTR_ID, 1);
+					put(ServicesXtraDao.ATTR_NAME, "");
+					put(ServicesXtraDao.ATTR_DESCRIPTION, "Faltan campos no nullables");
+				}
+			};
+			
+				EntityResult entityResult = service.servicesXtraInsert(attrMap);
+				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+				assertEquals(ErrorMessage.CREATION_ERROR + "Falta el campo " + ServicesXtraDao.ATTR_NAME,entityResult.getMessage());
+		}
 
+	}
+	/*
+	 * @Nested
+	@DisplayName("Test for ServicesXtra inserts")
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	public class InsertQuery {
+
+		@Test
+		@DisplayName("Insert ServicesXtra")
+		void when_ServicesXtra_insert_is_succsessfull() {
+			Map<String, Object> attrMap = new HashMap<>() {
+				{
+					put(ServicesXtraDao.ATTR_ID, 1);
+					put(ServicesXtraDao.ATTR_NAME, "paseacanes");
+					put(ServicesXtraDao.ATTR_DESCRIPTION, "Servicio extra a registrar");
+				}
+			};
+			EntityResult resultado = new EntityResultMapImpl();
+			resultado.addRecord(attrMap);
+			resultado.setCode(EntityResult.OPERATION_SUCCESSFUL);
+			resultado.setMessage("Servicio extra registrado");
+			when(daoHelper.insert(any(), anyMap())).thenReturn(resultado);
+			EntityResult entityResult = service.servicesXtraInsert(attrMap);
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
+			assertEquals(entityResult.getMessage(), "ServiceXtra registrado");
+		}
+	 */
+	@Nested
+	@DisplayName("Test for servicesXtra delete")
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	public class DeleteQuery {
+
+		@Test
+		@DisplayName("Delete servicesXtra")
+		void when_servicesXtra_delete_is_succsessfull() {
+			Map<String, Object> attrMap = new HashMap<>() {
+				{
+					put(ServicesXtraDao.ATTR_ID, 1);
+//					put(ServicesXtraDao.ATTR_NAME, "1 a borrar");
+//					put(ServicesXtraDao.ATTR_DESCRIPTION, "servicio extra borrado");
+				}
+			};
+
+			EntityResult entityResult = service.servicesXtraDelete(attrMap);
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
+			assertEquals(entityResult.getMessage(), "ServiceXtra borrado");
+		}
+
+	}
 }
