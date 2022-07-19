@@ -366,9 +366,10 @@ class ServicesXtraServiceTest {
 				}
 			};
 			
-				EntityResult entityResult = service.servicesXtraInsert(attrMap);
+				when(daoHelper.update(any(), anyMap(), anyMap())).thenThrow(DataIntegrityViolationException.class);
+				EntityResult entityResult = service.servicesXtraUpdate(attrMap, keyMap);
 				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-				assertEquals(ErrorMessage.CREATION_ERROR + "Falta el campo " + ServicesXtraDao.ATTR_NAME,entityResult.getMessage());
+				assertEquals(entityResult.getMessage(), ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
 		}
 
 	}
@@ -406,17 +407,56 @@ class ServicesXtraServiceTest {
 		@Test
 		@DisplayName("Delete servicesXtra")
 		void when_servicesXtra_delete_is_succsessfull() {
+			
+/*		
 			Map<String, Object> attrMap = new HashMap<>() {
 				{
 					put(ServicesXtraDao.ATTR_ID, 1);
-//					put(ServicesXtraDao.ATTR_NAME, "1 a borrar");
-//					put(ServicesXtraDao.ATTR_DESCRIPTION, "servicio extra borrado");
+					put(ServicesXtraDao.ATTR_NAME, "pista de bádminton");
+					put(ServicesXtraDao.ATTR_DESCRIPTION, "excelente");
+				}
+			};
+*/			
+			Map<String, Object> keyMap = new HashMap<>() {
+				{
+					put(ServicesXtraDao.ATTR_ID, 1);
+	//				put(ServicesXtraDao.ATTR_NAME, "pista de bádminton");
+	//				put(ServicesXtraDao.ATTR_DESCRIPTION, "excelente");
+				}
+			};
+			
+			EntityResult entityResult = service.servicesXtraDelete(keyMap);
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
+			assertEquals(entityResult.getMessage(), "Servicio extra eliminado.");
+		}
+		
+		@Test
+		@DisplayName("Missing Fields")			//emptyField o required?¿?¿? cuál ponemos. La excepción DataIntegrityViolationException de update, ya estaría comprobada en este test
+		void when_field_is_empty_null_delete() {
+    		Map<String, Object> attrMap = new HashMap<>() {
+				{
+					put(ServicesXtraDao.ATTR_NAME, "loco");
+					
 				}
 			};
 
+//				when(daoHelper.delete(any(), anyMap())).thenThrow(MissingFieldsException.class);
+				EntityResult entityResult = service.servicesXtraDelete(attrMap);
+				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+				assertEquals(entityResult.getMessage(), ErrorMessage.REQUIRED_FIELDS);
+			}
+
+		@Test
+		@DisplayName("Generic failure")
+		void when_already_exist() {
+			Map<String, Object> attrMap = new HashMap<>() {
+				{
+					put(ServicesXtraDao.ATTR_ID, 1);
+				}
+			};
 			EntityResult entityResult = service.servicesXtraDelete(attrMap);
-			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-			assertEquals(entityResult.getMessage(), "ServiceXtra borrado");
+			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+			assertEquals(entityResult.getMessage(), ErrorMessage.DELETE_ERROR);
 		}
 
 	}
