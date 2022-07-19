@@ -58,7 +58,7 @@ class HotelServiceTest {
 
 	// @Mock/@Autowired/@InjectMocks
 	MissingFieldsException e;
-
+ 
 	@Nested
 	@DisplayName("Test for Hotel queries")
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)

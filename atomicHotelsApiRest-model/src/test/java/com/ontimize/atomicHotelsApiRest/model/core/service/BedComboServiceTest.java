@@ -99,7 +99,7 @@ public class BedComboServiceTest {
 			EntityResult entityResult = service.bedComboQuery(new HashMap<>(), new ArrayList<>());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
 			assertEquals(0, entityResult.calculateRecordNumber());
-		}
+		} 
 //
 //		@ParameterizedTest(name = "Obtain data with bdc_id -> {1}")
 //		@MethodSource("randomIDGenerator")
@@ -283,7 +283,7 @@ public class BedComboServiceTest {
 				{
 					put(BedComboDao.ATTR_ID, 1);
 				}
-			};
+			}; 
 			Map<String, Object> keyMap = new HashMap<>() {
 				{
 					put(BedComboDao.ATTR_ID, 1);
@@ -292,22 +292,19 @@ public class BedComboServiceTest {
 				}
 			};
 			EntityResult resultado = new EntityResultMapImpl();
-			resultado.addRecord(keyMap);
-			resultado.setCode(EntityResult.OPERATION_SUCCESSFUL);
-			resultado.setMessage("Tipo de cama actualizado");
-
 			when(daoHelper.update(any(), anyMap(), anyMap())).thenReturn(resultado);
 			EntityResult entityResult = service.bedComboUpdate(attrMap, keyMap);
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
 			assertEquals(entityResult.getMessage(), "Tipo de cama actualizado");
-		}
+		} 
 
 		@Test
 		@DisplayName("Duplicated Key")
 		void when_already_exist() {
 			Map<String, Object> attrMap = new HashMap<>() {
 				{
-					put(HotelDao.ATTR_ID, 1);
+					put(BedComboDao.ATTR_ID, 1);
+				
 				}
 			};
 			Map<String, Object> keyMap = new HashMap<>() {
@@ -324,4 +321,38 @@ public class BedComboServiceTest {
 		}
 	
 	}
+	@Nested
+	@DisplayName("Test for BedCombo delete")
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	class deleteQuery {
+		
+		@Test
+		@DisplayName("Delete BedCombo")
+		void when_bedCombo_delete_is_succsessfull() {
+			
+			
+			
+			Map<String, Object> attrMap = new HashMap<>() {
+				
+					{
+						put(BedComboDao.ATTR_ID, 1);
+				
+					}
+				
+			};
+			BedComboQuery culo=new BedComboQuery();
+			doReturn(culo.getAllBedComboData()).when(daoHelper).query(any(), anyMap(), anyList());
+			EntityResult resultado = new EntityResultMapImpl();
+			resultado.addRecord(attrMap);
+			resultado.setCode(EntityResult.OPERATION_SUCCESSFUL);
+			resultado.setMessage("Tipo de cama borrado");
+			doReturn(resultado).when(daoHelper).delete(any(),anyMap());
+			EntityResult entityResult = service.bedComboDelete(new HashMap<>());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
+			assertEquals(entityResult.getMessage(), "Tipo de cama borrada");
+		}
+
+		
+	}
+	
 	}
