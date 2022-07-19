@@ -34,22 +34,21 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsExcepti
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
-import com.ontimize.atomicHotelsApiRest.model.core.dao.BedComboDao;
-import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.CreditCardDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
 
 @ExtendWith(MockitoExtension.class)
-public class BedComboServiceTest {
+public class CreditCardTest {
 
 	@Mock
 	DefaultOntimizeDaoHelper daoHelper;
 
 	@InjectMocks
-	BedComboService service;
+	CreditCardDao service;
 
 	@Autowired
-	BedComboDao bedComboDao;
+	CreditCardDao creditCardDao;
 	@Autowired
 	ValidateFields vf;
 
@@ -57,108 +56,107 @@ public class BedComboServiceTest {
 	MissingFieldsException e;
 	
 	@Nested
-	@DisplayName("Test for bedcombo queries")
+	@DisplayName("Test for creditCard queries")
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	public class BedComboQuery {
+	public class CreditCardQuery {
 
 		@Test
-		@DisplayName("Obtain all data from Bedcombo table")
-		void when_queryOnlyWithAllColumns_return_allBedComboData() {
-			doReturn(getAllBedComboData()).when(daoHelper).query(any(), anyMap(), anyList());
-			EntityResult entityResult = service.bedComboQuery(new HashMap<>(), new ArrayList<>());
+		@DisplayName("Obtain all data from CreditCard table")
+		void when_queryOnlyWithAllColumns_return_allCreditCardData() {
+			doReturn(getCreditAllCardData()).when(daoHelper).query(any(), anyMap(), anyList());
+			EntityResult entityResult = service.creditCardQuery (new HashMap<>(), new ArrayList<>());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
 			assertEquals(3, entityResult.calculateRecordNumber());
 		}
 
 		@Test
-		@DisplayName("Obtain all data columns from bed table when bdc_id is -> 2")
+		@DisplayName("Obtain all data columns from CreditCard table when crd_id is -> 2")
 		void when_queryAllColumns_return_specificData() {
 			HashMap<String, Object> keyMap = new HashMap<>() {
 				{
-					put(BedComboDao.ATTR_ID, 2);
+					put(CreditCardDao.ATTR_ID, 2);
 				}
 			};
-			List<String> attrList = Arrays.asList(BedComboDao.ATTR_ID, BedComboDao.ATTR_NAME, BedComboDao.ATTR_SLOTS);
-			doReturn(getSpecificBedComboData(keyMap, attrList)).when(daoHelper).query(any(), anyMap(), anyList());
-			EntityResult entityResult = service.bedComboQuery(new HashMap<>(), new ArrayList<>());
+			List<String> attrList = Arrays.asList(CreditCardDao.ATTR_ID, CreditCardDao.ATTR_NUMBER, CreditCardDao.ATTR_DATE_EXPIRY);
+			doReturn(getSpecificCreditCardData(keyMap, attrList)).when(daoHelper).query(any(), anyMap(), anyList());
+			EntityResult entityResult = service.creditCardQuery(new HashMap<>(), new ArrayList<>());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
 			assertEquals(1, entityResult.calculateRecordNumber());
-			assertEquals(2, entityResult.getRecordValues(0).get(bedComboDao.ATTR_ID));
+			assertEquals(2, entityResult.getRecordValues(0).get(CreditCardDao.ATTR_ID));
 		}
 
 		@Test
-		@DisplayName("Obtain all data columns from Bedcombo table when bdc_id not exist")
+		@DisplayName("Obtain all data columns from CreditCard table when cdc_id not exist")
 		void when_queryAllColumnsNotExisting_return_empty() {
 			HashMap<String, Object> keyMap = new HashMap<>() {
 				{
-					put(BedComboDao.ATTR_ID, 5);
+					put(CreditCardDao.ATTR_ID, 5);
 				}
 			};
-			List<String> attrList = Arrays.asList(BedComboDao.ATTR_ID, BedComboDao.ATTR_NAME, BedComboDao.ATTR_SLOTS);
-			when(daoHelper.query(any(), anyMap(), anyList())).thenReturn(getSpecificBedComboData(keyMap, attrList));
-			EntityResult entityResult = service.bedComboQuery(new HashMap<>(), new ArrayList<>());
+			List<String> attrList = Arrays.asList(CreditCardDao.ATTR_ID, CreditCardDao.ATTR_NUMBER, CreditCardDao.ATTR_DATE_EXPIRY);
+			when(daoHelper.query(any(), anyMap(), anyList())).thenReturn(getSpecificCreditCardData(keyMap, attrList));
+			EntityResult entityResult = service.creditCardQuery(new HashMap<>(), new ArrayList<>());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
 			assertEquals(0, entityResult.calculateRecordNumber());
 		}
 
-		@ParameterizedTest(name = "Obtain data with bdc_id -> {1}")
+		@ParameterizedTest(name = "Obtain data with cdc_id -> {1}")
 		@MethodSource("randomIDGenerator")
-		@DisplayName("Obtain all data columns from BedCombo table when bdc_id is random")
+		@DisplayName("Obtain all data columns from CreditCard table when cdc_id is random")
 		void when_queryAllColumnsWithRandomValue_return_specificData(int random) {
 			HashMap<String, Object> keyMap = new HashMap<>() {
 				{
-					put(bedComboDao.ATTR_ID, random);
+					put(CreditCardDao.ATTR_ID, random);
 				} 
 			};
-			List<String> attrList = Arrays.asList(BedComboDao.ATTR_ID, BedComboDao.ATTR_NAME, BedComboDao.ATTR_SLOTS);
-			when(daoHelper.query(any(), anyMap(), anyList())).thenReturn(getSpecificBedComboData(keyMap, attrList));
-			EntityResult entityResult = service.bedComboQuery(new HashMap<>(), new ArrayList<>());
+			List<String> attrList = Arrays.asList(CreditCardDao.ATTR_ID, CreditCardDao.ATTR_NUMBER, CreditCardDao.ATTR_DATE_EXPIRY);
+			when(daoHelper.query(any(), anyMap(), anyList())).thenReturn(getSpecificCreditCardData(keyMap, attrList));
+			EntityResult entityResult = service.creditCardQuery(new HashMap<>(), new ArrayList<>());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
 			assertEquals(1, entityResult.calculateRecordNumber());
-			assertEquals(random, entityResult.getRecordValues(0).get(BedComboDao.ATTR_ID));
+			assertEquals(random, entityResult.getRecordValues(0).get(CreditCardDao.ATTR_ID));
 		}
 
-		public EntityResult getAllBedComboData() {
-			List<String> columnList = Arrays.asList(BedComboDao.ATTR_ID, BedComboDao.ATTR_NAME, BedComboDao.ATTR_SLOTS
-					);
+		public EntityResult getCreditAllCardData() {
+			List<String> columnList = Arrays.asList(CreditCardDao.ATTR_ID, CreditCardDao.ATTR_NUMBER,CreditCardDao.ATTR_DATE_EXPIRY);
 			EntityResult er = new EntityResultMapImpl(columnList);
 			er.addRecord(new HashMap<String, Object>() {
 				{
-					put(BedComboDao.ATTR_ID, 1);
-					put(BedComboDao.ATTR_NAME, "Cama simple");
-					put(BedComboDao.ATTR_SLOTS, 1);
+					put(CreditCardDao.ATTR_ID, 1);
+					put(CreditCardDao.ATTR_NUMBER, "11111111111111");
+					put(CreditCardDao.ATTR_DATE_EXPIRY,"2022-07-29");
 				}
 			});
 			er.addRecord(new HashMap<String, Object>() {
 				{
-					put(BedComboDao.ATTR_ID, 2);
-					put(BedComboDao.ATTR_NAME, "Cama doble");
-					put(BedComboDao.ATTR_SLOTS, 2);
+					put(CreditCardDao.ATTR_ID, 2);
+					put(CreditCardDao.ATTR_NUMBER, "22222222222222");
+					put(CreditCardDao.ATTR_DATE_EXPIRY,"2022-07-30");
 				}
 			});
 			er.addRecord(new HashMap<String, Object>() {
 				{
-					put(BedComboDao.ATTR_ID, 1);
-					put(BedComboDao.ATTR_NAME, "Cama Triple");
-					put(BedComboDao.ATTR_SLOTS, 3);
+					put(CreditCardDao.ATTR_ID, 2);
+					put(CreditCardDao.ATTR_NUMBER, "22222222222222");
+					put(CreditCardDao.ATTR_DATE_EXPIRY,"2022-07-30");
 				}
 			});
 			er.setCode(EntityResult.OPERATION_SUCCESSFUL);
 			er.setColumnSQLTypes(new HashMap<String, Number>() {
 				{
-					put(BedComboDao.ATTR_ID, Types.INTEGER);
-					put(BedComboDao.ATTR_NAME, Types.VARCHAR);
-					put(BedComboDao.ATTR_SLOTS, Types.INTEGER);
+					put(CreditCardDao.ATTR_ID, Types.INTEGER);
+					put(CreditCardDao.ATTR_NUMBER, Types.BIGINT);
+					put(CreditCardDao.ATTR_DATE_EXPIRY , Types.DATE);
 				}
 			});
 			return er;
 		}
 
-		public EntityResult getSpecificBedComboData(Map<String, Object> keyValues, List<String> attributes) {
-			EntityResult allData = this.getAllBedComboData();
+		public EntityResult getSpecificCreditCardData(Map<String, Object> keyValues, List<String> attributes) {
+			EntityResult allData = this.getCreditAllCardData();
 			int recordIndex = allData.getRecordIndex(keyValues);
 			HashMap<String, Object> recordValues = (HashMap) allData.getRecordValues(recordIndex);
-			List<String> columnList = Arrays.asList(BedComboDao.ATTR_ID, BedComboDao.ATTR_NAME, BedComboDao.ATTR_SLOTS);
+			List<String> columnList = Arrays.asList(CreditCardDao.ATTR_ID, CreditCardDao.ATTR_NUMBER,CreditCardDao.ATTR_DATE_EXPIRY);
 			EntityResult er = new EntityResultMapImpl(columnList);
 			if (recordValues != null) {
 				er.addRecord(recordValues);
@@ -166,9 +164,9 @@ public class BedComboServiceTest {
 			er.setCode(EntityResult.OPERATION_SUCCESSFUL);
 			er.setColumnSQLTypes(new HashMap<String, Number>() {
 				{
-					put(BedComboDao.ATTR_ID, Types.INTEGER);
-					put(BedComboDao.ATTR_NAME, Types.VARCHAR);
-					put(BedComboDao.ATTR_SLOTS, Types.INTEGER);
+					put(CreditCardDao.ATTR_ID, Types.INTEGER);
+					put(CreditCardDao.ATTR_NUMBER, Types.BIGINT);
+					put(CreditCardDao.ATTR_DATE_EXPIRY , Types.DATE);
 				}
 			});
 			return er;
@@ -185,18 +183,18 @@ public class BedComboServiceTest {
 	}
  
 	@Nested
-	@DisplayName("Test for BedCombo inserts")
+	@DisplayName("Test for CreditCard inserts")
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	class InsertQuery {
 
 		@Test
-		@DisplayName("Insert BedCombo")
+		@DisplayName("Insert CreditCard")
 		void when_bedCombo_insert_is_succsessfull() {
 			Map<String, Object> attrMap = new HashMap<>() {
 				{
-					put(BedComboDao.ATTR_ID, 1);
-					put(BedComboDao.ATTR_NAME, "Cama real para 2");
-					put(BedComboDao.ATTR_SLOTS, 8);
+					put(CreditCardDao.ATTR_ID, 2);
+					put(CreditCardDao.ATTR_NUMBER, "22222222222222");
+					put(CreditCardDao.ATTR_DATE_EXPIRY,"2022-07-30");
 				}
 			};
 			EntityResult resultado = new EntityResultMapImpl();
@@ -204,9 +202,9 @@ public class BedComboServiceTest {
 			resultado.setCode(EntityResult.OPERATION_SUCCESSFUL);
 			resultado.setMessage("Tipo de cama insertado");
 			doReturn(resultado).when(daoHelper).insert(any(),anyMap());
-			EntityResult entityResult = service.bedComboInsert(attrMap);
+			EntityResult entityResult = service.creditCardInsert(attrMap);
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-			assertEquals(entityResult.getMessage(), "Tipo de cama insertado");
+			assertEquals(entityResult.getMessage(), "Tarjeta registrada");
 		}
 
 		@Test
@@ -214,58 +212,58 @@ public class BedComboServiceTest {
 		void when_already_exist() {
 			Map<String, Object> attrMap = new HashMap<>() {
 				{
-					put(BedComboDao.ATTR_ID, 1);
-					put(BedComboDao.ATTR_NAME, "Cama real para 2");
-					put(BedComboDao.ATTR_SLOTS, 8);
+					put(CreditCardDao.ATTR_ID, 2);
+					put(CreditCardDao.ATTR_NUMBER, "22222222222222");
+					put(CreditCardDao.ATTR_DATE_EXPIRY,"2022-07-30");
 				}
 			};
 			when(daoHelper.insert(any(), anyMap())).thenThrow(DuplicateKeyException.class);
-			EntityResult entityResult = service.bedComboInsert(attrMap);
+			EntityResult entityResult = service.creditCardInsert(attrMap);
 			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
 			assertEquals(entityResult.getMessage(), ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 		}
 
 		@Test
-		@DisplayName("Miss Field Name")
-		void when_Unable_Insert_Name() {
+		@DisplayName("Miss Field Number")
+		void when_Unable_Insert_Number() {
 			Map<String, Object> attrMap = new HashMap<>() {
 				{
-				put(BedComboDao.ATTR_ID, 1);
-				put(BedComboDao.ATTR_NAME, null);
-				put(BedComboDao.ATTR_SLOTS, 8);
+					put(CreditCardDao.ATTR_ID, 2);
+					put(CreditCardDao.ATTR_NUMBER, null);
+					put(CreditCardDao.ATTR_DATE_EXPIRY,"2022-07-30");
 				}	
 			};
-				EntityResult entityResult = service.bedComboInsert(attrMap);
+				EntityResult entityResult = service.creditCardInsert(attrMap);
 				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-				assertEquals(ErrorMessage.CREATION_ERROR + "El campo " + BedComboDao.ATTR_NAME + " es nulo",entityResult.getMessage());
+				assertEquals(ErrorMessage.CREATION_ERROR,entityResult.getMessage());
 
 		}
 		@Test
-		@DisplayName("Miss Field Slots")
-		void when_Unable_Insert_Slots() {
+		@DisplayName("Miss Field Expiry")
+		void when_Unable_Insert_Expiry() {
 			Map<String, Object> attrMap = new HashMap<>() {
 				{
-				put(BedComboDao.ATTR_ID, 1);
-				put(BedComboDao.ATTR_NAME,"La habitacion de test");
-				put(BedComboDao.ATTR_SLOTS, null);
+					put(CreditCardDao.ATTR_ID, 2);
+					put(CreditCardDao.ATTR_NUMBER,"222222222222" );
+					put(CreditCardDao.ATTR_DATE_EXPIRY,null);
 				}	
 			};
-				EntityResult entityResult = service.bedComboInsert(attrMap);
+				EntityResult entityResult = service.creditCardInsert(attrMap);
 				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-				assertEquals(ErrorMessage.CREATION_ERROR + "El campo " + BedComboDao.ATTR_SLOTS + " es nulo",entityResult.getMessage());
+				assertEquals(ErrorMessage.CREATION_ERROR ,entityResult.getMessage());
 
 		}
 		@Test
-		@DisplayName("Negative Slots")
-		void when_Slots_isNegative() {
+		@DisplayName("Negative number")
+		void when_Number_isNegative() {
 			Map<String, Object> attrMap = new HashMap<>() {
 				{
-				put(BedComboDao.ATTR_ID, 1);
-				put(BedComboDao.ATTR_NAME,"La habitacion de test");
-				put(BedComboDao.ATTR_SLOTS, -1);
+					put(CreditCardDao.ATTR_ID, 2);
+					put(CreditCardDao.ATTR_NUMBER, "-1234567890123");
+					put(CreditCardDao.ATTR_DATE_EXPIRY,"2022-07-30");
 				}	
 			};
-				EntityResult entityResult = service.bedComboInsert(attrMap);
+				EntityResult entityResult = service.creditCardInsert(attrMap);
 				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
 				assertEquals(ErrorMessage.NEGATIVE_OR_CERO_NOT_ALLOWED ,entityResult.getMessage());
 
