@@ -271,11 +271,57 @@ public class BedComboServiceTest {
 
 		}
 	}
+	@Nested
+	@DisplayName("Test for BedCombo updates")
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	public class UpdateQuery {
+
+		@Test
+		@DisplayName("Update BedCombo")
+		void when_BedCombo_update_is_succsessfull() {
+			Map<String, Object> attrMap = new HashMap<>() {
+				{
+					put(BedComboDao.ATTR_ID, 1);
+				}
+			};
+			Map<String, Object> keyMap = new HashMap<>() {
+				{
+					put(BedComboDao.ATTR_ID, 1);
+					put(BedComboDao.ATTR_NAME,"La habitacion de test está cambiada");
+					put(BedComboDao.ATTR_SLOTS, 6);
+				}
+			};
+			EntityResult resultado = new EntityResultMapImpl();
+			resultado.addRecord(keyMap);
+			resultado.setCode(EntityResult.OPERATION_SUCCESSFUL);
+			resultado.setMessage("Tipo de cama actualizado");
+
+			when(daoHelper.update(any(), anyMap(), anyMap())).thenReturn(resultado);
+			EntityResult entityResult = service.bedComboUpdate(attrMap, keyMap);
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
+			assertEquals(entityResult.getMessage(), "Tipo de cama actualizado");
+		}
+
+		@Test
+		@DisplayName("Duplicated Key")
+		void when_already_exist() {
+			Map<String, Object> attrMap = new HashMap<>() {
+				{
+					put(HotelDao.ATTR_ID, 1);
+				}
+			};
+			Map<String, Object> keyMap = new HashMap<>() {
+				{
+					put(BedComboDao.ATTR_ID, 1);
+					put(BedComboDao.ATTR_NAME, "Cama simple");
+					put(BedComboDao.ATTR_SLOTS, 1);
+				}
+			};
+			when(daoHelper.update(any(), anyMap(), anyMap())).thenThrow(DuplicateKeyException.class);
+			EntityResult entityResult = service.bedComboUpdate(attrMap, keyMap);
+			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+			assertEquals(entityResult.getMessage(), ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
+		}
 	
-	
-	
-	
-	
-	
-	
-}
+	}
+	}
