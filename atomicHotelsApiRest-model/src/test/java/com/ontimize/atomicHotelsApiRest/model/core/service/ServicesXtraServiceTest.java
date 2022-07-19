@@ -97,7 +97,7 @@ class ServicesXtraServiceTest {
 			};
 			List<String> attrList = Arrays.asList(ServicesXtraDao.ATTR_ID, ServicesXtraDao.ATTR_NAME, ServicesXtraDao.ATTR_DESCRIPTION);
 			
-			doReturn(getSpecificServicesXtraData(keyMap, attrList)).when(daoHelper).query(any(), anyMap(), anyList(),anyString());
+			doReturn(getSpecificServicesXtraData(keyMap, attrList)).when(daoHelper).query(any(), anyMap(), anyList());
 			EntityResult entityResult = service.servicesXtraQuery(new HashMap<>(), new ArrayList<>());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
 			assertEquals(1, entityResult.calculateRecordNumber());
@@ -109,7 +109,7 @@ class ServicesXtraServiceTest {
 		void when_queryAllColumnsNotExisting_return_empty() {
 			HashMap<String, Object> keyMap = new HashMap<>() {
 				{
-					put(ServicesXtraDao.ATTR_ID, 5);
+					put(ServicesXtraDao.ATTR_ID, 56);
 				}
 			};
 			List<String> attrList = Arrays.asList(ServicesXtraDao.ATTR_ID, ServicesXtraDao.ATTR_NAME, ServicesXtraDao.ATTR_DESCRIPTION);
@@ -200,24 +200,7 @@ class ServicesXtraServiceTest {
 		}
 
 	}
-/*
- * 
-					put(ServicesXtraDao.ATTR_DESCRIPTION, "canes que pasean humanos");
-				}
-			});
-			er.addRecord(new HashMap<String, Object>() {
-				{
-					put(ServicesXtraDao.ATTR_ID, 2);
-					put(ServicesXtraDao.ATTR_NAME, "Gatería");
-					put(ServicesXtraDao.ATTR_DESCRIPTION, "Humanos domesticados por gatos");
-				}
-			});
-			er.addRecord(new HashMap<String, Object>() {
-				{
-					put(ServicesXtraDao.ATTR_ID, 3);
-					put(ServicesXtraDao.ATTR_NAME, "Pajarería");
-					put(ServicesXtraDao.ATTR_DESCRIPTION, "Vienen volando");
- */
+
 	@Nested
 	@DisplayName("Test for ServicesXtra inserts")
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -240,7 +223,7 @@ class ServicesXtraServiceTest {
 			when(daoHelper.insert(any(), anyMap())).thenReturn(resultado);
 			EntityResult entityResult = service.servicesXtraInsert(attrMap);
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-			assertEquals(entityResult.getMessage(), "Servicio extra registrado");
+			assertEquals(entityResult.getMessage(), "ServiceXtra registrado");
 		}
 
 		@Test
@@ -257,6 +240,22 @@ class ServicesXtraServiceTest {
 			EntityResult entityResult = service.servicesXtraInsert(attrMap);
 			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
 			assertEquals(entityResult.getMessage(), ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+		}
+		
+		@Test
+		@DisplayName("Creation Failure")
+		void generic_fail() {
+			Map<String, Object> attrMap = new HashMap<>() {
+				{
+					put(ServicesXtraDao.ATTR_ID, 1);
+					put(ServicesXtraDao.ATTR_NAME, "paseacaness");
+					put(ServicesXtraDao.ATTR_DESCRIPTION, "Error de creación");
+				}
+			};
+			when(daoHelper.insert(any(), anyMap())).thenThrow(Exception.class);
+			EntityResult entityResult = service.servicesXtraInsert(attrMap);
+	//		assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+			assertEquals(entityResult.getMessage(), ErrorMessage.CREATION_ERROR);
 		}
 
 		@Test
@@ -305,7 +304,7 @@ class ServicesXtraServiceTest {
 			when(daoHelper.update(any(), anyMap(), anyMap())).thenReturn(resultado);
 			EntityResult entityResult = service.servicesXtraUpdate(attrMap, keyMap);
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-			assertEquals(entityResult.getMessage(), "Servicio extra actualizado");
+			assertEquals(entityResult.getMessage(), "ServiceXtra actualizado");
 		}
 
 		@Test

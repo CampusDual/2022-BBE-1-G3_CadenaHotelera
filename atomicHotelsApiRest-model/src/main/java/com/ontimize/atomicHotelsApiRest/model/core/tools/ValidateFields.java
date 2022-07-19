@@ -107,12 +107,11 @@ public class ValidateFields {
 	public static void onlyThis(Map<String, Object> keyMap, String... fields) {
 		keyMap.keySet().retainAll(Arrays.asList(fields));
 	}
-	
-	
+
 	/**
 	 * Elimina todos los elementos de una lista a excepción de los especificadas
 	 * 
-	 * @param list List donde se eliminan las claves
+	 * @param list   List donde se eliminan las claves
 	 * @param fields elementos a persistir.
 	 */
 	public static void onlyThis(List<String> list, String... fields) {
@@ -218,7 +217,6 @@ public class ValidateFields {
 		}
 	}
 
-
 	public static void emptyField(Map<String, Object> keyMap, String field) throws MissingFieldsException {
 		if (!keyMap.containsKey(field)) {
 			throw new MissingFieldsException("Falta el campo " + field);
@@ -275,8 +273,8 @@ public class ValidateFields {
 			final int LONGITUD_MAXIMA_TARJETA_CREDITO = 16;
 			final int LONGITUD_MINIMA_TARJETA_CREDITO = 13;
 			String numero = Long.toString(n);
-			if (numero.length() < LONGITUD_MINIMA_TARJETA_CREDITO
-					|| numero.length() > LONGITUD_MAXIMA_TARJETA_CREDITO) {
+			if (numero.length() < LONGITUD_MINIMA_TARJETA_CREDITO || numero.length() > LONGITUD_MAXIMA_TARJETA_CREDITO
+					|| n <= 0) {
 				throw new NumberFormatException();
 			}
 		} catch (java.lang.ClassCastException e) {
@@ -343,16 +341,16 @@ public class ValidateFields {
 	public static void isInt(Map<String, Object> keyMap, String... fields) throws InvalidFieldsValuesException {
 		for (String field : fields) {
 			try {
-			int i = (int) keyMap.get(field);
-			}catch(NullPointerException e) {
-				e.printStackTrace();
-			}catch(ClassCastException e) {
-				throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE+ " - "+field);
+				if (keyMap.containsKey(field)) {
+					int i = (int) keyMap.get(field);
+				}
+			} catch (ClassCastException | NullPointerException e) {
+				throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + field);
 			}
 		}
 	}
-	
-	//TODO validador pendiente
+
+	// TODO validador pendiente
 	/**
 	 * Castea los valores de un keyMap a String si es posible.
 	 * 
@@ -363,15 +361,16 @@ public class ValidateFields {
 	public static void isString(Map<String, Object> keyMap, String... fields) throws InvalidFieldsValuesException {
 		for (String field : fields) {
 			try {
-			String i = (String) keyMap.get(field);//No salta nunca el NullPointerException
-			}catch(ClassCastException e) {
-				throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE+ " - "+field);
+				if (keyMap.containsKey(field)) {
+					String i = (String) keyMap.get(field);// No salta nunca el NullPointerException
+				}
+			} catch (ClassCastException e) {
+				throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + field);
 			}
 		}
 	}
-	
-	
-	//TODO validador pendiente
+
+	// TODO validador pendiente
 	/**
 	 * Castea los valores de un keyMap a Date si es posible.
 	 * 
@@ -382,17 +381,16 @@ public class ValidateFields {
 	public static void isDate(Map<String, Object> keyMap, String... fields) throws InvalidFieldsValuesException {
 		for (String field : fields) {
 			try {
-			Date i = (Date) keyMap.get(field);
-			}catch(NullPointerException e) {
-				e.printStackTrace();
-			}catch(ClassCastException e) {
-				throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE+ " - "+field);
+				if (keyMap.containsKey(field)) {
+					Date i = (Date) keyMap.get(field);
+				}
+			} catch (ClassCastException | NullPointerException e) {
+				throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + field);
 			}
 		}
 	}
-	
-	
-	//TODO validador pendiente
+
+	// TODO validador pendiente
 	/**
 	 * Castea los valores de un keyMap a long si es posible.
 	 * 
@@ -403,17 +401,16 @@ public class ValidateFields {
 	public static void islong(Map<String, Object> keyMap, String... fields) throws InvalidFieldsValuesException {
 		for (String field : fields) {
 			try {
-			long i = (long) keyMap.get(field);
-			}catch(NullPointerException e) {
-				e.printStackTrace();
-			}catch(ClassCastException e) {
-				throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE+ " - "+field);
+				if (keyMap.containsKey(field)) {
+					long i = (long) keyMap.get(field);
+				}
+			} catch (ClassCastException | NullPointerException e) {
+				throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + field);
 			}
 		}
 	}
-	
-	
-	//TODO validador pendiente
+
+	// TODO validador pendiente
 	/**
 	 * Castea los valores de un keyMap a BigDecimal si es posible.
 	 * 
@@ -424,11 +421,30 @@ public class ValidateFields {
 	public static void isBigDecimal(Map<String, Object> keyMap, String... fields) throws InvalidFieldsValuesException {
 		for (String field : fields) {
 			try {
-			BigDecimal i = (BigDecimal) keyMap.get(field);
-			}catch(NullPointerException e) {
-				e.printStackTrace();
-			}catch(ClassCastException e) {
-				throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE+ " - "+field);
+				if (keyMap.containsKey(field)) {
+					BigDecimal i = (BigDecimal) keyMap.get(field);
+				}
+			} catch (ClassCastException | NullPointerException e) {
+				throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + field);
+			}
+		}
+	}
+	
+	/**
+	 * Castea los valores de un keyMap a double si es posible.
+	 * 
+	 * @param keyMap
+	 * @param fields
+	 * @throws ClassCastException
+	 */
+	public static void isDouble(Map<String, Object> keyMap, String... fields) throws InvalidFieldsValuesException {
+		for (String field : fields) {
+			try {
+				if (keyMap.containsKey(field)) {
+					double i = (double) keyMap.get(field);
+				}
+			} catch (ClassCastException | NullPointerException e) {
+				throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + field);
 			}
 		}
 	}
