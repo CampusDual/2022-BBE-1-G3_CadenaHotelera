@@ -415,8 +415,7 @@ class ServicesXtraServiceTest {
 		@Test
 		@DisplayName("Delete servicesXtra")
 		void when_servicesXtra_delete_is_succsessfull() {
-			
-/*		
+
 			Map<String, Object> attrMap = new HashMap<>() {
 				{
 					put(ServicesXtraDao.ATTR_ID, 1);
@@ -424,7 +423,7 @@ class ServicesXtraServiceTest {
 					put(ServicesXtraDao.ATTR_DESCRIPTION, "excelente");
 				}
 			};
-*/			
+
 			Map<String, Object> keyMap = new HashMap<>() {
 				{
 					put(ServicesXtraDao.ATTR_ID, 1);
@@ -432,6 +431,12 @@ class ServicesXtraServiceTest {
 	//				put(ServicesXtraDao.ATTR_DESCRIPTION, "excelente");
 				}
 			};
+			
+			EntityResult resultado = new EntityResultMapImpl();
+			resultado.addRecord(attrMap);
+			resultado.setCode(EntityResult.OPERATION_SUCCESSFUL);
+			resultado.setMessage("Servicio extra eliminado");
+			when(daoHelper.delete(any(), anyMap())).thenReturn(resultado);
 			
 			EntityResult entityResult = service.servicesXtraDelete(keyMap);
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
