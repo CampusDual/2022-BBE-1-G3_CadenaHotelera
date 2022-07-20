@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -176,9 +177,9 @@ class ReceiptServiceTest {
 					put(ReceiptDao.ATTR_BOOKING_ID, 2);
 					put(ReceiptDao.ATTR_DATE, LocalDateTime.now());
 					put(ReceiptDao.ATTR_DIAS, 3);
-					put(ReceiptDao.ATTR_TOTAL_ROOM, 200.15);
-					put(ReceiptDao.ATTR_TOTAL_SERVICES, 300.15);
-					put(ReceiptDao.ATTR_TOTAL, 500.30);
+					put(ReceiptDao.ATTR_TOTAL_ROOM, new BigDecimal(200.15));
+					put(ReceiptDao.ATTR_TOTAL_SERVICES, new BigDecimal(300.15));
+					put(ReceiptDao.ATTR_TOTAL, new BigDecimal(500.30));
 				}
 			});
 			er.addRecord(new HashMap<String, Object>() {
@@ -187,9 +188,9 @@ class ReceiptServiceTest {
 					put(ReceiptDao.ATTR_BOOKING_ID, 4);
 					put(ReceiptDao.ATTR_DATE, LocalDateTime.now());
 					put(ReceiptDao.ATTR_DIAS, 3);
-					put(ReceiptDao.ATTR_TOTAL_ROOM, 200.15);
-					put(ReceiptDao.ATTR_TOTAL_SERVICES, 300.15);
-					put(ReceiptDao.ATTR_TOTAL, 500.30);
+					put(ReceiptDao.ATTR_TOTAL_ROOM, new BigDecimal(200.15));
+					put(ReceiptDao.ATTR_TOTAL_SERVICES, new BigDecimal(300.15));
+					put(ReceiptDao.ATTR_TOTAL, new BigDecimal(500.30));
 				}
 			});
 			er.addRecord(new HashMap<String, Object>() {
@@ -198,9 +199,9 @@ class ReceiptServiceTest {
 					put(ReceiptDao.ATTR_BOOKING_ID, 5);
 					put(ReceiptDao.ATTR_DATE, LocalDateTime.now());
 					put(ReceiptDao.ATTR_DIAS, 3);
-					put(ReceiptDao.ATTR_TOTAL_ROOM, 200.15);
-					put(ReceiptDao.ATTR_TOTAL_SERVICES, 300.15);
-					put(ReceiptDao.ATTR_TOTAL, 500.30);
+					put(ReceiptDao.ATTR_TOTAL_ROOM, new BigDecimal(200.15));
+					put(ReceiptDao.ATTR_TOTAL_SERVICES, new BigDecimal(300.15));
+					put(ReceiptDao.ATTR_TOTAL, new BigDecimal(500.30));
 				}
 			});
 			er.setCode(EntityResult.OPERATION_SUCCESSFUL);
@@ -268,9 +269,9 @@ class ReceiptServiceTest {
 					put(ReceiptDao.ATTR_BOOKING_ID, 2);
 					put(ReceiptDao.ATTR_DATE, LocalDateTime.now());
 					put(ReceiptDao.ATTR_DIAS, 3);
-					put(ReceiptDao.ATTR_TOTAL_ROOM, 200.15);
-					put(ReceiptDao.ATTR_TOTAL_SERVICES, 300.15);
-					put(ReceiptDao.ATTR_TOTAL, 500.30);
+					put(ReceiptDao.ATTR_TOTAL_ROOM, new BigDecimal(200.15));
+					put(ReceiptDao.ATTR_TOTAL_SERVICES, new BigDecimal(300.15));
+					put(ReceiptDao.ATTR_TOTAL, new BigDecimal(500.30));
 				}
 			};
 			EntityResult resultado = new EntityResultMapImpl();
@@ -303,9 +304,9 @@ class ReceiptServiceTest {
 					put(ReceiptDao.ATTR_BOOKING_ID, 2);
 					put(ReceiptDao.ATTR_DATE, LocalDateTime.now());
 					put(ReceiptDao.ATTR_DIAS, 3);
-					put(ReceiptDao.ATTR_TOTAL_ROOM, 200.15);
-					put(ReceiptDao.ATTR_TOTAL_SERVICES, 300.15);
-					put(ReceiptDao.ATTR_TOTAL, 500.30);
+					put(ReceiptDao.ATTR_TOTAL_ROOM, new BigDecimal(200.15));
+					put(ReceiptDao.ATTR_TOTAL_SERVICES, new BigDecimal(300.15));
+					put(ReceiptDao.ATTR_TOTAL, new BigDecimal(500.30));
 				}
 			};
 
@@ -334,9 +335,9 @@ class ReceiptServiceTest {
 					put(ReceiptDao.ATTR_BOOKING_ID, null);
 					put(ReceiptDao.ATTR_DATE, LocalDateTime.now());
 					put(ReceiptDao.ATTR_DIAS, 3);
-					put(ReceiptDao.ATTR_TOTAL_ROOM, 200.15);
-					put(ReceiptDao.ATTR_TOTAL_SERVICES, 300.15);
-					put(ReceiptDao.ATTR_TOTAL, 500.30);
+					put(ReceiptDao.ATTR_TOTAL_ROOM, new BigDecimal(200.15));
+					put(ReceiptDao.ATTR_TOTAL_SERVICES, new BigDecimal(300.15));
+					put(ReceiptDao.ATTR_TOTAL, new BigDecimal(500.30));
 				}
 			};
 
@@ -356,9 +357,9 @@ class ReceiptServiceTest {
 //					put(ReceiptDao.ATTR_BOOKING_ID, 3); //No se inserta un campo obligatorio
 					put(ReceiptDao.ATTR_DATE, LocalDateTime.now());
 					put(ReceiptDao.ATTR_DIAS, 3);
-					put(ReceiptDao.ATTR_TOTAL_ROOM, 200.15);
-					put(ReceiptDao.ATTR_TOTAL_SERVICES, 300.15);
-					put(ReceiptDao.ATTR_TOTAL, 500.30);
+					put(ReceiptDao.ATTR_TOTAL_ROOM, new BigDecimal(200.15));
+					put(ReceiptDao.ATTR_TOTAL_SERVICES, new BigDecimal(300.15));
+					put(ReceiptDao.ATTR_TOTAL, new BigDecimal(500.30));
 				}
 			};
 
@@ -378,9 +379,9 @@ class ReceiptServiceTest {
 					put(ReceiptDao.ATTR_BOOKING_ID, 100);// Si no existe esta reserva en la tabla bookings
 					put(ReceiptDao.ATTR_DATE, LocalDateTime.now());
 					put(ReceiptDao.ATTR_DIAS, 3);
-					put(ReceiptDao.ATTR_TOTAL_ROOM, 200.15);
-					put(ReceiptDao.ATTR_TOTAL_SERVICES, 300.15);
-					put(ReceiptDao.ATTR_TOTAL, 500.30);
+					put(ReceiptDao.ATTR_TOTAL_ROOM, new BigDecimal(200.15));
+					put(ReceiptDao.ATTR_TOTAL_SERVICES, new BigDecimal(300.15));
+					put(ReceiptDao.ATTR_TOTAL, new BigDecimal(500.30));
 				}
 			};
 
@@ -406,7 +407,7 @@ class ReceiptServiceTest {
 			er.addRecord(new HashMap<String, Object>() {
 				{
 					put(BookingDao.ATTR_ID, 1);
-					put(RoomTypeDao.ATTR_PRICE, 20.21);
+					put(RoomTypeDao.ATTR_PRICE, new BigDecimal(20.21));
 					put(ReceiptDao.ATTR_DIAS, 3);
 				}
 			});
@@ -422,9 +423,9 @@ class ReceiptServiceTest {
 					put(ReceiptDao.ATTR_BOOKING_ID, "Esto debería ser un int");
 					put(ReceiptDao.ATTR_DATE, LocalDateTime.now());
 					put(ReceiptDao.ATTR_DIAS, 3);
-					put(ReceiptDao.ATTR_TOTAL_ROOM, 200.15);
-					put(ReceiptDao.ATTR_TOTAL_SERVICES, 300.15);
-					put(ReceiptDao.ATTR_TOTAL, 500.30);
+					put(ReceiptDao.ATTR_TOTAL_ROOM, new BigDecimal(200.15));
+					put(ReceiptDao.ATTR_TOTAL_SERVICES, new BigDecimal(300.15));
+					put(ReceiptDao.ATTR_TOTAL, new BigDecimal(500.30));
 				}
 			};
 
@@ -444,7 +445,7 @@ class ReceiptServiceTest {
 				{
 					put(BookingServiceExtraDao.ATTR_ID_BKG, 1);
 					put(BookingServiceExtraDao.ATTR_ID_UNITS, 2);
-					put(BookingServiceExtraDao.ATTR_PRECIO, 22.20);
+					put(BookingServiceExtraDao.ATTR_PRECIO, new BigDecimal(22.20));
 					put("total", 44.40);
 				}
 			});
