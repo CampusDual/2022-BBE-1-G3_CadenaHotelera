@@ -50,6 +50,11 @@ public class ReceiptService implements IReceiptService {
 
 	@Autowired
 	private BookingServiceExtraService bookingServiceExtraService;
+	
+	@Override
+	public EntityResult receiptsQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException{
+		return this.daoHelper.query(this.receiptDao, keyMap, attrList);
+	}
 
 	@Override
 	public EntityResult receiptQuery(Map<String, Object> keyMap, List<String> attrList)
@@ -187,10 +192,11 @@ public class ReceiptService implements IReceiptService {
 				EntityResult habitacion = bookingService.bookingDaysUnitaryRoomPriceQuery(bkg_id, reciboHabitacion);
 
 				int reservaHabitacion = (int) habitacion.getRecordValues(0).get(BookingDao.ATTR_ID);
-				double precioHabitacion = (double) habitacion.getRecordValues(0).get(RoomTypeDao.ATTR_PRICE);
+				BigDecimal precioHabitacion = (BigDecimal) habitacion.getRecordValues(0).get(RoomTypeDao.ATTR_PRICE);
 				int dias = (int) habitacion.getRecordValues(0).get(ReceiptDao.ATTR_DIAS);
 
-				double totalHabitacion = precioHabitacion*dias;
+				BigDecimal totalHabitacion = precioHabitacion.multiply(new BigDecimal(dias));
+				
 
 				attrMap.put(ReceiptDao.ATTR_TOTAL_ROOM, totalHabitacion);
 				attrMap.put(ReceiptDao.ATTR_DIAS, dias);
@@ -205,26 +211,26 @@ public class ReceiptService implements IReceiptService {
 				EntityResult servicios = bookingServiceExtraService.bookingExtraServicePriceUnitsTotalQuery(bsx_bkg_id,
 						reciboServiciosExtra);
 
-				double totalTodosServiciosExtra = 0;
+				BigDecimal totalTodosServiciosExtra = new BigDecimal(0);
 
 				for (int i = 0; i < servicios.calculateRecordNumber(); i++) {
 
 					int reservaServiciosExtra = (int) servicios.getRecordValues(i)
 							.get(BookingServiceExtraDao.ATTR_ID_BKG);
-					double precioServicioExtra = (double) servicios.getRecordValues(i)
+					BigDecimal precioServicioExtra = (BigDecimal) servicios.getRecordValues(i)
 							.get(BookingServiceExtraDao.ATTR_PRECIO);
 					int unidadesServicioExtra = (int) servicios.getRecordValues(i)
 							.get(BookingServiceExtraDao.ATTR_ID_UNITS);
 
-					double totalServicioExtra = precioServicioExtra*unidadesServicioExtra;
-					totalTodosServiciosExtra = totalTodosServiciosExtra+totalServicioExtra;
+					BigDecimal totalServicioExtra = precioServicioExtra.multiply(new BigDecimal(unidadesServicioExtra));   
+					totalTodosServiciosExtra = totalTodosServiciosExtra.add(totalServicioExtra);
 
 				}
 
 				attrMap.put(ReceiptDao.ATTR_TOTAL_SERVICES, totalTodosServiciosExtra);
 
 				// Total del recibo
-				double superTotal = totalHabitacion+totalTodosServiciosExtra;
+				BigDecimal superTotal = totalHabitacion.add(totalTodosServiciosExtra);
 				attrMap.put(ReceiptDao.ATTR_TOTAL, superTotal);
 
 				resultado = this.daoHelper.insert(this.receiptDao, attrMap);
@@ -309,6 +315,7 @@ public class ReceiptService implements IReceiptService {
 		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
 		} catch (Exception e) {
+			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR);
 		}
 		return resultado;

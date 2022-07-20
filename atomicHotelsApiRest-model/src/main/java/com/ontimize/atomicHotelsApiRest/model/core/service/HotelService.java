@@ -41,31 +41,47 @@ public class HotelService implements IHotelService {
 	private DefaultOntimizeDaoHelper daoHelper;
 
 	@Override
+	public EntityResult hotelsQuery(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException {
+		return this.daoHelper.query(this.hotelDao, keyMap, attrList);
+	}
+
+	@Override
 	public EntityResult hotelQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
-		
+
 		EntityResult resultado = new EntityResultMapImpl();
 
 		try {
-		ValidateFields.atLeastOneRequired(keyMap, HotelDao.ATTR_ID,HotelDao.ATTR_NAME,HotelDao.ATTR_STREET,HotelDao.ATTR_CITY,HotelDao.ATTR_CP,HotelDao.ATTR_STATE,HotelDao.ATTR_COUNTRY,HotelDao.ATTR_PHONE,HotelDao.ATTR_EMAIL,HotelDao.ATTR_DESCRIPTION,HotelDao.ATTR_IS_OPEN);
-		ValidateFields.onlyThis(keyMap, HotelDao.ATTR_ID,HotelDao.ATTR_NAME,HotelDao.ATTR_STREET,HotelDao.ATTR_CITY,HotelDao.ATTR_CP,HotelDao.ATTR_STATE,HotelDao.ATTR_COUNTRY,HotelDao.ATTR_PHONE,HotelDao.ATTR_EMAIL,HotelDao.ATTR_DESCRIPTION,HotelDao.ATTR_IS_OPEN);
-		ValidateFields.isInt(keyMap,HotelDao.ATTR_ID,HotelDao.ATTR_IS_OPEN);
-		//TODO ver qué hacer si se quiere buscar por nules ya que con esto no se aceptan!!
-		ValidateFields.isString(keyMap,HotelDao.ATTR_NAME,HotelDao.ATTR_STREET,HotelDao.ATTR_CITY,HotelDao.ATTR_CP,HotelDao.ATTR_STATE,HotelDao.ATTR_COUNTRY,HotelDao.ATTR_PHONE,HotelDao.ATTR_EMAIL,HotelDao.ATTR_DESCRIPTION);
+			ValidateFields.atLeastOneRequired(keyMap, HotelDao.ATTR_ID, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET,
+					HotelDao.ATTR_CITY, HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY,
+					HotelDao.ATTR_PHONE, HotelDao.ATTR_EMAIL, HotelDao.ATTR_DESCRIPTION, HotelDao.ATTR_IS_OPEN);
+			ValidateFields.onlyThis(keyMap, HotelDao.ATTR_ID, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET,
+					HotelDao.ATTR_CITY, HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY,
+					HotelDao.ATTR_PHONE, HotelDao.ATTR_EMAIL, HotelDao.ATTR_DESCRIPTION, HotelDao.ATTR_IS_OPEN);
+			ValidateFields.isInt(keyMap, HotelDao.ATTR_ID, HotelDao.ATTR_IS_OPEN);
+			// TODO ver qué hacer si se quiere buscar por nules ya que con esto no se
+			// aceptan!!
+			ValidateFields.isString(keyMap, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET, HotelDao.ATTR_CITY,
+					HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY, HotelDao.ATTR_PHONE,
+					HotelDao.ATTR_EMAIL, HotelDao.ATTR_DESCRIPTION);
 
-		
-		ValidateFields.atLeastOneRequired(attrList, HotelDao.ATTR_ID,HotelDao.ATTR_NAME,HotelDao.ATTR_STREET,HotelDao.ATTR_CITY,HotelDao.ATTR_CP,HotelDao.ATTR_STATE,HotelDao.ATTR_COUNTRY,HotelDao.ATTR_PHONE,HotelDao.ATTR_EMAIL,HotelDao.ATTR_DESCRIPTION,HotelDao.ATTR_IS_OPEN);
-		ValidateFields.onlyThis(attrList, HotelDao.ATTR_ID,HotelDao.ATTR_NAME,HotelDao.ATTR_STREET,HotelDao.ATTR_CITY,HotelDao.ATTR_CP,HotelDao.ATTR_STATE,HotelDao.ATTR_COUNTRY,HotelDao.ATTR_PHONE,HotelDao.ATTR_EMAIL,HotelDao.ATTR_DESCRIPTION,HotelDao.ATTR_IS_OPEN);
-		
-		resultado = this.daoHelper.query(this.hotelDao, keyMap, attrList);
-		
-		}catch(MissingFieldsException e) {
+			ValidateFields.atLeastOneRequired(attrList, HotelDao.ATTR_ID, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET,
+					HotelDao.ATTR_CITY, HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY,
+					HotelDao.ATTR_PHONE, HotelDao.ATTR_EMAIL, HotelDao.ATTR_DESCRIPTION, HotelDao.ATTR_IS_OPEN);
+			ValidateFields.onlyThis(attrList, HotelDao.ATTR_ID, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET,
+					HotelDao.ATTR_CITY, HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY,
+					HotelDao.ATTR_PHONE, HotelDao.ATTR_EMAIL, HotelDao.ATTR_DESCRIPTION, HotelDao.ATTR_IS_OPEN);
+
+			resultado = this.daoHelper.query(this.hotelDao, keyMap, attrList);
+
+		} catch (MissingFieldsException e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.REQUIRED_FIELDS);
-		}catch(MissingColumnsException e) {
+		} catch (MissingColumnsException e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.REQUIRED_COLUMNS);
-		}catch(InvalidFieldsValuesException e) {
+		} catch (InvalidFieldsValuesException e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (Exception e) {
@@ -76,8 +92,8 @@ public class HotelService implements IHotelService {
 	}
 
 	@Override
-	public EntityResult hotelInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException{
-		
+	public EntityResult hotelInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
+
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
 
@@ -85,23 +101,26 @@ public class HotelService implements IHotelService {
 			ValidateFields.emptyFields(attrMap, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET, HotelDao.ATTR_CITY,
 					HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY);
 			ValidateFields.onlyThis(attrMap, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET, HotelDao.ATTR_CITY,
-					HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY,HotelDao.ATTR_IS_OPEN,HotelDao.ATTR_PHONE,HotelDao.ATTR_EMAIL);
-////		TODO	if(mail está en la lista entonces hacer el check mail..,pero si no está hay nullPointerexception)
-			ValidateFields.checkMail((String) attrMap.get(HotelDao.ATTR_EMAIL));// Para obtener el valor introducido, attrMap.get, sino, valida simplemente el nombre que le damos al campo, no el valor 
-	
+					HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY, HotelDao.ATTR_IS_OPEN,
+					HotelDao.ATTR_PHONE, HotelDao.ATTR_EMAIL);
+			if (attrMap.containsKey(HotelDao.ATTR_EMAIL)) {
+				ValidateFields.checkMail((String) attrMap.get(HotelDao.ATTR_EMAIL));
+			} // Para obtener el valor introducido, attrMap.get, sino, valida simplemente el
+				// nombre que le damos al campo, no el valor
+
 			resultado = this.daoHelper.insert(this.hotelDao, attrMap);
 			resultado.setMessage("Hotel registrado");
 
 		} catch (MissingFieldsException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());
-			
-		}catch(InvalidFieldsValuesException e) {
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());	
-			
+
+		} catch (InvalidFieldsValuesException e) {
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());
+
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 
-		} 
+		}
 //		catch (Exception e) {
 //			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
 //		}
@@ -157,21 +176,24 @@ public class HotelService implements IHotelService {
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			//TODO pendiente comprobar que funcione bien
+			// TODO pendiente comprobar que funcione bien
 			ValidateFields.required(keyMap, HotelDao.ATTR_ID);
 			ValidateFields.onlyThis(keyMap, HotelDao.ATTR_ID);
 			ValidateFields.isInt(keyMap, HotelDao.ATTR_ID);
-			
+
 			ValidateFields.atLeastOneRequired(attrMap, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET, HotelDao.ATTR_CITY,
-					HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY,HotelDao.ATTR_PHONE,HotelDao.ATTR_EMAIL,HotelDao.ATTR_IS_OPEN,HotelDao.ATTR_DESCRIPTION);
+					HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY, HotelDao.ATTR_PHONE,
+					HotelDao.ATTR_EMAIL, HotelDao.ATTR_IS_OPEN, HotelDao.ATTR_DESCRIPTION);
 			ValidateFields.onlyThis(attrMap, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET, HotelDao.ATTR_CITY,
-					HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY,HotelDao.ATTR_PHONE,HotelDao.ATTR_EMAIL,HotelDao.ATTR_IS_OPEN,HotelDao.ATTR_DESCRIPTION);
+					HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY, HotelDao.ATTR_PHONE,
+					HotelDao.ATTR_EMAIL, HotelDao.ATTR_IS_OPEN, HotelDao.ATTR_DESCRIPTION);
 			ValidateFields.isInt(attrMap, HotelDao.ATTR_IS_OPEN);
-			
+
 ////		TODO	if(mail está en la lista entonces hacer el check mail..,pero si no está hay nullPointerexception)
 //			ValidateFields.checkMail((String) attrMap.get(HotelDao.ATTR_EMAIL));
-			//TODO qué pasa con no dejar que se metan cadenas vacías cuando todos los campos no son requeridos??
-			
+			// TODO qué pasa con no dejar que se metan cadenas vacías cuando todos los
+			// campos no son requeridos??
+
 			resultado = this.daoHelper.update(this.hotelDao, attrMap, keyMap);
 			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
 				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
@@ -179,9 +201,9 @@ public class HotelService implements IHotelService {
 				resultado.setMessage("Hotel actualizado");
 			}
 		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR +" - "+ e.getMessage());		
-		}catch(InvalidFieldsValuesException e) {
-			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR +" - "+ e.getMessage());
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + " - " + e.getMessage());
+		} catch (InvalidFieldsValuesException e) {
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + " - " + e.getMessage());
 		} catch (DuplicateKeyException e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
@@ -215,8 +237,8 @@ public class HotelService implements IHotelService {
 			}
 		} catch (MissingFieldsException e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + e.getMessage());
-		}catch(InvalidFieldsValuesException e) {
-			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR +" - "+ e.getMessage());
+		} catch (InvalidFieldsValuesException e) {
+			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + " - " + e.getMessage());
 		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
 		} catch (Exception e) {
