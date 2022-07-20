@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 import java.sql.Types;
@@ -54,9 +55,6 @@ class ServicesXtraServiceTest {
 	ServicesXtraDao servicesXtraDao;
 	@Autowired
 	ValidateFields vf;
-
-	// @Mock/@Autowired/@InjectMocks
-	MissingFieldsException e;
 
 	@Nested
 	@DisplayName("Test for ServicesXtra queries")
@@ -413,35 +411,53 @@ class ServicesXtraServiceTest {
 	public class DeleteQuery {
 
 		@Test
-		@DisplayName("Delete servicesXtra")
-		void when_servicesXtra_delete_is_succsessfull() {
+		@DisplayName("Delete ok")
+		void when_servicesXtra_delete_ok() {
 
-			Map<String, Object> attrMap = new HashMap<>() {
+			Map<String, Object> keyMapID = new HashMap<>() {
 				{
 					put(ServicesXtraDao.ATTR_ID, 1);
-					put(ServicesXtraDao.ATTR_NAME, "pista de bádminton");
-					put(ServicesXtraDao.ATTR_DESCRIPTION, "excelente");
 				}
 			};
+			EntityResult result = new EntityResultMapImpl();
+			result.addRecord(keyMapID);
+			when(
+					daoHelper.query(any(), anyMap(), anyList())		//en q estado capturamos el daohelper.query(con cualquier genérico)
+					
+					).thenReturn(result);
 
-			Map<String, Object> keyMap = new HashMap<>() {
-				{
-					put(ServicesXtraDao.ATTR_ID, 1);
-	//				put(ServicesXtraDao.ATTR_NAME, "pista de bádminton");
-	//				put(ServicesXtraDao.ATTR_DESCRIPTION, "excelente");
-				}
-			};
-			
-			EntityResult resultado = new EntityResultMapImpl();
-			resultado.addRecord(attrMap);
-			resultado.setCode(EntityResult.OPERATION_SUCCESSFUL);
-			resultado.setMessage("Servicio extra eliminado");
-			when(daoHelper.delete(any(), anyMap())).thenReturn(resultado);
-			
-			EntityResult entityResult = service.servicesXtraDelete(keyMap);
-			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-			assertEquals(entityResult.getMessage(), "Servicio extra eliminado.");
+			when(daoHelper.delete(any(), anyMap())).thenReturn(new EntityResultMapImpl());
+					
+			EntityResult entityResult = service.servicesXtraDelete(keyMapID);
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode(), entityResult.getMessage());
+			assertEquals(entityResult.getMessage(), "Servicio extra eliminado");
 		}
+		
+		@Test
+		@DisplayName("Delete ko")		//?¿??NOMBRE?
+		void when_servicesXtra_delete_ko() {			//InvalidFieldsValuesException  (isInt)
+
+			Map<String, Object> keyMapID = new HashMap<>() {
+				{
+					put(ServicesXtraDao.ATTR_ID, "blabla");
+				}
+			};
+			EntityResult result = new EntityResultMapImpl();
+			result.addRecord(keyMapID);
+			lenient().when(				//omitir los stubs estrictos, stubbing indulgente.método estático Mockito.lenient() para habilitar el stubing indulgente en el método add de nuestra lista simulada.
+					daoHelper.query(any(), anyMap(), anyList())		//en q estado capturamos el daohelper.query(con cualquier genérico)
+					
+					).thenReturn(result);
+
+			lenient().when(daoHelper.delete(any(), anyMap())).thenReturn(new EntityResultMapImpl());
+					
+			EntityResult entityResult = service.servicesXtraDelete(keyMapID);
+			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+			assertEquals(entityResult.getMessage(), ErrorMessage.REQUIRED_FIELDS);
+		}		
+		
+		
+		
 		
 		@Test
 		@DisplayName("Missing Fields")			//emptyField o required?¿?¿? cuál ponemos. La excepción DataIntegrityViolationException de update, ya estaría comprobada en este test
@@ -479,6 +495,8 @@ class ServicesXtraServiceTest {
 			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
 			assertEquals(entityResult.getMessage(), ErrorMessage.DELETE_ERROR);
 		}
+
+		
 
 	}
 }
