@@ -59,7 +59,7 @@ public class BedComboServiceTest {
 	@Nested
 	@DisplayName("Test for bedcombo queries")
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	public class BedComboQuery {
+	public class BedComboQuery { 
 
 		@Test
 		@DisplayName("Obtain all data from Bedcombo table")

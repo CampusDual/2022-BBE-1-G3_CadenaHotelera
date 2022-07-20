@@ -4,10 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
-
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,21 +13,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
@@ -68,7 +61,7 @@ public class CreditCardTest {
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
 			assertEquals(3, entityResult.calculateRecordNumber());
 		}
-
+ 
 		@Test
 		@DisplayName("Obtain all data columns from CreditCard table when crd_id is -> 2")
 		void when_queryAllColumns_return_specificData() {
@@ -189,18 +182,18 @@ public class CreditCardTest {
 
 		@Test
 		@DisplayName("Insert CreditCard")
-		void when_bedCombo_insert_is_succsessfull() {
+		void when_creditcard_insert_is_succsessfull() {
 			Map<String, Object> attrMap = new HashMap<>() {
 				{
 					put(CreditCardDao.ATTR_ID, 2);
-					put(CreditCardDao.ATTR_NUMBER, "22222222222222");
+					put(CreditCardDao.ATTR_NUMBER, 12345678911234L);
 					put(CreditCardDao.ATTR_DATE_EXPIRY,"2022-07-30");
 				}
 			};
 			EntityResult resultado = new EntityResultMapImpl();
 			resultado.addRecord(attrMap);
 			resultado.setCode(EntityResult.OPERATION_SUCCESSFUL);
-			resultado.setMessage("Tipo de cama insertado");
+			resultado.setMessage("Tarjeta registrada");
 			doReturn(resultado).when(daoHelper).insert(any(),anyMap());
 			EntityResult entityResult = service.creditCardInsert(attrMap);
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
@@ -213,7 +206,7 @@ public class CreditCardTest {
 			Map<String, Object> attrMap = new HashMap<>() {
 				{
 					put(CreditCardDao.ATTR_ID, 2);
-					put(CreditCardDao.ATTR_NUMBER, "22222222222222");
+					put(CreditCardDao.ATTR_NUMBER, 22222222222222L);
 					put(CreditCardDao.ATTR_DATE_EXPIRY,"2022-07-30");
 				}
 			};
@@ -244,7 +237,7 @@ public class CreditCardTest {
 			Map<String, Object> attrMap = new HashMap<>() {
 				{
 					put(CreditCardDao.ATTR_ID, 2);
-					put(CreditCardDao.ATTR_NUMBER,"222222222222" );
+					put(CreditCardDao.ATTR_NUMBER,222222222222L );
 					put(CreditCardDao.ATTR_DATE_EXPIRY,null);
 				}	
 			};
@@ -259,7 +252,7 @@ public class CreditCardTest {
 			Map<String, Object> attrMap = new HashMap<>() {
 				{
 					put(CreditCardDao.ATTR_ID, 2);
-					put(CreditCardDao.ATTR_NUMBER, "-1234567890123");
+					put(CreditCardDao.ATTR_NUMBER, -12345678911234L);
 					put(CreditCardDao.ATTR_DATE_EXPIRY,"2022-07-30");
 				}	
 			};
