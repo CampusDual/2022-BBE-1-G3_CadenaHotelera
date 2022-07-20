@@ -296,8 +296,8 @@ public class ReceiptService implements IReceiptService {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
 			ValidateFields.required(keyMap, ReceiptDao.ATTR_ID);
-			ValidateFields.onlyThis(keyMap, ReceiptDao.ATTR_BOOKING_ID);
-			ValidateFields.isInt(keyMap, ReceiptDao.ATTR_BOOKING_ID);
+			ValidateFields.onlyThis(keyMap, ReceiptDao.ATTR_ID);
+			ValidateFields.isInt(keyMap, ReceiptDao.ATTR_ID);
 
 			EntityResult auxEntity = this.daoHelper.query(this.receiptDao,
 					EntityResultTools.keysvalues(ReceiptDao.ATTR_ID, keyMap.get(ReceiptDao.ATTR_ID)),
