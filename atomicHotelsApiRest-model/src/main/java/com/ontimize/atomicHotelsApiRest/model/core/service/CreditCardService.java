@@ -48,7 +48,7 @@ public class CreditCardService implements ICreditCardService{
 		
 		EntityResult resultado = new EntityResultMapImpl();
 		try { 
-			 
+			  
 			ValidateFields.required(attrMap, CreditCardDao.ATTR_NUMBER, CreditCardDao.ATTR_DATE_EXPIRY);
 			ValidateFields.NegativeNotAllowed(((Number)( attrMap.get(CreditCardDao.ATTR_NUMBER))).longValue());
 			ValidateFields.invalidCreditCard(((Number)(attrMap.get(CreditCardDao.ATTR_NUMBER))).longValue());
@@ -81,9 +81,13 @@ public class CreditCardService implements ICreditCardService{
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
 			ValidateFields.required(keyMap,CreditCardDao.ATTR_ID);
-			EntityResult auxEntity = this.daoHelper.query(this.creditCardDao,
-					EntityResultTools.keysvalues(CreditCardDao.ATTR_ID, keyMap.get(CreditCardDao.ATTR_ID)),
-					EntityResultTools.attributes(CreditCardDao.ATTR_ID));
+			Map<String,Object> consulta=new HashMap<>(){
+				{
+				put(CreditCardDao.ATTR_ID, keyMap.get(CreditCardDao.ATTR_ID));
+				}
+				};
+				
+			EntityResult auxEntity = this.creditCardQuery(consulta,EntityResultTools.attributes(CreditCardDao.ATTR_ID));
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
 				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
 			} else {
