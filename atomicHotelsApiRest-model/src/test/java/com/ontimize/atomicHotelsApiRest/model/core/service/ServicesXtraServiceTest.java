@@ -74,7 +74,7 @@ class ServicesXtraServiceTest {
 
 		@Test
 		@DisplayName("Obtain all data columns from ServicesXtra table when sxt_id is -> 2")
-		void when_queryAllColumns_return_specificData() {
+		void when_queryAllColumns_return_specificData() { 
 			HashMap<String, Object> keyMap = new HashMap<>() {
 				{
 					put(ServicesXtraDao.ATTR_ID, 2);
