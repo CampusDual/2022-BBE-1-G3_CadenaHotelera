@@ -100,7 +100,7 @@ public class CreditCardTest {
 //			HashMap<String, Object> keyMap = new HashMap<>() {
 //				{
 //					put(CreditCardDao.ATTR_ID, random);
-//				} 
+//				}  
 //			};
 //			List<String> attrList = Arrays.asList(CreditCardDao.ATTR_ID, CreditCardDao.ATTR_NUMBER, CreditCardDao.ATTR_DATE_EXPIRY);
 //			when(daoHelper.query(any(), anyMap(), anyList())).thenReturn(getSpecificCreditCardData(keyMap, attrList));
@@ -252,7 +252,7 @@ public class CreditCardTest {
 			Map<String, Object> attrMap = new HashMap<>() {
 				{
 					put(CreditCardDao.ATTR_ID, 2);
-					put(CreditCardDao.ATTR_NUMBER, -12345678911234L);
+					put(CreditCardDao.ATTR_NUMBER, (-12345678911234L));
 					put(CreditCardDao.ATTR_DATE_EXPIRY,"2022-07-30");
 				}	
 			};
