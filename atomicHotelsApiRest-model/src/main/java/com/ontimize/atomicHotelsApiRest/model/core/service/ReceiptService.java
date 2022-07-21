@@ -77,7 +77,7 @@ public class ReceiptService implements IReceiptService {
 			resultado = this.daoHelper.query(this.receiptDao, keyMap, attrList);
 		}catch(MissingFieldsException e) {
 			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.REQUIRED_FIELDS);
+			resultado = new EntityResultWrong(ErrorMessage.REQUIRED_FIELD);
 		}catch(MissingColumnsException e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.REQUIRED_COLUMNS);

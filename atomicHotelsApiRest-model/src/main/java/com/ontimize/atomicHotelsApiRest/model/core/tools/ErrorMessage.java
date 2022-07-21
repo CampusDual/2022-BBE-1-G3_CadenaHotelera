@@ -30,12 +30,17 @@ public class ErrorMessage {
 	public static final String DATA_RANGE_REVERSE = "La fecha de inicio no puede ser posterior a la fecha de fin";	 
 	public static final String DATA_START_BEFORE_TODAY = "La fecha de inicio no puede ser anterior a hoy";
 	public static final String DATA_EXPIRY_BEFORE_TODAY = "Error de fecha o la fecha de validez no puede ser anterior a hoy ";
-	public static final String REQUIRED_FIELDS = "Faltan campos requeridos";
+	public static final String ALLOWED_FIELDS = "Campos permitidos: \n\t";
+	public static final String REQUIRED_FIELD = "Falta campo requerido - ";
+	public static final String INVALID_FIELD = "Campo no válido - ";
 	public static final String REQUIRED_COLUMNS = "Faltan columnas requeridas";
 	public static final String INVALID_ACTION = "Acción no válida";
 	public static final String NEGATIVE_OR_CERO_NOT_ALLOWED="Número igual o menor a 0 no permitido";
 	public static final String INVALID_NUMBER_CREDITCARD="Número de tarejeta no válido";
-	public static final String WRONG_TYPE = "Tipo incorrecto";
-	public static final String ERROR = "Error";	
+	public static final String WRONG_TYPE = "Tipo incorrecto - ";
+	public static final String REQUIRED_TYPE = " - Tipo requerido - ";
+	public static final String ERROR = "Error";
+	
+	public static final String INTERNAL_CAGADA = "Error interno";
 	
 }

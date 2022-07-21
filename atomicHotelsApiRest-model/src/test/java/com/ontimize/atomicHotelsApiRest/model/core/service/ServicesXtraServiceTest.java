@@ -273,7 +273,7 @@ class ServicesXtraServiceTest {
 //				when(daoHelper.insert(any(), anyMap())).thenThrow(MissingFieldsException.class);
 				EntityResult entityResult = service.servicesXtraInsert(attrMap);
 				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-				assertEquals(entityResult.getMessage(), ErrorMessage.REQUIRED_FIELDS);
+				assertEquals(entityResult.getMessage(), ErrorMessage.REQUIRED_FIELD);
 		//		assertEquals(ErrorMessage.CREATION_ERROR + "El campo " + ServicesXtraDao.ATTR_NAME + " es nulo",entityResult.getMessage());
 		}
 	}
@@ -453,7 +453,7 @@ class ServicesXtraServiceTest {
 					
 			EntityResult entityResult = service.servicesXtraDelete(keyMapID);
 			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
-			assertEquals(entityResult.getMessage(), ErrorMessage.REQUIRED_FIELDS);
+			assertEquals(entityResult.getMessage(), ErrorMessage.REQUIRED_FIELD);
 		}		
 		
 		
@@ -480,7 +480,7 @@ class ServicesXtraServiceTest {
 				}
 				EntityResult entityResult = service.servicesXtraDelete(attrMap);
 				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-				assertEquals(entityResult.getMessage(), ErrorMessage.REQUIRED_FIELDS);
+				assertEquals(entityResult.getMessage(), ErrorMessage.REQUIRED_FIELD);
 			}
 
 		@Test

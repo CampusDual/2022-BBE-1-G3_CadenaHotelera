@@ -57,7 +57,7 @@ public class ServicesXtraService implements IServicesXtraService{
 			resultado.setMessage("ServiceXtra registrado");
 
 		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(ErrorMessage.REQUIRED_FIELDS);	
+			resultado = new EntityResultWrong(ErrorMessage.REQUIRED_FIELD);	
 			
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
@@ -120,9 +120,9 @@ public class ServicesXtraService implements IServicesXtraService{
 				resultado.setMessage("Servicio extra eliminado");
 			}
 		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(ErrorMessage.REQUIRED_FIELDS);
+			resultado = new EntityResultWrong(ErrorMessage.REQUIRED_FIELD);
 		} catch (InvalidFieldsValuesException e) {
-			resultado = new EntityResultWrong(ErrorMessage.REQUIRED_FIELDS);
+			resultado = new EntityResultWrong(ErrorMessage.REQUIRED_FIELD);
 		}
 		catch (Exception e) {
 			System.err.println(e.getMessage());

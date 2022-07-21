@@ -31,18 +31,22 @@ public class HotelDao extends OntimizeJdbcDaoSupport {
 	public static final String ATTR_DESCRIPTION = TAG+"description";
 	public static final String ATTR_IS_OPEN = TAG+"is_open";
 	
-	public static final Map<String,Enum> fields = new HashMap<>() {{
+	public static final Map<String,type> fields = new HashMap<>() {{
 		put(ATTR_ID,type.INTEGER);
 		put(ATTR_NAME,type.STRING);
 		put(ATTR_STREET,type.STRING);
 		put(ATTR_CITY,type.STRING);
 		put(ATTR_CP,type.STRING);
 		put(ATTR_STATE,type.STRING);
-		put(ATTR_COUNTRY,type.COUNTRY);
-		put(ATTR_PHONE,type.PHONE);
-		put(ATTR_EMAIL,type.EMAIL);
+//		put(ATTR_COUNTRY,type.COUNTRY);
+		put(ATTR_COUNTRY,type.STRING);
+//		put(ATTR_PHONE,type.PHONE);
+		put(ATTR_PHONE,type.STRING);
+//		put(ATTR_EMAIL,type.EMAIL);
+		put(ATTR_EMAIL,type.STRING);
 		put(ATTR_DESCRIPTION,type.STRING);
-		put(ATTR_IS_OPEN,type.BOOLEAN);			
+//		put(ATTR_IS_OPEN,type.BOOLEAN);			
+		put(ATTR_IS_OPEN,type.INTEGER);	
 	}};
 	
 	

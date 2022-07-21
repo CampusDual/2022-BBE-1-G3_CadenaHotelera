@@ -240,7 +240,7 @@ public class RoomService implements IRoomService {
 			throws OntimizeJEERuntimeException, EntityResultRequiredException, InvalidFieldsValuesException,
 			MissingFieldsException {
 		if (startDate == null || endDate == null || roomId == null) {
-			throw new MissingFieldsException(ErrorMessage.REQUIRED_FIELDS);
+			throw new MissingFieldsException(ErrorMessage.REQUIRED_FIELD);
 		}
 		Map<String, Object> keyMap = new HashMap<String, Object>();
 		keyMap.put(BookingDao.ATTR_ROOM_ID, roomId);
