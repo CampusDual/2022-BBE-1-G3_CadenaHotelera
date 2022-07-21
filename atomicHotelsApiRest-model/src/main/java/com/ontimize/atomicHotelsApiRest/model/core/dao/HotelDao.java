@@ -38,15 +38,11 @@ public class HotelDao extends OntimizeJdbcDaoSupport {
 		put(ATTR_CITY,type.STRING);
 		put(ATTR_CP,type.STRING);
 		put(ATTR_STATE,type.STRING);
-//		put(ATTR_COUNTRY,type.COUNTRY);
-		put(ATTR_COUNTRY,type.STRING);
-//		put(ATTR_PHONE,type.PHONE);
-		put(ATTR_PHONE,type.STRING);
-//		put(ATTR_EMAIL,type.EMAIL);
-		put(ATTR_EMAIL,type.STRING);
+		put(ATTR_COUNTRY,type.COUNTRY);		
+		put(ATTR_PHONE,type.PHONE);
+		put(ATTR_EMAIL,type.EMAIL);
 		put(ATTR_DESCRIPTION,type.STRING);
-//		put(ATTR_IS_OPEN,type.BOOLEAN);			
-		put(ATTR_IS_OPEN,type.INTEGER);	
+		put(ATTR_IS_OPEN,type.BOOLEAN);					
 	}};
 	
 	
