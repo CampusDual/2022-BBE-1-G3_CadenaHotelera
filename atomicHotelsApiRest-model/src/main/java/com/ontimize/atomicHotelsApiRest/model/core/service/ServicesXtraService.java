@@ -12,6 +12,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.SQLWarningException;
 import org.springframework.stereotype.Service;
 
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IFeatureService;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IServicesXtraService;
@@ -100,19 +101,31 @@ public class ServicesXtraService implements IServicesXtraService{
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
 			ValidateFields.required(keyMap, ServicesXtraDao.ATTR_ID);
+			ValidateFields.onlyThis(keyMap,  ServicesXtraDao.ATTR_ID);
+			ValidateFields.isInt(keyMap, ServicesXtraDao.ATTR_ID);
 //			ValidateFields.emptyFields(keyMap, ServicesXtraDao.ATTR_ID);
-			EntityResult auxEntity = this.daoHelper.query(this.servicesXtraDao,
-					EntityResultTools.keysvalues(ServicesXtraDao.ATTR_ID, keyMap.get(ServicesXtraDao.ATTR_ID)),
+			
+			Map<String, Object> consultaKeyMap = new HashMap<>() { {
+				put(ServicesXtraDao.ATTR_ID, keyMap.get(ServicesXtraDao.ATTR_ID));
+				}
+			};
+			
+			EntityResult auxEntity = servicesXtraQuery(consultaKeyMap, 
 					EntityResultTools.attributes(ServicesXtraDao.ATTR_ID));
+			
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
 				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
 			} else {
 				resultado = this.daoHelper.delete(this.servicesXtraDao, keyMap);
-				resultado.setMessage("ServiceXtra eliminado");
+				resultado.setMessage("Servicio extra eliminado");
 			}
 		} catch (MissingFieldsException e) {
 			resultado = new EntityResultWrong(ErrorMessage.REQUIRED_FIELDS);
-		} catch (Exception e) {
+		} catch (InvalidFieldsValuesException e) {
+			resultado = new EntityResultWrong(ErrorMessage.REQUIRED_FIELDS);
+		}
+		catch (Exception e) {
+			System.err.println(e.getMessage());
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR);
 		}
 		return resultado;
