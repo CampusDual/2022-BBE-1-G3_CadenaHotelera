@@ -305,7 +305,7 @@ class ValidateFieldsTest {
 		
 		@ParameterizedTest
 		@DisplayName("Campos String - NO válidos")
-		@ValueSource(strings = {  "4.12345", "000000.000000", "123123343434", "1.99000",  "albaricoque", "?", "%", ".", " "})
+		@ValueSource(strings = {  "4.12345", "000000.000000", "123123343434", "1.99000",  "albaricoque", "?", "%", ".", " ","-"})
 		void testFormatpriceStringsKO(String numeros) {		
 			assertThrows(NumberFormatException.class, () -> ValidateFields.formatprice(numeros));
 			assertThrows(Exception.class, () -> ValidateFields.formatprice(numeros));

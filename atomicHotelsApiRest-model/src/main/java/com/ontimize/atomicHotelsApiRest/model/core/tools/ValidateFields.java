@@ -236,8 +236,13 @@ public class ValidateFields {
 	public static void formatprice(Object object) throws NumberFormatException {
 		String pre = "" + object;
 		String comprueba = pre.substring(pre.indexOf(".") + 1);
-		if (comprueba.length() > 2) {
+		System.err.println(pre);
+		if (comprueba.length() > 2 ) {
 			throw new NumberFormatException("Introduce solo 2 decimales");
+		}else
+		{
+			BigDecimal comprobado = new BigDecimal(pre);
+			System.err.println(comprobado+"/");
 		}
 
 	}

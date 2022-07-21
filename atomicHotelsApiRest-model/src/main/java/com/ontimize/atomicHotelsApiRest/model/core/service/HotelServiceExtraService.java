@@ -59,7 +59,7 @@ public class HotelServiceExtraService implements IHotelServiceExtraService {
 		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);
 		} catch (Exception e) {
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());
 		} 
 		return resultado;
 	}
