@@ -16,6 +16,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.RestrictedFieldExcep
 import com.ontimize.atomicHotelsApiRest.api.core.service.ICountryService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.CountryDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
@@ -41,11 +42,9 @@ public class CountryService implements ICountryService {
 			cf.validate(keyMap);
 			cf.validate(attrList);
 			this.daoHelper.query(this.countryDao, keyMap, attrList);
-		} catch (MissingFieldsException | RestrictedFieldException | LiadaPardaException | InvalidFieldsException e) {
+		} catch (MissingFieldsException | RestrictedFieldException | LiadaPardaException | InvalidFieldsException | InvalidFieldsValuesException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvalidFieldsValuesException e) {
-			// TODO Auto-generated catch block
+			resultado =  new EntityResultWrong(e.getMessage());
 			e.printStackTrace();
 		}
 		
