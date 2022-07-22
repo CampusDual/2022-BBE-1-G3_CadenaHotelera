@@ -184,15 +184,15 @@ public class ControlFields {
 		}
 	}
 
-	public static void set(Map<String, Object> keyMap, String... fields) throws MissingFieldsException {
-		for (String field : fields) {
-			if (!keyMap.containsKey(field)) {
-				throw new MissingFieldsException("Falta el campo " + field);
-			}
-			if (keyMap.get(field) == null) {
-				throw new MissingFieldsException("El campo " + field + " es nulo");
-			}
-		}
-	}
+//	public static void set(Map<String, Object> keyMap, String... fields) throws MissingFieldsException {
+//		for (String field : fields) {
+//			if (!keyMap.containsKey(field)) {
+//				throw new MissingFieldsException("Falta el campo " + field);
+//			}
+//			if (keyMap.get(field) == null) {
+//				throw new MissingFieldsException("El campo " + field + " es nulo");
+//			}
+//		}
+//	}
 
 }
