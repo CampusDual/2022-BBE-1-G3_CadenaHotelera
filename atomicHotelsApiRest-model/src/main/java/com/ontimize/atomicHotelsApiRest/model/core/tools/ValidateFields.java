@@ -260,15 +260,15 @@ public class ValidateFields {
 	 * @throws NumberFormatException error si es menor o igual 0
 	 */
 
-	public static void NegativeNotAllowed(long n) throws NumberFormatException {
+	public static void NegativeNotAllowed(long n) throws InvalidFieldsValuesException {
 		if (n <= 0) {
-			throw new NumberFormatException(ErrorMessage.NEGATIVE_OR_CERO_NOT_ALLOWED);
+			throw new InvalidFieldsValuesException(ErrorMessage.NEGATIVE_OR_CERO_NOT_ALLOWED);
 		}
 	}
 
-	public static void NegativeNotAllowed(int n) throws NumberFormatException {
+	public static void NegativeNotAllowed(int n) throws InvalidFieldsValuesException {
 		if (n <= 0) {
-			throw new NumberFormatException(ErrorMessage.NEGATIVE_OR_CERO_NOT_ALLOWED);
+			throw new InvalidFieldsValuesException(ErrorMessage.NEGATIVE_OR_CERO_NOT_ALLOWED);
 		}
 	}
 
