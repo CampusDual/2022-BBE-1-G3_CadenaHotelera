@@ -5,14 +5,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.Validate;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.RestrictedFieldException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IBedComboService;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
@@ -20,9 +24,11 @@ import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
 import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BedComboDao;
-import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
+
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.TypeCodes.type;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
 
 @Service("BedComboService")
@@ -43,22 +49,36 @@ public class BedComboService implements IBedComboService{
 	@Override
 	public EntityResult bedComboInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
-		try {
-			ValidateFields.required(attrMap,BedComboDao.ATTR_NAME,BedComboDao.ATTR_SLOTS);
-			ValidateFields.NegativeNotAllowed((int) attrMap.get(BedComboDao.ATTR_SLOTS));
+		try {			
+			ControlFields controller=new ControlFields();
+			controller.addBasics(BedComboDao.fields);
+			List<String> required=new ArrayList<>() {
+				{
+					add(BedComboDao.ATTR_NAME);
+					add(BedComboDao.ATTR_SLOTS);
+				}
+			};
+			controller.setRequired(required);
+			List<String> resticted=new ArrayList<>() {
+				{
+				add(BedComboDao.ATTR_ID);
+				}
+				};
+			controller.validate(attrMap);
+			
 			resultado=this.daoHelper.insert(this.bedComboDao, attrMap);
 			resultado.setMessage("Tipo de cama insertado");
-		} catch (MissingFieldsException e) {
-			resultado= new EntityResultWrong(ErrorMessage.CREATION_ERROR+e.getMessage());
-			
+
 		}catch (DuplicateKeyException e) {
 			resultado =new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
-		}
-		catch (NumberFormatException e) {
-			resultado =new EntityResultWrong(ErrorMessage.NEGATIVE_OR_CERO_NOT_ALLOWED);
+		}catch (DataIntegrityViolationException e) {
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);
+		}catch (RestrictedFieldException |MissingFieldsException |NumberFormatException |InvalidFieldsValuesException | InvalidFieldsException |LiadaPardaException e) {
+			resultado =new EntityResultWrong(ErrorMessage.CREATION_ERROR+e.getMessage());
 		}
 		catch(Exception e) {
-			resultado=new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+			resultado=new EntityResultWrong(e.getMessage());
+			e.printStackTrace();
 		}
 		return resultado;		
 	}

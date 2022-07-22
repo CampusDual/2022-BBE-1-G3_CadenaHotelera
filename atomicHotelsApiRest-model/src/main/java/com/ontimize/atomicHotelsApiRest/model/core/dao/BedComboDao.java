@@ -23,7 +23,7 @@ public class BedComboDao extends OntimizeJdbcDaoSupport {
 	{
 		put(ATTR_ID,type.INTEGER);
 		put(ATTR_NAME,type.STRING);
-		put(ATTR_SLOTS,type.INTEGER);
+		put(ATTR_SLOTS,type.INTEGER_UNSIGNED);
 	}
 	};
 }

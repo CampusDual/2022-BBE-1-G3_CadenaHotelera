@@ -71,26 +71,20 @@ public class CreditCardService implements ICreditCardService{
 			resultado = this.daoHelper.insert(this.creditCardDao, attrMap);	
 			resultado.setMessage("Tarjeta registrada");
 			
-		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());			
-		} catch (DuplicateKeyException e) {
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+		}catch (DuplicateKeyException e) {
+			resultado =new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 		}catch (DataIntegrityViolationException e) {
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);		
-		}catch (InvalidFieldsValuesException e) {
-				resultado =new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());
-		}catch (InvalidFieldsException e) {
-			resultado =new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());		
-		}catch (RestrictedFieldException e) {
-			resultado =new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());
-		}catch(LiadaPardaException e) {
-			resultado =new EntityResultWrong(ErrorMessage.CREATION_ERROR+ e.getMessage());
-		}catch (Exception e) {
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
-		e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);
+		}catch (RestrictedFieldException |MissingFieldsException |NumberFormatException |InvalidFieldsValuesException | InvalidFieldsException |LiadaPardaException e) {
+			resultado =new EntityResultWrong(ErrorMessage.CREATION_ERROR+e.getMessage());
 		}
-		 
+		catch(Exception e) {
+			resultado=new EntityResultWrong(e.getMessage());
+			e.printStackTrace();
+		}
 		return resultado;
+		 
+		
 
 	}
 
