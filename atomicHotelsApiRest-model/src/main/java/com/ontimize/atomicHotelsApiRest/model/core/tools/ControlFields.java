@@ -207,7 +207,7 @@ public class ControlFields {
 			}
 		}
 
-		if (restricted != null) {
+		if (restricted!= null) {
 			for (String key : restricted) {
 				if (list.contains(key)) {
 					throw new RestrictedFieldException(ErrorMessage.INVALID_FIELD + key);
