@@ -20,7 +20,7 @@ public class CreditCardDao extends OntimizeJdbcDaoSupport {
 			{
 				put(ATTR_ID,type.INTEGER);
 				put(ATTR_NUMBER,type.CREDIT_CARD);
-				put(ATTR_DATE_EXPIRY,type.DATE);
+				put(ATTR_DATE_EXPIRY,type.EXPIRATION_DATE);
 			}
 			};
 		

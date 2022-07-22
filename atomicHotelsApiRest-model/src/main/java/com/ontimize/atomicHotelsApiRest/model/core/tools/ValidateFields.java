@@ -280,10 +280,10 @@ public class ValidateFields {
 			String numero = Long.toString(n);
 			if (numero.length() < LONGITUD_MINIMA_TARJETA_CREDITO || numero.length() > LONGITUD_MAXIMA_TARJETA_CREDITO
 					|| n <= 0) {
-				throw new NumberFormatException();
+				throw new NumberFormatException(ErrorMessage.INVALID_NUMBER_CREDITCARD);
 			}
 		} catch (java.lang.ClassCastException e) {
-			throw new NumberFormatException();
+			throw new NumberFormatException(ErrorMessage.INVALID_NUMBER_CREDITCARD);
 		}
 	}
 

@@ -12,8 +12,11 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.RestrictedFieldException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.ICreditCardService;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
@@ -47,21 +50,26 @@ public class CreditCardService implements ICreditCardService{
 		EntityResult resultado = new EntityResultMapImpl();
 		try { 
 			  
-//			ValidateFields.required(attrMap, CreditCardDao.ATTR_NUMBER, CreditCardDao.ATTR_DATE_EXPIRY);
-//			ValidateFields.NegativeNotAllowed(((Number)( attrMap.get(CreditCardDao.ATTR_NUMBER))).longValue());
-//			ValidateFields.invalidCreditCard(((Number)(attrMap.get(CreditCardDao.ATTR_NUMBER))).longValue());
-//			
-//			ValidateFields.validDateExpiry((String) attrMap.get(CreditCardDao.ATTR_DATE_EXPIRY));
+
 			
-			ControlFields controler=new ControlFields();
-			controler.addBasics(CreditCardDao.fields);
+			ControlFields controller=new ControlFields();
+			controller.addBasics(CreditCardDao.fields);
 			List<String> required=new ArrayList<>() {
 			{
 				add(CreditCardDao.ATTR_NUMBER);
 				add(CreditCardDao.ATTR_DATE_EXPIRY);
 			}
 			};
+			controller.setRequired(required);
 			
+			List<String> restricted=new ArrayList(){
+				{
+				add(CreditCardDao.ATTR_ID);
+			}
+				};
+			controller.setRestricted(restricted);
+			//controller.setOptional(false);yo digo que salta sin esto estefania dicq que no tengo idea
+			controller.validate(attrMap);
 			
 			resultado = this.daoHelper.insert(this.creditCardDao, attrMap);	
 			resultado.setMessage("Tarjeta registrada");
@@ -75,7 +83,7 @@ public class CreditCardService implements ICreditCardService{
 		}catch (NumberFormatException e) {
 			resultado =new EntityResultWrong(ErrorMessage.INVALID_NUMBER_CREDITCARD);
 		}catch (InvalidFieldsValuesException e) {
-				resultado =new EntityResultWrong(ErrorMessage.DATA_EXPIRY_BEFORE_TODAY);
+				resultado =new EntityResultWrong(e.getMessage());
 		}catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
 		e.printStackTrace();
