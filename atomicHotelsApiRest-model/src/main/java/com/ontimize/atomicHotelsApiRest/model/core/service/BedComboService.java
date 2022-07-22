@@ -73,7 +73,7 @@ public class BedComboService implements IBedComboService{
 			resultado =new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 		}catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);
-		}catch (RestrictedFieldException |MissingFieldsException |NumberFormatException |InvalidFieldsValuesException | InvalidFieldsException |LiadaPardaException e) {
+		}catch (RestrictedFieldException |MissingFieldsException |InvalidFieldsValuesException | InvalidFieldsException |LiadaPardaException e) {
 			resultado =new EntityResultWrong(ErrorMessage.CREATION_ERROR+e.getMessage());
 		}
 		catch(Exception e) {
