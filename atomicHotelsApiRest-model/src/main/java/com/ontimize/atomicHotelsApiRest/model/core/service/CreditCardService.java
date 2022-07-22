@@ -49,9 +49,6 @@ public class CreditCardService implements ICreditCardService{
 		
 		EntityResult resultado = new EntityResultMapImpl();
 		try { 
-			  
-
-			
 			ControlFields controller=new ControlFields();
 			controller.addBasics(CreditCardDao.fields);
 			List<String> required=new ArrayList<>() {
@@ -101,12 +98,20 @@ public class CreditCardService implements ICreditCardService{
 	public EntityResult creditCardDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
+			ControlFields controller=new ControlFields();
+			List<String> required=new ArrayList<>() {
+			{
+				add(CreditCardDao.ATTR_ID);
+			}
+			};
+			controller.setRequired(required);
 			ValidateFields.required(keyMap,CreditCardDao.ATTR_ID);
 			Map<String,Object> consulta=new HashMap<>(){
 				{
 				put(CreditCardDao.ATTR_ID, keyMap.get(CreditCardDao.ATTR_ID));
 				}
 				};
+				
 				
 			EntityResult auxEntity = this.creditCardQuery(consulta,EntityResultTools.attributes(CreditCardDao.ATTR_ID));
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
