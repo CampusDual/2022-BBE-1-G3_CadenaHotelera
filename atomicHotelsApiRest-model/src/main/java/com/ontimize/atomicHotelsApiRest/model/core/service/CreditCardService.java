@@ -53,14 +53,22 @@ public class CreditCardService implements ICreditCardService{
 //			
 //			ValidateFields.validDateExpiry((String) attrMap.get(CreditCardDao.ATTR_DATE_EXPIRY));
 			
-			ControlFields controler=new ControlFields();
-			controler.addBasics(CreditCardDao.fields);
+			ControlFields controller=new ControlFields();
+			controller.addBasics(CreditCardDao.fields);
 			List<String> required=new ArrayList<>() {
 			{
 				add(CreditCardDao.ATTR_NUMBER);
 				add(CreditCardDao.ATTR_DATE_EXPIRY);
 			}
 			};
+			controller.setRequired(required);
+			
+			List<String> restricted=new ArrayList(){
+				{
+				add(CreditCardDao.ATTR_ID);
+			}
+				};
+			controller.setRestricted(restricted);
 			
 			
 			resultado = this.daoHelper.insert(this.creditCardDao, attrMap);	

@@ -283,7 +283,7 @@ public class ValidateFields {
 				throw new NumberFormatException();
 			}
 		} catch (java.lang.ClassCastException e) {
-			throw new NumberFormatException();
+			throw new NumberFormatException(ErrorMessage.INVALID_NUMBER_CREDITCARD);
 		}
 	}
 
