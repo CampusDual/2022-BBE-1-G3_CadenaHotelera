@@ -17,6 +17,7 @@ public class ControlFields {
 	private List<String> restricted = null;
 	private List<String> required = null;
 	private boolean optional = true;
+	private int minimumFields = 1;
 
 	public ControlFields() {
 
@@ -37,7 +38,25 @@ public class ControlFields {
 	public void setOptional(boolean optional) {
 		this.optional = optional;
 	}
+	
+	public int getMinimumFields() {
+		return minimumFields;
+	}
 
+	public void setMinimumFields(int minimumFields) {
+		this.minimumFields = minimumFields;
+	}
+
+
+	/**
+	 * 
+	 * @param keyMap
+	 * @throws MissingFieldsException
+	 * @throws RestrictedFieldException
+	 * @throws InvalidFieldsException
+	 * @throws InvalidFieldsValuesException
+	 * @throws LiadaPardaException
+	 */
 	public void validate(Map<String, Object> keyMap) throws MissingFieldsException, RestrictedFieldException,
 			InvalidFieldsException, InvalidFieldsValuesException, LiadaPardaException {
 
@@ -166,8 +185,20 @@ public class ControlFields {
 		}
 	}
 
+	/**
+	 * Para validar atributos de vuelta. Ignora los valores.
+	 * @param list Lista de camos a validar 
+	 * @throws MissingFieldsException
+	 * @throws RestrictedFieldException
+	 * @throws LiadaPardaException
+	 * @throws InvalidFieldsException
+	 */
 	public void validate(List<String> list)
 			throws MissingFieldsException, RestrictedFieldException, LiadaPardaException, InvalidFieldsException {
+		if(list.size() < minimumFields) {
+			throw new MissingFieldsException(ErrorMessage.REQUIRED_MINIMUM_FIELDs);
+		}
+		
 		if (required != null) {
 			for (String key : required) {
 				if (!list.contains(key)) {
@@ -193,6 +224,7 @@ public class ControlFields {
 		}
 	}
 
+	
 //	public static void set(Map<String, Object> keyMap, String... fields) throws MissingFieldsException {
 //		for (String field : fields) {
 //			if (!keyMap.containsKey(field)) {
