@@ -10,13 +10,17 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingColumnsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
+import com.ontimize.atomicHotelsApiRest.model.core.service.CountryService;
 
 import repositories.Countries;
 
 public class ValidateFields {
+	
 	public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd") {
 		{
 			setLenient(false);
@@ -456,8 +460,10 @@ public class ValidateFields {
 		}
 	}
 	
+	@Autowired
+	static CountryService  countryService;
 	public static void country(String country) throws InvalidFieldsValuesException {
-		if(!Countries.instance().getMap().containsKey(country)) {
+		if(!countryService.mapCountries().containsKey(country)) {
 			throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + country);		
 		}
 	}

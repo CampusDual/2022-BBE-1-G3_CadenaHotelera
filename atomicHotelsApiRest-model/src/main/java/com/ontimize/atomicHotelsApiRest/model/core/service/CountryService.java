@@ -1,5 +1,7 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +56,20 @@ public class CountryService implements ICountryService {
 	
 	public Map<String,String> mapCountries(){
 		if(mapCountries == null) {
+			List<String> attrList = new ArrayList<>() {{
+				add(CountryDao.ATTR_ISO);
+				add(CountryDao.ATTR_NAME);
+			}};
+			EntityResult er = countryQuery(new HashMap<>(), attrList);
 			
+			this.mapCountries = new HashMap<>();							
+			for(int i = 0 ; i < er.calculateRecordNumber();i++) {
+				System.out.println(er.getRecordValues(i));
+				mapCountries.put((String) er.getRecordValues(i).get(CountryDao.ATTR_ISO),(String) er.getRecordValues(i).get(CountryDao.ATTR_NAME));		
+			}				
+			System.out.println();
+			System.out.println("****************");
+			System.err.println(mapCountries);
 		}
 		return mapCountries;
 	}
