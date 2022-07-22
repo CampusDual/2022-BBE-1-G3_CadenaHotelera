@@ -460,11 +460,12 @@ public class ValidateFields {
 		}
 	}
 	
-	@Autowired
-	static CountryService  countryService;
+//	@Autowired
+//	static CountryService  countryService;
+	
 	public static void country(String country) throws InvalidFieldsValuesException {
-		if(!countryService.mapCountries().containsKey(country)) {
-			throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + country);		
-		}
+//		if(!countryService.mapCountries().containsKey(country)) {
+//			throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + country);		
+//		}
 	}
 }
