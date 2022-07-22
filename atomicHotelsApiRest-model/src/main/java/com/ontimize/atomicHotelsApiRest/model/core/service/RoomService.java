@@ -128,6 +128,7 @@ public class RoomService implements IRoomService {
 		} catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR);
 		}
+
 		return resultado;
 	}
 
