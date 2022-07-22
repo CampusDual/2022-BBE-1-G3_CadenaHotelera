@@ -467,5 +467,8 @@ public class ValidateFields {
 //		if(!countryService.mapCountries().containsKey(country)) {
 //			throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + country);		
 //		}
+		if(country.length() != 2 || country.compareTo(country.toUpperCase()) != 0) {
+			throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + country);					
+		}
 	}
 }
