@@ -32,25 +32,34 @@ public class CountryService implements ICountryService {
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
 	
+	private Map<String, String> mapCountries = null;
+
 	@Override
 	public EntityResult countryQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
-		EntityResult resultado = new EntityResultMapImpl();
+		EntityResult resultado = new EntityResultWrong();
 		ControlFields cf = new ControlFields();
 		cf.addBasics(CountryDao.fields);
 		try {
 			cf.validate(keyMap);
 			cf.validate(attrList);
-			this.daoHelper.query(this.countryDao, keyMap, attrList);
+			resultado = this.daoHelper.query(this.countryDao, keyMap, attrList);
 		} catch (MissingFieldsException | RestrictedFieldException | LiadaPardaException | InvalidFieldsException | InvalidFieldsValuesException e) {
-			// TODO Auto-generated catch block
 			resultado =  new EntityResultWrong(e.getMessage());
 			e.printStackTrace();
 		}
 		
 		return resultado;
 	}
+	
+	public Map<String,String> mapCountries(){
+		if(mapCountries == null) {
+			
+		}
+		return mapCountries;
+	}
 
+	
 	
 }
 

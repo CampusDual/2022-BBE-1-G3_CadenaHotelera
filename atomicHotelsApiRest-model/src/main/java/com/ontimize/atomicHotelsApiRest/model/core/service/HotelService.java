@@ -117,7 +117,7 @@ public class HotelService implements IHotelService {
 			
 			cf.addBasics(HotelDao.fields);
 			cf.setRequired(requeridos);
-//			cf.setRestricted(restricted);
+			cf.setRestricted(restricted);
 			cf.setOptional(true);//El resto de los campos de fields serán aceptados
 			cf.validate(attrMap);
 			

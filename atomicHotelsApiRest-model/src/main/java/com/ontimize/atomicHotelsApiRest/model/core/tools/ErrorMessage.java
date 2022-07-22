@@ -32,7 +32,7 @@ public class ErrorMessage {
 	public static final String DATA_EXPIRY_BEFORE_TODAY = "Error de fecha o la fecha de validez no puede ser anterior a hoy ";
 	public static final String ALLOWED_FIELDS = "Campos permitidos: \n\t";
 	public static final String REQUIRED_FIELD = "Falta campo requerido - ";
-	public static final String REQUIRED_MINIMUM_FIELDs = "Se requiere mínimo un campo";
+	public static final String REQUIRED_MINIMUM_COLUMS = "Se requiere mínimo una columna";
 	public static final String INVALID_FIELD = "Campo no válido - ";
 	public static final String REQUIRED_COLUMNS = "Faltan columnas requeridas";
 	public static final String INVALID_ACTION = "Acción no válida";
@@ -41,6 +41,8 @@ public class ErrorMessage {
 	public static final String WRONG_TYPE = "Tipo incorrecto - ";
 	public static final String REQUIRED_TYPE = " - Tipo requerido - ";
 	public static final String ERROR = "Error";
+	public static final String NO_NULL_DATA= "No se admiten datos null";
+	public static final String NO_NULL_VALUE = "No se admite valor null - ";
 	
 	public static final String INTERNAL_CAGADA = "Error interno";
 	

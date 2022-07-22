@@ -11,13 +11,16 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsExcepti
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.RestrictedFieldException;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.TypeCodes.type;
 
+import kotlin.jvm.Throws;
+
 public class ControlFields {
 
 	private Map<String, type> fields = new HashMap<String, type>();
 	private List<String> restricted = null;
 	private List<String> required = null;
 	private boolean optional = true;
-	private int minimumFields = 1;
+	private boolean noEmptyList = true;
+	private boolean noWildcard = true;
 
 	public ControlFields() {
 
@@ -38,15 +41,24 @@ public class ControlFields {
 	public void setOptional(boolean optional) {
 		this.optional = optional;
 	}
+
 	
-	public int getMinimumFields() {
-		return minimumFields;
+	
+	public boolean isNoEmptyList() {
+		return noEmptyList;
 	}
 
-	public void setMinimumFields(int minimumFields) {
-		this.minimumFields = minimumFields;
+	public void setNoEmptyList(boolean noEmptyList) {
+		this.noEmptyList = noEmptyList;
 	}
 
+	public boolean isNoWildcard() {
+		return noWildcard;
+	}
+
+	public void setNoWildcard(boolean noWildcard) {
+		this.noWildcard = noWildcard;
+	}
 
 	/**
 	 * 
@@ -59,7 +71,11 @@ public class ControlFields {
 	 */
 	public void validate(Map<String, Object> keyMap) throws MissingFieldsException, RestrictedFieldException,
 			InvalidFieldsException, InvalidFieldsValuesException, LiadaPardaException {
-
+		
+			if(keyMap == null) {
+				throw new MissingFieldsException(ErrorMessage.NO_NULL_DATA);
+			}
+		
 		if (required != null) {
 			for (String key : required) {
 				if (!keyMap.containsKey(key)) {
@@ -87,8 +103,12 @@ public class ControlFields {
 //validar typos y valores
 		for (String key : keyMap.keySet()) {
 			boolean validType = false;
-			if (fields.containsKey(key)) {
-
+			
+			if (fields.containsKey(key)) {				
+				if(keyMap.get(key) == null) {
+					throw new MissingFieldsException(ErrorMessage.NO_NULL_VALUE + key);
+				}
+				
 				switch (fields.get(key)) {
 				case STRING:
 					if ((keyMap.get(key) instanceof String)) {
@@ -132,7 +152,7 @@ public class ControlFields {
 
 				case EXPIRATION_DATE:
 					if ((keyMap.get(key) instanceof String)) {
-		System.err.println("TODO - comprobar....");						
+						System.err.println("TODO - comprobar....");
 						ValidateFields.validDateExpiry((String) keyMap.get(key));
 						validType = true;
 					}
@@ -147,7 +167,8 @@ public class ControlFields {
 
 				case COUNTRY:
 					if ((keyMap.get(key) instanceof String)) {
-						System.err.println("TODO - validar countries de verdad....");
+	System.err.println("TODO - validar countries de verdad....");
+						ValidateFields.country(key);
 						validType = true;
 					}
 					break;
@@ -187,29 +208,43 @@ public class ControlFields {
 
 	/**
 	 * Para validar atributos de vuelta. Ignora los valores.
-	 * @param list Lista de camos a validar 
+	 * 
+	 * @param columns Lista de camos a validar
 	 * @throws MissingFieldsException
 	 * @throws RestrictedFieldException
 	 * @throws LiadaPardaException
 	 * @throws InvalidFieldsException
 	 */
-	public void validate(List<String> list)
+	public void validate(List<String> columns)
 			throws MissingFieldsException, RestrictedFieldException, LiadaPardaException, InvalidFieldsException {
-		if(list.size() < minimumFields) {
-			throw new MissingFieldsException(ErrorMessage.REQUIRED_MINIMUM_FIELDs);
-		}
 		
+		if(columns == null) {
+			throw new MissingFieldsException(ErrorMessage.NO_NULL_DATA);
+		}
+	
+		if (noEmptyList) {
+			int minimuSize = 1;
+			
+			if (noWildcard && columns.contains("*")) {
+				minimuSize++;
+			}
+					
+			if (columns.size() < minimuSize) {
+				throw new MissingFieldsException(ErrorMessage.REQUIRED_MINIMUM_COLUMS);
+			}
+		}
+
 		if (required != null) {
 			for (String key : required) {
-				if (!list.contains(key)) {
+				if (!columns.contains(key)) {
 					throw new MissingFieldsException(ErrorMessage.REQUIRED_FIELD);
 				}
 			}
 		}
 
-		if (restricted!= null) {
+		if (restricted != null) {
 			for (String key : restricted) {
-				if (list.contains(key)) {
+				if (columns.contains(key)) {
 					throw new RestrictedFieldException(ErrorMessage.INVALID_FIELD + key);
 				}
 			}
@@ -218,13 +253,18 @@ public class ControlFields {
 		if (!optional && required == null) {
 			throw new LiadaPardaException(ErrorMessage.INTERNAL_CAGADA);
 		} else {
-			if (!optional && (required.size() != list.size())) {
+			if (!optional && (required.size() != columns.size())) {
 				throw new InvalidFieldsException(ErrorMessage.ALLOWED_FIELDS + required.toString());
+			}
+		}
+
+		for (String key : columns) {
+			if (!fields.containsKey(key)) {
+				throw new InvalidFieldsException(ErrorMessage.INVALID_FIELD + key);
 			}
 		}
 	}
 
-	
 //	public static void set(Map<String, Object> keyMap, String... fields) throws MissingFieldsException {
 //		for (String field : fields) {
 //			if (!keyMap.containsKey(field)) {

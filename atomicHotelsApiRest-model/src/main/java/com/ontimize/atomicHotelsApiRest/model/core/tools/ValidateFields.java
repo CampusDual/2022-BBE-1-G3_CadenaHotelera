@@ -14,6 +14,8 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesE
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingColumnsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 
+import repositories.Countries;
+
 public class ValidateFields {
 	public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd") {
 		{
@@ -451,6 +453,12 @@ public class ValidateFields {
 			} catch (ClassCastException | NullPointerException e) {
 				throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + field);
 			}
+		}
+	}
+	
+	public static void country(String country) throws InvalidFieldsValuesException {
+		if(!Countries.instance().getMap().containsKey(country)) {
+			throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + country);		
 		}
 	}
 }
