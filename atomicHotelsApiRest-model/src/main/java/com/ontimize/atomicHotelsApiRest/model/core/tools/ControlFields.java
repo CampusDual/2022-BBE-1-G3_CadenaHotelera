@@ -65,7 +65,7 @@ public class ControlFields {
 			}
 		}
 
-
+//validar typos y valores
 		for (String key : keyMap.keySet()) {
 			boolean validType = false;
 			if (fields.containsKey(key)) {
@@ -158,8 +158,30 @@ public class ControlFields {
 		}
 	}
 
-	public void validate(List<String> list) {
+	public void validate(List<String> list) throws MissingFieldsException, RestrictedFieldException, LiadaPardaException, InvalidFieldsException {
+		if (required != null) {
+			for (String key : required) {
+				if (!list.contains(key)) {
+					throw new MissingFieldsException(ErrorMessage.REQUIRED_FIELD);
+				}
+			}
+		}
 
+		if (restricted != null) {
+			for (String key : restricted) {
+				if (list.contains(key)) {
+					throw new RestrictedFieldException(ErrorMessage.INVALID_FIELD + key);
+				}
+			}
+		}
+
+		if (!optional && required == null) {
+			throw new LiadaPardaException(ErrorMessage.INTERNAL_CAGADA);
+		} else {
+			if (!optional && (required.size() != list.size())) {
+				throw new InvalidFieldsException(ErrorMessage.ALLOWED_FIELDS + required.toString());
+			}
+		}
 	}
 
 	public static void set(Map<String, Object> keyMap, String... fields) throws MissingFieldsException {
