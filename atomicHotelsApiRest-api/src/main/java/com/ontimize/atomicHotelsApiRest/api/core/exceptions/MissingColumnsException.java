@@ -1,6 +1,6 @@
 package com.ontimize.atomicHotelsApiRest.api.core.exceptions;
 
-public class MissingColumnsException extends Exception{
+public class MissingColumnsException extends ValidateException{
 	
 	public MissingColumnsException() {
 		super();

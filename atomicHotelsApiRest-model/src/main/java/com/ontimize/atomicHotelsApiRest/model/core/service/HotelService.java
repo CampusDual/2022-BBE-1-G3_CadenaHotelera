@@ -53,21 +53,17 @@ public class HotelService implements IHotelService {
 
 		try {
 			
+			//Control del friltro
 			ControlFields cf = new ControlFields();
 			cf.addBasics(HotelDao.fields);
-			cf.setOptional(true);//El resto de los campos de fields serán aceptados
+//			cf.setOptional(true);//El resto de los campos de fields serán aceptados
 			cf.validate(keyMap);
-			//Como la validación de las columnas cuadra con todo igual que los fields no hace falta crear una nueva, solo añadirle este
+			
 			cf.validate(attrList);
 						
-//			ControlFields cc = new ControlFields();
-//			cf.addBasics(HotelDao.fields);
-//			cc.setOptional(true);
-//			cc.validate(attrList);
-			
 			resultado = this.daoHelper.query(this.hotelDao, keyMap, attrList);
 
-		} catch (MissingFieldsException| RestrictedFieldException| LiadaPardaException| InvalidFieldsException | InvalidFieldsValuesException e) {
+		} catch (MissingFieldsException| RestrictedFieldException| LiadaPardaException | InvalidFieldsException | InvalidFieldsValuesException e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(e.getMessage());
 
@@ -100,7 +96,7 @@ public class HotelService implements IHotelService {
 			cf.addBasics(HotelDao.fields);
 			cf.setRequired(required);
 			cf.setRestricted(restricted);
-			cf.setOptional(true);//El resto de los campos de fields serán aceptados
+//			cf.setOptional(true);//El resto de los campos de fields serán aceptados. No es neceario ponerlo
 			cf.validate(attrMap);		
 
 			resultado = this.daoHelper.insert(this.hotelDao, attrMap);
@@ -161,38 +157,44 @@ public class HotelService implements IHotelService {
 		return resultado;
 	}
 
-	@Override
+	@Override                                          //data                       //filter
 	public EntityResult hotelUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			// TODO pendiente comprobar que funcione bien
-			ValidateFields.required(keyMap, HotelDao.ATTR_ID);
-			ValidateFields.onlyThis(keyMap, HotelDao.ATTR_ID);
-			ValidateFields.isInt(keyMap, HotelDao.ATTR_ID);
-
-			ValidateFields.atLeastOneRequired(attrMap, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET, HotelDao.ATTR_CITY,
-					HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY, HotelDao.ATTR_PHONE,
-					HotelDao.ATTR_EMAIL, HotelDao.ATTR_IS_OPEN, HotelDao.ATTR_DESCRIPTION);
-			ValidateFields.onlyThis(attrMap, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET, HotelDao.ATTR_CITY,
-					HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY, HotelDao.ATTR_PHONE,
-					HotelDao.ATTR_EMAIL, HotelDao.ATTR_IS_OPEN, HotelDao.ATTR_DESCRIPTION);
-			ValidateFields.isInt(attrMap, HotelDao.ATTR_IS_OPEN);
-
-////		TODO	if(mail está en la lista entonces hacer el check mail..,pero si no está hay nullPointerexception)
-//			ValidateFields.checkMail((String) attrMap.get(HotelDao.ATTR_EMAIL));
-			// TODO qué pasa con no dejar que se metan cadenas vacías cuando todos los
-			// campos no son requeridos??
+			
+			//ControlFields del filtro
+			List<String> requiredFilter = new ArrayList<String>() {{
+				add(HotelDao.ATTR_ID);
+			}};	
+			ControlFields cf = new ControlFields();		
+			cf.addBasics(HotelDao.fields);
+			cf.setRequired(requiredFilter);
+			cf.setOptional(false);//No será aceptado ningún campo que no esté en required
+			cf.validate(keyMap);	
+			
+			
+			
+			//ControlFields de los nuevos datos
+			List<String> restrictedData = new ArrayList<String>() {{
+				add(HotelDao.ATTR_ID);//El id no se puede actualizar
+			}};
+			ControlFields cd = new ControlFields();
+			cd.addBasics(HotelDao.fields);
+			cd.setRestricted(restrictedData);
+//			cd.setOptional(true); //No es necesario ponerlo
+			cd.validate(attrMap);
+			
 
 			resultado = this.daoHelper.update(this.hotelDao, attrMap, keyMap);
+			
 			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
 				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
 			} else {
 				resultado.setMessage("Hotel actualizado");
 			}
-		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + " - " + e.getMessage());
-		} catch (InvalidFieldsValuesException e) {
+			
+		} catch (MissingFieldsException | RestrictedFieldException |InvalidFieldsException | InvalidFieldsValuesException | LiadaPardaException e) {
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + " - " + e.getMessage());
 		} catch (DuplicateKeyException e) {
 			e.printStackTrace();
@@ -212,9 +214,14 @@ public class HotelService implements IHotelService {
 
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			ValidateFields.required(keyMap, HotelDao.ATTR_ID);
-			ValidateFields.onlyThis(keyMap, HotelDao.ATTR_ID);
-			ValidateFields.isInt(keyMap, HotelDao.ATTR_ID);
+			List<String> required = new ArrayList<String>() {{
+				add(HotelDao.ATTR_ID);
+			}};
+			ControlFields cf = new ControlFields();
+			cf.addBasics(HotelDao.fields);
+			cf.setRequired(required);
+			cf.setOptional(false);
+			cf.validate(keyMap);
 
 			EntityResult auxEntity = this.daoHelper.query(this.hotelDao,
 					EntityResultTools.keysvalues(HotelDao.ATTR_ID, keyMap.get(HotelDao.ATTR_ID)),
@@ -225,13 +232,13 @@ public class HotelService implements IHotelService {
 				resultado = this.daoHelper.delete(this.hotelDao, keyMap);
 				resultado.setMessage("Hotel eliminado");
 			}
-		} catch (MissingFieldsException e) {
+
+		} catch (MissingFieldsException | RestrictedFieldException | InvalidFieldsException | InvalidFieldsValuesException | LiadaPardaException e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + e.getMessage());
-		} catch (InvalidFieldsValuesException e) {
-			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + " - " + e.getMessage());
 		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
 		} catch (Exception e) {
+			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR);
 		}
 		return resultado;
