@@ -254,17 +254,17 @@ public class ValidateFields {
 	 * @throws NumberFormatException error si es menor o igual 0
 	 */
 
-//	public static void NegativeNotAllowed(long n) throws NumberFormatException {
-//		if (n <= 0) {
-//			throw new NumberFormatException();
-//		}
-//	}
-//
-//	public static void NegativeNotAllowed(int n) throws NumberFormatException {
-//		if (n <= 0) {
-//			throw new NumberFormatException();
-//		}
-//	}
+	public static void NegativeNotAllowed(long n) throws NumberFormatException {
+		if (n <= 0) {
+			throw new NumberFormatException();
+		}
+	}
+
+	public static void NegativeNotAllowed(int n) throws NumberFormatException {
+		if (n <= 0) {
+			throw new NumberFormatException();
+		}
+	}
 
 	/**
 	 * comprueba que un numero tenga 13 a 16 digitos si no lo es lanza excepcion
