@@ -187,8 +187,14 @@ public class ControlFields {
 						validType = true;
 					}
 					break;
+				case INTEGER_UNSIGNED:
+					if ((keyMap.get(key) instanceof Integer)) {
+						ValidateFields.NegativeNotAllowed((Integer) keyMap.get(key));
+						validType = true;
+					}
+					break;
 				default:
-					throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + key);
+					throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE+ key);
 				}
 
 				if (!validType) {

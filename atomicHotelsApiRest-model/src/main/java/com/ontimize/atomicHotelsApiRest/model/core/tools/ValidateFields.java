@@ -262,13 +262,13 @@ public class ValidateFields {
 
 	public static void NegativeNotAllowed(long n) throws NumberFormatException {
 		if (n <= 0) {
-			throw new NumberFormatException();
+			throw new NumberFormatException(ErrorMessage.NEGATIVE_OR_CERO_NOT_ALLOWED);
 		}
 	}
 
 	public static void NegativeNotAllowed(int n) throws NumberFormatException {
 		if (n <= 0) {
-			throw new NumberFormatException();
+			throw new NumberFormatException(ErrorMessage.NEGATIVE_OR_CERO_NOT_ALLOWED);
 		}
 	}
 
