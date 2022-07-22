@@ -1,6 +1,6 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
-import java.math.BigDecimal;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,13 +20,11 @@ import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
 import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
-import com.ontimize.atomicHotelsApiRest.model.core.dao.BedComboDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.CreditCardDao;
-import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
-
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 @Service("CreditCardService")
 @Lazy
 public class CreditCardService implements ICreditCardService{
@@ -49,11 +47,22 @@ public class CreditCardService implements ICreditCardService{
 		EntityResult resultado = new EntityResultMapImpl();
 		try { 
 			  
-			ValidateFields.required(attrMap, CreditCardDao.ATTR_NUMBER, CreditCardDao.ATTR_DATE_EXPIRY);
-			ValidateFields.NegativeNotAllowed(((Number)( attrMap.get(CreditCardDao.ATTR_NUMBER))).longValue());
-			ValidateFields.invalidCreditCard(((Number)(attrMap.get(CreditCardDao.ATTR_NUMBER))).longValue());
+//			ValidateFields.required(attrMap, CreditCardDao.ATTR_NUMBER, CreditCardDao.ATTR_DATE_EXPIRY);
+//			ValidateFields.NegativeNotAllowed(((Number)( attrMap.get(CreditCardDao.ATTR_NUMBER))).longValue());
+//			ValidateFields.invalidCreditCard(((Number)(attrMap.get(CreditCardDao.ATTR_NUMBER))).longValue());
+//			
+//			ValidateFields.validDateExpiry((String) attrMap.get(CreditCardDao.ATTR_DATE_EXPIRY));
 			
-			ValidateFields.validDateExpiry((String) attrMap.get(CreditCardDao.ATTR_DATE_EXPIRY));
+			ControlFields controler=new ControlFields();
+			controler.addBasics(CreditCardDao.fields);
+			List<String> required=new ArrayList<>() {
+			{
+				add(CreditCardDao.ATTR_NUMBER);
+				add(CreditCardDao.ATTR_DATE_EXPIRY);
+			}
+			};
+			
+			
 			resultado = this.daoHelper.insert(this.creditCardDao, attrMap);	
 			resultado.setMessage("Tarjeta registrada");
 
