@@ -81,19 +81,20 @@ public class ControlFields {
 						validType = true;
 					}
 					break;
-					
+
 				case LONG:
 					if (keyMap.get(key) instanceof Integer || keyMap.get(key) instanceof Long) {
 						validType = true;
 					}
 					break;
-					
+
 				case DOUBLE:
-					if (keyMap.get(key) instanceof Integer || keyMap.get(key) instanceof Long || keyMap.get(key) instanceof Double) {
+					if (keyMap.get(key) instanceof Integer || keyMap.get(key) instanceof Long
+							|| keyMap.get(key) instanceof Double) {
 						validType = true;
 					}
 					break;
-					
+
 				case PRICE:
 					if (keyMap.get(key) instanceof Integer || keyMap.get(key) instanceof Double) {
 						System.err.println("TODO - revisar mensaje de error....");
@@ -101,7 +102,7 @@ public class ControlFields {
 						validType = true;
 					}
 					break;
-					
+
 				case CREDIT_CARD:
 					if (keyMap.get(key) instanceof Long) {
 						System.err.println("TODO - revisar mensaje de error....");
@@ -109,33 +110,40 @@ public class ControlFields {
 						validType = true;
 					}
 					break;
-					
-					
-				case PHONE:					
+
+				case EXPIRATION_DATE:
+					if ((keyMap.get(key) instanceof String)) {
+		System.err.println("TODO - comprobar....");						
+						ValidateFields.validDateExpiry((String) keyMap.get(key));
+						validType = true;
+					}
+					break;
+
+				case PHONE:
 					if ((keyMap.get(key) instanceof String)) {
 						System.err.println("TODO - validar phone de verdad....");
 						validType = true;
 					}
 					break;
-					
-				case COUNTRY:					
+
+				case COUNTRY:
 					if ((keyMap.get(key) instanceof String)) {
 						System.err.println("TODO - validar countries de verdad....");
 						validType = true;
 					}
 					break;
-					
-				case DATE:					
+
+				case DATE:
 					if ((keyMap.get(key) instanceof String)) {
-	System.err.println("TODO - comprobar....");
+						System.err.println("TODO - comprobar....");
 						keyMap.replace(key, ValidateFields.stringToDate((String) keyMap.get(key)));
 						validType = true;
 					}
 					break;
-												
-				case EMAIL:					
+
+				case EMAIL:
 					if ((keyMap.get(key) instanceof String)) {
-						ValidateFields.checkMail((String)keyMap.get(key));
+						ValidateFields.checkMail((String) keyMap.get(key));
 						validType = true;
 					}
 					break;
@@ -158,7 +166,8 @@ public class ControlFields {
 		}
 	}
 
-	public void validate(List<String> list) throws MissingFieldsException, RestrictedFieldException, LiadaPardaException, InvalidFieldsException {
+	public void validate(List<String> list)
+			throws MissingFieldsException, RestrictedFieldException, LiadaPardaException, InvalidFieldsException {
 		if (required != null) {
 			for (String key : required) {
 				if (!list.contains(key)) {
