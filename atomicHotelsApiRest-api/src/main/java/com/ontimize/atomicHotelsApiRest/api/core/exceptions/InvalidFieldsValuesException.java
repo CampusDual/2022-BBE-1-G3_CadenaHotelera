@@ -1,6 +1,6 @@
 package com.ontimize.atomicHotelsApiRest.api.core.exceptions;
 
-public class InvalidFieldsValuesException extends Exception{
+public class InvalidFieldsValuesException extends ValidateException{
 
 	public InvalidFieldsValuesException() {
 		super();

@@ -1,6 +1,6 @@
 package com.ontimize.atomicHotelsApiRest.api.core.exceptions;
 
-public class RestrictedFieldException extends Exception{
+public class RestrictedFieldException extends ValidateException{
 
 	public RestrictedFieldException() {
 		super();
