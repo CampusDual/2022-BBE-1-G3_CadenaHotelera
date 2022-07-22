@@ -254,17 +254,17 @@ public class ValidateFields {
 	 * @throws NumberFormatException error si es menor o igual 0
 	 */
 
-	public static void NegativeNotAllowed(long n) throws NumberFormatException {
-		if (n <= 0) {
-			throw new NumberFormatException();
-		}
-	}
-
-	public static void NegativeNotAllowed(int n) throws NumberFormatException {
-		if (n <= 0) {
-			throw new NumberFormatException();
-		}
-	}
+//	public static void NegativeNotAllowed(long n) throws NumberFormatException {
+//		if (n <= 0) {
+//			throw new NumberFormatException();
+//		}
+//	}
+//
+//	public static void NegativeNotAllowed(int n) throws NumberFormatException {
+//		if (n <= 0) {
+//			throw new NumberFormatException();
+//		}
+//	}
 
 	/**
 	 * comprueba que un numero tenga 13 a 16 digitos si no lo es lanza excepcion
@@ -273,17 +273,17 @@ public class ValidateFields {
 	 * @throws NumberFormatException error si es menor a 13 o mayor de 16 digitos
 	 */
 
-	public static void invalidCreditCard(long n) throws NumberFormatException {
+	public static void invalidCreditCard(long n) throws InvalidFieldsValuesException {
 		try {
 			final int LONGITUD_MAXIMA_TARJETA_CREDITO = 16;
 			final int LONGITUD_MINIMA_TARJETA_CREDITO = 13;
 			String numero = Long.toString(n);
 			if (numero.length() < LONGITUD_MINIMA_TARJETA_CREDITO || numero.length() > LONGITUD_MAXIMA_TARJETA_CREDITO
 					|| n <= 0) {
-				throw new NumberFormatException(ErrorMessage.INVALID_NUMBER_CREDITCARD);
+				throw new InvalidFieldsValuesException(ErrorMessage.INVALID_NUMBER_CREDITCARD);
 			}
 		} catch (java.lang.ClassCastException e) {
-			throw new NumberFormatException(ErrorMessage.INVALID_NUMBER_CREDITCARD);
+			throw new InvalidFieldsValuesException(ErrorMessage.INVALID_NUMBER_CREDITCARD);
 		}
 	}
 
