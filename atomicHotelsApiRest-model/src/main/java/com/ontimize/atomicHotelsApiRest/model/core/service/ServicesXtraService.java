@@ -12,8 +12,13 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.SQLWarningException;
 import org.springframework.stereotype.Service;
 
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingColumnsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.RestrictedFieldException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IFeatureService;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IServicesXtraService;
 import com.ontimize.jee.common.dto.EntityResult;
@@ -26,6 +31,7 @@ import com.ontimize.atomicHotelsApiRest.model.core.dao.FeatureDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomTypeDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.ServicesXtraDao;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
@@ -42,64 +48,140 @@ public class ServicesXtraService implements IServicesXtraService{
 	@Override
 	public EntityResult servicesXtraQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
-		EntityResult resultado = this.daoHelper.query(this.servicesXtraDao, keyMap, attrList);
+
+		EntityResult resultado = new EntityResultMapImpl();
+
+		try {
+
+			ValidateFields.atLeastOneRequired(keyMap, ServicesXtraDao.ATTR_ID, ServicesXtraDao.ATTR_NAME,ServicesXtraDao.ATTR_DESCRIPTION);
+			ValidateFields.isInt(keyMap, ServicesXtraDao.ATTR_ID);
+			// TODO ver qué hacer si se quiere buscar por nules ya que con esto no se
+			// aceptan!!
+			ValidateFields.isString(keyMap, ServicesXtraDao.ATTR_NAME, ServicesXtraDao.ATTR_DESCRIPTION);
+
+			ValidateFields.atLeastOneRequired(attrList, ServicesXtraDao.ATTR_ID, ServicesXtraDao.ATTR_NAME, ServicesXtraDao.ATTR_DESCRIPTION);
+			ValidateFields.onlyThis(attrList, ServicesXtraDao.ATTR_ID, ServicesXtraDao.ATTR_NAME, ServicesXtraDao.ATTR_DESCRIPTION);
+
+			resultado = this.daoHelper.query(this.servicesXtraDao, keyMap, attrList);
+
+		} catch (ValidateException e) {
+			resultado =  new EntityResultWrong(e.getMessage());
+			e.printStackTrace();		
+		}catch (DuplicateKeyException e) {
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+		}catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
+		}
 		return resultado;
 	}
 
 	@Override
 	public EntityResult servicesXtraInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
-		
+
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			ValidateFields.required(attrMap, ServicesXtraDao.ATTR_NAME);
-//			ValidateFields.emptyFields(attrMap, ServicesXtraDao.ATTR_NAME, ServicesXtraDao.ATTR_DESCRIPTION);
-			resultado = this.daoHelper.insert(this.servicesXtraDao, attrMap);
-			resultado.setMessage("ServiceXtra registrado");
-
-		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(ErrorMessage.REQUIRED_FIELD);	
 			
-		} catch (DuplicateKeyException e) {
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+			ControlFields cf = new ControlFields();
+			List<String> requeridos = new ArrayList<String>() {{
+				add(ServicesXtraDao.ATTR_NAME);
+			}};
+			List<String> restricted = new ArrayList<String>() {{
+				add(ServicesXtraDao.ATTR_ID);//No quiero que meta el id porque quiero el id autogenerado de la base de datos
+			}};
+			
+			cf.addBasics(ServicesXtraDao.fields);
+			cf.setRequired(requeridos);
+			cf.setRestricted(restricted);
+			cf.setOptional(true);//El resto de los campos de fields serán aceptados
+			cf.validate(attrMap);
 
-		} catch (Exception e) {
+			resultado = this.daoHelper.insert(this.servicesXtraDao, attrMap);
+			resultado.setMessage("Extra service registrado");
+
+		} catch (ValidateException e) {
+			resultado =  new EntityResultWrong(e.getMessage());
+			e.printStackTrace();		
+		}catch (DuplicateKeyException e) {
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+		}catch (Exception e) {
+			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
 		}
-		
 		return resultado;
 	}
 
 	@Override
-	public EntityResult servicesXtraUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)		//attrMap filtro, keymap nuevo valor a actualizar
-			throws OntimizeJEERuntimeException {
-		
+	public EntityResult servicesXtraUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)	throws OntimizeJEERuntimeException {	//attrMap filtro, keymap nuevo valor a actualizar
+
 		EntityResult resultado = new EntityResultMapImpl();
-		try {
-			ValidateFields.required(attrMap, ServicesXtraDao.ATTR_ID);
-//			ValidateFields.emptyFields(attrMap, ServicesXtraDao.ATTR_ID);
-			resultado = this.daoHelper.update(this.servicesXtraDao, attrMap, keyMap);
-			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
-				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
-			} else {
-				resultado.setMessage("ServiceXtra actualizado");
-			}
-		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
-		} catch (DuplicateKeyException e) {
-			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
-		} catch (DataIntegrityViolationException e) {
-			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
-		} catch (Exception e) {
-			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR);
+	
+	try {
+			
+			ControlFields cf = new ControlFields();
+			List<String> requeridos = new ArrayList<String>() {{
+				add(ServicesXtraDao.ATTR_NAME);
+			}};
+			List<String> restricted = new ArrayList<String>() {{
+				add(ServicesXtraDao.ATTR_ID);//No quiero que meta el id porque quiero el id autogenerado de la base de datos
+			}};
+			
+			cf.addBasics(ServicesXtraDao.fields);
+			cf.setRequired(requeridos);
+			cf.setRestricted(restricted);
+			cf.setOptional(true);//El resto de los campos de fields serán aceptados
+			cf.validate(attrMap);
+
+			resultado = this.daoHelper.insert(this.servicesXtraDao, attrMap);
+			resultado.setMessage("Extra service actualizado");
+
+		} catch (ValidateException e) {
+			resultado =  new EntityResultWrong(e.getMessage());
+			e.printStackTrace();		
+		}catch (DuplicateKeyException e) {
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+		}catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
 		}
-		return resultado; 
+		return resultado;
 	}
 
 	@Override
-	public EntityResult servicesXtraDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {			//El filtro del where del postman		
+	public EntityResult servicesXtraDelete(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {			//El filtro del where del postman		
 		
 		EntityResult resultado = new EntityResultMapImpl();
+
 		try {
+			
+			ControlFields cf = new ControlFields();
+			List<String> requeridos = new ArrayList<String>() {{
+				add(ServicesXtraDao.ATTR_ID);
+			}};
+			
+			ValidateFields.atLeastOneRequired(attrMap, ServicesXtraDao.ATTR_ID, ServicesXtraDao.ATTR_NAME,ServicesXtraDao.ATTR_DESCRIPTION);
+			ValidateFields.isInt(attrMap, ServicesXtraDao.ATTR_ID);			
+
+//			cf.addBasics(ServicesXtraDao.fields);
+			cf.setRequired(requeridos);
+	//		ValidateFields.atLeastOneRequired(requeridos);
+			cf.setOptional(true);//El resto de los campos de fields serán aceptados
+			cf.validate(attrMap);
+
+			resultado = this.daoHelper.insert(this.servicesXtraDao, attrMap);
+			resultado.setMessage("Extra service eliminado");
+
+		} catch (ValidateException e) {
+			resultado =  new EntityResultWrong(e.getMessage());
+			e.printStackTrace();		
+		}catch (DuplicateKeyException e) {
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+		}catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
+		}
+	
+/*		try {
 			ValidateFields.required(keyMap, ServicesXtraDao.ATTR_ID);
 			ValidateFields.onlyThis(keyMap,  ServicesXtraDao.ATTR_ID);
 			ValidateFields.isInt(keyMap, ServicesXtraDao.ATTR_ID);
@@ -128,8 +210,8 @@ public class ServicesXtraService implements IServicesXtraService{
 			System.err.println(e.getMessage());
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR);
 		}
-		return resultado;
-		
+*/		
+		return resultado;		
 	}
 
 }
