@@ -64,22 +64,22 @@ public class BedComboService implements IBedComboService{
 	public EntityResult bedComboInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {			
-			ControlFields controllerFilter=new ControlFields();
-			controllerFilter.addBasics(BedComboDao.fields);
+			ControlFields controllerData=new ControlFields();
+			controllerData.addBasics(BedComboDao.fields);
 			List<String> required=new ArrayList<>() {
 				{
 					add(BedComboDao.ATTR_NAME);
 					add(BedComboDao.ATTR_SLOTS);
 				}
 			};
-			controllerFilter.setRequired(required);
-			List<String> resticted=new ArrayList<>() {
+			controllerData.setRequired(required);
+			List<String> restricted=new ArrayList<>() {
 				{
 				add(BedComboDao.ATTR_ID);
 				}
 				};
-				ControlFields controllerColumns=new ControlFields();
-			controllerColumns.validate(attrMap);
+				controllerData.setRestricted(restricted);
+			controllerData.validate(attrMap);
 			
 			resultado=this.daoHelper.insert(this.bedComboDao, attrMap);
 			resultado.setMessage("Tipo de cama insertado");
