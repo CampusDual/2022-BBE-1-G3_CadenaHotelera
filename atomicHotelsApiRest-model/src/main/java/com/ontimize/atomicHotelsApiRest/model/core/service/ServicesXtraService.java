@@ -162,15 +162,27 @@ public class ServicesXtraService implements IServicesXtraService{
 			ValidateFields.atLeastOneRequired(attrMap, ServicesXtraDao.ATTR_ID, ServicesXtraDao.ATTR_NAME,ServicesXtraDao.ATTR_DESCRIPTION);
 			ValidateFields.isInt(attrMap, ServicesXtraDao.ATTR_ID);			
 
-//			cf.addBasics(ServicesXtraDao.fields);
+			cf.addBasics(ServicesXtraDao.fields);
 			cf.setRequired(requeridos);
 	//		ValidateFields.atLeastOneRequired(requeridos);
 			cf.setOptional(true);//El resto de los campos de fields serán aceptados
 			cf.validate(attrMap);
-
-			resultado = this.daoHelper.insert(this.servicesXtraDao, attrMap);
-			resultado.setMessage("Extra service eliminado");
-
+			
+			Map<String, Object> consultaKeyMap = new HashMap<>() { {
+				put(ServicesXtraDao.ATTR_ID, attrMap.get(ServicesXtraDao.ATTR_ID));
+				}
+			};
+			
+			EntityResult auxEntity = servicesXtraQuery(consultaKeyMap, 
+					EntityResultTools.attributes(ServicesXtraDao.ATTR_ID));
+			
+			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
+				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
+			} else {
+				resultado = this.daoHelper.delete(this.servicesXtraDao, attrMap);
+				resultado.setMessage("Servicio extra eliminado");
+			}
+			
 		} catch (ValidateException e) {
 			resultado =  new EntityResultWrong(e.getMessage());
 			e.printStackTrace();		
