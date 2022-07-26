@@ -1,5 +1,6 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IServiceService;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
@@ -19,6 +21,7 @@ import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.FeatureDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.ServiceDao;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
@@ -35,31 +38,60 @@ public class ServiceService implements IServiceService{
 	@Override
 	public EntityResult serviceQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
-		EntityResult resultado = this.daoHelper.query(this.serviceDao, keyMap, attrList);
+		EntityResult resultado=new EntityResultWrong();
+		try {
+		ControlFields filterAndColumns=new ControlFields();
+		filterAndColumns.addBasics(ServiceDao.fields);
+		filterAndColumns.validate(keyMap);//Validamos el filtro
+		filterAndColumns.validate(attrList);//Validamos las columnas
+		}catch(ValidateException e) {
+			e.getMessage();
+			resultado=new EntityResultWrong(ErrorMessage.ERROR);
+		}catch(Exception e) {
+			e.getStackTrace();
+			resultado=new EntityResultWrong(ErrorMessage.ERROR);
+		}
 		return resultado;
-	}
-
+		}
+	
+	
 	@Override
 	public EntityResult serviceInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 		
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			ValidateFields.required(attrMap, ServiceDao.ATTR_NAME);					
+			ControlFields controllerData=new ControlFields();
+			controllerData.addBasics(ServiceDao.fields);
+			List<String> required=new ArrayList<>() {
+				{
+				
+				add(ServiceDao.ATTR_NAME);
+			}
+			};
+			controllerData.setRequired(required);
+			List<String> restricted=new ArrayList<>(){
+				{
+				add(ServiceDao.ATTR_ID);
+				}
+				};
+			controllerData.setRestricted(restricted);
+			controllerData.validate(attrMap);
 			resultado = this.daoHelper.insert(this.serviceDao, attrMap);
 			resultado.setMessage("Service registrado");
 
-		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());	
-			
-		} catch (DuplicateKeyException e) {
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
-
-		} catch (Exception e) {
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
+		}catch (DuplicateKeyException e) {
+			resultado =new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+		}catch (DataIntegrityViolationException e) {
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);
+		}catch (ValidateException e) {
+			e.getStackTrace();
+			resultado =new EntityResultWrong(e.getMessage());
 		}
-		
-		return resultado;
-
+		catch(Exception e) {
+			resultado=new EntityResultWrong(ErrorMessage.ERROR);
+			e.printStackTrace();
+		}
+		return resultado;		
 	}
 
 	@Override
