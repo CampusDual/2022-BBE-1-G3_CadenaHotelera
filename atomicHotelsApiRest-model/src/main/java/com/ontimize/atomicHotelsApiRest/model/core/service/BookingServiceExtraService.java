@@ -1,6 +1,7 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,8 +60,6 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 		try {
 			ValidateFields.required(attrMap, BookingServiceExtraDao.ATTR_ID_SXT, BookingServiceExtraDao.ATTR_ID_BKG,
 					BookingServiceExtraDao.ATTR_ID_UNITS);
-			//Este validador hace que falle.
-//			ValidateFields.formatprice(attrMap.get(BookingServiceExtraDao.ATTR_PRECIO));
 			if(bookingService.getBookingStatus(attrMap.get(bookingServiceExtraDao.ATTR_ID_BKG))
 					.equals(BookingDao.Status.CANCELED)) {
 				resultado.setMessage("La reserva esta cancelada, no se pueden añadir servicios extra.");
@@ -69,13 +68,16 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 				resultado.setMessage("La reserva esta completada, no se pueden añadir servicios extra");
 			}else if(bookingService.getBookingStatus(attrMap.get(bookingServiceExtraDao.ATTR_ID_BKG))
 					.equals(BookingDao.Status.IN_PROGRESS)) {
-				System.err.println("hola");
-				resultado = this.daoHelper.insert(this.bookingServiceExtraDao, attrMap);// en progreso añadimos servicio extra
-				System.err.println(resultado);
-				resultado.setMessage("Servicio extra registrado");
+					EntityResult precio = this.daoHelper.query(bookingServiceExtraDao, EntityResultTools.keysvalues(BookingServiceExtraDao.ATTR_ID_BKG,attrMap.get(BookingServiceExtraDao.ATTR_ID_BKG)), 
+					EntityResultTools.attributes(BookingServiceExtraDao.ATTR_PRECIO));
+					attrMap.put(BookingServiceExtraDao.ATTR_PRECIO, precio.getRecordValues(0).get(BookingServiceExtraDao.ATTR_PRECIO));
+					System.err.println(attrMap.entrySet());
+					resultado = this.daoHelper.insert(this.bookingServiceExtraDao, attrMap); //en progreso añadimos servicio extra
+					System.err.println(resultado);
+					resultado.setMessage("Servicio extra registrado");
 			}else if(bookingService.getBookingStatus(attrMap.get(bookingServiceExtraDao.ATTR_ID_BKG))
 					.equals(BookingDao.Status.IN_PROGRESS)) {
-				resultado.setMessage("La reserva esta confirmada, no se pueden añadir servicios extra.");
+					resultado.setMessage("La reserva esta confirmada, no se pueden añadir servicios extra.");
 			}
 		} catch (NumberFormatException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());
