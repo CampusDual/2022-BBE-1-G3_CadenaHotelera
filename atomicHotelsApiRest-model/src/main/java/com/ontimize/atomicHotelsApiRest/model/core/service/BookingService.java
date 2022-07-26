@@ -285,8 +285,7 @@ public class BookingService implements IBookingService {
 		EntityResult resultado = new EntityResultWrong();
 		try {	
 			ControlFields cf = new ControlFields();
-//			cf.addBasics(BookingDao.fields); //Pendiente
-			
+//			cf.addBasics(BookingDao.fields); //Pendiente			
 			ValidateFields.required(keyMap, BookingDao.ATTR_ID);
 			resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryDiasPrecioUnitarioHabitacion");
 
