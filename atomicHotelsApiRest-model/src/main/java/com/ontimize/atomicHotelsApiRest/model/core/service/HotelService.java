@@ -20,6 +20,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingColumnsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.RestrictedFieldException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IHotelService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
@@ -63,7 +64,7 @@ public class HotelService implements IHotelService {
 						
 			resultado = this.daoHelper.query(this.hotelDao, keyMap, attrList);
 
-		} catch (MissingFieldsException| RestrictedFieldException| LiadaPardaException | InvalidFieldsException | InvalidFieldsValuesException e) {
+		} catch (ValidateException e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(e.getMessage());
 
@@ -102,7 +103,7 @@ public class HotelService implements IHotelService {
 			resultado = this.daoHelper.insert(this.hotelDao, attrMap);
 			resultado.setMessage("Hotel registrado");
 
-		} catch (MissingFieldsException | RestrictedFieldException | InvalidFieldsException | InvalidFieldsValuesException |LiadaPardaException e) {
+		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
@@ -194,7 +195,7 @@ public class HotelService implements IHotelService {
 				resultado.setMessage("Hotel actualizado");
 			}
 			
-		} catch (MissingFieldsException | RestrictedFieldException |InvalidFieldsException | InvalidFieldsValuesException | LiadaPardaException e) {
+		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + " - " + e.getMessage());
 		} catch (DuplicateKeyException e) {
 			e.printStackTrace();
@@ -239,7 +240,7 @@ public class HotelService implements IHotelService {
 				resultado.setMessage("Hotel eliminado");
 			}
 
-		} catch (MissingFieldsException | RestrictedFieldException | InvalidFieldsException | InvalidFieldsValuesException | LiadaPardaException e) {
+		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + e.getMessage());
 		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
