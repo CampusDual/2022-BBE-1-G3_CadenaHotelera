@@ -121,6 +121,7 @@ public class ServicesXtraService implements IServicesXtraService{
 			ControlFields cf = new ControlFields();
 			List<String> requeridos = new ArrayList<String>() {{
 				add(ServicesXtraDao.ATTR_NAME);
+				add(ServicesXtraDao.ATTR_ID);
 			}};
 			List<String> restricted = new ArrayList<String>() {{
 				add(ServicesXtraDao.ATTR_ID);//No quiero que meta el id porque quiero el id autogenerado de la base de datos
