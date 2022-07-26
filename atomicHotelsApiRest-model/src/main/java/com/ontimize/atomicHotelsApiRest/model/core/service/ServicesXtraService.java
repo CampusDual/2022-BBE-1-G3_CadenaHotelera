@@ -126,7 +126,7 @@ public class ServicesXtraService implements IServicesXtraService{
 			ControlFields cf = new ControlFields();		
 			cf.addBasics(ServicesXtraDao.fields);
 			cf.setRequired(requiredFilter);
-			cf.setOptional(true);//No será aceptado ningún campo que no esté en required
+			cf.setOptional(false);//No será aceptado ningún campo que no esté en required
 			cf.validate(keyMap);
 			
 			
