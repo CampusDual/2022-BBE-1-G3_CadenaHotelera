@@ -149,7 +149,7 @@ public class HotelServiceExtraService implements IHotelServiceExtraService {
 	@Override
 	public EntityResult hotelServiceExtraDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 
-		EntityResult resultado = new EntityResultMapImpl();
+		EntityResult resultado = new EntityResultWrong();
 		try {
 			
 			List<String> required = new ArrayList<String>() {{
