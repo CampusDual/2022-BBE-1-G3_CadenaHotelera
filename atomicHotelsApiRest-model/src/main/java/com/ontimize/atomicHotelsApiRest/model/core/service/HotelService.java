@@ -60,7 +60,8 @@ public class HotelService implements IHotelService {
 //			cf.setOptional(true);//El resto de los campos de fields serán aceptados, por defecto true			
 			cf.validate(keyMap);
 			
-			cf.validate(attrList);//reutilizamos los mismos criterios para validar attrList						
+			cf.validate(attrList);//reutilizamos los mismos criterios para validar attrList	
+			
 			resultado = this.daoHelper.query(this.hotelDao, keyMap, attrList);
 
 		} catch (ValidateException e) {
@@ -249,14 +250,24 @@ public class HotelService implements IHotelService {
 		}
 		return resultado;
 	}
-
-	public EntityResult hotelDataQuery(Map<String, Object> keysValues, List<String> attrList) {
-		EntityResult queryRes = this.daoHelper.query(this.hotelDao,
-				EntityResultTools.keysvalues(HotelDao.ATTR_ID, keysValues.get(HotelDao.ATTR_ID)),
-				EntityResultTools.attributes(HotelDao.ATTR_ID, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET,
-						HotelDao.ATTR_CITY, HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY,
-						HotelDao.ATTR_PHONE, HotelDao.ATTR_EMAIL, HotelDao.ATTR_DESCRIPTION, HotelDao.ATTR_IS_OPEN),
-				"queryHotel");
+	
+	@Override
+	public EntityResult hotelInfoQuery(Map<String, Object> keysValues, List<String> attrList) throws OntimizeJEERuntimeException{
+		EntityResult queryRes = new EntityResultWrong();
+		try {
+			ControlFields cf = new ControlFields();
+			cf.addBasics(HotelDao.fields);		
+			cf.validate(keysValues);
+			
+			cf.validate(attrList);
+			
+			queryRes = this.daoHelper.query(this.hotelDao,keysValues, attrList,"queryHotel");
+		}catch(ValidateException e) {
+			queryRes = new EntityResultWrong(e.getMessage());
+		}catch(Exception e) {
+			queryRes = new EntityResultWrong(ErrorMessage.ERROR);
+		}
+		
 		return queryRes;
 	}
 

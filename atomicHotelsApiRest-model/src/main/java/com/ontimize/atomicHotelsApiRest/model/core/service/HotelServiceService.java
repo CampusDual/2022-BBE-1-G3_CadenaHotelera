@@ -22,6 +22,7 @@ import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelServiceDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomTypeFeatureDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.ServiceDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
@@ -35,11 +36,28 @@ public class HotelServiceService implements IHotelServiceService {
 	private HotelServiceDao hotelserviceDao;
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
-	
+
 	@Override
 	public EntityResult hotelServiceInfoQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
-		return this.daoHelper.query(this.hotelserviceDao, keyMap, attrList, "queryhotelservice");
+		EntityResult resultado = new EntityResultWrong();
+		try {
+
+			ControlFields cf = new ControlFields();
+			cf.addBasics(HotelServiceDao.fields);
+			cf.addBasics(HotelDao.fields);
+			cf.addBasics(ServiceDao.fields);
+			cf.validate(keyMap);
+
+			cf.validate(attrList);
+
+			resultado = this.daoHelper.query(this.hotelserviceDao, keyMap, attrList, "queryhotelservice");
+		} catch (ValidateException e) {
+			resultado = new EntityResultWrong(e.getMessage());
+		} catch (Exception e) {
+			resultado = new EntityResultWrong(ErrorMessage.ERROR);
+		}
+		return resultado;
 	}
 
 	@Override
@@ -47,10 +65,9 @@ public class HotelServiceService implements IHotelServiceService {
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 		try {
-			
-			// Control del filtro
+
 			ControlFields cf = new ControlFields();
-			cf.addBasics(HotelServiceDao.fields);		
+			cf.addBasics(HotelServiceDao.fields);
 			cf.validate(keyMap);
 
 			cf.validate(attrList);
@@ -69,12 +86,14 @@ public class HotelServiceService implements IHotelServiceService {
 
 		EntityResult resultado = new EntityResultWrong();
 		try {
-			
+
 			ControlFields cf = new ControlFields();
-			List<String> required = new ArrayList<String>() {{
-				add(HotelServiceDao.ATTR_ID_HTL);
-				add(HotelServiceDao.ATTR_ID_SRV);
-			}};
+			List<String> required = new ArrayList<String>() {
+				{
+					add(HotelServiceDao.ATTR_ID_HTL);
+					add(HotelServiceDao.ATTR_ID_SRV);
+				}
+			};
 			cf.addBasics(HotelDao.fields);
 			cf.setRequired(required);
 			cf.setOptional(false);
@@ -101,20 +120,37 @@ public class HotelServiceService implements IHotelServiceService {
 	public EntityResult hotelServiceDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			ValidateFields.required(keyMap, RoomTypeFeatureDao.ATTR_FEATURE_ID, RoomTypeFeatureDao.ATTR_ROOM_ID);
+			
+			List<String> required = new ArrayList<String>() {
+				{
+					add(HotelServiceDao.ATTR_ID_HTL);
+					add(HotelServiceDao.ATTR_ID_SRV);
+				}
+			};
+			ControlFields cf = new ControlFields();
+			cf.addBasics(HotelDao.fields);
+			cf.setRequired(required);
+			cf.setOptional(false);
+			cf.validate(keyMap);
 
-			EntityResult auxEntity = this.daoHelper.query(this.hotelserviceDao,
-					EntityResultTools.keysvalues(HotelServiceDao.ATTR_ID_HTL, keyMap.get(HotelServiceDao.ATTR_ID_HTL),
-							HotelServiceDao.ATTR_ID_SRV, keyMap.get(HotelServiceDao.ATTR_ID_SRV)),
-					EntityResultTools.attributes(HotelServiceDao.ATTR_ID_HTL, HotelServiceDao.ATTR_ID_SRV));
+			Map<String, Object> consultaKeyMap = new HashMap<>() {
+				{
+					put(HotelServiceDao.ATTR_ID_HTL, keyMap.get(HotelServiceDao.ATTR_ID_HTL));
+					put(HotelServiceDao.ATTR_ID_SRV, keyMap.get(HotelServiceDao.ATTR_ID_SRV));
+				}
+			};
+
+			EntityResult auxEntity = hotelServiceQuery(consultaKeyMap, EntityResultTools.attributes(HotelDao.ATTR_ID));
+
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
 				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
 			} else {
 				resultado = this.daoHelper.delete(this.hotelserviceDao, keyMap);
 				resultado.setMessage("HotelService eliminado");
 			}
-		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + e.getMessage());
+		
+		} catch (ValidateException e) {
+			resultado = new EntityResultWrong(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR);
