@@ -3,7 +3,7 @@ package com.ontimize.atomicHotelsApiRest.model.core.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
+import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -11,11 +11,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
-import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsException;
-import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
-import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
-import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
-import com.ontimize.atomicHotelsApiRest.api.core.exceptions.RestrictedFieldException;
+
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IBedComboService;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
@@ -48,7 +45,7 @@ public class BedComboService implements IBedComboService{
 		controllerFilterandColumns.validate(keyMap);
 		controllerFilterandColumns.validate(attrList);
 		return this.daoHelper.query(this.bedComboDao, keyMap, attrList);
-		}catch(MissingFieldsException|RestrictedFieldException|InvalidFieldsException|InvalidFieldsValuesException|LiadaPardaException e) {
+		}catch(ValidateException e) {
 			e.getMessage();
 			resultado=new EntityResultWrong(e.getMessage());
 		}catch(Exception e) {
@@ -86,7 +83,7 @@ public class BedComboService implements IBedComboService{
 			resultado =new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 		}catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);
-		}catch (RestrictedFieldException |MissingFieldsException |InvalidFieldsValuesException | InvalidFieldsException |LiadaPardaException e) {
+		}catch (ValidateException e) {
 			e.getStackTrace();
 			resultado =new EntityResultWrong(e.getMessage());
 		}
@@ -129,9 +126,7 @@ public class BedComboService implements IBedComboService{
 			}else {
 				resultado.setMessage("Tipo de cama actualizado");
 			}
-			//MissingFieldsException, RestrictedFieldException,
-			//InvalidFieldsException, InvalidFieldsValuesException, LiadaPardaException
-			}catch(MissingFieldsException|RestrictedFieldException|InvalidFieldsException| InvalidFieldsValuesException| LiadaPardaException e){
+			}catch(ValidateException e){
 				e.printStackTrace();
 				resultado = new EntityResultWrong(e.getMessage());
 			}catch(DuplicateKeyException e){
@@ -165,10 +160,16 @@ public class BedComboService implements IBedComboService{
 			ControllerFilter.setOptional(false);
 			ControllerFilter.validate(keyMap);
 			
-			EntityResult auxEntity= this.daoHelper.query(this.bedComboDao,
-					EntityResultTools.keysvalues(BedComboDao.ATTR_ID,keyMap.get(BedComboDao.ATTR_ID)),
-					EntityResultTools.attributes(BedComboDao.ATTR_ID));
-		if(auxEntity.calculateRecordNumber()==0) {
+			Map<String,Object> consultaKeyMap=new HashMap<>()
+			{
+				{
+				put( BedComboDao.ATTR_ID,keyMap.get(BedComboDao.ATTR_ID));	
+				}
+			};
+			
+			EntityResult auxEntity= bedComboQuery(consultaKeyMap,EntityResultTools.attributes(BedComboDao.ATTR_ID));
+		
+			if(auxEntity.calculateRecordNumber()==0) {
 			resultado=new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
 		}else {
 				resultado=this.daoHelper.delete(this.bedComboDao, keyMap);
@@ -176,7 +177,7 @@ public class BedComboService implements IBedComboService{
 				
 		}
 
-		} catch (MissingFieldsException | RestrictedFieldException | InvalidFieldsException | InvalidFieldsValuesException | LiadaPardaException e) {
+		} catch (ValidateException e) {
 			e.getStackTrace();
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (DataIntegrityViolationException e) {
