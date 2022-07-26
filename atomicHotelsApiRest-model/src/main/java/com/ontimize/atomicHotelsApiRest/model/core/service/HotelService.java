@@ -223,9 +223,15 @@ public class HotelService implements IHotelService {
 			cf.setOptional(false);
 			cf.validate(keyMap);
 
-			EntityResult auxEntity = this.daoHelper.query(this.hotelDao,
-					EntityResultTools.keysvalues(HotelDao.ATTR_ID, keyMap.get(HotelDao.ATTR_ID)),
+			
+			Map<String, Object> consultaKeyMap = new HashMap<>() { {
+				put(HotelDao.ATTR_ID, keyMap.get(HotelDao.ATTR_ID));
+				}
+			};
+			
+			EntityResult auxEntity = hotelQuery(consultaKeyMap, 
 					EntityResultTools.attributes(HotelDao.ATTR_ID));
+			
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
 				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
 			} else {
