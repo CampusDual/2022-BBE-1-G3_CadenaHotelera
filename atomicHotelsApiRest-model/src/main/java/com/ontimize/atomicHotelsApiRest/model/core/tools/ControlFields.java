@@ -193,6 +193,14 @@ public class ControlFields {
 						validType = true;
 					}
 					break;
+
+				case BOOLEAN:
+					if ((keyMap.get(key) instanceof Integer)) {
+						ValidateFields.isBoolean((Integer) keyMap.get(key));
+						validType = true;
+					}
+					break;
+					
 				default:
 					throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE+ key);
 				}

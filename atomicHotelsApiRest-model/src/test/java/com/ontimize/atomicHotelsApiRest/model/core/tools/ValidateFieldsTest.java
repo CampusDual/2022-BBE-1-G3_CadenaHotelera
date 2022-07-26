@@ -189,14 +189,14 @@ class ValidateFieldsTest {
 		@Test
 		@DisplayName("Fecha inicio Pasada y Fin Válidas")
 		void testDataRangeDateDatePastOK() {
-			Calendar today = Calendar.getInstance();
-			today.setTime(new Date());
-			today.add(Calendar.MINUTE, 1);
-			Calendar c = Calendar.getInstance();
-			c.setTime(new Date());
-			c.add(Calendar.DATE, -2);
+//			Calendar today = Calendar.getInstance();
+//			today.setTime(new Date());
+//			today.add(Calendar.MINUTE, 1);
+//			Calendar c = Calendar.getInstance();
+//			c.setTime(new Date());
+//			c.add(Calendar.DATE, -2);
 			try {
-				assertEquals(1, ValidateFields.dataRange(c.getTime(), today.getTime()));
+				assertEquals(1, ValidateFields.dataRange(Tools.getYesterday(), Tools.getNow()));
 			} catch (InvalidFieldsValuesException e) {
 				fail();
 			}
@@ -205,14 +205,14 @@ class ValidateFieldsTest {
 		@Test
 		@DisplayName("Fecha inicio superior a Fin (NO Válidas)")
 		void testDataRangeDateDatePastKO() {
-			Calendar today = Calendar.getInstance();
-			today.setTime(new Date());
-			today.add(Calendar.MINUTE, 1);
-			Calendar c = Calendar.getInstance();
-			c.setTime(new Date());
-			c.add(Calendar.DATE, -2000);
+//			Calendar today = Calendar.getInstance();
+//			today.setTime(new Date());
+//			today.add(Calendar.MINUTE, 1);
+//			Calendar c = Calendar.getInstance();
+//			c.setTime(new Date());
+//			c.add(Calendar.DATE, -2000);
 			assertThrows(InvalidFieldsValuesException.class,
-					() -> ValidateFields.dataRange(today.getTime(), c.getTime()));
+					() -> ValidateFields.dataRange(Tools.getNow(), Tools.getYesterday()));
 		}
 
 //		@Test
@@ -230,7 +230,9 @@ class ValidateFieldsTest {
 			c.add(Calendar.DATE, 1);
 
 			assertDoesNotThrow(() -> ValidateFields.dataRange((Object) "2022-01-01", (Object) "2022-01-03"));
-			assertDoesNotThrow(() -> ValidateFields.dataRange((Object) today.getTime(), (Object) c.getTime()));
+			assertDoesNotThrow(() -> ValidateFields.dataRange((Object) "2022-01-01", "2022-01-03"));
+			assertDoesNotThrow(() -> ValidateFields.dataRange((Object) Tools.getNowString(), (Object) Tools.getTomorrowString()));
+			assertDoesNotThrow(() -> ValidateFields.dataRange((Object) Tools.getNowString(), Tools.getTomorrowString()));
 		}
 
 		@Test
@@ -336,7 +338,7 @@ class ValidateFieldsTest {
 		@DisplayName("Numeros - NO Válidos")
 		@ValueSource(longs = { 10, 1200_0000_0000L, 1700_0000_0000_0000_0L, 0000_0000_0000_0001L, -1400_0000_0000_00L })
 		void testFormatpriceDoublesKO(Long numeros) {
-			assertThrows(NumberFormatException.class, () -> ValidateFields.invalidCreditCard(numeros));
+			assertThrows(InvalidFieldsValuesException.class, () -> ValidateFields.invalidCreditCard(numeros));
 		}
 
 		@Test

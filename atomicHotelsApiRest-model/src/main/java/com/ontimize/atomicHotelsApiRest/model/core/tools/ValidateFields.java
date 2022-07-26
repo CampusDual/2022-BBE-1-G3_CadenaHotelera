@@ -23,7 +23,7 @@ import com.ontimize.atomicHotelsApiRest.model.core.service.CountryService;
 import repositories.Countries;
 
 public class ValidateFields {
-	
+
 	public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd") {
 		{
 			setLenient(false);
@@ -246,12 +246,11 @@ public class ValidateFields {
 		String pre = "" + object;
 		String comprueba = pre.substring(pre.indexOf(".") + 1);
 		System.err.println(pre);
-		if (comprueba.length() > 2 ) {
+		if (comprueba.length() > 2) {
 			throw new NumberFormatException("Introduce solo 2 decimales");
-		}else
-		{
+		} else {
 			BigDecimal comprobado = new BigDecimal(pre);
-			System.err.println(comprobado+"/");
+			System.err.println(comprobado + "/");
 		}
 
 	}
@@ -443,7 +442,7 @@ public class ValidateFields {
 			}
 		}
 	}
-	
+
 	/**
 	 * Castea los valores de un keyMap a double si es posible.
 	 * 
@@ -462,16 +461,28 @@ public class ValidateFields {
 			}
 		}
 	}
-	
+
+	/**
+	 * Comprueba si el numero de entrada es 1 o 0  
+	 * @param booleano en formato numero
+	 * @throws InvalidFieldsValuesException
+	 */
+	public static void isBoolean(Integer value) throws InvalidFieldsValuesException {
+		if (!(value == 0 || value == 1)) {
+			throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + value);
+		}
+	}
+
 //	@Autowired
 //	static CountryService  countryService;
-	
+
 	public static void country(String country) throws InvalidFieldsValuesException {
 //		if(!countryService.mapCountries().containsKey(country)) {
 //			throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + country);		
 //		}
-		if(country.length() != 2 || country.compareTo(country.toUpperCase()) != 0) {
-			throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + country);					
+		if (country.length() != 2 || country.compareTo(country.toUpperCase()) != 0) {
+			throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + country);
 		}
 	}
+
 }
