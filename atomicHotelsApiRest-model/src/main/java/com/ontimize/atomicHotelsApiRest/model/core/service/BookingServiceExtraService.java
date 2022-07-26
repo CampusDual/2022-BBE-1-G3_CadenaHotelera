@@ -102,7 +102,6 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 	public EntityResult bookingServiceExtraDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 			
 		
-		
 
 			EntityResult auxEntity = this.daoHelper.query(this.bookingServiceExtraDao,
 					EntityResultTools.keysvalues(ReceiptDao.ATTR_ID, keyMap.get(ReceiptDao.ATTR_ID)),
