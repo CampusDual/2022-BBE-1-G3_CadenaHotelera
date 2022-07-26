@@ -10,6 +10,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.sql.Types;
@@ -118,28 +119,30 @@ class HotelServiceTest {
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
 		}
 		
-		@Mock
-		ControlFields cf;
+		
 		
 		@Test
 		@DisplayName("Valores de entrada NO válidos")
 		void testHotelQueryKO() {
-			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
-			
+//			ControlFields cf2 = mock(ControlFields.class);
+
 //			when(cf).thenThrow(new MissingFieldsException("test"));
+//			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
 			try {
-				doThrow(new MissingFieldsException("test")).when(cf).validate(anyMap());
-			} catch (Exception e) {
+				doThrow(new InvalidFieldsValuesException("test")).when(cf).validate(anyMap());			
+//				doThrow(new InvalidFieldsValuesException("test")).when(cf);
+
 //			} catch (MissingFieldsException | RestrictedFieldException | InvalidFieldsException
 //					| InvalidFieldsValuesException | LiadaPardaException e) {
-				// TODO Auto-generated catch block
+			} catch (Exception e) {
 				e.printStackTrace();
 				fail("excepción no capturada");
 			}
+			EntityResult entityResult = service.hotelQuery(new HashMap<>(), getColumsName());
+			System.err.println(entityResult.getMessage());
+			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
 //			when(daoHelper.insert(any(),anyMap())).thenThrow(new MissingFieldsException("El campo " + HotelDao.ATTR_NAME + " es nulo"));
 						 
-			EntityResult entityResult = service.hotelQuery(new HashMap<>(), getColumsName());
-			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
 			
 		}
 		
@@ -333,166 +336,166 @@ class HotelServiceTest {
 
 	}
 
-	@Nested
-	@DisplayName("Test for Hotel inserts")
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	public class InsertQuery {
-
-		@Test
-		@DisplayName("Insert Hotel")
-		void when_hotel_insert_is_succsessfull() {
-			Map<String, Object> attrMap = new HashMap<>() {
-				{
-					put(HotelDao.ATTR_ID, 1);
-					put(HotelDao.ATTR_NAME, "Hotel 1");
-					put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 1");
-					put(HotelDao.ATTR_CITY, "Vigo");
-					put(HotelDao.ATTR_CP, "36211");
-					put(HotelDao.ATTR_STATE, "Galicia");
-					put(HotelDao.ATTR_COUNTRY, "Spain");
-					put(HotelDao.ATTR_PHONE, "+34 986 111 111");
-					put(HotelDao.ATTR_EMAIL, "hotel1@atomicHotels.com");
-					put(HotelDao.ATTR_DESCRIPTION, "Hotel a registrar");
-					put(HotelDao.ATTR_IS_OPEN, 1);
-				}
-			};
-			EntityResult resultado = new EntityResultMapImpl();
-			resultado.addRecord(attrMap);
-			resultado.setCode(EntityResult.OPERATION_SUCCESSFUL);
-			resultado.setMessage("Hotel registrado");
-			when(daoHelper.insert(any(), anyMap())).thenReturn(resultado);
-			EntityResult entityResult = service.hotelInsert(attrMap);
-			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-			assertEquals(entityResult.getMessage(), "Hotel registrado");
-		}
-
-		@Test
-		@DisplayName("Duplicated Key")
-		void when_already_exist() {
-			Map<String, Object> attrMap = new HashMap<>() {
-				{
-					put(HotelDao.ATTR_ID, 1);
-					put(HotelDao.ATTR_NAME, "Hotel 1");
-					put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 1");
-					put(HotelDao.ATTR_CITY, "Vigo");
-					put(HotelDao.ATTR_CP, "36211");
-					put(HotelDao.ATTR_STATE, "Galicia");
-					put(HotelDao.ATTR_COUNTRY, "Spain");
-					put(HotelDao.ATTR_PHONE, "+34 986 111 111");
-					put(HotelDao.ATTR_EMAIL, "hotel1@atomicHotels.com");
-					put(HotelDao.ATTR_DESCRIPTION, "Este hotel ya estaría registrado");
-					put(HotelDao.ATTR_IS_OPEN, 1);
-				}
-			};
-			when(daoHelper.insert(any(), anyMap())).thenThrow(DuplicateKeyException.class);
-			EntityResult entityResult = service.hotelInsert(attrMap);
-			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-			assertEquals(entityResult.getMessage(), ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
-		}
-
-		@Test
-		@DisplayName("Missing Fields")
-		void when_unable_insert() {
-			Map<String, Object> attrMap = new HashMap<>() {
-				{
-					put(HotelDao.ATTR_ID, 1);
-					put(HotelDao.ATTR_NAME, null);
-					put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 1");
-					put(HotelDao.ATTR_CITY, "Vigo");
-					put(HotelDao.ATTR_CP, "36211");
-					put(HotelDao.ATTR_STATE, "Galicia");
-					put(HotelDao.ATTR_COUNTRY, "Spain");
-					put(HotelDao.ATTR_PHONE, "+34 986 111 111");
-					put(HotelDao.ATTR_EMAIL, "hotel1@atomicHotels.com");
-					put(HotelDao.ATTR_DESCRIPTION, "Faltan campos no nullables");
-					put(HotelDao.ATTR_IS_OPEN, 1);
-				}
-			};
-			// try (MockedStatic<ValidateFields> vf =
-			// Mockito.mockStatic(ValidateFields.class)) {
-			// vf.when(() -> ValidateFields.required(anyMap(),
-			// anyString())).thenThrow(MissingFieldsException.class);
-			EntityResult entityResult = service.hotelInsert(attrMap);
-			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-			assertEquals(ErrorMessage.CREATION_ERROR + "El campo " + HotelDao.ATTR_NAME + " es nulo",
-					entityResult.getMessage());
-			// }
-
-//			doThrow().when(ValidateFields.required(anyMap(), anyString())).thenThrow(MissingFieldsException.class);
-//			when(daoHelper.insert(any(),anyMap())).thenThrow(new MissingFieldsException("El campo " + HotelDao.ATTR_NAME + " es nulo"));
-//    		entityResult = service.hotelInsert(anyMap());
+//	@Nested
+//	@DisplayName("Test for Hotel inserts")
+//	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+//	public class InsertQuery {
+//
+//		@Test
+//		@DisplayName("Insert Hotel")
+//		void when_hotel_insert_is_succsessfull() {
+//			Map<String, Object> attrMap = new HashMap<>() {
+//				{
+//					put(HotelDao.ATTR_ID, 1);
+//					put(HotelDao.ATTR_NAME, "Hotel 1");
+//					put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 1");
+//					put(HotelDao.ATTR_CITY, "Vigo");
+//					put(HotelDao.ATTR_CP, "36211");
+//					put(HotelDao.ATTR_STATE, "Galicia");
+//					put(HotelDao.ATTR_COUNTRY, "Spain");
+//					put(HotelDao.ATTR_PHONE, "+34 986 111 111");
+//					put(HotelDao.ATTR_EMAIL, "hotel1@atomicHotels.com");
+//					put(HotelDao.ATTR_DESCRIPTION, "Hotel a registrar");
+//					put(HotelDao.ATTR_IS_OPEN, 1);
+//				}
+//			};
+//			EntityResult resultado = new EntityResultMapImpl();
+//			resultado.addRecord(attrMap);
+//			resultado.setCode(EntityResult.OPERATION_SUCCESSFUL);
+//			resultado.setMessage("Hotel registrado");
+//			when(daoHelper.insert(any(), anyMap())).thenReturn(resultado);
+//			EntityResult entityResult = service.hotelInsert(attrMap);
+//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
+//			assertEquals(entityResult.getMessage(), "Hotel registrado");
+//		}
+//
+//		@Test
+//		@DisplayName("Duplicated Key")
+//		void when_already_exist() {
+//			Map<String, Object> attrMap = new HashMap<>() {
+//				{
+//					put(HotelDao.ATTR_ID, 1);
+//					put(HotelDao.ATTR_NAME, "Hotel 1");
+//					put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 1");
+//					put(HotelDao.ATTR_CITY, "Vigo");
+//					put(HotelDao.ATTR_CP, "36211");
+//					put(HotelDao.ATTR_STATE, "Galicia");
+//					put(HotelDao.ATTR_COUNTRY, "Spain");
+//					put(HotelDao.ATTR_PHONE, "+34 986 111 111");
+//					put(HotelDao.ATTR_EMAIL, "hotel1@atomicHotels.com");
+//					put(HotelDao.ATTR_DESCRIPTION, "Este hotel ya estaría registrado");
+//					put(HotelDao.ATTR_IS_OPEN, 1);
+//				}
+//			};
+//			when(daoHelper.insert(any(), anyMap())).thenThrow(DuplicateKeyException.class);
+//			EntityResult entityResult = service.hotelInsert(attrMap);
 //			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-
-		}
-	}
-
-	@Nested
-	@DisplayName("Test for Hotel updates")
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	public class UpdateQuery {
-
-		@Test
-		@DisplayName("Update Hotel")
-		void when_hotel_insert_is_succsessfull() {
-			Map<String, Object> attrMap = new HashMap<>() {
-				{
-					put(HotelDao.ATTR_ID, 1);
-				}
-			};
-			Map<String, Object> keyMap = new HashMap<>() {
-				{
-					put(HotelDao.ATTR_ID, 1);
-					put(HotelDao.ATTR_NAME, "Hotel 1 actualizado");
-					put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 1 actualizado");
-					put(HotelDao.ATTR_CITY, "Vigo actualizado");
-					put(HotelDao.ATTR_CP, "36211 actualizado");
-					put(HotelDao.ATTR_STATE, "Galicia");
-					put(HotelDao.ATTR_COUNTRY, "Spain");
-					put(HotelDao.ATTR_PHONE, "+34 986 111 111");
-					put(HotelDao.ATTR_EMAIL, "hotel1@atomicHotels.com");
-					put(HotelDao.ATTR_DESCRIPTION, "Hotel actualizado");
-					put(HotelDao.ATTR_IS_OPEN, 0);
-				}
-			};
-			EntityResult resultado = new EntityResultMapImpl();
-			resultado.addRecord(keyMap);
-			resultado.setCode(EntityResult.OPERATION_SUCCESSFUL);
-			resultado.setMessage("Hotel actualizado");
-
-			when(daoHelper.update(any(), anyMap(), anyMap())).thenReturn(resultado);
-			EntityResult entityResult = service.hotelUpdate(attrMap, keyMap);
-			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-			assertEquals(entityResult.getMessage(), "Hotel actualizado");
-		}
-
-		@Test
-		@DisplayName("Duplicated Key")
-		void when_already_exist() {
-			Map<String, Object> attrMap = new HashMap<>() {
-				{
-					put(HotelDao.ATTR_ID, 2);
-				}
-			};
-			Map<String, Object> keyMap = new HashMap<>() {
-				{
-					put(HotelDao.ATTR_ID, 2);// ???
-					put(HotelDao.ATTR_NAME, "Hotel 1");// Este hotel ya existe
-					put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 1 actualizado");
-					put(HotelDao.ATTR_CITY, "Vigo actualizado");
-					put(HotelDao.ATTR_CP, "36211 actualizado");
-					put(HotelDao.ATTR_STATE, "Galicia");
-					put(HotelDao.ATTR_COUNTRY, "Spain");
-					put(HotelDao.ATTR_PHONE, "+34 986 111 111");
-					put(HotelDao.ATTR_EMAIL, "hotel1@atomicHotels.com");
-					put(HotelDao.ATTR_DESCRIPTION, "Hotel actualizado");
-					put(HotelDao.ATTR_IS_OPEN, 1);
-				}
-			};
-			when(daoHelper.update(any(), anyMap(), anyMap())).thenThrow(DuplicateKeyException.class);
-			EntityResult entityResult = service.hotelUpdate(attrMap, keyMap);
-			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-			assertEquals(entityResult.getMessage(), ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
-		}
+//			assertEquals(entityResult.getMessage(), ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+//		}
+//
+//		@Test
+//		@DisplayName("Missing Fields")
+//		void when_unable_insert() {
+//			Map<String, Object> attrMap = new HashMap<>() {
+//				{
+//					put(HotelDao.ATTR_ID, 1);
+//					put(HotelDao.ATTR_NAME, null);
+//					put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 1");
+//					put(HotelDao.ATTR_CITY, "Vigo");
+//					put(HotelDao.ATTR_CP, "36211");
+//					put(HotelDao.ATTR_STATE, "Galicia");
+//					put(HotelDao.ATTR_COUNTRY, "Spain");
+//					put(HotelDao.ATTR_PHONE, "+34 986 111 111");
+//					put(HotelDao.ATTR_EMAIL, "hotel1@atomicHotels.com");
+//					put(HotelDao.ATTR_DESCRIPTION, "Faltan campos no nullables");
+//					put(HotelDao.ATTR_IS_OPEN, 1);
+//				}
+//			};
+//			// try (MockedStatic<ValidateFields> vf =
+//			// Mockito.mockStatic(ValidateFields.class)) {
+//			// vf.when(() -> ValidateFields.required(anyMap(),
+//			// anyString())).thenThrow(MissingFieldsException.class);
+//			EntityResult entityResult = service.hotelInsert(attrMap);
+//			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+//			assertEquals(ErrorMessage.CREATION_ERROR + "El campo " + HotelDao.ATTR_NAME + " es nulo",
+//					entityResult.getMessage());
+//			// }
+//
+////			doThrow().when(ValidateFields.required(anyMap(), anyString())).thenThrow(MissingFieldsException.class);
+////			when(daoHelper.insert(any(),anyMap())).thenThrow(new MissingFieldsException("El campo " + HotelDao.ATTR_NAME + " es nulo"));
+////    		entityResult = service.hotelInsert(anyMap());
+////			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+//
+//		}
+//	}
+//
+//	@Nested
+//	@DisplayName("Test for Hotel updates")
+//	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+//	public class UpdateQuery {
+//
+//		@Test
+//		@DisplayName("Update Hotel")
+//		void when_hotel_insert_is_succsessfull() {
+//			Map<String, Object> attrMap = new HashMap<>() {
+//				{
+//					put(HotelDao.ATTR_ID, 1);
+//				}
+//			};
+//			Map<String, Object> keyMap = new HashMap<>() {
+//				{
+//					put(HotelDao.ATTR_ID, 1);
+//					put(HotelDao.ATTR_NAME, "Hotel 1 actualizado");
+//					put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 1 actualizado");
+//					put(HotelDao.ATTR_CITY, "Vigo actualizado");
+//					put(HotelDao.ATTR_CP, "36211 actualizado");
+//					put(HotelDao.ATTR_STATE, "Galicia");
+//					put(HotelDao.ATTR_COUNTRY, "Spain");
+//					put(HotelDao.ATTR_PHONE, "+34 986 111 111");
+//					put(HotelDao.ATTR_EMAIL, "hotel1@atomicHotels.com");
+//					put(HotelDao.ATTR_DESCRIPTION, "Hotel actualizado");
+//					put(HotelDao.ATTR_IS_OPEN, 0);
+//				}
+//			};
+//			EntityResult resultado = new EntityResultMapImpl();
+//			resultado.addRecord(keyMap);
+//			resultado.setCode(EntityResult.OPERATION_SUCCESSFUL);
+//			resultado.setMessage("Hotel actualizado");
+//
+//			when(daoHelper.update(any(), anyMap(), anyMap())).thenReturn(resultado);
+//			EntityResult entityResult = service.hotelUpdate(attrMap, keyMap);
+//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
+//			assertEquals(entityResult.getMessage(), "Hotel actualizado");
+//		}
+//
+//		@Test
+//		@DisplayName("Duplicated Key")
+//		void when_already_exist() {
+//			Map<String, Object> attrMap = new HashMap<>() {
+//				{
+//					put(HotelDao.ATTR_ID, 2);
+//				}
+//			};
+//			Map<String, Object> keyMap = new HashMap<>() {
+//				{
+//					put(HotelDao.ATTR_ID, 2);// ???
+//					put(HotelDao.ATTR_NAME, "Hotel 1");// Este hotel ya existe
+//					put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 1 actualizado");
+//					put(HotelDao.ATTR_CITY, "Vigo actualizado");
+//					put(HotelDao.ATTR_CP, "36211 actualizado");
+//					put(HotelDao.ATTR_STATE, "Galicia");
+//					put(HotelDao.ATTR_COUNTRY, "Spain");
+//					put(HotelDao.ATTR_PHONE, "+34 986 111 111");
+//					put(HotelDao.ATTR_EMAIL, "hotel1@atomicHotels.com");
+//					put(HotelDao.ATTR_DESCRIPTION, "Hotel actualizado");
+//					put(HotelDao.ATTR_IS_OPEN, 1);
+//				}
+//			};
+//			when(daoHelper.update(any(), anyMap(), anyMap())).thenThrow(DuplicateKeyException.class);
+//			EntityResult entityResult = service.hotelUpdate(attrMap, keyMap);
+//			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+//			assertEquals(entityResult.getMessage(), ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
+//		}
 
 //    	@Test
 //		@DisplayName("Missing Fields")
@@ -515,6 +518,6 @@ class HotelServiceTest {
 //			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
 //    		assertEquals(entityResult.getMessage(), ErrorMessage.CREATION_ERROR+e.getMessage());
 //    	}
-	}
+//	}
 
 }

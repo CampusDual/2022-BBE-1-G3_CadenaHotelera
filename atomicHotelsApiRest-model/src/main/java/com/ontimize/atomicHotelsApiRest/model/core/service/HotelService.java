@@ -77,7 +77,7 @@ public class HotelService implements IHotelService {
 	@Override
 	public EntityResult hotelInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 
-		EntityResult resultado = new EntityResultWrong();
+		EntityResult resultado = new EntityResultMapImpl();
 		try {
 			
 			ControlFields cf = new ControlFields();
@@ -160,7 +160,7 @@ public class HotelService implements IHotelService {
 	@Override                                          //data                       //filter
 	public EntityResult hotelUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
-		EntityResult resultado = new EntityResultWrong();
+		EntityResult resultado = new EntityResultMapImpl();
 		try {
 			
 			//ControlFields del filtro
@@ -212,7 +212,7 @@ public class HotelService implements IHotelService {
 	@Override
 	public EntityResult hotelDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 
-		EntityResult resultado = new EntityResultWrong();
+		EntityResult resultado = new EntityResultMapImpl();
 		try {
 			List<String> required = new ArrayList<String>() {{
 				add(HotelDao.ATTR_ID);
