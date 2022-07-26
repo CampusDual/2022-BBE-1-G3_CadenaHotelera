@@ -50,18 +50,17 @@ public class HotelService implements IHotelService {
 	public EntityResult hotelQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 
-		EntityResult resultado = new EntityResultMapImpl();
+		EntityResult resultado = new EntityResultWrong();
 
 		try {
 			
-			//Control del friltro
+			//Control del filtro
 			ControlFields cf = new ControlFields();
 			cf.addBasics(HotelDao.fields);
-//			cf.setOptional(true);//El resto de los campos de fields serán aceptados
+//			cf.setOptional(true);//El resto de los campos de fields serán aceptados, por defecto true			
 			cf.validate(keyMap);
 			
-			cf.validate(attrList);
-						
+			cf.validate(attrList);//reutilizamos los mismos criterios para validar attrList						
 			resultado = this.daoHelper.query(this.hotelDao, keyMap, attrList);
 
 		} catch (ValidateException e) {

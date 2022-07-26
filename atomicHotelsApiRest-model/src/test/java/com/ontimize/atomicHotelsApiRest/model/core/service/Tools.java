@@ -42,7 +42,7 @@ public class Tools {
 	 *Fecha actual de HOY (sin horas/minutos)  
 	 * @return String
 	 */
-	static String getNowString() {
+	public static String getNowString() {
 		return LocalDate.now().format(localDateFormat);
 	}
 	
@@ -50,7 +50,7 @@ public class Tools {
 	 *Fecha actual de MAÑANA (sin horas/minutos)  
 	 * @return String
 	 */
-	static String getTomorrowString() {
+	public static String getTomorrowString() {
 		LocalDate tomorrow = LocalDate.now().plusDays(1);
 		return tomorrow.format(localDateFormat);
 	}
@@ -58,7 +58,7 @@ public class Tools {
 	 *Fecha actual de MAÑANA (sin horas/minutos)  
 	 * @return String
 	 */
-	static String getYesterdayString() {
+	public static String getYesterdayString() {
 		LocalDate yesterday = LocalDate.now().minusDays(1);
 		return yesterday.format(localDateFormat);
 	}
@@ -67,7 +67,7 @@ public class Tools {
 	 * Fecha actual de HOY al principio del día 
 	 * @return Date
 	 */
-	static Date getNow() {        
+	public static Date getNow() {        
 		return Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
 	}
 	
@@ -75,7 +75,7 @@ public class Tools {
 	 * Fecha actual de MAÑANA al principio del día 
 	 * @return Date
 	 */
-	static Date getTomorrow() {
+	public static Date getTomorrow() {
 		LocalDate tomorrow = LocalDate.now().plusDays(1);
 		return Date.from(tomorrow.atStartOfDay(ZoneId.systemDefault()).toInstant());
 	}
@@ -84,7 +84,7 @@ public class Tools {
 	 * Fecha actual de AYER al principio del día 
 	 * @return Date
 	 */
-	static Date getYesterday() {
+	public static Date getYesterday() {
 		LocalDate yesterday = LocalDate.now().minusDays(1);
 		return Date.from(yesterday.atStartOfDay(ZoneId.systemDefault()).toInstant());
 	}
