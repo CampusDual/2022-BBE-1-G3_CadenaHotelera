@@ -1,7 +1,6 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,8 +27,7 @@ import com.ontimize.atomicHotelsApiRest.model.core.dao.BedComboDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
-import com.ontimize.atomicHotelsApiRest.model.core.tools.TypeCodes.type;
-import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
+
 
 @Service("BedComboService")
 @Lazy
