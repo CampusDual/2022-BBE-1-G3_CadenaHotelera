@@ -122,7 +122,7 @@ public class CustomerCreditCardService implements ICustomerCreditCardService{
 			resultado=new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
 		}else {
 				resultado=this.daoHelper.delete(this.customerCreditCardDao, keyMap);
-				resultado.setMessage("Tipo de cama borrada");
+				resultado.setMessage("Asociacion de tarjeta y cliente borrada");
 				
 		}
 
