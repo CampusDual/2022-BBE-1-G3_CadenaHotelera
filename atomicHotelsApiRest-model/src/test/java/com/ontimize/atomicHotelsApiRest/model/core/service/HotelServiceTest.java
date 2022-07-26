@@ -53,41 +53,49 @@ class HotelServiceTest {
 
 	@Autowired
 	HotelDao hotelDao;
-	
+
 //	@Autowired
 //	ValidateFields vf;
 
-	
- 
 	@Nested
 	@DisplayName("Test for Hotel queries")
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	public class HotelQuery {
+		// datos entrada
+		HashMap<String, Object> getFilterId1() {
+			HashMap<String, Object> filters = new HashMap<>() {
+				{
+					put(HotelDao.ATTR_ID, 1);
+				}
+			};
+			return filters;
+		};
+
+		List<String> getColumsName() {
+			List<String> columns = new ArrayList<>() {
+				{
+					add(HotelDao.ATTR_NAME);
+				}
+			};
+			return columns;
+		}
+		// fin datos entrada
 
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void when_queryOnlyWithAllColumns_return_allHotelsData() {
-			
-//			doReturn(getAllHotelsData()).when(daoHelper).query(any(), anyMap(), anyList());			
-			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());			
-			
-			EntityResult entityResult = service.hotelQuery(new HashMap<>(), new ArrayList<>() {{
-				add(HotelDao.ATTR_NAME);
-			}});
+
+			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
+
+			// válido: HashMap vacio (sin filtros)
+			EntityResult entityResult = service.hotelQuery(new HashMap<>(), getColumsName());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-			
-			
-			entityResult = service.hotelQuery(new HashMap<>() {{
-				put(HotelDao.ATTR_ID,1);
-			}}, new ArrayList<>() {{
-				add(HotelDao.ATTR_NAME);
-			}});
+
+			entityResult = service.hotelQuery(getFilterId1(), getColumsName());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
 //			assertEquals(3, entityResult.calculateRecordNumber());
 		}
 
-		
-		
 		@Test
 		@DisplayName("Obtain all data columns from hotels table when htl_id is -> 2")
 		void when_queryAllColumns_return_specificData() {
@@ -119,8 +127,9 @@ class HotelServiceTest {
 					HotelDao.ATTR_CITY, HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY,
 					HotelDao.ATTR_PHONE, HotelDao.ATTR_PHONE, HotelDao.ATTR_EMAIL, HotelDao.ATTR_DESCRIPTION,
 					HotelDao.ATTR_IS_OPEN);
-			
-			doReturn(getSpecificHotelData(keyMap, attrList)).when(daoHelper).query(any(), anyMap(), anyList(),anyString());
+
+			doReturn(getSpecificHotelData(keyMap, attrList)).when(daoHelper).query(any(), anyMap(), anyList(),
+					anyString());
 			EntityResult entityResult = service.hotelDataQuery(new HashMap<>(), new ArrayList<>());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
 			assertEquals(1, entityResult.calculateRecordNumber());
@@ -351,12 +360,15 @@ class HotelServiceTest {
 					put(HotelDao.ATTR_IS_OPEN, 1);
 				}
 			};
-			//try (MockedStatic<ValidateFields> vf = Mockito.mockStatic(ValidateFields.class)) {
-				//vf.when(() -> ValidateFields.required(anyMap(), anyString())).thenThrow(MissingFieldsException.class);
-				EntityResult entityResult = service.hotelInsert(attrMap);
-				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-				assertEquals(ErrorMessage.CREATION_ERROR + "El campo " + HotelDao.ATTR_NAME + " es nulo",entityResult.getMessage());
-			//}
+			// try (MockedStatic<ValidateFields> vf =
+			// Mockito.mockStatic(ValidateFields.class)) {
+			// vf.when(() -> ValidateFields.required(anyMap(),
+			// anyString())).thenThrow(MissingFieldsException.class);
+			EntityResult entityResult = service.hotelInsert(attrMap);
+			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+			assertEquals(ErrorMessage.CREATION_ERROR + "El campo " + HotelDao.ATTR_NAME + " es nulo",
+					entityResult.getMessage());
+			// }
 
 //			doThrow().when(ValidateFields.required(anyMap(), anyString())).thenThrow(MissingFieldsException.class);
 //			when(daoHelper.insert(any(),anyMap())).thenThrow(new MissingFieldsException("El campo " + HotelDao.ATTR_NAME + " es nulo"));
