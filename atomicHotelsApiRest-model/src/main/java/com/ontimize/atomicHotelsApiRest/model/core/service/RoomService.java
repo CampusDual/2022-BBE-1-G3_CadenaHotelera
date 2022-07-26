@@ -1,10 +1,12 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.postgresql.xml.EmptyStringEntityResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -12,26 +14,23 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.SQLWarningException;
 import org.springframework.stereotype.Service;
 
-import com.ontimize.jee.common.db.SQLStatementBuilder.BasicExpression;
-import com.ontimize.jee.common.db.SQLStatementBuilder.BasicField;
-import com.ontimize.jee.common.db.SQLStatementBuilder.BasicOperator;
-import com.ontimize.jee.common.dto.EntityResult;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingColumnsException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.RestrictedFieldException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IBookingService;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IRoomService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
-import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomTypeDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
-import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultExtraTools;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
-import com.ontimize.atomicHotelsApiRest.model.core.tools.TypeCodes.type;
-import com.ontimize.atomicHotelsApiRest.api.core.exceptions.EntityResultRequiredException;
-import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
-import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
-import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
+import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
 import com.ontimize.jee.common.tools.EntityResultTools;
@@ -44,8 +43,8 @@ public class RoomService implements IRoomService {
 	private RoomDao roomDao;
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
-//	@Autowired
-//	IBookingService bookingService;
+	@Autowired
+	IBookingService bookingService;
 
 	@Override
 	public EntityResult roomQuery(Map<String, Object> keyMap, List<String> attrList)
