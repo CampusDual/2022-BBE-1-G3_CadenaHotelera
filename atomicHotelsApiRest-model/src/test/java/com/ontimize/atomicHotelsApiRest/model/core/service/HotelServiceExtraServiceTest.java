@@ -71,16 +71,16 @@ class HotelServiceExtraServiceTest {
 			void when_queryAllColumns_return_specificData() {
 				HashMap<String, Object> keyMap = new HashMap<>(){
 					{
-						put(HotelServiceExtraDao.ATTR_ID_HSX, 1);
+						put(HotelServiceExtraDao.ATTR_ID, 1);
 					}
 				};
-				List<String> attrList = Arrays.asList(HotelServiceExtraDao.ATTR_ID_HSX, HotelServiceExtraDao.ATTR_ID_HTL, HotelServiceExtraDao.ATTR_ID_SXT, HotelServiceExtraDao.ATTR_PRECIO);
+				List<String> attrList = Arrays.asList(HotelServiceExtraDao.ATTR_ID, HotelServiceExtraDao.ATTR_ID_HTL, HotelServiceExtraDao.ATTR_ID_SXT, HotelServiceExtraDao.ATTR_PRECIO);
 				doReturn(getSpecificHotelServiceExtraServiceData(keyMap, attrList)).when(daoHelper).query(any(), anyMap(), anyList());
 				EntityResult entityResult = service.hotelServiceExtraQuery(new HashMap<>(), new ArrayList<>());
 				assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
 				System.out.println(entityResult.calculateRecordNumber());
 				assertEquals(1, entityResult.calculateRecordNumber());
-				assertEquals(1, entityResult.getRecordValues(0).get(HotelServiceExtraDao.ATTR_ID_HSX));
+				assertEquals(1, entityResult.getRecordValues(0).get(HotelServiceExtraDao.ATTR_ID));
 			}
 			
 			@Test
@@ -88,16 +88,16 @@ class HotelServiceExtraServiceTest {
 			void when_queryOnlyWithAllColumns_return_allhotelServiceExtraQueryfromPersonalizedQuery() {
 				HashMap<String, Object> keyMap = new HashMap<>() {
 					{
-						put(HotelServiceExtraDao.ATTR_ID_HSX, 1);
+						put(HotelServiceExtraDao.ATTR_ID, 1);
 					} 
 				};
-				List<String> attrList = Arrays.asList(HotelServiceExtraDao.ATTR_ID_HSX, HotelServiceExtraDao.ATTR_ID_HTL, HotelServiceExtraDao.ATTR_ID_SXT, HotelServiceExtraDao.ATTR_PRECIO);
+				List<String> attrList = Arrays.asList(HotelServiceExtraDao.ATTR_ID, HotelServiceExtraDao.ATTR_ID_HTL, HotelServiceExtraDao.ATTR_ID_SXT, HotelServiceExtraDao.ATTR_PRECIO);
 				
 				doReturn(getSpecificHotelServiceExtraServiceData(keyMap, attrList)).when(daoHelper).query(any(), anyMap(), anyList());
 				EntityResult entityResult = service.hotelServiceExtraQuery(new HashMap<>(), new ArrayList<>());
 				assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
 				assertEquals(1, entityResult.calculateRecordNumber());
-				assertEquals(2, entityResult.getRecordValues(0).get(HotelServiceExtraDao.ATTR_ID_HSX));
+				assertEquals(2, entityResult.getRecordValues(0).get(HotelServiceExtraDao.ATTR_ID));
 			}
 
 			@Test
@@ -106,10 +106,10 @@ class HotelServiceExtraServiceTest {
 				HashMap<String, Object> keyMap = new HashMap<>() {
 
 					{
-						put(HotelServiceExtraDao.ATTR_ID_HSX, 56);
+						put(HotelServiceExtraDao.ATTR_ID, 56);
 					}
 				};
-				List<String> attrList = Arrays.asList(HotelServiceExtraDao.ATTR_ID_HSX, HotelServiceExtraDao.ATTR_ID_HTL, HotelServiceExtraDao.ATTR_ID_SXT, HotelServiceExtraDao.ATTR_PRECIO);
+				List<String> attrList = Arrays.asList(HotelServiceExtraDao.ATTR_ID, HotelServiceExtraDao.ATTR_ID_HTL, HotelServiceExtraDao.ATTR_ID_SXT, HotelServiceExtraDao.ATTR_PRECIO);
 				when(daoHelper.query(any(), anyMap(), anyList())).thenReturn(getSpecificHotelServiceExtraServiceData(keyMap, attrList));
 				EntityResult entityResult = service.hotelServiceExtraQuery(new HashMap<>(), new ArrayList<>());
 				assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
@@ -125,7 +125,7 @@ class HotelServiceExtraServiceTest {
 						put(HotelServiceExtraDao.ATTR_ID_HTL, random);
 					}
 				};
-				List<String> attrList = Arrays.asList(HotelServiceExtraDao.ATTR_ID_HSX, HotelServiceExtraDao.ATTR_ID_HTL, HotelServiceExtraDao.ATTR_ID_SXT, HotelServiceExtraDao.ATTR_PRECIO);
+				List<String> attrList = Arrays.asList(HotelServiceExtraDao.ATTR_ID, HotelServiceExtraDao.ATTR_ID_HTL, HotelServiceExtraDao.ATTR_ID_SXT, HotelServiceExtraDao.ATTR_PRECIO);
 				when(daoHelper.query(any(), anyMap(), anyList())).thenReturn(getSpecificHotelServiceExtraServiceData(keyMap, attrList));
 				EntityResult entityResult = service.hotelServiceExtraQuery(new HashMap<>(), new ArrayList<>());
 				assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
@@ -134,7 +134,7 @@ class HotelServiceExtraServiceTest {
 			}
 
 			public EntityResult getAllhotelServiceExtraData() {
-				List<String> columnList = Arrays.asList(HotelServiceExtraDao.ATTR_ID_HSX, HotelServiceExtraDao.ATTR_ID_HTL, HotelServiceExtraDao.ATTR_ID_SXT, HotelServiceExtraDao.ATTR_PRECIO);
+				List<String> columnList = Arrays.asList(HotelServiceExtraDao.ATTR_ID, HotelServiceExtraDao.ATTR_ID_HTL, HotelServiceExtraDao.ATTR_ID_SXT, HotelServiceExtraDao.ATTR_PRECIO);
 				EntityResult er = new EntityResultMapImpl(columnList);
 				er.addRecord(new HashMap<String, Object>() {
 					{
@@ -173,7 +173,7 @@ class HotelServiceExtraServiceTest {
 				int recordIndex = allData.getRecordIndex(keyValues);
 				@SuppressWarnings("unchecked")
 				HashMap<String, Object> recordValues = (HashMap) allData.getRecordValues(recordIndex);
-				List<String> columnList = Arrays.asList(HotelServiceExtraDao.ATTR_ID_HSX, HotelServiceExtraDao.ATTR_ID_HTL, HotelServiceExtraDao.ATTR_ID_SXT, HotelServiceExtraDao.ATTR_PRECIO);
+				List<String> columnList = Arrays.asList(HotelServiceExtraDao.ATTR_ID, HotelServiceExtraDao.ATTR_ID_HTL, HotelServiceExtraDao.ATTR_ID_SXT, HotelServiceExtraDao.ATTR_PRECIO);
 				EntityResult er = new EntityResultMapImpl(columnList);
 				if (recordValues != null) {
 					er.addRecord(recordValues);
