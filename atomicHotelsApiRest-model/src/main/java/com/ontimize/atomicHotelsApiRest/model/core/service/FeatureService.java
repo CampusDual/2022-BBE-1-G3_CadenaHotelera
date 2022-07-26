@@ -61,18 +61,24 @@ public class FeatureService implements IFeatureService {
 	@Override
 	public EntityResult featureInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 
-		EntityResult resultado = new EntityResultMapImpl();
+		EntityResult resultado = new EntityResultWrong();
 
 		try {
+			List<String> required = new ArrayList<String>() {{
+				add(FeatureDao.ATTR_NAME);
+			}};
+			ControlFields cf = new ControlFields();
+			cf.addBasics(FeatureDao.fields);
+			cf.setRequired(required);
+			cf.validate(attrMap);
 
-			ValidateFields.required(attrMap, HotelDao.ATTR_NAME);
 
 			resultado = this.daoHelper.insert(this.featureDao, attrMap);
 
 			resultado.setMessage("Feature registrada");
 
-		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());
+		} catch (ValidateException e) {
+			resultado = new EntityResultWrong(e.getMessage());
 
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
@@ -88,25 +94,43 @@ public class FeatureService implements IFeatureService {
 	public EntityResult featureUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
 
-		EntityResult resultado = new EntityResultMapImpl();
+		EntityResult resultado = new EntityResultWrong();
 		try {
-			ValidateFields.required(keyMap, FeatureDao.ATTR_ID);
+			
+			//ControlFields del filtro
+			List<String> requiredFilter = new ArrayList<String>() {{
+				add(FeatureDao.ATTR_ID);
+			}};	
+			ControlFields cf = new ControlFields();		
+			cf.addBasics(FeatureDao.fields);
+			cf.setRequired(requiredFilter);
+			cf.setOptional(false);//No será aceptado ningún campo que no esté en required
+			cf.validate(keyMap);	
+			
+			
+			
+			//ControlFields de los nuevos datos
+			List<String> restrictedData = new ArrayList<String>() {{
+				add(FeatureDao.ATTR_ID);//El id no se puede actualizar
+			}};
+			ControlFields cd = new ControlFields();
+			cd.addBasics(FeatureDao.fields);
+			cd.setRestricted(restrictedData);
+			cd.validate(attrMap);
+			
 			resultado = this.daoHelper.update(this.featureDao, attrMap, keyMap);
 			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
 				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
 			} else {
 				resultado.setMessage("Feature actualizada");
 			}
-		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + e.getMessage());
+		} catch (ValidateException e) {
+			resultado = new EntityResultWrong(e.getMessage());
 		} catch (DuplicateKeyException e) {
-			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
 		} catch (DataIntegrityViolationException e) {
-			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
 		} catch (Exception e) {
-			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR);
 		}
 		return resultado;
@@ -117,19 +141,34 @@ public class FeatureService implements IFeatureService {
 
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			ValidateFields.required(keyMap, FeatureDao.ATTR_ID);
+			
+			List<String> required = new ArrayList<String>() {{
+				add(FeatureDao.ATTR_ID);
+			}};
+			ControlFields cf = new ControlFields();
+			cf.addBasics(FeatureDao.fields);
+			cf.setRequired(required);
+			cf.setOptional(false);
+			cf.validate(keyMap);
 
-			EntityResult auxEntity = this.daoHelper.query(this.featureDao,
-					EntityResultTools.keysvalues(FeatureDao.ATTR_ID, keyMap.get(FeatureDao.ATTR_ID)),
+			
+			Map<String, Object> consultaKeyMap = new HashMap<>() { {
+				put(FeatureDao.ATTR_ID, keyMap.get(FeatureDao.ATTR_ID));
+				}
+			};
+			
+			EntityResult auxEntity = featureQuery(consultaKeyMap, 
 					EntityResultTools.attributes(FeatureDao.ATTR_ID));
+			
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
 				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
 			} else {
 				resultado = this.daoHelper.delete(this.featureDao, keyMap);
 				resultado.setMessage("Feature eliminada");
 			}
-		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + e.getMessage());
+			
+		} catch (ValidateException e) {
+			resultado = new EntityResultWrong(e.getMessage());
 		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
 		} catch (Exception e) {
