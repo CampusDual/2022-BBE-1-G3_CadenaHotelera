@@ -111,30 +111,42 @@ public class ServicesXtraService implements IServicesXtraService{
 		return resultado;
 	}
 
-	@Override
+	@Override													//data						//filter
 	public EntityResult servicesXtraUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)	throws OntimizeJEERuntimeException {	//attrMap filtro, keymap nuevo valor a actualizar
 
 		EntityResult resultado = new EntityResultMapImpl();
 	
-	try {
-			
-			ControlFields cf = new ControlFields();
-			List<String> requeridos = new ArrayList<String>() {{
-				add(ServicesXtraDao.ATTR_NAME);
+		try {
+		
+			//ControlFields del filtro
+			List<String> requiredFilter = new ArrayList<String>() {{
+//				add(ServicesXtraDao.ATTR_NAME);
 				add(ServicesXtraDao.ATTR_ID);
-			}};
-			List<String> restricted = new ArrayList<String>() {{
-				add(ServicesXtraDao.ATTR_ID);//No quiero que meta el id porque quiero el id autogenerado de la base de datos
-			}};
-			
+			}};	
+			ControlFields cf = new ControlFields();		
 			cf.addBasics(ServicesXtraDao.fields);
-			cf.setRequired(requeridos);
-			cf.setRestricted(restricted);
-			cf.setOptional(true);//El resto de los campos de fields serán aceptados
-			cf.validate(attrMap);
-
-			resultado = this.daoHelper.insert(this.servicesXtraDao, attrMap);
-			resultado.setMessage("Extra service actualizado");
+			cf.setRequired(requiredFilter);
+			cf.setOptional(false);//No será aceptado ningún campo que no esté en required
+			cf.validate(keyMap);
+			
+			
+			//ControlFields de los nuevos datos
+			List<String> restrictedData = new ArrayList<String>() {{
+				add(ServicesXtraDao.ATTR_ID);//El id no se puede actualizar
+			}};
+			ControlFields cd = new ControlFields();
+			cd.addBasics(ServicesXtraDao.fields);
+			cd.setRestricted(restrictedData);
+	//		cd.setOptional(true); //No es necesario ponerlo
+			cd.validate(attrMap);
+			
+			resultado = this.daoHelper.update(this.servicesXtraDao, attrMap, keyMap);
+	
+			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
+				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
+			} else {
+				resultado.setMessage("Servicio extra actualizado");
+			}
 
 		} catch (ValidateException e) {
 			resultado =  new EntityResultWrong(e.getMessage());

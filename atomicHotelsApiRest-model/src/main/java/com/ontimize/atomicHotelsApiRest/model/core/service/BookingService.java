@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IBookingService;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IRoomService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultExtraTools;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
@@ -20,6 +21,7 @@ import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.EntityResultRequiredException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.jee.common.db.SQLStatementBuilder.BasicExpression;
 import com.ontimize.jee.common.db.SQLStatementBuilder.BasicField;
 import com.ontimize.jee.common.db.SQLStatementBuilder.BasicOperator;
@@ -280,13 +282,17 @@ public class BookingService implements IBookingService {
 	@Override
 	public EntityResult bookingDaysUnitaryRoomPriceQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException{
 
-		EntityResult resultado = new EntityResultMapImpl();
-		try {		
+		EntityResult resultado = new EntityResultWrong();
+		try {	
+			ControlFields cf = new ControlFields();
+//			cf.addBasics(BookingDao.fields); //Pendiente			
 			ValidateFields.required(keyMap, BookingDao.ATTR_ID);
 			resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryDiasPrecioUnitarioHabitacion");
 
-		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(ErrorMessage.RESULT_REQUIRED+e.getMessage());
+		} catch (ValidateException e) {
+			resultado = new EntityResultWrong(e.getMessage());
+		}catch(Exception e) {
+			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}
 		return resultado;
 	}

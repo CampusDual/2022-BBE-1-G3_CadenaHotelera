@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import javax.sound.midi.SysexMessage;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -14,7 +16,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsExcepti
 import com.ontimize.atomicHotelsApiRest.api.core.service.IBookingServiceExtraService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingServiceExtraDao;
-
+import com.ontimize.atomicHotelsApiRest.model.core.dao.ReceiptDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
@@ -23,6 +25,8 @@ import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
 import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
+
+import ch.qos.logback.core.recovery.ResilientSyslogOutputStream;
 
 
 @Service("BookingServiceExtraService")
@@ -34,6 +38,10 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
+	
+	@Autowired
+	private BookingService bookingService;
+	
 
 	public EntityResult bookingServiceExtraQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
@@ -46,25 +54,29 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 	// Registra el servicio si la reserva esta activa en progreso.
 	public EntityResult bookingServiceExtraInsert(Map<String, Object> attrMap)
 			throws OntimizeJEERuntimeException, MissingFieldsException {
-
+		
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-
 			ValidateFields.required(attrMap, BookingServiceExtraDao.ATTR_ID_SXT, BookingServiceExtraDao.ATTR_ID_BKG,
 					BookingServiceExtraDao.ATTR_ID_UNITS);
-			ValidateFields.formatprice(attrMap.get(BookingServiceExtraDao.ATTR_PRECIO));
-			List<String> columns = Arrays.asList("bsx_id");
-			EntityResult inProgress = bookingInProgressQuery(null, columns);
-
-			if (((List<Integer>) inProgress.get(BookingDao.ATTR_ID))
-					.contains(attrMap.get(BookingServiceExtraDao.ATTR_ID_BKG))) {
-				resultado = this.daoHelper.insert(this.bookingServiceExtraDao, attrMap);
-				resultado.setMessage(
-						"Reserva " + attrMap.get(BookingServiceExtraDao.ATTR_ID_BKG) + " Service Extra registrado");
-			} else {
-				resultado.setMessage("Esta reserva no es valida para registar el servicio");
+			//Este validador hace que falle.
+//			ValidateFields.formatprice(attrMap.get(BookingServiceExtraDao.ATTR_PRECIO));
+			if(bookingService.getBookingStatus(attrMap.get(bookingServiceExtraDao.ATTR_ID_BKG))
+					.equals(BookingDao.Status.CANCELED)) {
+				resultado.setMessage("La reserva esta cancelada, no se pueden añadir servicios extra.");
+			}else if(bookingService.getBookingStatus(attrMap.get(bookingServiceExtraDao.ATTR_ID_BKG))
+					.equals(BookingDao.Status.COMPLETED)) {
+				resultado.setMessage("La reserva esta completada, no se pueden añadir servicios extra");
+			}else if(bookingService.getBookingStatus(attrMap.get(bookingServiceExtraDao.ATTR_ID_BKG))
+					.equals(BookingDao.Status.IN_PROGRESS)) {
+				System.err.println("hola");
+				resultado = this.daoHelper.insert(this.bookingServiceExtraDao, attrMap);// en progreso añadimos servicio extra
+				System.err.println(resultado);
+				resultado.setMessage("Servicio extra registrado");
+			}else if(bookingService.getBookingStatus(attrMap.get(bookingServiceExtraDao.ATTR_ID_BKG))
+					.equals(BookingDao.Status.IN_PROGRESS)) {
+				resultado.setMessage("La reserva esta confirmada, no se pueden añadir servicios extra.");
 			}
-
 		} catch (NumberFormatException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());
 		} catch (MissingFieldsException e) {
@@ -89,26 +101,38 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public EntityResult bookingServiceExtraDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
-
-		EntityResult resultado = new EntityResultMapImpl();
-		try {
-			ValidateFields.required(keyMap, BookingServiceExtraDao.ATTR_ID_BKGHSX, BookingServiceExtraDao.ATTR_ID_BKG);
-			List<String> columns = Arrays.asList("bsx_id");
-			EntityResult inProgress = bookingInProgressQuery(null, columns);
-
-			if (((List<Integer>) inProgress.get(BookingDao.ATTR_ID)).contains(keyMap.get(BookingServiceExtraDao.ATTR_ID_BKG))) {
-				EntityResult auxEntity = this.daoHelper.query(this.bookingServiceExtraDao, EntityResultTools.keysvalues(BookingServiceExtraDao.ATTR_ID_BKGHSX, keyMap.get(BookingServiceExtraDao.ATTR_ID_BKGHSX)),
-						EntityResultTools.attributes(BookingServiceExtraDao.ATTR_ID_BKGHSX));
-				if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
-					resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
-				} else {
-					resultado = this.daoHelper.delete(this.bookingServiceExtraDao, keyMap);
-					resultado.setMessage(
-							" Servicio " + keyMap.get(BookingServiceExtraDao.ATTR_ID_BKGHSX) + "  Extra eliminado.");
+			
+		
+//TODO revisar, comentado porque da error
+//			EntityResult auxEntity = this.daoHelper.query(this.bookingServiceExtraDao,
+//					EntityResultTools.keysvalues(ReceiptDao.ATTR_ID, keyMap.get(ReceiptDao.ATTR_ID)),
+//					EntityResultTools.attributes(ReceiptDao.ATTR_ID));
+//			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
+//				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
+//			} else {
+//				resultado = this.daoHelper.delete(this.receiptDao, keyMap);
+//				resultado.setMessage("Receipt eliminada");
+//			}
+			
+			EntityResult resultado = new EntityResultMapImpl();
+			try {
+				ValidateFields.required(keyMap,BookingServiceExtraDao.ATTR_ID_BKGHSX);
+		
+				if(bookingService.getBookingStatus(keyMap.get(bookingServiceExtraDao.ATTR_ID_BKG))
+						.equals(BookingDao.Status.CANCELED)) {
+					resultado.setMessage("La reserva de este servicio esta cancelada no se pueden eliminar.");
+				}else if(bookingService.getBookingStatus(keyMap.get(bookingServiceExtraDao.ATTR_ID_BKG))
+						.equals(BookingDao.Status.COMPLETED)) {
+					resultado.setMessage("La reserva de este servicio esta completada no se se pueden eliminar.");
+				}else if(bookingService.getBookingStatus(keyMap.get(bookingServiceExtraDao.ATTR_ID_BKG))
+						.equals(BookingDao.Status.IN_PROGRESS)) {
+					System.err.println("eliminando");
+					resultado = this.daoHelper.delete(this.bookingServiceExtraDao, keyMap); //eliminamos servicio extra.
+					resultado.setMessage(" Servicio " + keyMap.get(BookingServiceExtraDao.ATTR_ID_BKGHSX) + "  Extra eliminado.");
+				}else if(bookingService.getBookingStatus(keyMap.get(bookingServiceExtraDao.ATTR_ID_BKG))
+						.equals(BookingDao.Status.CONFIRMED)) {
+					resultado.setMessage("La Reserva esta confirmada no se puede eliminar servicios extra.");
 				}
-			}else {
-				resultado.setMessage("Reserva no esta activa el servicio no se puede eliminar.");
-			}
 		} catch (MissingFieldsException e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + e.getMessage());
 		} catch (DataIntegrityViolationException e) {
