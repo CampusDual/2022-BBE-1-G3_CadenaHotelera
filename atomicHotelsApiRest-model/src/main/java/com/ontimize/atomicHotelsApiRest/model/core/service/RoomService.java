@@ -1,5 +1,6 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,15 +19,19 @@ import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IBookingService;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IRoomService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomTypeDao;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultExtraTools;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.TypeCodes.type;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.EntityResultRequiredException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
 import com.ontimize.jee.common.tools.EntityResultTools;
@@ -39,27 +44,92 @@ public class RoomService implements IRoomService {
 	private RoomDao roomDao;
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
-	@Autowired
-	IBookingService bookingService;
+//	@Autowired
+//	IBookingService bookingService;
 
 	@Override
 	public EntityResult roomQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
-		EntityResult resultado = this.daoHelper.query(this.roomDao, keyMap, attrList, "queryEnabledRooms");
+		
+		EntityResult resultado = new EntityResultWrong();
+
+		try {
+			
+			//Control del filtro
+			ControlFields cf = new ControlFields();
+			cf.addBasics(RoomDao.fields);
+//			cf.setOptional(true);//El resto de los campos de fields serán aceptados, por defecto true			
+			cf.validate(keyMap);
+			
+			cf.validate(attrList);//reutilizamos los mismos criterios para validar attrList						
+			resultado = this.daoHelper.query(this.roomDao, keyMap, attrList);
+
+		} catch (ValidateException e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(e.getMessage());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.ERROR);
+		}
 		return resultado;
 	}
 
+	
+/*	@Override
+	public EntityResult roomInfoQuery(Map<String, Object> keysValues, List<String> attrList) {
+		EntityResult queryRes = this.daoHelper.query(this.roomDao,
+				EntityResultTools.keysvalues(RoomDao.ATTR_ID, keysValues.get(RoomDao.ATTR_ID)),
+				EntityResultTools.attributes(RoomDao.ATTR_ID, RoomDao.ATTR_HOTEL_ID, RoomDao.ATTR_NUMBER,
+						RoomDao.ATTR_SQUARE_METERS, RoomDao.ATTR_ROOM_TYPE_ID, RoomDao.ATTR_STATUS),
+				"queryInfoRooms");
+		return queryRes;
+	}
+*/
+	
+/*
 	@Override
-	public EntityResult roomInfoQuery(Map<String, Object> keyMap, List<String> attrList)
+	public EntityResult roomInfoQuery(Map<String, Object> keysValues, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = this.daoHelper.query(this.roomDao, keyMap, attrList, "queryInfoRooms");
 		return resultado;
 	}
-
+*/
 	@Override
 	public EntityResult roomInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
-		
-		EntityResult resultado = new EntityResultMapImpl();
+
+		EntityResult resultado = new EntityResultWrong();
+		try {
+			
+			ControlFields cf = new ControlFields();
+			List<String> required = new ArrayList<String>() {{
+				add(RoomDao.ATTR_ID);
+				add(RoomDao.ATTR_HOTEL_ID);
+				add(RoomDao.ATTR_NUMBER);
+			}};
+			List<String> restricted = new ArrayList<String>() {{
+				add(HotelDao.ATTR_ID);//No quiero que meta el id porque quiero el id autogenerado de la base de datos
+			}};
+			
+			cf.addBasics(HotelDao.fields);
+			cf.setRequired(required);
+			cf.setRestricted(restricted);
+//			cf.setOptional(true);//El resto de los campos de fields serán aceptados. No es neceario ponerlo
+			cf.validate(attrMap);		
+
+			resultado = this.daoHelper.insert(this.roomDao, attrMap);
+			resultado.setMessage("Registered room");
+
+		} catch (ValidateException e) {
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());
+		} catch (DuplicateKeyException e) {
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+		}catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
+		}
+
+/*		EntityResult resultado = new EntityResultMapImpl();
 		try {
 			ValidateFields.required(attrMap, RoomDao.ATTR_HOTEL_ID, RoomDao.ATTR_NUMBER);
 
@@ -76,15 +146,65 @@ public class RoomService implements IRoomService {
 		} catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
 		}
-
+*/
 		return resultado;
 	}
 
-	@Override
+	@Override											//data						//filter
 	public EntityResult roomUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
 		
-		EntityResult resultado = new EntityResultMapImpl();
+		EntityResult resultado = new EntityResultWrong();
+		try {
+			
+			//ControlFields del filtro
+			List<String> requiredFilter = new ArrayList<String>() {{
+				add(RoomDao.ATTR_ID);
+			}};	
+			ControlFields cf = new ControlFields();		
+			cf.addBasics(RoomDao.fields);
+			cf.setRequired(requiredFilter);
+			cf.setOptional(false);//No será aceptado ningún campo que no esté en required
+			cf.validate(keyMap);	
+			
+			
+			
+			//ControlFields de los nuevos datos
+			List<String> restrictedData = new ArrayList<String>() {{
+				add(RoomDao.ATTR_ID);//El id no se puede actualizar
+			}};
+			ControlFields cd = new ControlFields();
+			cd.addBasics(RoomDao.fields);
+			cd.setRestricted(restrictedData);
+//			cd.setOptional(true); //No es necesario ponerlo
+			cd.validate(attrMap);
+			
+
+			resultado = this.daoHelper.update(this.roomDao, attrMap, keyMap);
+			
+			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
+				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
+			} else {
+				resultado.setMessage("Updated room");
+			}
+			
+		} catch (ValidateException e) {
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + " - " + e.getMessage());
+		} catch (DuplicateKeyException e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
+		} catch (DataIntegrityViolationException e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR);
+		}
+		return resultado;
+	}
+
+		
+/*		EntityResult resultado = new EntityResultMapImpl();
 		try {
 			ValidateFields.required(keyMap, RoomDao.ATTR_ID);
 			resultado = this.daoHelper.update(this.roomDao, attrMap, keyMap);
@@ -104,11 +224,50 @@ public class RoomService implements IRoomService {
 		}
 		return resultado; 
 	}
-
+*/
+		
 	@Override
 	public EntityResult roomDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
+	
+		EntityResult resultado = new EntityResultWrong();
+		try {
+			List<String> required = new ArrayList<String>() {{
+				add(RoomDao.ATTR_ID);
+			}};
+			ControlFields cf = new ControlFields();
+			cf.addBasics(RoomDao.fields);
+			cf.setRequired(required);
+			cf.setOptional(false);
+			cf.validate(keyMap);
+
+			
+			Map<String, Object> consultaKeyMap = new HashMap<>() { {
+				put(RoomDao.ATTR_ID, keyMap.get(RoomDao.ATTR_ID));
+				}
+			};
+			
+			EntityResult auxEntity = roomQuery(consultaKeyMap, 
+					EntityResultTools.attributes(RoomDao.ATTR_ID));
+			
+			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
+				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
+			} else {
+				resultado = this.daoHelper.delete(this.roomDao, keyMap);
+				resultado.setMessage("Deleted room");
+			}
+
+		} catch (ValidateException e) {
+			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + e.getMessage());
+		} catch (DataIntegrityViolationException e) {
+			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR);
+		}
+		return resultado;
+	}
 		
-		EntityResult resultado = new EntityResultMapImpl();
+/*		EntityResult resultado = new EntityResultMapImpl();
 		try {
 			ValidateFields.required(keyMap, RoomDao.ATTR_ID);
 
@@ -131,7 +290,7 @@ public class RoomService implements IRoomService {
 
 		return resultado;
 	}
-
+*/
 	@Override
 	public EntityResult roomsUnbookedInRangeQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {

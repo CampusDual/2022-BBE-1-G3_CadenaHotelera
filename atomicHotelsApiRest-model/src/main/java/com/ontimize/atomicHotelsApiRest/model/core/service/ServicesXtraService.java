@@ -49,7 +49,7 @@ public class ServicesXtraService implements IServicesXtraService{
 	public EntityResult servicesXtraQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 
-		EntityResult resultado = new EntityResultMapImpl();
+		EntityResult resultado = new EntityResultWrong();
 
 		try {
 
@@ -79,7 +79,7 @@ public class ServicesXtraService implements IServicesXtraService{
 	@Override
 	public EntityResult servicesXtraInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 
-		EntityResult resultado = new EntityResultMapImpl();
+		EntityResult resultado = new EntityResultWrong();
 		try {
 			
 			ControlFields cf = new ControlFields();
@@ -114,7 +114,7 @@ public class ServicesXtraService implements IServicesXtraService{
 	@Override													//data						//filter
 	public EntityResult servicesXtraUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)	throws OntimizeJEERuntimeException {	//attrMap filtro, keymap nuevo valor a actualizar
 
-		EntityResult resultado = new EntityResultMapImpl();
+		EntityResult resultado = new EntityResultWrong();
 	
 		try {
 		
@@ -163,7 +163,7 @@ public class ServicesXtraService implements IServicesXtraService{
 	@Override
 	public EntityResult servicesXtraDelete(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {			//El filtro del where del postman		
 		
-		EntityResult resultado = new EntityResultMapImpl();
+		EntityResult resultado = new EntityResultWrong();
 
 		try {
 			
