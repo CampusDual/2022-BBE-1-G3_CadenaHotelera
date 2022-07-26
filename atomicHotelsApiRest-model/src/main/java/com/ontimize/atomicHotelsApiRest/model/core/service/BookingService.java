@@ -296,5 +296,23 @@ public class BookingService implements IBookingService {
 		}
 		return resultado;
 	}
+	
+	@Override
+	public EntityResult bookingsHotelsQuery (Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException{
+		EntityResult resultado = new EntityResultWrong();
+		try {	
+			ControlFields cf = new ControlFields();
+//			cf.addBasics(BookingDao.fields); //Pendiente			
+			ValidateFields.required(keyMap, BookingDao.ATTR_ID);
+			resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryBookingsHotel");
+
+		} catch (ValidateException e) {
+			resultado = new EntityResultWrong(e.getMessage());
+		}catch(Exception e) {
+			resultado = new EntityResultWrong(ErrorMessage.ERROR);
+		}
+		return resultado;
+	}
+
 
 }

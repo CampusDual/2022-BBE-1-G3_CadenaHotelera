@@ -46,6 +46,19 @@ catalog="" schema="${mainschema}" table="bookings" datasource="mainDataSource" s
      #WHERE#
    ]]>
    </Sentence>
-  </Query>		
+  </Query>			
+  <Query id="queryBookingsHotel">
+			<Sentence>
+				<![CDATA[
+				    SELECT
+				     	#COLUMNS#
+				    FROM
+				     	bookings
+				   	LEFT JOIN rooms ON rm_id = bkg_rm_id
+				   	LEFT JOIN hotels ON rm_htl_id=htl_id
+				    #WHERE#				    
+			    ]]>
+			</Sentence>
+		</Query>	
 	</Queries>			
 </JdbcEntitySetup>

@@ -1,5 +1,6 @@
 package com.ontimize.atomicHotelsApiRest.model.core.tools;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -177,6 +178,12 @@ public class ControlFields {
 					if ((keyMap.get(key) instanceof String)) {
 						System.err.println("TODO - comprobar....");
 						keyMap.replace(key, ValidateFields.stringToDate((String) keyMap.get(key)));
+						validType = true;
+					}
+					break;
+				case DATETIME://Comprobar!!!
+					if ((keyMap.get(key) instanceof LocalDateTime)) {
+						System.err.println("TODO - comprobar....");
 						validType = true;
 					}
 					break;
