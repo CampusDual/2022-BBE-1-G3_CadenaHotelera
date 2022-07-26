@@ -103,13 +103,8 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 			
 		
 		
-		EntityResult resultado = new EntityResultMapImpl();
-		try {
-			ValidateFields.required(keyMap, ReceiptDao.ATTR_ID);
-			ValidateFields.onlyThis(keyMap, ReceiptDao.ATTR_ID);
-			ValidateFields.isInt(keyMap, ReceiptDao.ATTR_ID);
 
-			EntityResult auxEntity = this.daoHelper.query(this.receiptDao,
+			EntityResult auxEntity = this.daoHelper.query(this.bookingServiceExtraDao,
 					EntityResultTools.keysvalues(ReceiptDao.ATTR_ID, keyMap.get(ReceiptDao.ATTR_ID)),
 					EntityResultTools.attributes(ReceiptDao.ATTR_ID));
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
