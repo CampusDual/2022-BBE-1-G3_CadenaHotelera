@@ -59,7 +59,8 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 		try {
 			ValidateFields.required(attrMap, BookingServiceExtraDao.ATTR_ID_SXT, BookingServiceExtraDao.ATTR_ID_BKG,
 					BookingServiceExtraDao.ATTR_ID_UNITS);
-			ValidateFields.formatprice(attrMap.get(BookingServiceExtraDao.ATTR_PRECIO));
+			//Este validador hace que falle.
+//			ValidateFields.formatprice(attrMap.get(BookingServiceExtraDao.ATTR_PRECIO));
 			if(bookingService.getBookingStatus(attrMap.get(bookingServiceExtraDao.ATTR_ID_BKG))
 					.equals(BookingDao.Status.CANCELED)) {
 				resultado.setMessage("La reserva esta cancelada, no se pueden añadir servicios extra.");

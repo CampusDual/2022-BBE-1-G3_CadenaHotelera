@@ -13,6 +13,7 @@ import org.springframework.jdbc.SQLWarningException;
 import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IFeatureService;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
@@ -21,14 +22,15 @@ import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.FeatureDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
 
 @Service("FeatureService")
 @Lazy
-public class FeatureService implements IFeatureService{
-	
+public class FeatureService implements IFeatureService {
+
 	@Autowired
 	private FeatureDao featureDao;
 	@Autowired
@@ -37,26 +39,41 @@ public class FeatureService implements IFeatureService{
 	@Override
 	public EntityResult featureQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
-		EntityResult resultado = this.daoHelper.query(this.featureDao, keyMap, attrList);
+		
+		EntityResult resultado = new EntityResultWrong();
+		try {
+
+			ControlFields cf = new ControlFields();
+			cf.addBasics(FeatureDao.fields);
+			cf.validate(keyMap);
+
+			cf.validate(attrList);
+
+			resultado = this.daoHelper.query(this.featureDao, keyMap, attrList);
+		} catch (ValidateException e) {
+			resultado = new EntityResultWrong(e.getMessage());
+		} catch (Exception e) {
+			resultado = new EntityResultWrong(ErrorMessage.ERROR);
+		}
 		return resultado;
 	}
 
 	@Override
 	public EntityResult featureInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
-		
+
 		EntityResult resultado = new EntityResultMapImpl();
 
 		try {
 
 			ValidateFields.required(attrMap, HotelDao.ATTR_NAME);
-			
+
 			resultado = this.daoHelper.insert(this.featureDao, attrMap);
 
 			resultado.setMessage("Feature registrada");
 
 		} catch (MissingFieldsException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());
-			
+
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 
@@ -70,7 +87,7 @@ public class FeatureService implements IFeatureService{
 	@Override
 	public EntityResult featureUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
-		
+
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
 			ValidateFields.required(keyMap, FeatureDao.ATTR_ID);
@@ -92,12 +109,12 @@ public class FeatureService implements IFeatureService{
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR);
 		}
-		return resultado; 
+		return resultado;
 	}
 
 	@Override
 	public EntityResult featureDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
-		
+
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
 			ValidateFields.required(keyMap, FeatureDao.ATTR_ID);
