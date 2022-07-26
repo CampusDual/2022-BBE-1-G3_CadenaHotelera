@@ -24,7 +24,7 @@ public class HotelServiceExtraDao extends OntimizeJdbcDaoSupport {
 		public static final Map<String,type> fields = new HashMap<>() {{
 			put(ATTR_ID,type.INTEGER);
 			put(ATTR_ID_HTL,type.INTEGER);
-			put(ATTR_ID_HTL,type.INTEGER);
+			put(ATTR_ID_SXT,type.INTEGER);
 			put(ATTR_PRECIO,type.PRICE);				
 		}};
 }
