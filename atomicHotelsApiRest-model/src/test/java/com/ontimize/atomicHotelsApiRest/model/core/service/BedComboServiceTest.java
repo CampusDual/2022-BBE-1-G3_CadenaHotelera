@@ -50,11 +50,8 @@ public class BedComboServiceTest {
 
 	@Autowired
 	BedComboDao bedComboDao;
-	@Autowired
-	ValidateFields vf;
 
-	// @Mock/@Autowired/@InjectMocks
-	MissingFieldsException e;
+
 	
 	@Nested
 	@DisplayName("Test for bedcombo queries")
@@ -62,12 +59,27 @@ public class BedComboServiceTest {
 	public class BedComboQuery { 
 
 		@Test
-		@DisplayName("Obtain all data from Bedcombo table")
+		@DisplayName("Valores de entrada válidos")
 		void when_queryOnlyWithAllColumns_return_allBedComboData() {
-			doReturn(getAllBedComboData()).when(daoHelper).query(any(), anyMap(), anyList());
-			EntityResult entityResult = service.bedComboQuery(new HashMap<>(), new ArrayList<>());
+			
+			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
+			
+			EntityResult entityResult = service.bedComboQuery(new HashMap<>(), new ArrayList<>(){{
+			add(BedComboDao.ATTR_NAME);	
+			}
+			});
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-			assertEquals(3, entityResult.calculateRecordNumber());
+			
+			entityResult=service.bedComboQuery(new HashMap<>(){
+				{
+				put(BedComboDao.ATTR_ID,1);
+			};
+				},new ArrayList<>() {
+					{
+				add(BedComboDao.ATTR_NAME);
+			};
+					});
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL,entityResult.getCode());
 		}
 
 		@Test
@@ -78,7 +90,8 @@ public class BedComboServiceTest {
 					put(BedComboDao.ATTR_ID, 2);
 				}
 			};
-			List<String> attrList = Arrays.asList(BedComboDao.ATTR_ID, BedComboDao.ATTR_NAME, BedComboDao.ATTR_SLOTS);
+			List<String> attrList = Arrays.asList(BedComboDao.ATTR_ID, BedComboDao.ATTR_NAME,
+					BedComboDao.ATTR_SLOTS);
 			doReturn(getSpecificBedComboData(keyMap, attrList)).when(daoHelper).query(any(), anyMap(), anyList());
 			EntityResult entityResult = service.bedComboQuery(new HashMap<>(), new ArrayList<>());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());

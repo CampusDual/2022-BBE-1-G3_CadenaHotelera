@@ -38,7 +38,7 @@ public class BedComboService implements IBedComboService{
 	@Override 
 	public EntityResult bedComboQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
-		EntityResult resultado=new EntityResultMapImpl();
+		EntityResult resultado=new EntityResultWrong();
 		try {
 		ControlFields controllerFilterandColumns =new ControlFields();
 		controllerFilterandColumns.addBasics(BedComboDao.fields);
@@ -57,7 +57,7 @@ public class BedComboService implements IBedComboService{
 	 
 	@Override
 	public EntityResult bedComboInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
-		EntityResult resultado = new EntityResultMapImpl();
+		EntityResult resultado = new EntityResultWrong();
 		try {			
 			ControlFields controllerData=new ControlFields();
 			controllerData.addBasics(BedComboDao.fields);
@@ -97,7 +97,7 @@ public class BedComboService implements IBedComboService{
 	@Override
 	public EntityResult bedComboUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
-			EntityResult resultado=new EntityResultMapImpl();
+			EntityResult resultado=new EntityResultWrong();
 		try {
 			ControlFields controllerFilter =new ControlFields();
 			controllerFilter.addBasics(BedComboDao.fields);
@@ -147,7 +147,7 @@ public class BedComboService implements IBedComboService{
 
 	@Override
 	public EntityResult bedComboDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
-		EntityResult resultado=new EntityResultMapImpl();
+		EntityResult resultado=new EntityResultWrong();
 		try {
 			ControlFields ControllerFilter=new ControlFields();
 			ControllerFilter.addBasics(BedComboDao.fields);

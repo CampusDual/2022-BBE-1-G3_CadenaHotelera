@@ -39,7 +39,7 @@ public class CustomerCreditCardService implements ICustomerCreditCardService{
 	@Override
 	public EntityResult customerCreditCardQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
-		EntityResult resultado=new EntityResultMapImpl();
+		EntityResult resultado=new EntityResultWrong();
 		try {
 		ControlFields controllerFilterandColumns=new ControlFields();	
 		controllerFilterandColumns.addBasics(CustomerCreditCardDao.fields);
@@ -60,7 +60,7 @@ public class CustomerCreditCardService implements ICustomerCreditCardService{
 	@Override
 	public EntityResult customerCreditCardInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException { 
 		
-		EntityResult resultado = new EntityResultMapImpl();
+		EntityResult resultado = new EntityResultWrong();
 		try {
 			ControlFields controllerData=new ControlFields();
 			controllerData.addBasics(CustomerCreditCardDao.fields);
@@ -92,7 +92,7 @@ public class CustomerCreditCardService implements ICustomerCreditCardService{
 
 	@Override
 	public EntityResult customerCreditCardDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
-		EntityResult resultado = new EntityResultMapImpl();
+		EntityResult resultado = new EntityResultWrong();
 		try {
 			ControlFields ControllerFilter=new ControlFields();
 			ControllerFilter.addBasics(CustomerCreditCardDao.fields);
