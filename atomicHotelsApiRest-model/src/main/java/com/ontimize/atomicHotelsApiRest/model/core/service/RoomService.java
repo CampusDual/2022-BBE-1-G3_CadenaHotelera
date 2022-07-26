@@ -85,7 +85,7 @@ public class RoomService implements IRoomService {
 	}
 
 	
-/*	@Override
+	@Override
 	public EntityResult roomInfoQuery(Map<String, Object> keysValues, List<String> attrList) {
 		EntityResult queryRes = this.daoHelper.query(this.roomDao,
 				EntityResultTools.keysvalues(RoomDao.ATTR_ID, keysValues.get(RoomDao.ATTR_ID)),
@@ -94,7 +94,7 @@ public class RoomService implements IRoomService {
 				"queryInfoRooms");
 		return queryRes;
 	}
-*/
+
 	
 /*
 	@Override
