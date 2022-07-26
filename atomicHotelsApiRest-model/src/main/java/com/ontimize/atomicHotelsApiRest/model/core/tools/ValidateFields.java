@@ -3,6 +3,9 @@ package com.ontimize.atomicHotelsApiRest.model.core.tools;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -192,7 +195,7 @@ public class ValidateFields {
 	 */
 	public static int dataRange(Date startDate, Date endDate) throws InvalidFieldsValuesException {
 		if (startDate.compareTo(endDate) < 0) {
-			if (startDate.compareTo(new Date()) < 0) {
+			if (startDate.compareTo(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())) < 0) {
 				return 1;
 			}
 			return 0;

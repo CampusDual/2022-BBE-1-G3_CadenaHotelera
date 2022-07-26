@@ -19,7 +19,7 @@ public class ControlFields {
 	private List<String> restricted = null;
 	private List<String> required = null;
 	private boolean optional = true;
-	private boolean noEmptyList = true;
+	private boolean noEmptyList = true; //solo para las Listas no los HashMap
 	private boolean noWildcard = true;
 
 	public ControlFields() {

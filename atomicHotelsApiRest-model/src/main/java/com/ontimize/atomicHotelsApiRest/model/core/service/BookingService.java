@@ -232,6 +232,12 @@ public class BookingService implements IBookingService {
 //		
 //	}
 //	
+	/**
+	 * Para obtener el estado un de una reserva
+	 * @param bookingId  Id de la reserva (Object)
+	 * @return BookigDao.Status (enum estado)
+	 * @throws EntityResultRequiredException Si da error al hacer la consulta
+	 */
 	public BookingDao.Status getBookingStatus(Object bookingId) throws EntityResultRequiredException {
 		Map<String, Object> keyMap = new HashMap<>();
 		keyMap.put(BookingDao.ATTR_ID, bookingId);

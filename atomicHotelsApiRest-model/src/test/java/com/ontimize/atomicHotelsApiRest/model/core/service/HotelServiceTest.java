@@ -53,11 +53,11 @@ class HotelServiceTest {
 
 	@Autowired
 	HotelDao hotelDao;
-	@Autowired
-	ValidateFields vf;
+	
+//	@Autowired
+//	ValidateFields vf;
 
-	// @Mock/@Autowired/@InjectMocks
-	MissingFieldsException e;
+	
  
 	@Nested
 	@DisplayName("Test for Hotel queries")
@@ -65,14 +65,29 @@ class HotelServiceTest {
 	public class HotelQuery {
 
 		@Test
-		@DisplayName("Obtain all data from Hotel table")
+		@DisplayName("Valores de entrada válidos")
 		void when_queryOnlyWithAllColumns_return_allHotelsData() {
-			doReturn(getAllHotelsData()).when(daoHelper).query(any(), anyMap(), anyList());
-			EntityResult entityResult = service.hotelQuery(new HashMap<>(), new ArrayList<>());
+			
+//			doReturn(getAllHotelsData()).when(daoHelper).query(any(), anyMap(), anyList());			
+			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());			
+			
+			EntityResult entityResult = service.hotelQuery(new HashMap<>(), new ArrayList<>() {{
+				add(HotelDao.ATTR_NAME);
+			}});
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-			assertEquals(3, entityResult.calculateRecordNumber());
+			
+			
+			entityResult = service.hotelQuery(new HashMap<>() {{
+				put(HotelDao.ATTR_ID,1);
+			}}, new ArrayList<>() {{
+				add(HotelDao.ATTR_NAME);
+			}});
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
+//			assertEquals(3, entityResult.calculateRecordNumber());
 		}
 
+		
+		
 		@Test
 		@DisplayName("Obtain all data columns from hotels table when htl_id is -> 2")
 		void when_queryAllColumns_return_specificData() {
