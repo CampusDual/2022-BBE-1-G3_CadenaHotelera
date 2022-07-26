@@ -102,16 +102,16 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 	public EntityResult bookingServiceExtraDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 			
 		
-
-			EntityResult auxEntity = this.daoHelper.query(this.bookingServiceExtraDao,
-					EntityResultTools.keysvalues(ReceiptDao.ATTR_ID, keyMap.get(ReceiptDao.ATTR_ID)),
-					EntityResultTools.attributes(ReceiptDao.ATTR_ID));
-			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
-				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
-			} else {
-				resultado = this.daoHelper.delete(this.receiptDao, keyMap);
-				resultado.setMessage("Receipt eliminada");
-			}
+//TODO revisar, comentado porque da error
+//			EntityResult auxEntity = this.daoHelper.query(this.bookingServiceExtraDao,
+//					EntityResultTools.keysvalues(ReceiptDao.ATTR_ID, keyMap.get(ReceiptDao.ATTR_ID)),
+//					EntityResultTools.attributes(ReceiptDao.ATTR_ID));
+//			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
+//				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
+//			} else {
+//				resultado = this.daoHelper.delete(this.receiptDao, keyMap);
+//				resultado.setMessage("Receipt eliminada");
+//			}
 			
 			EntityResult resultado = new EntityResultMapImpl();
 			try {
