@@ -94,7 +94,7 @@ public class HotelServiceService implements IHotelServiceService {
 					add(HotelServiceDao.ATTR_ID_SRV);
 				}
 			};
-			cf.addBasics(HotelDao.fields);
+			cf.addBasics(HotelServiceDao.fields);
 			cf.setRequired(required);
 			cf.setOptional(false);
 			cf.validate(attrMap);
@@ -128,7 +128,7 @@ public class HotelServiceService implements IHotelServiceService {
 				}
 			};
 			ControlFields cf = new ControlFields();
-			cf.addBasics(HotelDao.fields);
+			cf.addBasics(HotelServiceDao.fields);
 			cf.setRequired(required);
 			cf.setOptional(false);
 			cf.validate(keyMap);
@@ -140,7 +140,7 @@ public class HotelServiceService implements IHotelServiceService {
 				}
 			};
 
-			EntityResult auxEntity = hotelServiceQuery(consultaKeyMap, EntityResultTools.attributes(HotelDao.ATTR_ID));
+			EntityResult auxEntity = hotelServiceQuery(consultaKeyMap, EntityResultTools.attributes(HotelServiceDao.ATTR_ID_HTL,HotelServiceDao.ATTR_ID_SRV));
 
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
 				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);

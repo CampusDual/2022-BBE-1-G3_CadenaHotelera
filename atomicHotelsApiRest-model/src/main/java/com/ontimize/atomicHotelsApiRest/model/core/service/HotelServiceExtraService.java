@@ -108,7 +108,7 @@ public class HotelServiceExtraService implements IHotelServiceExtraService {
 				add(HotelServiceExtraDao.ATTR_ID);
 			}};	
 			ControlFields cf = new ControlFields();		
-			cf.addBasics(HotelDao.fields);
+			cf.addBasics(HotelServiceExtraDao.fields);
 			cf.setRequired(requiredFilter);
 			cf.setOptional(false);//No será aceptado ningún campo que no esté en required
 			cf.validate(keyMap);	

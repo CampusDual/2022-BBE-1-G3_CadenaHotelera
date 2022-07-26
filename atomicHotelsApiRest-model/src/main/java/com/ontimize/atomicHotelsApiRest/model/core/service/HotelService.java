@@ -45,7 +45,6 @@ public class HotelService implements IHotelService {
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
 
-
 	@Override
 	public EntityResult hotelQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
@@ -53,15 +52,15 @@ public class HotelService implements IHotelService {
 		EntityResult resultado = new EntityResultWrong();
 
 		try {
-			
-			//Control del filtro
+
+			// Control del filtro
 			ControlFields cf = new ControlFields();
 			cf.addBasics(HotelDao.fields);
 //			cf.setOptional(true);//El resto de los campos de fields serán aceptados, por defecto true			
 			cf.validate(keyMap);
-			
-			cf.validate(attrList);//reutilizamos los mismos criterios para validar attrList	
-			
+
+			cf.validate(attrList);// reutilizamos los mismos criterios para validar attrList
+
 			resultado = this.daoHelper.query(this.hotelDao, keyMap, attrList);
 
 		} catch (ValidateException e) {
@@ -80,25 +79,30 @@ public class HotelService implements IHotelService {
 
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			
+
 			ControlFields cf = new ControlFields();
-			List<String> required = new ArrayList<String>() {{
-				add(HotelDao.ATTR_NAME);
-				add(HotelDao.ATTR_STREET);
-				add(HotelDao.ATTR_CITY);
-				add(HotelDao.ATTR_CP);
-				add(HotelDao.ATTR_STATE);
-				add(HotelDao.ATTR_COUNTRY);
-			}};
-			List<String> restricted = new ArrayList<String>() {{
-				add(HotelDao.ATTR_ID);//No quiero que meta el id porque quiero el id autogenerado de la base de datos
-			}};
-			
+			List<String> required = new ArrayList<String>() {
+				{
+					add(HotelDao.ATTR_NAME);
+					add(HotelDao.ATTR_STREET);
+					add(HotelDao.ATTR_CITY);
+					add(HotelDao.ATTR_CP);
+					add(HotelDao.ATTR_STATE);
+					add(HotelDao.ATTR_COUNTRY);
+				}
+			};
+			List<String> restricted = new ArrayList<String>() {
+				{
+					add(HotelDao.ATTR_ID);// No quiero que meta el id porque quiero el id autogenerado de la base de
+											// datos
+				}
+			};
+
 			cf.addBasics(HotelDao.fields);
 			cf.setRequired(required);
 			cf.setRestricted(restricted);
 //			cf.setOptional(true);//El resto de los campos de fields serán aceptados. No es neceario ponerlo
-			cf.validate(attrMap);		
+			cf.validate(attrMap);
 
 			resultado = this.daoHelper.insert(this.hotelDao, attrMap);
 			resultado.setMessage("Hotel registrado");
@@ -107,7 +111,7 @@ public class HotelService implements IHotelService {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
 		}
@@ -158,43 +162,44 @@ public class HotelService implements IHotelService {
 		return resultado;
 	}
 
-	@Override                                          //data                       //filter
+	@Override // data //filter
 	public EntityResult hotelUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			
-			//ControlFields del filtro
-			List<String> requiredFilter = new ArrayList<String>() {{
-				add(HotelDao.ATTR_ID);
-			}};	
-			ControlFields cf = new ControlFields();		
+
+			// ControlFields del filtro
+			List<String> requiredFilter = new ArrayList<String>() {
+				{
+					add(HotelDao.ATTR_ID);
+				}
+			};
+			ControlFields cf = new ControlFields();
 			cf.addBasics(HotelDao.fields);
 			cf.setRequired(requiredFilter);
-			cf.setOptional(false);//No será aceptado ningún campo que no esté en required
-			cf.validate(keyMap);	
-			
-			
-			
-			//ControlFields de los nuevos datos
-			List<String> restrictedData = new ArrayList<String>() {{
-				add(HotelDao.ATTR_ID);//El id no se puede actualizar
-			}};
+			cf.setOptional(false);// No será aceptado ningún campo que no esté en required
+			cf.validate(keyMap);
+
+			// ControlFields de los nuevos datos
+			List<String> restrictedData = new ArrayList<String>() {
+				{
+					add(HotelDao.ATTR_ID);// El id no se puede actualizar
+				}
+			};
 			ControlFields cd = new ControlFields();
 			cd.addBasics(HotelDao.fields);
 			cd.setRestricted(restrictedData);
 //			cd.setOptional(true); //No es necesario ponerlo
 			cd.validate(attrMap);
-			
 
 			resultado = this.daoHelper.update(this.hotelDao, attrMap, keyMap);
-			
+
 			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
 				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
 			} else {
 				resultado.setMessage("Hotel actualizado");
 			}
-			
+
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + " - " + e.getMessage());
 		} catch (DuplicateKeyException e) {
@@ -215,24 +220,25 @@ public class HotelService implements IHotelService {
 
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			List<String> required = new ArrayList<String>() {{
-				add(HotelDao.ATTR_ID);
-			}};
+			List<String> required = new ArrayList<String>() {
+				{
+					add(HotelDao.ATTR_ID);
+				}
+			};
 			ControlFields cf = new ControlFields();
 			cf.addBasics(HotelDao.fields);
 			cf.setRequired(required);
 			cf.setOptional(false);
 			cf.validate(keyMap);
 
-			
-			Map<String, Object> consultaKeyMap = new HashMap<>() { {
-				put(HotelDao.ATTR_ID, keyMap.get(HotelDao.ATTR_ID));
+			Map<String, Object> consultaKeyMap = new HashMap<>() {
+				{
+					put(HotelDao.ATTR_ID, keyMap.get(HotelDao.ATTR_ID));
 				}
 			};
-			
-			EntityResult auxEntity = hotelQuery(consultaKeyMap, 
-					EntityResultTools.attributes(HotelDao.ATTR_ID));
-			
+
+			EntityResult auxEntity = hotelQuery(consultaKeyMap, EntityResultTools.attributes(HotelDao.ATTR_ID));
+
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
 				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
 			} else {
@@ -250,24 +256,25 @@ public class HotelService implements IHotelService {
 		}
 		return resultado;
 	}
-	
+
 	@Override
-	public EntityResult hotelInfoQuery(Map<String, Object> keysValues, List<String> attrList) throws OntimizeJEERuntimeException{
+	public EntityResult hotelInfoQuery(Map<String, Object> keysValues, List<String> attrList)
+			throws OntimizeJEERuntimeException {
 		EntityResult queryRes = new EntityResultWrong();
 		try {
 			ControlFields cf = new ControlFields();
-			cf.addBasics(HotelDao.fields);		
+			cf.addBasics(HotelDao.fields);
 			cf.validate(keysValues);
-			
+
 			cf.validate(attrList);
-			
-			queryRes = this.daoHelper.query(this.hotelDao,keysValues, attrList,"queryHotel");
-		}catch(ValidateException e) {
+
+			queryRes = this.daoHelper.query(this.hotelDao, keysValues, attrList, "queryHotel");
+		} catch (ValidateException e) {
 			queryRes = new EntityResultWrong(e.getMessage());
-		}catch(Exception e) {
+		} catch (Exception e) {
 			queryRes = new EntityResultWrong(ErrorMessage.ERROR);
 		}
-		
+
 		return queryRes;
 	}
 
