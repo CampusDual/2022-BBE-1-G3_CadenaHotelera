@@ -26,10 +26,10 @@ public class RoomDao extends OntimizeJdbcDaoSupport{
 	public static final Map<String,type> fields = new HashMap<>() {{
 		put(ATTR_ID,type.INTEGER);
 		put(ATTR_HOTEL_ID,type.INTEGER);
-		put(ATTR_NUMBER,type.INTEGER);
-		put(ATTR_SQUARE_METERS,type.INTEGER);
+		put(ATTR_NUMBER,type.INTEGER_UNSIGNED);
+		put(ATTR_SQUARE_METERS,type.INTEGER_UNSIGNED);
 		put(ATTR_ROOM_TYPE_ID,type.INTEGER);
-		put(ATTR_STATUS,type.INTEGER);	
+		put(ATTR_STATUS,type.BOOLEAN);	
 	}};
 
 

@@ -4,26 +4,26 @@ public class ErrorMessage {
 	
 //ERRORES DE CREATE
 	public static final String CREATION_ERROR = "Error de creación ";		
-	public static final String CREATION_ERROR_DUPLICATED_FIELD = CREATION_ERROR+"- El registro ya existe";	 
-	public static final String CREATION_ERROR_MISSING_FK = CREATION_ERROR+"- No existe la referencia necesaria en otra tabla";
+	public static final String CREATION_ERROR_DUPLICATED_FIELD = "El registro ya existe";	 
+	public static final String CREATION_ERROR_MISSING_FK = "No existe la referencia necesaria en otra tabla";
 	public static final String INVALID_MAIL= "Campo mail no es correcto"; 
 	 
 //ERRORES DE UPDATE
 	public static final String UPDATE_ERROR = "Error de actualización ";	 
-	public static final String UPDATE_ERROR_MISSING_FIELD = UPDATE_ERROR+"- El registro que pretende actualizar no existe.";	
-	public static final String UPDATE_ERROR_DUPLICATED_FIELD = UPDATE_ERROR+"- No es posible duplicar un registro";	 
-	public static final String UPDATE_ERROR_REQUIRED_FIELDS = UPDATE_ERROR+"- No es posible eliminar campos obligatorios";	 
-	public static final String UPDATE_ERROR_MISSING_FK = UPDATE_ERROR+"- No existe la referencia necesaria en otra tabla";
+	public static final String UPDATE_ERROR_MISSING_FIELD = "El registro que pretende actualizar no existe.";	
+	public static final String UPDATE_ERROR_DUPLICATED_FIELD = "No es posible duplicar un registro";	 
+	public static final String UPDATE_ERROR_REQUIRED_FIELDS = "No es posible eliminar campos obligatorios";	 
+	public static final String UPDATE_ERROR_MISSING_FK = "No existe la referencia necesaria en otra tabla";
  
 	 
 //ERRORES DE DELETE
     public static final String DELETE_ERROR = "Error de eliminación ";	 
-	public static final String DELETE_ERROR_MISSING_FIELD = DELETE_ERROR+"- El registro que pretende eliminar no existe.";	 
-	public static final String DELETE_ERROR_FOREING_KEY = DELETE_ERROR+"- Está referenciado en alguna otra tabla (FK)";	 
+	public static final String DELETE_ERROR_MISSING_FIELD = "El registro que pretende eliminar no existe.";	 
+	public static final String DELETE_ERROR_FOREING_KEY = "No es posible eliminar el registro. Está referenciado en alguna otra tabla (FK)";	 
 	 
 //ERRORES DE QUERY
 	public static final String SUBQUERY_ERROR = "Error de subconsulta  ";	 
-	public static final String RESULT_REQUIRED = SUBQUERY_ERROR + "- Datos requeridos no encontrados";
+	public static final String RESULT_REQUIRED = "Datos requeridos no encontrados";
 	
 	 
 //ERRORES VARIOS	 
@@ -40,10 +40,12 @@ public class ErrorMessage {
 	public static final String INVALID_NUMBER_CREDITCARD="Número de tarejeta no válido";
 	public static final String WRONG_TYPE = "Tipo incorrecto - ";
 	public static final String REQUIRED_TYPE = " - Tipo requerido - ";
-	public static final String ERROR = "Error";
 	public static final String NO_NULL_DATA= "No se admiten datos null";
 	public static final String NO_NULL_VALUE = "No se admite valor null - ";
+	public static final String NO_RECEIPT_FOR_UNFINISH_BOOKING = "No se puede generar un recibo de una reserva que no está completada";
+	public static final String NO_BOOKING_ID = "El número de reserva no existe";
 	
+	public static final String ERROR = "Error";
 	public static final String INTERNAL_CAGADA = "Error interno";
 	
 }

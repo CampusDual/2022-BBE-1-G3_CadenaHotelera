@@ -222,12 +222,14 @@ public class ReceiptService implements IReceiptService {
 				resultado.setMessage("Receipt registrada");
 
 			} else {
-				resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR
-						+ "- No se puede generar un recibo de una reserva que no está completada");
+				resultado = new EntityResultWrong(ErrorMessage.NO_RECEIPT_FOR_UNFINISH_BOOKING);
 			}
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
-
+		
+		}catch(EntityResultRequiredException e) {
+			resultado = new EntityResultWrong(ErrorMessage.RESULT_REQUIRED+" "+ErrorMessage.NO_BOOKING_ID);
+		
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 
