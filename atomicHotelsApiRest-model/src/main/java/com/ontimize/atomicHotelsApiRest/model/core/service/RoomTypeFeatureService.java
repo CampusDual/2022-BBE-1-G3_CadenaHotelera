@@ -11,6 +11,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IFeatureService;
@@ -38,6 +39,9 @@ public class RoomTypeFeatureService implements IRoomTypeFeatureService{
 	private RoomTypeFeatureDao roomTypeFeatureDao;
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
+
+	@Autowired
+	ControlFields cf;
 	
 	@Override
 	public EntityResult roomTypeFeatureQuery(Map<String, Object> keyMap, List<String> attrList)
@@ -47,7 +51,7 @@ public class RoomTypeFeatureService implements IRoomTypeFeatureService{
 		try {
 
 			// Control del filtro
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			cf.addBasics(RoomTypeFeatureDao.fields);
 //			cf.setOptional(true);//El resto de los campos de fields serán aceptados, por defecto true			
 			cf.validate(keyMap);
@@ -56,10 +60,9 @@ public class RoomTypeFeatureService implements IRoomTypeFeatureService{
 
 			resultado = this.daoHelper.query(this.roomTypeFeatureDao, keyMap, attrList);
 
-		} catch (ValidateException e) {
+		} catch (ValidateException | LiadaPardaException e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(e.getMessage());
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);
@@ -74,7 +77,7 @@ public class RoomTypeFeatureService implements IRoomTypeFeatureService{
 		EntityResult resultado = new EntityResultWrong();
 		try {
 			
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			List<String> required = new ArrayList<String>() {
 				{
 					add(RoomTypeFeatureDao.ATTR_ROOM_ID);
@@ -97,7 +100,7 @@ public class RoomTypeFeatureService implements IRoomTypeFeatureService{
 			resultado = this.daoHelper.insert(this.roomTypeFeatureDao, attrMap);
 			resultado.setMessage("Room type features registered");
 
-		} catch (ValidateException e) {
+		} catch (ValidateException | LiadaPardaException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
@@ -136,7 +139,7 @@ public class RoomTypeFeatureService implements IRoomTypeFeatureService{
 					add(RoomTypeFeatureDao.ATTR_FEATURE_ID);
 				}
 			};
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			cf.addBasics(RoomTypeFeatureDao.fields);
 			cf.setRequired(required);
 			cf.setOptional(false);
@@ -158,9 +161,9 @@ public class RoomTypeFeatureService implements IRoomTypeFeatureService{
 				resultado.setMessage("Room type features deleted");
 			}
 
-		} catch (ValidateException e) {
+		} catch (ValidateException | LiadaPardaException e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + e.getMessage());
-		}  catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR);
 		}
