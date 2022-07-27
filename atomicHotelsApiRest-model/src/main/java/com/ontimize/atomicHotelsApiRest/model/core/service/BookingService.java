@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IBookingService;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IRoomService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomTypeDao;
@@ -244,6 +245,10 @@ public class BookingService implements IBookingService {
 	public EntityResult bookingsInRangeQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException, InvalidFieldsValuesException {
 		try {
+			cf.reset();
+			cf.addBasics(BookingDao.fields);
+			cf.addBasics(RoomDao.fields);
+ 	
 			bookingsInRangeBuilder(keyMap, attrList);
 			return this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryBasicBooking");
 		} catch (ValidateException | LiadaPardaException e) {
@@ -256,6 +261,13 @@ public class BookingService implements IBookingService {
 	public EntityResult bookingsInRangeInfoQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		try {
+			cf.reset();
+			cf.addBasics(CustomerDao.fields);
+			cf.addBasics(BookingDao.fields);
+			cf.addBasics(RoomDao.fields);
+			cf.addBasics(RoomTypeDao.fields);
+			cf.addBasics(HotelDao.fields);
+
 			bookingsInRangeBuilder(keyMap, attrList);
 			return this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryInfoBooking");
 		} catch (ValidateException | LiadaPardaException e) {
@@ -275,14 +287,12 @@ public class BookingService implements IBookingService {
 	public void bookingsInRangeBuilder(Map<String, Object> keyMap, List<String> attrList)
 			throws ValidateException, LiadaPardaException {
 		
-		cf.reset();
 		List<String> required = new ArrayList<String>() {
 			{
 				add(BookingDao.ATTR_START);
-				add(BookingDao.ATTR_END);;
+				add(BookingDao.ATTR_END);
 			}
 		};
-		cf.addBasics(BookingDao.fields);
 		cf.setRequired(required);
 		cf.validate(keyMap);
 		
