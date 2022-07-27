@@ -52,6 +52,9 @@ public class ReceiptService implements IReceiptService {
 
 	@Autowired
 	private BookingServiceExtraService bookingServiceExtraService;
+	
+	@Autowired
+	ControlFields cf;
 
 	@Override
 	public EntityResult receiptQuery(Map<String, Object> keyMap, List<String> attrList)
@@ -60,7 +63,7 @@ public class ReceiptService implements IReceiptService {
 
 		try {
 
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			cf.addBasics(ReceiptDao.fields);
 			cf.validate(keyMap);
 
@@ -89,7 +92,7 @@ public class ReceiptService implements IReceiptService {
 					add(ReceiptDao.ATTR_ID);
 				}
 			};
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			cf.addBasics(ReceiptDao.fields);
 			cf.setRequired(required);
 			cf.setOptional(false);
@@ -147,7 +150,7 @@ public class ReceiptService implements IReceiptService {
 		EntityResult resultado = new EntityResultWrong();
 		try {
 
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			List<String> required = new ArrayList<String>() {
 				{
 					add(ReceiptDao.ATTR_BOOKING_ID);
@@ -282,7 +285,7 @@ public class ReceiptService implements IReceiptService {
 					add(ReceiptDao.ATTR_ID);
 				}
 			};
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			cf.addBasics(ReceiptDao.fields);
 			cf.setRequired(required);
 			cf.setOptional(false);
