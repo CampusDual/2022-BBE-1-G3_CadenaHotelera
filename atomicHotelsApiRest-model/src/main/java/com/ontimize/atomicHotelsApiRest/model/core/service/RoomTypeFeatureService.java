@@ -133,6 +133,7 @@ public class RoomTypeFeatureService implements IRoomTypeFeatureService{
 			List<String> required = new ArrayList<String>() {
 				{
 					add(RoomTypeFeatureDao.ATTR_ROOM_ID);
+					add(RoomTypeFeatureDao.ATTR_FEATURE_ID);
 				}
 			};
 			ControlFields cf = new ControlFields();
@@ -144,10 +145,11 @@ public class RoomTypeFeatureService implements IRoomTypeFeatureService{
 			Map<String, Object> consultaKeyMap = new HashMap<>() {
 				{
 					put(RoomTypeFeatureDao.ATTR_ROOM_ID, keyMap.get(RoomTypeFeatureDao.ATTR_ROOM_ID));
+					put(RoomTypeFeatureDao.ATTR_FEATURE_ID, keyMap.get(RoomTypeFeatureDao.ATTR_FEATURE_ID));
 				}
 			};
 
-			EntityResult auxEntity = roomTypeFeatureQuery(consultaKeyMap, EntityResultTools.attributes(RoomTypeFeatureDao.ATTR_ROOM_ID));
+			EntityResult auxEntity = roomTypeFeatureQuery(consultaKeyMap, EntityResultTools.attributes(RoomTypeFeatureDao.ATTR_ROOM_ID, RoomTypeFeatureDao.ATTR_FEATURE_ID));
 
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
 				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
