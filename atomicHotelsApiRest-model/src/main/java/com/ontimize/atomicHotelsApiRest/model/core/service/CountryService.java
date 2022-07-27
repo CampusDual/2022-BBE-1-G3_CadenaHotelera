@@ -15,10 +15,12 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesE
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.RestrictedFieldException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.ICountryService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.CountryDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
@@ -34,21 +36,26 @@ public class CountryService implements ICountryService {
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
 	
+	@Autowired
+	ControlFields cf;
+	
 	private Map<String, String> mapCountries = null;
 
 	@Override
 	public EntityResult countryQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
-		ControlFields cf = new ControlFields();
+		cf.reset();
 		cf.addBasics(CountryDao.fields);
 		try {
 			cf.validate(keyMap);
 			cf.validate(attrList);
 			resultado = this.daoHelper.query(this.countryDao, keyMap, attrList);
-		} catch (MissingFieldsException | RestrictedFieldException | LiadaPardaException | InvalidFieldsException | InvalidFieldsValuesException e) {
+		} catch (ValidateException e) {
 			resultado =  new EntityResultWrong(e.getMessage());
 			e.printStackTrace();
+		}catch(Exception e) {
+			resultado =  new EntityResultWrong(ErrorMessage.ERROR);
 		}
 		
 		return resultado;
