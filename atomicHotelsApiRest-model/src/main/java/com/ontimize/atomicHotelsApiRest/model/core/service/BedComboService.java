@@ -38,7 +38,6 @@ public class BedComboService implements IBedComboService{
 	@Autowired
 	ControlFields cf;
 	
-
 	@Override 
 	public EntityResult bedComboQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
@@ -48,8 +47,9 @@ public class BedComboService implements IBedComboService{
 		cf.addBasics(BedComboDao.fields);
 		cf.validate(keyMap);
 		cf.validate(attrList);
+		
 		return this.daoHelper.query(this.bedComboDao, keyMap, attrList);
-		}catch(ValidateException | LiadaPardaException e) {
+		}catch(ValidateException e) {
 			resultado=new EntityResultWrong(e.getMessage());
 		}catch(Exception e) {
 			resultado=new EntityResultWrong(ErrorMessage.ERROR);
@@ -85,7 +85,7 @@ public class BedComboService implements IBedComboService{
 			resultado =new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 		}catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);
-		}catch (ValidateException | LiadaPardaException e) {
+		}catch (ValidateException e) {
 			resultado =new EntityResultWrong(e.getMessage());
 		}
 		catch(Exception e) {
@@ -126,7 +126,7 @@ public class BedComboService implements IBedComboService{
 			}else {
 				resultado.setMessage("Tipo de cama actualizado");
 			}
-			}catch(ValidateException | LiadaPardaException e){
+			}catch(ValidateException e){
 				resultado = new EntityResultWrong(e.getMessage());
 			}catch(DuplicateKeyException e){
 				resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
@@ -171,7 +171,7 @@ public class BedComboService implements IBedComboService{
 				
 		}
 
-		} catch (ValidateException | LiadaPardaException e) {
+		} catch (ValidateException e) {
 			e.getStackTrace();
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (DataIntegrityViolationException e) {
