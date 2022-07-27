@@ -161,7 +161,7 @@ public class RoomTypeService implements IRoomTypeService {
 			Map<String,Object> consultaKeyMap=new HashMap<>()
 			{
 				{
-				put( BedComboDao.ATTR_ID,keyMap.get(RoomTypeDao.ATTR_ID));	
+				put( RoomTypeDao.ATTR_ID,keyMap.get(RoomTypeDao.ATTR_ID));	
 				}
 			};
 
