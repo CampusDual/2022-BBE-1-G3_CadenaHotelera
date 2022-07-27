@@ -3,6 +3,7 @@ package com.ontimize.atomicHotelsApiRest.model.core.service;
 import static org.mockito.ArgumentMatchers.anyList;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IServiceService;
@@ -20,9 +22,11 @@ import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
 import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.BedComboDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.FeatureDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.ServiceDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.ServicesXtraDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
@@ -36,61 +40,60 @@ public class ServiceService implements IServiceService {
 	private ServiceDao serviceDao;
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
+	
+	@Autowired
+	ControlFields cf;
 
 	@Override
 	public EntityResult serviceQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
+		
 		EntityResult resultado = new EntityResultWrong();
 		try {
-			ControlFields filterAndColumns = new ControlFields();
-			filterAndColumns.addBasics(ServiceDao.fields);
-			filterAndColumns.validate(keyMap);// Validamos el filtro
-			filterAndColumns.validate(attrList);// Validamos las columnas
-			resultado = this.daoHelper.query(this.serviceDao, keyMap, attrList);
-		} catch (ValidateException e) {
-			e.getMessage();
-			resultado = new EntityResultWrong(e.getMessage());
-		} catch (Exception e) {
-			e.getStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.ERROR);
+		cf.reset();
+		cf.addBasics(ServiceDao.fields);
+		cf.validate(keyMap);
+		cf.validate(attrList);
+		return this.daoHelper.query(this.serviceDao, keyMap, attrList);
+		}catch(ValidateException | LiadaPardaException e) {
+			resultado=new EntityResultWrong(e.getMessage());
+		}catch(Exception e) {
+			resultado=new EntityResultWrong(ErrorMessage.ERROR);
 		}
 		return resultado;
 	}
-
+	
 	@Override
 	public EntityResult serviceInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 
 		EntityResult resultado = new EntityResultWrong();
 		try {
-			ControlFields controllerData = new ControlFields();
-			controllerData.addBasics(ServiceDao.fields);
-			List<String> required = new ArrayList<>() {
-				{
+			
+			cf.reset();
+			List<String> requeridos = new ArrayList<String>() {{
+				add(ServiceDao.ATTR_NAME);
+			}};
+			List<String> restricted = new ArrayList<String>() {{
+				add(ServiceDao.ATTR_ID);//No quiero que meta el id porque quiero el id autogenerado de la base de datos
+			}};
+			
+			cf.addBasics(ServiceDao.fields);
+			cf.setRequired(requeridos);
+			cf.setRestricted(restricted);
+			cf.setOptional(true);//El resto de los campos de fields serán aceptados
+			cf.validate(attrMap);
 
-					add(ServiceDao.ATTR_NAME);
-				}
-			};
-			controllerData.setRequired(required);
-			List<String> restricted = new ArrayList<>() {
-				{
-					add(ServiceDao.ATTR_ID);
-				}
-			};
-			controllerData.setRestricted(restricted);
-			controllerData.validate(attrMap);
 			resultado = this.daoHelper.insert(this.serviceDao, attrMap);
-			resultado.setMessage("Service registrado");
+			resultado.setMessage("Service registered");
 
-		} catch (DuplicateKeyException e) {
+		} catch (ValidateException | LiadaPardaException e) {
+			resultado =  new EntityResultWrong(e.getMessage());
+			e.printStackTrace();		
+		}catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
-		} catch (DataIntegrityViolationException e) {
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);
-		} catch (ValidateException e) {
-			e.getStackTrace();
-			resultado = new EntityResultWrong(e.getMessage());
-		} catch (Exception e) {
-			resultado = new EntityResultWrong(ErrorMessage.ERROR);
+		}catch (Exception e) {
 			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
 		}
 		return resultado;
 	}
@@ -98,91 +101,93 @@ public class ServiceService implements IServiceService {
 	@Override
 	public EntityResult serviceUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
-
+		
 		EntityResult resultado = new EntityResultWrong();
+		
 		try {
-			// ValidateFields.required(keyMap, ServiceDao.ATTR_ID);
-
-			ControlFields filter = new ControlFields();
-			filter.addBasics(ServiceDao.fields);
-			List<String> required = new ArrayList<>() {
-				{
-					add(ServiceDao.ATTR_ID);
-				}
-			};
-			filter.setRequired(required);
-			filter.validate(keyMap);
-			ControlFields data = new ControlFields();
-			data.addBasics(ServiceDao.fields);
-			List<String> dataRequired=new ArrayList<>() {
-			{
-				add(ServiceDao.ATTR_NAME);
-			}
-			};
-			data.setRequired(dataRequired);
-			List<String> restricted = new ArrayList<>() {
-				{
-					add(ServiceDao.ATTR_ID);
-				}
-			};
-			data.setRestricted(restricted);
-			System.out.toString();
-			data.validate(attrMap);
+		
+			//ControlFields del filtro
+			cf.reset();
+			cf.addBasics(ServiceDao.fields);
+			List<String> requiredFilter = new ArrayList<String>() {{
+//				add(ServicesXtraDao.ATTR_NAME);
+				add(ServiceDao.ATTR_ID);
+			}};				
+			cf.setRequired(requiredFilter);
+			cf.setOptional(false);//No será aceptado ningún campo que no esté en required
+			cf.validate(keyMap);
+			
+			
+			//ControlFields de los nuevos datos
+			cf.reset();
+			cf.addBasics(ServiceDao.fields);
+			List<String> restrictedData = new ArrayList<String>() {{
+				add(ServiceDao.ATTR_ID);//El id no se puede actualizar
+			}};
+			cf.setRestricted(restrictedData);
+	//		cd.setOptional(true); //No es necesario ponerlo
+			cf.validate(attrMap);
+			
 			resultado = this.daoHelper.update(this.serviceDao, attrMap, keyMap);
+	
 			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
 				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
 			} else {
-				resultado.setMessage("Service actualizado");
+				resultado.setMessage("Service updated");
 			}
-		} catch (DuplicateKeyException e) {
+
+		} catch (ValidateException | LiadaPardaException e) {
+			resultado =  new EntityResultWrong(e.getMessage());
+			e.printStackTrace();		
+		}catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
-		} catch (DataIntegrityViolationException e) {
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);
-		} catch (ValidateException e) {
-			e.getStackTrace();
-			resultado = new EntityResultWrong(e.getMessage());
-		} catch (Exception e) {
-			resultado = new EntityResultWrong(ErrorMessage.ERROR);
+		}catch (Exception e) {
 			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
 		}
 		return resultado;
 	}
 
 	@Override
-	public EntityResult serviceDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
+	public EntityResult serviceDelete(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 
 		EntityResult resultado = new EntityResultWrong();
+
 		try {
-			ValidateFields.required(keyMap, ServiceDao.ATTR_ID);
-			ControlFields filter=new ControlFields();
-			filter.addBasics(ServiceDao.fields);
-			List<String> required=new ArrayList<>() {
-				{
-					add(ServiceDao.ATTR_ID);
+			
+			cf.reset();
+			cf.addBasics(ServiceDao.fields);
+			List<String> requeridos = new ArrayList<String>() {{
+				add(ServiceDao.ATTR_ID);
+			}};
+
+			cf.setRequired(requeridos);
+			cf.setOptional(true);//El resto de los campos de fields serán aceptados
+			cf.validate(attrMap);
+			
+			Map<String, Object> consultaKeyMap = new HashMap<>() { {
+				put(ServiceDao.ATTR_ID, attrMap.get(ServiceDao.ATTR_ID));
 				}
 			};
-			filter.setRequired(required);
-			filter.setOptional(false);
-			filter.validate(keyMap);
-
-			EntityResult auxEntity = this.daoHelper.query(this.serviceDao,
-					EntityResultTools.keysvalues(ServiceDao.ATTR_ID, keyMap.get(ServiceDao.ATTR_ID)),
+			
+			EntityResult auxEntity = serviceQuery(consultaKeyMap, 
 					EntityResultTools.attributes(ServiceDao.ATTR_ID));
+			
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
 				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
 			} else {
-				resultado = this.daoHelper.delete(this.serviceDao, keyMap);
-				resultado.setMessage("Service eliminado");
+				resultado = this.daoHelper.delete(this.serviceDao, attrMap);
+				resultado.setMessage("Service deleted");
 			}
-		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + e.getMessage());
-		} catch (DataIntegrityViolationException e) {
-			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
-		} catch (ValidateException e) {
-			e.getStackTrace();
-			resultado = new EntityResultWrong(e.getMessage());
-		} catch (Exception e) {
-			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR);
+			
+		} catch (ValidateException | LiadaPardaException e) {
+			resultado =  new EntityResultWrong(e.getMessage());
+			e.printStackTrace();		
+		}catch (DuplicateKeyException e) {
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+		}catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
 		}
 		return resultado;
 	}
