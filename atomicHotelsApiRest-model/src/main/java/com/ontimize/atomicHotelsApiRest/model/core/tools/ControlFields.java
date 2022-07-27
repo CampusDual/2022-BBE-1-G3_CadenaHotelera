@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
+
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
@@ -17,6 +20,9 @@ import com.ontimize.atomicHotelsApiRest.model.core.tools.TypeCodes.type;
  * @author Ar
  *
  */
+
+@Component
+@Lazy(value = true)
 public class ControlFields {
 
 	private Map<String, type> fields;;
