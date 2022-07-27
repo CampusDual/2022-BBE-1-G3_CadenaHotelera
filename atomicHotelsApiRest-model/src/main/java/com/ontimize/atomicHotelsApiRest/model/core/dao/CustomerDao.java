@@ -39,7 +39,7 @@ public class CustomerDao extends OntimizeJdbcDaoSupport {
 	public static final String ATTR_ADDRESS = TAG+"address";
 	public static final String ATTR_CITY = TAG +"city";
 	public static final String ATTR_STATE = TAG +"state";
-	public static final String ATTR_COUNTRY = TAG +"country";
+	public static final String ATTR_COUNTRY = TAG +"cnt_iso";//Clave foránea de countries
 	public static final String ATTR_PHONE = TAG+"phone";
 	public static final String ATTR_EMAIL = TAG+"email";
 	public static final String ATTR_EMAIL_ACCESS = TAG+"email_access";
