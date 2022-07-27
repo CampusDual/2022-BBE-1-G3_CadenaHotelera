@@ -36,6 +36,9 @@ public class HotelServiceService implements IHotelServiceService {
 	private HotelServiceDao hotelserviceDao;
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
+	
+	@Autowired
+	ControlFields cf;
 
 	@Override
 	public EntityResult hotelServiceInfoQuery(Map<String, Object> keyMap, List<String> attrList)
@@ -43,7 +46,7 @@ public class HotelServiceService implements IHotelServiceService {
 		EntityResult resultado = new EntityResultWrong();
 		try {
 
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			cf.addBasics(HotelServiceDao.fields);
 			cf.addBasics(HotelDao.fields);
 			cf.addBasics(ServiceDao.fields);
@@ -66,7 +69,7 @@ public class HotelServiceService implements IHotelServiceService {
 		EntityResult resultado = new EntityResultWrong();
 		try {
 
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			cf.addBasics(HotelServiceDao.fields);
 			cf.validate(keyMap);
 
@@ -87,7 +90,7 @@ public class HotelServiceService implements IHotelServiceService {
 		EntityResult resultado = new EntityResultWrong();
 		try {
 
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			List<String> required = new ArrayList<String>() {
 				{
 					add(HotelServiceDao.ATTR_ID_HTL);
@@ -127,7 +130,7 @@ public class HotelServiceService implements IHotelServiceService {
 					add(HotelServiceDao.ATTR_ID_SRV);
 				}
 			};
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			cf.addBasics(HotelServiceDao.fields);
 			cf.setRequired(required);
 			cf.setOptional(false);
