@@ -11,7 +11,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
-
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IBedComboService;
 import com.ontimize.jee.common.dto.EntityResult;
@@ -34,22 +34,24 @@ public class BedComboService implements IBedComboService{
 	private BedComboDao bedComboDao;
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
+	
+	@Autowired
+	ControlFields cf;
+	
 
 	@Override 
 	public EntityResult bedComboQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado=new EntityResultWrong();
 		try {
-		ControlFields controllerFilterandColumns =new ControlFields();
-		controllerFilterandColumns.addBasics(BedComboDao.fields);
-		controllerFilterandColumns.validate(keyMap);
-		controllerFilterandColumns.validate(attrList);
+		cf.reset();
+		cf.addBasics(BedComboDao.fields);
+		cf.validate(keyMap);
+		cf.validate(attrList);
 		return this.daoHelper.query(this.bedComboDao, keyMap, attrList);
-		}catch(ValidateException e) {
-			e.getMessage();
+		}catch(ValidateException | LiadaPardaException e) {
 			resultado=new EntityResultWrong(e.getMessage());
 		}catch(Exception e) {
-			e.getStackTrace();
 			resultado=new EntityResultWrong(ErrorMessage.ERROR);
 		}
 		return resultado;
@@ -59,22 +61,22 @@ public class BedComboService implements IBedComboService{
 	public EntityResult bedComboInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 		try {			
-			ControlFields controllerData=new ControlFields();
-			controllerData.addBasics(BedComboDao.fields);
+			cf.reset();
+			cf.addBasics(BedComboDao.fields);
 			List<String> required=new ArrayList<>() {
 				{
 					add(BedComboDao.ATTR_NAME);
 					add(BedComboDao.ATTR_SLOTS);
 				}
 			};
-			controllerData.setRequired(required);
+			cf.setRequired(required);
 			List<String> restricted=new ArrayList<>() {
 				{
 				add(BedComboDao.ATTR_ID);
 				}
 				};
-				controllerData.setRestricted(restricted);
-			controllerData.validate(attrMap);
+				cf.setRestricted(restricted);
+			cf.validate(attrMap);
 			
 			resultado=this.daoHelper.insert(this.bedComboDao, attrMap);
 			resultado.setMessage("Tipo de cama insertado");
@@ -83,13 +85,11 @@ public class BedComboService implements IBedComboService{
 			resultado =new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 		}catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);
-		}catch (ValidateException e) {
-			e.getStackTrace();
+		}catch (ValidateException | LiadaPardaException e) {
 			resultado =new EntityResultWrong(e.getMessage());
 		}
 		catch(Exception e) {
 			resultado=new EntityResultWrong(ErrorMessage.ERROR);
-			e.printStackTrace();
 		}
 		return resultado;		
 	}
@@ -99,46 +99,40 @@ public class BedComboService implements IBedComboService{
 			throws OntimizeJEERuntimeException {
 			EntityResult resultado=new EntityResultWrong();
 		try {
-			ControlFields controllerFilter =new ControlFields();
-			controllerFilter.addBasics(BedComboDao.fields);
+			cf.reset();
+			cf.addBasics(BedComboDao.fields);
 			List<String> required=new ArrayList<>() {
 				{
 				add(BedComboDao.ATTR_ID);	
 				}
 				};
-			controllerFilter.setRequired(required);
-			controllerFilter.setOptional(false);
-			controllerFilter.validate(keyMap);
+			cf.setRequired(required);
+			cf.setOptional(false);
+			cf.validate(keyMap);
 			
 			
-			ControlFields controllerData=new ControlFields();
-			controllerData.addBasics(BedComboDao.fields);
+			cf.reset();
+			cf.addBasics(BedComboDao.fields);
 			List<String> restricted=new ArrayList<>() {
 				{
 				add(BedComboDao.ATTR_ID);	
 				}
 				};
-			controllerData.setRestricted(restricted);
-			controllerData.validate(attrMap);			
+			cf.setRestricted(restricted);
+			cf.validate(attrMap);			
 			resultado=this.daoHelper.update(bedComboDao, attrMap, keyMap);
 			if(resultado.getCode()==EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
 				resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD); 
 			}else {
 				resultado.setMessage("Tipo de cama actualizado");
 			}
-			}catch(ValidateException e){
-				e.printStackTrace();
+			}catch(ValidateException | LiadaPardaException e){
 				resultado = new EntityResultWrong(e.getMessage());
 			}catch(DuplicateKeyException e){
-				e.printStackTrace();
 				resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
 			}catch( DataIntegrityViolationException e){
-				e.printStackTrace();
 				resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
-			}catch (NumberFormatException e) {
-				resultado =new EntityResultWrong(ErrorMessage.NEGATIVE_OR_CERO_NOT_ALLOWED);
 			}catch(Exception e){
-				e.printStackTrace();
 				resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR);
 			}
 			return resultado;	
@@ -149,16 +143,16 @@ public class BedComboService implements IBedComboService{
 	public EntityResult bedComboDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado=new EntityResultWrong();
 		try {
-			ControlFields ControllerFilter=new ControlFields();
-			ControllerFilter.addBasics(BedComboDao.fields);
+			cf.reset();
+			cf.addBasics(BedComboDao.fields);
 			List<String> required=new ArrayList<>() {
 				{
 					add(BedComboDao.ATTR_ID);
 				}
 				};
-			ControllerFilter.setRequired(required);
-			ControllerFilter.setOptional(false);
-			ControllerFilter.validate(keyMap);
+			cf.setRequired(required);
+			cf.setOptional(false);
+			cf.validate(keyMap);
 			
 			Map<String,Object> consultaKeyMap=new HashMap<>()
 			{
@@ -177,7 +171,7 @@ public class BedComboService implements IBedComboService{
 				
 		}
 
-		} catch (ValidateException e) {
+		} catch (ValidateException | LiadaPardaException e) {
 			e.getStackTrace();
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (DataIntegrityViolationException e) {
