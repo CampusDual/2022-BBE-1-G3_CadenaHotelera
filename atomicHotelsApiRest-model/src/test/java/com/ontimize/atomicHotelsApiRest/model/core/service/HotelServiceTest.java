@@ -82,7 +82,7 @@ class HotelServiceTest {
 			};
 			return filters;
 		};
-		// datos entrada
+
 		HashMap<String, Object> getFilterNombreNoExiste() {
 			HashMap<String, Object> filters = new HashMap<>() {
 				{
@@ -96,6 +96,16 @@ class HotelServiceTest {
 			List<String> columns = new ArrayList<>() {
 				{
 					add(HotelDao.ATTR_NAME);
+				}
+			};
+			return columns;
+		}
+		
+		List<String> getColumsNoExist() {
+			List<String> columns = new ArrayList<>() {
+				{
+					add("en un lugar de la mancha...");
+					add("uno dos tres cuatro cinco y seis");
 				}
 			};
 			return columns;
@@ -122,44 +132,44 @@ class HotelServiceTest {
 		
 		
 		
+//		@Test
+//		@DisplayName("Valores de entrada NO válidos")
+//		void testHotelQueryKO() {
+////			ControlFields cf2 = mock(ControlFields.class);
+//
+////			when(cf).thenThrow(new MissingFieldsException("test"));
+////			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
+//			try {
+//				doThrow(new MissingFieldsException("test")).when(cf).validate(anyMap());			
+////				doThrow(ValidateException.class).when(daoHelper).query(any(),anyMap(),anyList());
+////				doThrow(new ValidateException("test")).when(daoHelper).query(any(),anyMap(),anyList());
+//				
+////				doThrow(new InvalidFieldsValuesException("test")).when(cf);
+//
+////			} catch (MissingFieldsException | RestrictedFieldException | InvalidFieldsException
+////					| InvalidFieldsValuesException | LiadaPardaException e) {
+//			} catch (Exception e) {
+////				e.printStackTrace();
+////				fail("excepción no capturada");
+//			}
+////			EntityResult entityResult = service.hotelQuery(new HashMap<>(), null);
+//			EntityResult entityResult = service.hotelQuery(new HashMap<>(), getColumsName());
+//			System.out.println("resultado: " + entityResult.getMessage());
+//			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+////			when(daoHelper.insert(any(),anyMap())).thenThrow(new MissingFieldsException("El campo " + HotelDao.ATTR_NAME + " es nulo"));
+//		
+//		}
+//		
 		@Test
-		@DisplayName("Valores de entrada NO válidos")
-		void testHotelQueryKO() {
-//			ControlFields cf2 = mock(ControlFields.class);
-
-//			when(cf).thenThrow(new MissingFieldsException("test"));
-//			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
-			try {
-				doThrow(new MissingFieldsException("test")).when(cf).validate(anyMap());			
-//				doThrow(ValidateException.class).when(daoHelper).query(any(),anyMap(),anyList());
-//				doThrow(new ValidateException("test")).when(daoHelper).query(any(),anyMap(),anyList());
-				
-//				doThrow(new InvalidFieldsValuesException("test")).when(cf);
-
-//			} catch (MissingFieldsException | RestrictedFieldException | InvalidFieldsException
-//					| InvalidFieldsValuesException | LiadaPardaException e) {
-			} catch (Exception e) {
-//				e.printStackTrace();
-//				fail("excepción no capturada");
-			}
-//			EntityResult entityResult = service.hotelQuery(new HashMap<>(), null);
-			EntityResult entityResult = service.hotelQuery(new HashMap<>(), getColumsName());
-			System.err.println(entityResult.getMessage());
-			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
-//			when(daoHelper.insert(any(),anyMap())).thenThrow(new MissingFieldsException("El campo " + HotelDao.ATTR_NAME + " es nulo"));
-						 
-			
-		}
-		
-		@Test
-		@DisplayName("Valores de entrada NO válidos")
+		@DisplayName("XXX Valores de entrada NO válidos")
 		void testHotelQueryKO2() {
 			EntityResult entityResult ;
 			entityResult = service.hotelQuery(new HashMap<>(), null);
 			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
 
-			entityResult = service.hotelQuery(new HashMap<>(), null);
+			entityResult = service.hotelQuery(new HashMap<>(), getColumsNoExist());
 			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+			
 //			EntityResult entityResult = service.hotelQuery(new HashMap<>(), getColumsName());
 			System.err.println(entityResult.getMessage());
 //			when(daoHelper.insert(any(),anyMap())).thenThrow(new MissingFieldsException("El campo " + HotelDao.ATTR_NAME + " es nulo"));

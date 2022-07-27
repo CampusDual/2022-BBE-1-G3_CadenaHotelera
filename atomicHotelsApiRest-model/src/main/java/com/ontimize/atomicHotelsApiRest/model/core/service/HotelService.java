@@ -31,7 +31,6 @@ import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
 import com.ontimize.jee.common.dto.EntityResult;
-import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
 import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
@@ -77,7 +76,7 @@ public class HotelService implements IHotelService {
 	@Override
 	public EntityResult hotelInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 
-		EntityResult resultado = new EntityResultMapImpl();
+		EntityResult resultado = new EntityResultWrong();
 		try {
 
 			ControlFields cf = new ControlFields();
@@ -165,7 +164,7 @@ public class HotelService implements IHotelService {
 	@Override // data //filter
 	public EntityResult hotelUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
-		EntityResult resultado = new EntityResultMapImpl();
+		EntityResult resultado = new EntityResultWrong();
 		try {
 
 			// ControlFields del filtro
@@ -218,7 +217,7 @@ public class HotelService implements IHotelService {
 	@Override
 	public EntityResult hotelDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 
-		EntityResult resultado = new EntityResultMapImpl();
+		EntityResult resultado = new EntityResultWrong();
 		try {
 			List<String> required = new ArrayList<String>() {
 				{
