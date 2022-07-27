@@ -174,18 +174,13 @@ public class ControlFields {
 					}
 					break;
 
+				case DATETIME://diferenciar al devolver los datos
 				case DATE:
 					if ((keyMap.get(key) instanceof String)) {
 						System.err.println("TODO - comprobar....");
 						keyMap.replace(key, ValidateFields.stringToDate((String) keyMap.get(key)));
 						validType = true;
-					}
-					break;
-				case DATETIME://Comprobar!!!
-					if ((keyMap.get(key) instanceof LocalDateTime)) {
-						System.err.println("TODO - comprobar....");
-						validType = true;
-					}
+					}					
 					break;
 
 				case EMAIL:

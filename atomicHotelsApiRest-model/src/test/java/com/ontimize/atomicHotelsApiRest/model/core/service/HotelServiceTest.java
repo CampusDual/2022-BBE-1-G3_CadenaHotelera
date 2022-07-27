@@ -41,6 +41,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesE
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.RestrictedFieldException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
@@ -129,15 +130,19 @@ class HotelServiceTest {
 //			when(cf).thenThrow(new MissingFieldsException("test"));
 //			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
 			try {
-				doThrow(new InvalidFieldsValuesException("test")).when(cf).validate(anyMap());			
+				doThrow(new MissingFieldsException("test")).when(cf).validate(anyMap());			
+//				doThrow(ValidateException.class).when(daoHelper).query(any(),anyMap(),anyList());
+//				doThrow(new ValidateException("test")).when(daoHelper).query(any(),anyMap(),anyList());
+				
 //				doThrow(new InvalidFieldsValuesException("test")).when(cf);
 
 //			} catch (MissingFieldsException | RestrictedFieldException | InvalidFieldsException
 //					| InvalidFieldsValuesException | LiadaPardaException e) {
 			} catch (Exception e) {
-				e.printStackTrace();
-				fail("excepción no capturada");
+//				e.printStackTrace();
+//				fail("excepción no capturada");
 			}
+//			EntityResult entityResult = service.hotelQuery(new HashMap<>(), null);
 			EntityResult entityResult = service.hotelQuery(new HashMap<>(), getColumsName());
 			System.err.println(entityResult.getMessage());
 			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
@@ -146,6 +151,21 @@ class HotelServiceTest {
 			
 		}
 		
+		@Test
+		@DisplayName("Valores de entrada NO válidos")
+		void testHotelQueryKO2() {
+			EntityResult entityResult ;
+			entityResult = service.hotelQuery(new HashMap<>(), null);
+			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+
+			entityResult = service.hotelQuery(new HashMap<>(), null);
+			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+//			EntityResult entityResult = service.hotelQuery(new HashMap<>(), getColumsName());
+			System.err.println(entityResult.getMessage());
+//			when(daoHelper.insert(any(),anyMap())).thenThrow(new MissingFieldsException("El campo " + HotelDao.ATTR_NAME + " es nulo"));
+						 
+			
+		}
 
 //		@Test
 //		@DisplayName("Obtain all data columns from hotels table when htl_id is -> 2")
