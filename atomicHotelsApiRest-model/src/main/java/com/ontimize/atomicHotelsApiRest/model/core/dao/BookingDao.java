@@ -1,8 +1,12 @@
 package com.ontimize.atomicHotelsApiRest.model.core.dao;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 
+import com.ontimize.atomicHotelsApiRest.model.core.tools.TypeCodes.type;
 import com.ontimize.jee.server.dao.common.ConfigurationFile;
 import com.ontimize.jee.server.dao.jdbc.OntimizeJdbcDaoSupport;
 
@@ -24,5 +28,19 @@ public class BookingDao extends OntimizeJdbcDaoSupport {
 	public static final String NON_ATTR_ACTION = "action";
 	public enum Status{CONFIRMED,IN_PROGRESS,COMPLETED,CANCELED}
 	public enum Action{CHECKIN,CHECKOUT,CANCEL}
+	
+	//TODO asegurarse de que los tipos son los adecuados. Ver qué hacer con las últimas variables anteriores
+	public static final Map<String,type> fields = new HashMap<>() {{
+		put(ATTR_ID,type.INTEGER);
+		put(ATTR_OBSERVATIONS,type.STRING);
+		put(ATTR_START,type.DATE);
+		put(ATTR_END,type.DATE);
+		put(ATTR_CHECKIN,type.DATETIME);
+		put(ATTR_CHECKOUT,type.DATETIME);	
+		put(ATTR_CANCELED,type.DATETIME);	
+		put(ATTR_CREATED,type.DATETIME);	
+		put(ATTR_CUSTOMER_ID,type.INTEGER);	
+		put(ATTR_ROOM_ID,type.INTEGER);
+	}};
 
 }
