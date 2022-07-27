@@ -396,7 +396,7 @@ class BookingServiceTest {
 			{
 				put(BookingDao.ATTR_CHECKIN, null);
 				put(BookingDao.ATTR_CHECKOUT, null);
-				put(BookingDao.ATTR_CANCELED, Tools.getYesterdayString());
+				put(BookingDao.ATTR_CANCELED, TestingTools.getYesterdayString());
 			}
 		});
 		return er;
@@ -406,8 +406,8 @@ class BookingServiceTest {
 		EntityResult er = new EntityResultMapImpl(getStatusColumnList());
 		er.addRecord(new HashMap<String, Object>() {
 			{
-				put(BookingDao.ATTR_CHECKIN, Tools.getYesterdayString());
-				put(BookingDao.ATTR_CHECKOUT, Tools.getTomorrowString());
+				put(BookingDao.ATTR_CHECKIN, TestingTools.getYesterdayString());
+				put(BookingDao.ATTR_CHECKOUT, TestingTools.getTomorrowString());
 				put(BookingDao.ATTR_CANCELED, null);
 			}
 		});
@@ -418,7 +418,7 @@ class BookingServiceTest {
 		EntityResult er = new EntityResultMapImpl(getStatusColumnList());
 		er.addRecord(new HashMap<String, Object>() {
 			{
-				put(BookingDao.ATTR_CHECKIN, Tools.getYesterdayString());
+				put(BookingDao.ATTR_CHECKIN, TestingTools.getYesterdayString());
 				put(BookingDao.ATTR_CHECKOUT, null);
 				put(BookingDao.ATTR_CANCELED, null);
 			}

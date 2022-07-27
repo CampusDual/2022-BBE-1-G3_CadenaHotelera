@@ -74,7 +74,8 @@ class HotelServiceTest {
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	public class HotelQuery {
 		// datos entrada
-		HashMap<String, Object> getFilterId1() {
+	
+		HashMap<String, Object> getFilterId() {
 			HashMap<String, Object> filters = new HashMap<>() {
 				{
 					put(HotelDao.ATTR_ID, 1);
@@ -83,14 +84,16 @@ class HotelServiceTest {
 			return filters;
 		};
 
-		HashMap<String, Object> getFilterNombreNoExiste() {
+		HashMap<String, Object> getFilterIdWrongValue() {
 			HashMap<String, Object> filters = new HashMap<>() {
 				{
-					put(HotelDao.ATTR_NAME, "nombre que no debería existir");
+					put(HotelDao.ATTR_ID, "albaricoque");
 				}
 			};
 			return filters;
 		};
+		
+		
 
 		List<String> getColumsName() {
 			List<String> columns = new ArrayList<>() {
@@ -101,15 +104,7 @@ class HotelServiceTest {
 			return columns;
 		}
 		
-		List<String> getColumsNoExist() {
-			List<String> columns = new ArrayList<>() {
-				{
-					add("en un lugar de la mancha...");
-					add("uno dos tres cuatro cinco y seis");
-				}
-			};
-			return columns;
-		}
+		
 		// fin datos entrada
 
 		@Test
@@ -118,16 +113,13 @@ class HotelServiceTest {
 			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
 
 			// válido: HashMap vacio (sin filtros)
-			EntityResult entityResult = service.hotelQuery(new HashMap<>(), getColumsName());
+			EntityResult entityResult = service.hotelQuery(TestingTools.getMapEmpty(), getColumsName());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
 
 			// válido: HashMap con filtro que existe (sin filtros)
-			entityResult = service.hotelQuery(getFilterId1(), getColumsName());
+			entityResult = service.hotelQuery(getFilterId(), getColumsName());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
 			
-			// válido: HashMap con filtro que NO  existe (sin filtros)
-			entityResult = service.hotelQuery(getFilterNombreNoExiste(), getColumsName());
-			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
 		}
 		
 		
@@ -152,8 +144,8 @@ class HotelServiceTest {
 ////				e.printStackTrace();
 ////				fail("excepción no capturada");
 //			}
-////			EntityResult entityResult = service.hotelQuery(new HashMap<>(), null);
-//			EntityResult entityResult = service.hotelQuery(new HashMap<>(), getColumsName());
+////			EntityResult entityResult = service.hotelQuery(TestingTools.getMapEmpty(), null);
+//			EntityResult entityResult = service.hotelQuery(TestingTools.getMapEmpty(), getColumsName());
 //			System.out.println("resultado: " + entityResult.getMessage());
 //			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
 ////			when(daoHelper.insert(any(),anyMap())).thenThrow(new MissingFieldsException("El campo " + HotelDao.ATTR_NAME + " es nulo"));
@@ -164,13 +156,32 @@ class HotelServiceTest {
 		@DisplayName("XXX Valores de entrada NO válidos")
 		void testHotelQueryKO2() {
 			EntityResult entityResult ;
-			entityResult = service.hotelQuery(new HashMap<>(), null);
+
+			//no existe campos
+			entityResult = service.hotelQuery(TestingTools.getMapEmpty(), TestingTools.getListColumsNoExist());
 			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
 
-			entityResult = service.hotelQuery(new HashMap<>(), getColumsNoExist());
+//			entityResult = service.hotelQuery(getFilterNoExist(), getColumsNoExist());
+//			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+			
+			entityResult = service.hotelQuery(TestingTools.getMapKeyNoExist(), getColumsName());
+			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+
+			entityResult = service.hotelQuery(getFilterIdWrongValue(), getColumsName());
+			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+			
+			//null
+			entityResult = service.hotelQuery(null, getColumsName());
+			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+			
+			entityResult = service.hotelQuery(TestingTools.getMapEmpty(), null);
 			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
 			
-//			EntityResult entityResult = service.hotelQuery(new HashMap<>(), getColumsName());
+			entityResult = service.hotelQuery(TestingTools.getMapEmpty(), TestingTools.getListEmpty());
+			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+			
+			
+//			EntityResult entityResult = service.hotelQuery(TestingTools.getMapEmpty(), getColumsName());
 			System.err.println(entityResult.getMessage());
 //			when(daoHelper.insert(any(),anyMap())).thenThrow(new MissingFieldsException("El campo " + HotelDao.ATTR_NAME + " es nulo"));
 						 

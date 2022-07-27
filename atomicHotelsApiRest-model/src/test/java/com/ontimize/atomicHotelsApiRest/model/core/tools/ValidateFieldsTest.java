@@ -25,7 +25,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
-import com.ontimize.atomicHotelsApiRest.model.core.service.Tools;
+import com.ontimize.atomicHotelsApiRest.model.core.service.TestingTools;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -180,7 +180,7 @@ class ValidateFieldsTest {
 		@DisplayName("Fecha inicio y Fin Válidas")
 		void testDataRangeDateDateOK() {
 			try {
-				assertEquals(0, ValidateFields.dataRange(Tools.getNowString(), Tools.getTomorrowString()));
+				assertEquals(0, ValidateFields.dataRange(TestingTools.getNowString(), TestingTools.getTomorrowString()));
 			} catch (InvalidFieldsValuesException e) {
 				fail();
 			}
@@ -196,7 +196,7 @@ class ValidateFieldsTest {
 //			c.setTime(new Date());
 //			c.add(Calendar.DATE, -2);
 			try {
-				assertEquals(1, ValidateFields.dataRange(Tools.getYesterday(), Tools.getNow()));
+				assertEquals(1, ValidateFields.dataRange(TestingTools.getYesterday(), TestingTools.getNow()));
 			} catch (InvalidFieldsValuesException e) {
 				fail();
 			}
@@ -212,7 +212,7 @@ class ValidateFieldsTest {
 //			c.setTime(new Date());
 //			c.add(Calendar.DATE, -2000);
 			assertThrows(InvalidFieldsValuesException.class,
-					() -> ValidateFields.dataRange(Tools.getNow(), Tools.getYesterday()));
+					() -> ValidateFields.dataRange(TestingTools.getNow(), TestingTools.getYesterday()));
 		}
 
 //		@Test
@@ -231,8 +231,8 @@ class ValidateFieldsTest {
 
 			assertDoesNotThrow(() -> ValidateFields.dataRange((Object) "2022-01-01", (Object) "2022-01-03"));
 			assertDoesNotThrow(() -> ValidateFields.dataRange((Object) "2022-01-01", "2022-01-03"));
-			assertDoesNotThrow(() -> ValidateFields.dataRange((Object) Tools.getNowString(), (Object) Tools.getTomorrowString()));
-			assertDoesNotThrow(() -> ValidateFields.dataRange((Object) Tools.getNowString(), Tools.getTomorrowString()));
+			assertDoesNotThrow(() -> ValidateFields.dataRange((Object) TestingTools.getNowString(), (Object) TestingTools.getTomorrowString()));
+			assertDoesNotThrow(() -> ValidateFields.dataRange((Object) TestingTools.getNowString(), TestingTools.getTomorrowString()));
 		}
 
 		@Test
