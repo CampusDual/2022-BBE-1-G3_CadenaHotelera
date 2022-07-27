@@ -1,6 +1,5 @@
 package com.ontimize.atomicHotelsApiRest.model.core.tools;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,21 +11,30 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsExcepti
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.RestrictedFieldException;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.TypeCodes.type;
 
-import kotlin.jvm.Throws;
 
 public class ControlFields {
 
-	private Map<String, type> fields = new HashMap<String, type>();
-	private List<String> restricted = null;
-	private List<String> required = null;
-	private boolean optional = true;
-	private boolean noEmptyList = true; //solo para las Listas no los HashMap
-	private boolean noWildcard = true;
+	private Map<String, type> fields;;
+	private List<String> restricted;
+	private List<String> required;
+	private boolean optional;
+	private boolean noEmptyList;
+	private boolean noWildcard;
 
 	public ControlFields() {
-
+		reset();
 	}
-
+	
+	public void reset() {
+		fields = new HashMap<String, type>();
+		restricted = null;
+		required = null;
+		optional = true;
+		noEmptyList = true; //solo para las Listas no los HashMap
+		noWildcard = true;
+		
+	}
+	
 	public void addBasics(Map<String, type> fields) {
 		this.fields.putAll(fields);
 	}

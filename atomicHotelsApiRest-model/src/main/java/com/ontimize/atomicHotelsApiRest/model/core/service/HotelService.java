@@ -22,6 +22,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsExcepti
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.RestrictedFieldException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IHotelService;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.ReceiptDao;
@@ -44,6 +45,9 @@ public class HotelService implements IHotelService {
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
 
+	@Autowired
+	ControlFields cf;
+	
 	@Override
 	public EntityResult hotelQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
@@ -51,18 +55,21 @@ public class HotelService implements IHotelService {
 		EntityResult resultado = new EntityResultWrong();
 
 		try {
-
-			// Control del filtro
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			cf.addBasics(HotelDao.fields);
-//			cf.setOptional(true);//El resto de los campos de fields serán aceptados, por defecto true			
+//			cf.setOptional(true);
 			cf.validate(keyMap);
+			cf.validate(attrList);
+			
+//			cf.addBasics(HotelDao.fields);			
+//			cf.setOptional(true);//El resto de los campos de fields serán aceptados, por defecto true			
+//			cf.validate(keyMap);
 
-			cf.validate(attrList);// reutilizamos los mismos criterios para validar attrList
+//			cf.validate(attrList);// reutilizamos los mismos criterios para validar attrList
 
 			resultado = this.daoHelper.query(this.hotelDao, keyMap, attrList);
 
-		} catch (ValidateException e) {
+		} catch (MissingFieldsException e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(e.getMessage());
 

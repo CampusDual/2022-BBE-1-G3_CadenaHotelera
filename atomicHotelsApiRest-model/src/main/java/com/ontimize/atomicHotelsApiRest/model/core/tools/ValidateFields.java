@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingColumnsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
+import com.ontimize.atomicHotelsApiRest.api.core.service.ICountryService;
 import com.ontimize.atomicHotelsApiRest.model.core.service.CountryService;
 
 import repositories.Countries;
@@ -473,16 +474,16 @@ public class ValidateFields {
 		}
 	}
 
-//	@Autowired
-//	static CountryService  countryService;
+	@Autowired
+	static CountryService  countryService;
 
 	public static void country(String country) throws InvalidFieldsValuesException {
-//		if(!countryService.mapCountries().containsKey(country)) {
-//			throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + country);		
-//		}
-		if (country.length() != 2 || country.compareTo(country.toUpperCase()) != 0) {
-			throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + country);
+		if(!countryService.mapCountries().containsKey(country)) {
+			throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + country);		
 		}
+//		if (country.length() != 2 || country.compareTo(country.toUpperCase()) != 0) {
+//			throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + country);
+//		}
 	}
 
 }

@@ -11,6 +11,8 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.sql.Types;
@@ -32,6 +34,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -74,7 +77,7 @@ class HotelServiceTest {
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	public class HotelQuery {
 		// datos entrada
-	
+
 		HashMap<String, Object> getFilterId() {
 			HashMap<String, Object> filters = new HashMap<>() {
 				{
@@ -92,8 +95,6 @@ class HotelServiceTest {
 			};
 			return filters;
 		};
-		
-		
 
 		List<String> getColumsName() {
 			List<String> columns = new ArrayList<>() {
@@ -103,10 +104,22 @@ class HotelServiceTest {
 			};
 			return columns;
 		}
-		
-		
+
 		// fin datos entrada
 
+		@Test
+		@DisplayName("ControlFields usar teset()")
+		void testHotelQueryControlFieldsReset() {
+			//doThrow(new MissingFieldsException("test")).when(cf).reset();
+			verify(cf, times(1)).reset();
+			//assertTrue(, "no se llama al metodo cf.reset()");
+
+//			EntityResult entityResult = service.hotelQuery(TestingTools.getMapEmpty(), getColumsName());
+//			System.out.println("resultado: " + entityResult.getMessage());
+//			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+			
+		}
+		
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testHotelQueryOK() {
@@ -119,74 +132,56 @@ class HotelServiceTest {
 			// válido: HashMap con filtro que existe (sin filtros)
 			entityResult = service.hotelQuery(getFilterId(), getColumsName());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-			
+
 		}
-		
-		
-		
-//		@Test
-//		@DisplayName("Valores de entrada NO válidos")
-//		void testHotelQueryKO() {
-////			ControlFields cf2 = mock(ControlFields.class);
-//
-////			when(cf).thenThrow(new MissingFieldsException("test"));
-////			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
-//			try {
-//				doThrow(new MissingFieldsException("test")).when(cf).validate(anyMap());			
-////				doThrow(ValidateException.class).when(daoHelper).query(any(),anyMap(),anyList());
-////				doThrow(new ValidateException("test")).when(daoHelper).query(any(),anyMap(),anyList());
-//				
-////				doThrow(new InvalidFieldsValuesException("test")).when(cf);
-//
-////			} catch (MissingFieldsException | RestrictedFieldException | InvalidFieldsException
-////					| InvalidFieldsValuesException | LiadaPardaException e) {
-//			} catch (Exception e) {
-////				e.printStackTrace();
-////				fail("excepción no capturada");
-//			}
-////			EntityResult entityResult = service.hotelQuery(TestingTools.getMapEmpty(), null);
-//			EntityResult entityResult = service.hotelQuery(TestingTools.getMapEmpty(), getColumsName());
-//			System.out.println("resultado: " + entityResult.getMessage());
-//			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
-////			when(daoHelper.insert(any(),anyMap())).thenThrow(new MissingFieldsException("El campo " + HotelDao.ATTR_NAME + " es nulo"));
-//		
-//		}
-//		
+
 		@Test
-		@DisplayName("XXX Valores de entrada NO válidos")
-		void testHotelQueryKO2() {
-			EntityResult entityResult ;
+		@DisplayName("Valores de entrada NO válidos")
+		void testHotelQueryKO() {
+			try {
+				doThrow(new MissingFieldsException("test")).when(cf).validate(anyMap());			
+				
+				EntityResult entityResult = service.hotelQuery(TestingTools.getMapEmpty(), getColumsName());
+				System.out.println("resultado: " + entityResult.getMessage());
+				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+//			}
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("excepción no capturada: " + e.getMessage());
+			}
 
-			//no existe campos
-			entityResult = service.hotelQuery(TestingTools.getMapEmpty(), TestingTools.getListColumsNoExist());
-			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
-
-//			entityResult = service.hotelQuery(getFilterNoExist(), getColumsNoExist());
-//			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
-			
-			entityResult = service.hotelQuery(TestingTools.getMapKeyNoExist(), getColumsName());
-			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-
-			entityResult = service.hotelQuery(getFilterIdWrongValue(), getColumsName());
-			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-			
-			//null
-			entityResult = service.hotelQuery(null, getColumsName());
-			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-			
-			entityResult = service.hotelQuery(TestingTools.getMapEmpty(), null);
-			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
-			
-			entityResult = service.hotelQuery(TestingTools.getMapEmpty(), TestingTools.getListEmpty());
-			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
-			
-			
-//			EntityResult entityResult = service.hotelQuery(TestingTools.getMapEmpty(), getColumsName());
-			System.err.println(entityResult.getMessage());
-//			when(daoHelper.insert(any(),anyMap())).thenThrow(new MissingFieldsException("El campo " + HotelDao.ATTR_NAME + " es nulo"));
-						 
-			
 		}
+
+//		@Test
+//		@DisplayName("XXX Valores de entrada NO válidos")
+//		void testHotelQueryKO2() {
+//			EntityResult entityResult ;
+//
+//			//no existen campos
+//			entityResult = service.hotelQuery(TestingTools.getMapEmpty(), TestingTools.getListColumsNoExist());
+//			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+//
+//			entityResult = service.hotelQuery(TestingTools.getMapKeyNoExist(), getColumsName());
+//			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+//
+//			//valor erroneo en filtro
+//			entityResult = service.hotelQuery(getFilterIdWrongValue(), getColumsName());
+//			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+//			
+//			//null
+//			entityResult = service.hotelQuery(null, getColumsName());
+//			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+//			
+//			entityResult = service.hotelQuery(TestingTools.getMapEmpty(), null);
+//			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+//			
+//			//columnas vacias
+//			entityResult = service.hotelQuery(TestingTools.getMapEmpty(), TestingTools.getListEmpty());
+//			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+//						
+//			System.err.println(entityResult.getMessage());
+//						 			
+//		}
 
 //		@Test
 //		@DisplayName("Obtain all data columns from hotels table when htl_id is -> 2")
