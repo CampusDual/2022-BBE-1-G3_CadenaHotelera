@@ -20,6 +20,7 @@ import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingServiceExtraDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelServiceExtraDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.ServicesXtraDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
@@ -44,13 +45,16 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 
 	@Autowired
 	private HotelServiceExtraService hotelServiceExtraService;
+	
+	@Autowired
+	ControlFields cf;
 
 	public EntityResult bookingServiceExtraQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 		try {
 
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			cf.addBasics(BookingServiceExtraDao.fields);
 			cf.validate(keyMap);
 
@@ -74,7 +78,7 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 
 		EntityResult resultado = new EntityResultWrong();
 		try {
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			List<String> required = Arrays.asList(BookingServiceExtraDao.ATTR_ID_SXT,BookingServiceExtraDao.ATTR_ID_BKG,BookingServiceExtraDao.ATTR_ID_UNITS);
 			cf.addBasics(BookingServiceExtraDao.fields);
 			cf.setRequired(required);
@@ -173,8 +177,8 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-				ValidateFields.required(keyMap, BookingServiceExtraDao.ATTR_ID);
-				ControlFields cf = new ControlFields();
+
+				cf.reset();
 				List<String> required = Arrays.asList(BookingServiceExtraDao.ATTR_ID);
 				cf.addBasics(BookingServiceExtraDao.fields);
 				cf.setRequired(required);
@@ -200,8 +204,8 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 					.equals(BookingDao.Status.CONFIRMED)) {
 				resultado = new EntityResultWrong("La reserva de este servicio esta confirmada no se pueden eliminar.");
 			} 
-		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + e.getMessage());
+		} catch (ValidateException e) {
+			resultado = new EntityResultWrong(e.getMessage());
 		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
 		} catch (Exception e) {
@@ -211,15 +215,6 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 		return resultado;
 	}
 
-	@Override
-	/*
-	 * RETURNS devuelve las reservas en progreso.
-	 */
-	public EntityResult bookingInProgressQuery(Map<String, Object> keyMap, List<String> attrList)
-			throws OntimizeJEERuntimeException {
-		return this.daoHelper.query(this.bookingServiceExtraDao, keyMap, attrList, "booking_inprocess");
-
-	}
 
 	@Override
 	/**
@@ -236,14 +231,23 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			ValidateFields.required(keyMap, BookingServiceExtraDao.ATTR_ID_BKG);
+			List<String> required = Arrays.asList(BookingServiceExtraDao.ATTR_ID_BKG);
+			cf.reset();
+			cf.addBasics(BookingServiceExtraDao.fields);
+			cf.setRequired(required);
+			cf.validate(keyMap);
+
 			resultado = this.daoHelper.query(this.bookingServiceExtraDao, keyMap, attrList,
 					"queryServciosExtraPrecioUnidadesTotal");
-		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(ErrorMessage.RESULT_REQUIRED + e.getMessage());
+		} catch (ValidateException e) {
+			resultado = new EntityResultWrong(e.getMessage());
+		}catch(Exception e) {
+			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}
 		return resultado;
 	}
+	
+
 
 	@Override
 	/**
@@ -261,11 +265,19 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 		EntityResult resultado = new EntityResultMapImpl();
 
 		try {
-			ValidateFields.required(keyMap, BookingServiceExtraDao.ATTR_ID_BKG);
+			List<String> required = Arrays.asList(BookingServiceExtraDao.ATTR_ID_BKG);
+			cf.reset();
+			cf.addBasics(BookingServiceExtraDao.fields);
+			cf.addBasics(ServicesXtraDao.fields);
+			cf.setRequired(required);
+			cf.validate(keyMap);
+			
 			resultado = this.daoHelper.query(this.bookingServiceExtraDao, keyMap, attrList,
 					"queryServiciosExtraNombreDescripcionUnidadesPrecioFecha");
-		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(ErrorMessage.RESULT_REQUIRED + e.getMessage());
+		} catch (ValidateException e) {
+			resultado = new EntityResultWrong(e.getMessage());
+		}catch (Exception e) {
+			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}
 		return resultado;
 	}

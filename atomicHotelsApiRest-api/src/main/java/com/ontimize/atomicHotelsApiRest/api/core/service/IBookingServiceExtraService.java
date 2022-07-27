@@ -10,7 +10,6 @@ import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
 public interface IBookingServiceExtraService {
 	
 	 public EntityResult bookingServiceExtraQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
-	 public EntityResult bookingInProgressQuery(Map<String, Object> keyMap,List<String> attrList) throws OntimizeJEERuntimeException;
 	 public EntityResult bookingServiceExtraInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException, MissingFieldsException;
 	// public EntityResult bookingServiceExtraUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
 	 public EntityResult bookingServiceExtraDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
