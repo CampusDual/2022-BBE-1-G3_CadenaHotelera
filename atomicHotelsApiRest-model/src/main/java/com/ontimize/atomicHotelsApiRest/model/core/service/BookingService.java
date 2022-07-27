@@ -1,5 +1,6 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.EntityResultRequiredException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.jee.common.db.SQLStatementBuilder.BasicExpression;
@@ -47,24 +49,27 @@ public class BookingService implements IBookingService {
 	@Autowired
 	IRoomService roomService;
 
+	@Autowired
+	ControlFields cf;
+
 	@Override
 	public EntityResult bookingQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
-		
-		EntityResult resultado =new EntityResultWrong();
+
+		EntityResult resultado = new EntityResultWrong();
 		try {
 
-			ControlFields cf = new ControlFields();
-			cf.addBasics(BookingDao.fields);		
+			cf.reset();
+			cf.addBasics(BookingDao.fields);
 			cf.validate(keyMap);
 
 			cf.validate(attrList);
-			
-			resultado=this.daoHelper.query(this.bookingDao, keyMap, attrList);
-		}catch(ValidateException e) {
-			resultado= new EntityResultWrong(e.getMessage());
-		}catch(Exception e) {
-			resultado= new EntityResultWrong(ErrorMessage.ERROR);
+
+			resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList);
+		} catch (ValidateException | LiadaPardaException e) {
+			resultado = new EntityResultWrong(e.getMessage());
+		} catch (Exception e) {
+			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}
 		return resultado;
 	}
@@ -72,25 +77,25 @@ public class BookingService implements IBookingService {
 	@Override
 	public EntityResult bookingInfoQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
-		EntityResult resultado =new EntityResultWrong();
+		EntityResult resultado = new EntityResultWrong();
 		try {
 
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			cf.addBasics(BookingDao.fields);
 			cf.addBasics(RoomDao.fields);
 			cf.addBasics(RoomTypeDao.fields);
 			cf.addBasics(HotelDao.fields);
 			cf.validate(keyMap);
 
-			cf.validate(attrList);  
-			
-			resultado=this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryInfoBooking");
-		}catch(ValidateException e) {
-			resultado= new EntityResultWrong(e.getMessage());
-		}catch(Exception e) {
-			resultado= new EntityResultWrong(ErrorMessage.ERROR);
+			cf.validate(attrList);
+
+			resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryInfoBooking");
+		} catch (ValidateException | LiadaPardaException e) {
+			resultado = new EntityResultWrong(e.getMessage());
+		} catch (Exception e) {
+			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}
-		
+
 		return resultado;
 	}
 
@@ -98,10 +103,29 @@ public class BookingService implements IBookingService {
 	public EntityResult bookingInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 		try {
-			ValidateFields.required(attrMap, BookingDao.ATTR_START, BookingDao.ATTR_END, BookingDao.ATTR_ROOM_ID,
-					BookingDao.ATTR_CUSTOMER_ID);
-			ValidateFields.restricted(attrMap, BookingDao.ATTR_CHECKIN, BookingDao.ATTR_CHECKOUT,
-					BookingDao.ATTR_CANCELED, BookingDao.ATTR_CREATED);
+			cf.reset();
+			List<String> required = new ArrayList<String>() {
+				{
+					add(BookingDao.ATTR_START);
+					add(BookingDao.ATTR_END);
+					add(BookingDao.ATTR_ROOM_ID);
+					add(BookingDao.ATTR_CUSTOMER_ID);
+				}
+			};
+			List<String> restricted = new ArrayList<String>() {
+				{
+					add(BookingDao.ATTR_CHECKIN);
+					add(BookingDao.ATTR_CHECKOUT);
+					add(BookingDao.ATTR_CANCELED);
+					add(BookingDao.ATTR_CREATED);
+				}
+			};
+
+			cf.addBasics(BookingDao.fields);
+			cf.setRequired(required);
+			cf.setRestricted(restricted);
+			cf.setOptional(false);
+			cf.validate(attrMap);
 
 			if (ValidateFields.dataRange(attrMap.get(BookingDao.ATTR_START), attrMap.get(BookingDao.ATTR_END)) == 0) {
 				if (roomService.isRoomUnbookedgInRange(attrMap.get(BookingDao.ATTR_START),
@@ -113,7 +137,7 @@ public class BookingService implements IBookingService {
 			} else {
 				resultado = new EntityResultWrong(ErrorMessage.DATA_START_BEFORE_TODAY);
 			}
-		} catch (EntityResultRequiredException | ValidateException e) {
+		} catch (EntityResultRequiredException | ValidateException | LiadaPardaException e) {
 			System.err.println(e.getMessage());
 			resultado = new EntityResultWrong(e.getMessage());
 		}
@@ -121,18 +145,39 @@ public class BookingService implements IBookingService {
 	}
 
 	/**
-	 * Requiere el campo de filtrado (keyMap) ID y el campo de data (attrMap) action. El resto los ignora.
-	 * acciones válidas : CHECKIN,CHECKOUT,CANCEL
+	 * Requiere el campo de filtrado (keyMap) ID y el campo de data (attrMap)
+	 * action. El resto los ignora. acciones válidas : CHECKIN,CHECKOUT,CANCEL
 	 */
 	@Override
 	public EntityResult bookingActionUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultadoER = new EntityResultWrong(ErrorMessage.INVALID_ACTION);
 		try {
-			ValidateFields.required(keyMap, BookingDao.ATTR_ID);
-			ValidateFields.required(attrMap, BookingDao.NON_ATTR_ACTION);
-			
+			// ControlFields del filtro
+			List<String> requiredFilter = new ArrayList<String>() {
+				{
+					add(BookingDao.ATTR_ID);
+				}
+			};
+			cf.reset();
+			cf.addBasics(HotelDao.fields);
+			cf.setRequired(requiredFilter);
+			cf.setOptional(false);
+			cf.validate(keyMap);
 
+			// ControlFields de los nuevos datos
+			List<String> requiredData = new ArrayList<String>() {
+				{
+					add(BookingDao.NON_ATTR_ACTION);
+				}
+			};
+			cf.reset();
+			cf.addBasics(HotelDao.fields);
+			cf.setRequired(requiredData);
+			cf.setOptional(false);
+			cf.validate(attrMap);
+			 
+			//TODO pasar a ControlFields
 			BookingDao.Action action;
 			try {
 				action = BookingDao.Action.valueOf((String) attrMap.get(BookingDao.NON_ATTR_ACTION));
@@ -143,7 +188,7 @@ public class BookingService implements IBookingService {
 			}
 
 			BookingDao.Status status = getBookingStatus(keyMap.get(BookingDao.ATTR_ID));
-			
+
 			switch (status) {
 			case CANCELED:
 				resultadoER = new EntityResultWrong("No se pueden modificar reservas canceladas");
@@ -178,8 +223,10 @@ public class BookingService implements IBookingService {
 				break;
 			}
 
-		} catch (MissingFieldsException | EntityResultRequiredException | InvalidFieldsValuesException e) {
+		} catch (ValidateException | EntityResultRequiredException e) {
 			System.err.println(e.getMessage());
+			resultadoER = new EntityResultWrong(e.getMessage());
+		}catch(Exception e) {
 			resultadoER = new EntityResultWrong(e.getMessage());
 		}
 		return resultadoER;
@@ -191,13 +238,15 @@ public class BookingService implements IBookingService {
 		return new EntityResultWrong("No se pueden eliminar reservas, debe cancelarla");
 	}
 
+	
+//TODO ver bien el validador en los tres siguientes métodos
 	@Override
 	public EntityResult bookingsInRangeQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException, InvalidFieldsValuesException {
 		try {
 			bookingsInRangeBuilder(keyMap, attrList);
 			return this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryBasicBooking");
-		} catch (MissingFieldsException | InvalidFieldsValuesException e) {
+		} catch (ValidateException | LiadaPardaException e) {
 			System.err.println(e.getMessage());
 			return new EntityResultWrong(e.getMessage());
 		}
@@ -209,7 +258,7 @@ public class BookingService implements IBookingService {
 		try {
 			bookingsInRangeBuilder(keyMap, attrList);
 			return this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryInfoBooking");
-		} catch (MissingFieldsException | InvalidFieldsValuesException e) {
+		} catch (ValidateException | LiadaPardaException e) {
 			System.err.println(e.getMessage());
 			return new EntityResultWrong(e.getMessage());
 		}
@@ -224,11 +273,26 @@ public class BookingService implements IBookingService {
 	 * @throws InvalidFieldsValuesException
 	 */
 	public void bookingsInRangeBuilder(Map<String, Object> keyMap, List<String> attrList)
-			throws MissingFieldsException, InvalidFieldsValuesException {
-		ValidateFields.required(keyMap, BookingDao.ATTR_START, BookingDao.ATTR_END);
-
-		Date rangeStart = ValidateFields.stringToDate((String) keyMap.get(BookingDao.ATTR_START));
-		Date rangeEnd = ValidateFields.stringToDate((String) keyMap.get(BookingDao.ATTR_END));
+			throws ValidateException, LiadaPardaException {
+		
+		cf.reset();
+		List<String> required = new ArrayList<String>() {
+			{
+				add(BookingDao.ATTR_START);
+				add(BookingDao.ATTR_END);;
+			}
+		};
+		cf.addBasics(BookingDao.fields);
+		cf.setRequired(required);
+		cf.validate(keyMap);
+		
+		
+//		Date rangeStart = ValidateFields.stringToDate((String) keyMap.get(BookingDao.ATTR_START));
+//		Date rangeEnd = ValidateFields.stringToDate((String) keyMap.get(BookingDao.ATTR_END));
+		
+		Date rangeStart = (Date)keyMap.get(BookingDao.ATTR_START);
+		Date rangeEnd = (Date)keyMap.get(BookingDao.ATTR_END);
+		
 		ValidateFields.dataRange(rangeStart, rangeEnd);
 
 		BasicField bkgStart = new BasicField(BookingDao.ATTR_START);
@@ -274,7 +338,8 @@ public class BookingService implements IBookingService {
 //	
 	/**
 	 * Para obtener el estado un de una reserva
-	 * @param bookingId  Id de la reserva (Object)
+	 * 
+	 * @param bookingId Id de la reserva (Object)
 	 * @return BookigDao.Status (enum estado)
 	 * @throws EntityResultRequiredException Si da error al hacer la consulta
 	 */
@@ -289,8 +354,8 @@ public class BookingService implements IBookingService {
 //		attrList.add(BookingDao.ATTR_CHECKOUT);
 //		attrList.add(BookingDao.ATTR_CANCELED);
 //		attrList.add(BookingDao.ATTR_CREATED);
-		List<String> attrList = Arrays.asList(BookingDao.ATTR_CHECKIN,
-				BookingDao.ATTR_CHECKOUT, BookingDao.ATTR_CANCELED);
+		List<String> attrList = Arrays.asList(BookingDao.ATTR_CHECKIN, BookingDao.ATTR_CHECKOUT,
+				BookingDao.ATTR_CANCELED);
 		EntityResult consultaER = this.daoHelper.query(this.bookingDao, keyMap, attrList);
 
 		if (consultaER.calculateRecordNumber() == 1) {
@@ -308,9 +373,10 @@ public class BookingService implements IBookingService {
 		}
 
 	}
-	
+
 	/**
-	 * Dado un bkg_id devuelve los días de esa reserva y el precio diario de la habitación
+	 * Dado un bkg_id devuelve los días de esa reserva y el precio diario de la
+	 * habitación
 	 * 
 	 * @param keyMap
 	 * @param attrList
@@ -318,39 +384,58 @@ public class BookingService implements IBookingService {
 	 * @throws OntimizeJEERuntimeException
 	 */
 	@Override
-	public EntityResult bookingDaysUnitaryRoomPriceQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException{
+	public EntityResult bookingDaysUnitaryRoomPriceQuery(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException {
 
 		EntityResult resultado = new EntityResultWrong();
-		try {	
-			ControlFields cf = new ControlFields();
-//			cf.addBasics(BookingDao.fields); //Pendiente			
-			ValidateFields.required(keyMap, BookingDao.ATTR_ID);
+		try {
+			List<String> required = new ArrayList<String>() {
+				{
+					add(BookingDao.ATTR_ID);
+				}
+			};
+			cf.reset();
+			cf.addBasics(BookingDao.fields); 
+			cf.addBasics(RoomTypeDao.fields); 
+			cf.addBasics(RoomDao.fields); 
+			cf.setRequired(required);
+	        cf.validate(keyMap);
+	               
 			resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryDiasPrecioUnitarioHabitacion");
 
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
-		}catch(Exception e) {
+		} catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}
 		return resultado;
 	}
-	
+
 	@Override
-	public EntityResult bookingsHotelsQuery (Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException{
+	public EntityResult bookingsHotelsQuery(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
-		try {	
-			ControlFields cf = new ControlFields();
-//			cf.addBasics(BookingDao.fields); //Pendiente			
-			ValidateFields.required(keyMap, BookingDao.ATTR_ID);
+		try {
+			List<String> required = new ArrayList<String>() {
+				{
+					add(BookingDao.ATTR_ID);
+				}
+			};
+			cf.reset();
+			cf.addBasics(BookingDao.fields); 
+			cf.addBasics(RoomDao.fields); 
+			cf.addBasics(HotelDao.fields); 
+			cf.setRequired(required);
+	        cf.validate(keyMap);
+	        
 			resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryBookingsHotel");
 
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
-		}catch(Exception e) {
+		} catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}
 		return resultado;
 	}
-
 
 }
