@@ -57,6 +57,9 @@ public class RoomService implements IRoomService {
 	private DefaultOntimizeDaoHelper daoHelper;
 	@Autowired
 	IBookingService bookingService;
+	
+	@Autowired
+	ControlFields cf;
 
 	@Override
 	public EntityResult roomQuery(Map<String, Object> keyMap, List<String> attrList)
@@ -66,7 +69,7 @@ public class RoomService implements IRoomService {
 
 		try {
 
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			cf.addBasics(RoomDao.fields);
 			cf.validate(keyMap);
 
@@ -90,7 +93,7 @@ public class RoomService implements IRoomService {
 		EntityResult queryRes = new EntityResultWrong();
 		try {
 
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			cf.addBasics(RoomDao.fields);
 			cf.addBasics(RoomTypeDao.fields);
 			cf.addBasics(HotelDao.fields);
@@ -112,7 +115,7 @@ public class RoomService implements IRoomService {
 		EntityResult resultado = new EntityResultWrong();
 		try {
 
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			List<String> required = new ArrayList<String>() {
 				{
 					add(RoomDao.ATTR_HOTEL_ID);
@@ -158,7 +161,7 @@ public class RoomService implements IRoomService {
 					add(RoomDao.ATTR_ID);
 				}
 			};
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			cf.addBasics(RoomDao.fields);
 			cf.setRequired(requiredFilter);
 			cf.setOptional(false);// No será aceptado ningún campo que no esté en required
@@ -170,10 +173,10 @@ public class RoomService implements IRoomService {
 					add(RoomDao.ATTR_ID);// El id no se puede actualizar
 				}
 			};
-			ControlFields cd = new ControlFields();
-			cd.addBasics(RoomDao.fields);
-			cd.setRestricted(restrictedData);
-			cd.validate(attrMap);
+			cf.reset();
+			cf.addBasics(RoomDao.fields);
+			cf.setRestricted(restrictedData);
+			cf.validate(attrMap);
 
 			resultado = this.daoHelper.update(this.roomDao, attrMap, keyMap);
 
@@ -208,7 +211,7 @@ public class RoomService implements IRoomService {
 					add(RoomDao.ATTR_ID);
 				}
 			};
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			cf.addBasics(RoomDao.fields);
 			cf.setRequired(required);
 			cf.setOptional(false);
@@ -274,7 +277,7 @@ public class RoomService implements IRoomService {
 				add(BookingDao.ATTR_END);
 			}
 		};
-		ControlFields cf = new ControlFields();
+		cf.reset();
 		cf.addBasics(BookingDao.fields);
 		cf.setRequired(required);
 		cf.setOptional(false);
@@ -381,7 +384,7 @@ public class RoomService implements IRoomService {
 
 		try {
 
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			cf.addBasics(RoomDao.fields);
 			cf.addBasics(RoomTypeDao.fields);
 			cf.addBasics(RoomTypeFeatureDao.fields);
