@@ -1,24 +1,27 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.jdbc.SQLWarningException;
+
 import org.springframework.stereotype.Service;
 
-import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
+
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IRoomTypeService;
-import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
-import com.ontimize.atomicHotelsApiRest.model.core.dao.FeatureDao;
-import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.BedComboDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomTypeDao;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
-import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
+
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
@@ -33,40 +36,67 @@ public class RoomTypeService implements IRoomTypeService {
 	private RoomTypeDao roomTypeDao;
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
+	
+	@Autowired
+	ControlFields cf;
 
 	@Override
 	public EntityResult roomTypeQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
-		EntityResult resultado = this.daoHelper.query(this.roomTypeDao, keyMap, attrList);
+		EntityResult resultado=new EntityResultWrong();
+		try {
+		cf.reset();
+		cf.addBasics(RoomTypeDao.fields);
+		cf.validate(keyMap);
+		cf.validate(attrList);
+		return this.daoHelper.query(this.roomTypeDao, keyMap, attrList);
+		}catch(ValidateException e) {
+			resultado=new EntityResultWrong(e.getMessage());
+		}catch(Exception e) {
+			resultado=new EntityResultWrong(ErrorMessage.ERROR);
+		}
 		return resultado;
 	}
 
 	@Override
 	public EntityResult roomTypeInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
-		
-		EntityResult resultado = new EntityResultMapImpl();
+
+		EntityResult resultado = new EntityResultWrong();
 
 		try {
+			cf.reset();
+			cf.addBasics(RoomTypeDao.fields);
+			List<String> required = new ArrayList<>() {
+				{
+					add(RoomTypeDao.ATTR_NAME);
+					add(RoomTypeDao.ATTR_PRICE);
+					add(RoomTypeDao.ATTR_BEDS_COMBO);
+				}
+			};
+			cf.setRequired(required);
+			List<String> restricted = new ArrayList<>() {
+				{
+					add(RoomTypeDao.ATTR_ID);
+				}
+			};
+			cf.setRestricted(restricted);
+			cf.validate(attrMap);
 
-			ValidateFields.required(attrMap, RoomTypeDao.ATTR_NAME, RoomTypeDao.ATTR_PRICE, RoomTypeDao.ATTR_BEDS_COMBO);
-		
 			resultado = this.daoHelper.insert(this.roomTypeDao, attrMap);
 
 			resultado.setMessage("RoomType registrada");
 
-		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());	
-			
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
-		}catch(DataIntegrityViolationException e) {
+		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);
+		} catch (ValidateException e) {
+			resultado = new EntityResultWrong(e.getMessage());
 		} catch (Exception e) {
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}
-		
 		return resultado;
-		
 	}
 
 	@Override
@@ -75,49 +105,82 @@ public class RoomTypeService implements IRoomTypeService {
 		
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			ValidateFields.required(keyMap, RoomTypeDao.ATTR_ID);
+			cf.reset();
+			cf.addBasics(RoomTypeDao.fields);
+			List<String> required=new ArrayList<>(){
+				{
+				add(RoomTypeDao.ATTR_ID);
+			}
+				};
+			cf.setRequired(required);
+			cf.setOptional(false);
+			cf.validate(keyMap);
+			
+			cf.reset();
+			cf.addBasics(RoomTypeDao.fields);
+			List<String> restricted=new ArrayList<>(){
+				{
+				add(RoomTypeDao.ATTR_ID);
+			}
+				};
+			cf.setRestricted(restricted);
+			cf.validate(attrMap);
+			
 			resultado = this.daoHelper.update(this.roomTypeDao, attrMap, keyMap);
 			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
 				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
 			} else {
 				resultado.setMessage("RoomType actualizada");
 			}
-		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + e.getMessage());
-		} catch (DuplicateKeyException e) {
-			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
-		} catch (DataIntegrityViolationException e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FK+" / "+ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
-		} catch (Exception e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR);
+		}catch(ValidateException e){
+			resultado = new EntityResultWrong(e.getMessage());
+		}catch(DuplicateKeyException e){
+			resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
+		}catch( DataIntegrityViolationException e){
+			resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
+		}catch(Exception e){
+			resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR);
 		}
-		return resultado; 
+		return resultado;
 	}
-
 	@Override
 	public EntityResult roomTypeDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 		
-		EntityResult resultado = new EntityResultMapImpl();
+		EntityResult resultado = new EntityResultWrong();
 		try {
-			ValidateFields.required(keyMap, RoomTypeDao.ATTR_ID);
+			cf.reset();
+			cf.addBasics(RoomTypeDao.fields);
+			List<String> required = new ArrayList() {
+				{
+					add(RoomTypeDao.ATTR_ID);
+				}
+			};
+			cf.setRequired(required);
+			cf.setOptional(false);
+			cf.validate(keyMap);
+			Map<String,Object> consultaKeyMap=new HashMap<>()
+			{
+				{
+				put( BedComboDao.ATTR_ID,keyMap.get(RoomTypeDao.ATTR_ID));	
+				}
+			};
 
-			EntityResult auxEntity = this.daoHelper.query(this.roomTypeDao,
-					EntityResultTools.keysvalues(RoomTypeDao.ATTR_ID, keyMap.get(RoomTypeDao.ATTR_ID)),
-					EntityResultTools.attributes(RoomTypeDao.ATTR_ID));
+			EntityResult auxEntity= roomTypeQuery(consultaKeyMap,EntityResultTools.attributes(RoomTypeDao.ATTR_ID));
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
 				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
 			} else {
 				resultado = this.daoHelper.delete(this.roomTypeDao, keyMap);
 				resultado.setMessage("RoomType eliminado");
 			}
-		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + e.getMessage());
+		} catch (ValidateException e) {
+			e.getStackTrace();
+			resultado = new EntityResultWrong(e.getMessage());
 		} catch (DataIntegrityViolationException e) {
+			e.getStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
 		} catch (Exception e) {
-			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR);
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}
 		return resultado;
 		

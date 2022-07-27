@@ -243,12 +243,12 @@ public class ValidateFields {
 	 * comprueba que un formato de precio tenga como maximo 2 decimales
 	 */
 
-	public static void formatprice(Object object) throws NumberFormatException {
+	public static void formatprice(Object object) throws InvalidFieldsValuesException {
 		String pre = "" + object;
 		String comprueba = pre.substring(pre.indexOf(".") + 1);
 		System.err.println(pre);
 		if (comprueba.length() > 2) {
-			throw new NumberFormatException("Introduce solo 2 decimales");
+			throw new InvalidFieldsValuesException("Introduce solo 2 decimales");
 		} else {
 			BigDecimal comprobado = new BigDecimal(pre);
 			System.err.println(comprobado + "/");
