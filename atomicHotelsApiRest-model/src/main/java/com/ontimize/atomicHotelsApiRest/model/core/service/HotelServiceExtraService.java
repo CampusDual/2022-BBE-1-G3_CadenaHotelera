@@ -34,13 +34,16 @@ public class HotelServiceExtraService implements IHotelServiceExtraService {
 
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
+	
+	@Autowired
+	ControlFields cf;
 
 	public EntityResult hotelServiceExtraQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 		try {
 
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			cf.addBasics(HotelServiceExtraDao.fields);
 			cf.validate(keyMap);
 
@@ -63,7 +66,7 @@ public class HotelServiceExtraService implements IHotelServiceExtraService {
 		EntityResult resultado = new EntityResultWrong();
 		try {
 
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			List<String> required = new ArrayList<String>() {
 				{
 					add(HotelServiceExtraDao.ATTR_ID_HTL);
@@ -107,7 +110,7 @@ public class HotelServiceExtraService implements IHotelServiceExtraService {
 			List<String> requiredFilter = new ArrayList<String>() {{
 				add(HotelServiceExtraDao.ATTR_ID);
 			}};	
-			ControlFields cf = new ControlFields();		
+			cf.reset();	
 			cf.addBasics(HotelServiceExtraDao.fields);
 			cf.setRequired(requiredFilter);
 			cf.setOptional(false);//No será aceptado ningún campo que no esté en required
@@ -119,11 +122,11 @@ public class HotelServiceExtraService implements IHotelServiceExtraService {
 			List<String> restrictedData = new ArrayList<String>() {{
 				add(HotelServiceExtraDao.ATTR_ID);//El id no se puede actualizar
 			}};
-			ControlFields cd = new ControlFields();
-			cd.addBasics(HotelServiceExtraDao.fields);
-			cd.setRestricted(restrictedData);
-//			cd.setOptional(true); //No es necesario ponerlo
-			cd.validate(attrMap);
+			cf.reset();
+			cf.addBasics(HotelServiceExtraDao.fields);
+			cf.setRestricted(restrictedData);
+//			cf.setOptional(true); //No es necesario ponerlo
+			cf.validate(attrMap);
 			
 			resultado = this.daoHelper.update(this.hotelServiceExtraDao, attrMap, keyMap);
 			
@@ -155,7 +158,7 @@ public class HotelServiceExtraService implements IHotelServiceExtraService {
 			List<String> required = new ArrayList<String>() {{
 				add(HotelServiceExtraDao.ATTR_ID);
 			}};
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			cf.addBasics(HotelServiceExtraDao.fields);
 			cf.setRequired(required);
 			cf.setOptional(false);
