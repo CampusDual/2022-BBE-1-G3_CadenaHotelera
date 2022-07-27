@@ -35,22 +35,23 @@ public class CustomerCreditCardService implements ICustomerCreditCardService{
 	private CustomerCreditCardDao customerCreditCardDao;
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
+	
+	@Autowired
+	ControlFields cf;
 
 	@Override
 	public EntityResult customerCreditCardQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado=new EntityResultWrong();
 		try {
-		ControlFields controllerFilterandColumns=new ControlFields();	
-		controllerFilterandColumns.addBasics(CustomerCreditCardDao.fields);
-		controllerFilterandColumns.validate(keyMap);
-		controllerFilterandColumns.validate(attrList);
+		cf.reset();
+		cf.addBasics(CustomerCreditCardDao.fields);
+		cf.validate(keyMap);
+		cf.validate(attrList);
 		return this.daoHelper.query(this.customerCreditCardDao, keyMap, attrList);
 		}catch( ValidateException e) {
-			e.getMessage();
 			resultado=new EntityResultWrong(e.getMessage());
 		}catch(Exception e) {
-			e.getStackTrace();
 			resultado=new EntityResultWrong(ErrorMessage.ERROR);
 		}
 		return resultado;
@@ -62,16 +63,16 @@ public class CustomerCreditCardService implements ICustomerCreditCardService{
 		
 		EntityResult resultado = new EntityResultWrong();
 		try {
-			ControlFields controllerData=new ControlFields();
-			controllerData.addBasics(CustomerCreditCardDao.fields);
+			cf.reset();
+			cf.addBasics(CustomerCreditCardDao.fields);
 			List<String> required=new ArrayList<>() {
 				{
 					add(CustomerCreditCardDao.ATTR_CRD_ID);
 					add(CustomerCreditCardDao.ATTR_CST_ID);
 				}
 				};
-			controllerData.setRequired(required);
-			controllerData.validate(attrMap);
+			cf.setRequired(required);
+			cf.validate(attrMap);
 			resultado = this.daoHelper.insert(this.customerCreditCardDao, attrMap);	
 			resultado.setMessage("Tarjeta añadida a cliente");
 
@@ -80,12 +81,12 @@ public class CustomerCreditCardService implements ICustomerCreditCardService{
 		}catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);
 		}catch (ValidateException e) {
-			e.getStackTrace();
+
 			resultado =new EntityResultWrong(e.getMessage());
 		}
 		catch(Exception e) {
 			resultado=new EntityResultWrong(ErrorMessage.ERROR);
-			e.printStackTrace();
+
 		}
 		return resultado;		
 	}
@@ -94,17 +95,17 @@ public class CustomerCreditCardService implements ICustomerCreditCardService{
 	public EntityResult customerCreditCardDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 		try {
-			ControlFields ControllerFilter=new ControlFields();
-			ControllerFilter.addBasics(CustomerCreditCardDao.fields);
+			cf.reset();
+			cf.addBasics(CustomerCreditCardDao.fields);
 			List<String> required=new ArrayList<>() {
 				{
 					add(CustomerCreditCardDao.ATTR_CRD_ID);
 					add(CustomerCreditCardDao.ATTR_CST_ID);
 				}
 				};
-			ControllerFilter.setRequired(required);
-			ControllerFilter.setOptional(false);
-			ControllerFilter.validate(keyMap);
+			cf.setRequired(required);
+			cf.setOptional(false);
+			cf.validate(keyMap);
 			
 			Map<String,Object> consultaKeyMap=new HashMap<>()
 			{
@@ -127,13 +128,13 @@ public class CustomerCreditCardService implements ICustomerCreditCardService{
 		}
 
 		} catch (ValidateException e) {
-			e.getStackTrace();
+
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (DataIntegrityViolationException e) {
-			e.getStackTrace();
+	
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
 		} catch (Exception e) {
-			e.printStackTrace();
+	
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}
 		return resultado;
