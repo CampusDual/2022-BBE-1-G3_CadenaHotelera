@@ -1,5 +1,6 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,12 +17,14 @@ import org.springframework.stereotype.Service;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.EntityResultRequiredException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.ICustomerService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.FeatureDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomDao;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultExtraTools;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
@@ -45,47 +48,145 @@ public class CustomerService implements ICustomerService {
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
 
+	@Autowired
+	ControlFields cf;
+
 	@Override
 	public EntityResult customerQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
-		return this.daoHelper.query(this.customerDao, keyMap, attrList);
+		EntityResult resultado = new EntityResultWrong();
+		try {
+			cf.reset();
+			cf.addBasics(CustomerDao.fields);
+			cf.validate(keyMap);
+			cf.validate(attrList);
+
+			resultado = this.daoHelper.query(this.customerDao, keyMap, attrList);
+		} catch (Exception e) {
+			resultado = new EntityResultWrong(ErrorMessage.ERROR);
+		}
+		return resultado;
 	}
 
+	// TODO HACER DOS MÉTODOS DISTINTOS DE INSERT PARA EMPRESA Y CLIENTE PARTICULAR
+	// O JUNTAR LOS DOS SIGUIENTES MÉTODOS EN UN SOLO??
+
 	@Override
-	public EntityResult customerInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
-
-		EntityResult resultado = new EntityResultMapImpl();
-
+	public EntityResult businessCustomerInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
+		EntityResult resultado = new EntityResultWrong();
 		try {
 
-			// ValidateFields.emptyFields(attrMap, CustomerDao.ATTR_NAME,
-			// CustomerDao.ATTR_SURNAMES, CustomerDao.ATTR_DNI,
-			// CustomerDao.ATTR_NATIONALITY,CustomerDao.ATTR_PHONE,CustomerDao.ATTR_CREDITCARD,
-			// CustomerDao.ATTR_VALID_DATE);
-
-			ValidateFields.emptyFields(attrMap, CustomerDao.ATTR_NAME, CustomerDao.ATTR_SURNAMES, CustomerDao.ATTR_DNI,
-					CustomerDao.ATTR_NATIONALITY, CustomerDao.ATTR_PHONE, CustomerDao.ATTR_CREDITCARD,
-					CustomerDao.ATTR_VALID_DATE);
-			
-	//		ValidateFields.checkMail(CustomerDao.ATTR_EMAIL);
+			List<String> required = new ArrayList<String>() {
+				{// TODO AÑADIR TODOS LOS QUE NO SEAN NULABLES
+					// TODO también habría que obligar a que guardaran la tarjeta??? Qué pasa ahora que hay una tabla aparte para ellas??
+					add(CustomerDao.ATTR_VAT_NUMBER);
+					add(CustomerDao.ATTR_NAME);
+				}
+			};
+			List<String> restricted = new ArrayList<String>() {//TODO VER SI HAY ALGÚN CAMPO MÁS QUE UNA EMPRESA NO ADMITE
+				{
+					add(CustomerDao.ATTR_ID);
+					add(CustomerDao.ATTR_IDEN_DOC);
+				}
+			};
+			cf.reset();
+			cf.addBasics(CustomerDao.fields);
+			cf.setRequired(required);
+			cf.setRestricted(restricted);
+			cf.setOptional(true);
+			cf.validate(attrMap);
 
 			resultado = this.daoHelper.insert(this.customerDao, attrMap);
+			resultado.setMessage("Business Customer registrado");
 
-			resultado.setMessage("Customer registrado");
-
-		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());
+		} catch (ValidateException e) {
+			resultado = new EntityResultWrong(e.getMessage());
 
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 
 		} catch (Exception e) {
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
+			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}
-
 		return resultado;
-
 	}
+
+	@Override
+	public EntityResult regularCustomerInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
+		EntityResult resultado = new EntityResultWrong();
+		try {
+
+			List<String> required = new ArrayList<String>() {
+				{// TODO AÑADIR TODOS LOS QUE NO SEAN NULABLES
+					// TODO también habría que obligar a que guardaran la tarjeta??? Qué pasa ahora que hay una tabla aparte para ellas??
+					add(CustomerDao.ATTR_IDEN_DOC);
+					add(CustomerDao.ATTR_NAME);
+					add(CustomerDao.ATTR_SURNAME);
+				}
+			};
+			List<String> restricted = new ArrayList<String>() {//TODO VER SI HAY ALGÚN CAMPO MÁS QUE UN CLIENTE PARTICULAR NO ADMITE
+				{
+					add(CustomerDao.ATTR_ID);
+					add(CustomerDao.ATTR_VAT_NUMBER);
+				}
+			};
+			cf.reset();
+			cf.addBasics(CustomerDao.fields);
+			cf.setRequired(required);
+			cf.setRestricted(restricted);
+			cf.setOptional(true);
+			cf.validate(attrMap);
+
+			resultado = this.daoHelper.insert(this.customerDao, attrMap);
+			resultado.setMessage("Regular Customer registrado");
+
+		} catch (ValidateException e) {
+			resultado = new EntityResultWrong(e.getMessage());
+
+		} catch (DuplicateKeyException e) {
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+
+		} catch (Exception e) {
+			resultado = new EntityResultWrong(ErrorMessage.ERROR);
+		}
+		return resultado;
+	}
+
+//	@Override
+//	public EntityResult customerInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
+//
+//		EntityResult resultado = new EntityResultMapImpl();
+//
+//		try {
+//
+//			// ValidateFields.emptyFields(attrMap, CustomerDao.ATTR_NAME,
+//			// CustomerDao.ATTR_SURNAMES, CustomerDao.ATTR_DNI,
+//			// CustomerDao.ATTR_NATIONALITY,CustomerDao.ATTR_PHONE,CustomerDao.ATTR_CREDITCARD,
+//			// CustomerDao.ATTR_VALID_DATE);
+//
+//			ValidateFields.emptyFields(attrMap, CustomerDao.ATTR_NAME, CustomerDao.ATTR_SURNAMES, CustomerDao.ATTR_DNI,
+//					CustomerDao.ATTR_NATIONALITY, CustomerDao.ATTR_PHONE, CustomerDao.ATTR_CREDITCARD,
+//					CustomerDao.ATTR_VALID_DATE);
+//
+//			// ValidateFields.checkMail(CustomerDao.ATTR_EMAIL);
+//
+//			resultado = this.daoHelper.insert(this.customerDao, attrMap);
+//
+//			resultado.setMessage("Customer registrado");
+//
+//		} catch (MissingFieldsException e) {
+//			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());
+//
+//		} catch (DuplicateKeyException e) {
+//			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+//
+//		} catch (Exception e) {
+//			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
+//		}
+//
+//		return resultado;
+//
+//	}
 
 	@Override
 	public EntityResult customerUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
@@ -141,54 +242,59 @@ public class CustomerService implements ICustomerService {
 		return resultado;
 
 	}
- 
-/**
- * Creamos dos métodos para leer, mostrar y restringir mails de customers.
- * En el primero llamamos al método alojado en la Interfaz y lo sobreescribimos, para posteriormente realizar lo dispuesto en el xml.
- * En el segundo, validamos con el restricted de la clase ValidateFields, y creamos una basicExpression en la que indicamos que el campo mailAgreement, debe ser true	
- */
+
+	/**
+	 * Creamos dos métodos para leer, mostrar y restringir mails de customers. En el
+	 * primero llamamos al método alojado en la Interfaz y lo sobreescribimos, para
+	 * posteriormente realizar lo dispuesto en el xml. En el segundo, validamos con
+	 * el restricted de la clase ValidateFields, y creamos una basicExpression en la
+	 * que indicamos que el campo mailAgreement, debe ser true
+	 */
 	@Override
 	public EntityResult mailAgreementQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = this.daoHelper.query(this.customerDao, keyMap, attrList, "queryAgreementEmails");
 		return resultado;
 	}
-	
-	@Override
-	public EntityResult mailAgreementBasicExpressionQuery(Map<String, Object> keyMap, List<String> attrList)
-			throws OntimizeJEERuntimeException {
-		ValidateFields.restricted(attrList, CustomerDao.ATTR_CREDITCARD,CustomerDao.ATTR_PHONE);
-		
-		BasicField mailAgreement = new BasicField(CustomerDao.ATTR_MAIL_AGREEMENT);
-		BasicExpression expresion = new BasicExpression(mailAgreement, BasicOperator.EQUAL_OP, true);				
-		EntityResultExtraTools.putBasicExpression(keyMap, expresion);				
-		return this.daoHelper.query(this.customerDao, keyMap, attrList);
-	}
-	
-	/**Método para comprobar que los datos del atributo país, concuerden con los de la tabla countries
+
+//	@Override
+//	public EntityResult mailAgreementBasicExpressionQuery(Map<String, Object> keyMap, List<String> attrList)
+//			throws OntimizeJEERuntimeException {
+//		ValidateFields.restricted(attrList, CustomerDao.ATTR_CREDITCARD, CustomerDao.ATTR_PHONE);
+//
+//		BasicField mailAgreement = new BasicField(CustomerDao.ATTR_MAIL_AGREEMENT);
+//		BasicExpression expresion = new BasicExpression(mailAgreement, BasicOperator.EQUAL_OP, true);
+//		EntityResultExtraTools.putBasicExpression(keyMap, expresion);
+//		return this.daoHelper.query(this.customerDao, keyMap, attrList);
+//	}
+
+	/**
+	 * Método para comprobar que los datos del atributo país, concuerden con los de
+	 * la tabla countries
 	 * 
 	 */
-/*	@Override
-	public EntityResult checkCountryQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException {
-		EntityResult resultado = new EntityResultMapImpl();
-		try{
-			List<String> attrlist = Arrays.asList(CustomerDao.ATTR_COUNTRY);
-			Map<String, Object> col = new HashMap<>();
-			col.put(CustomerDao.ATTR_COUNTRY, attrMap.get(CustomerDao.ATTR_COUNTRY));
-			EntityResult country= this.daoHelper.query(this.customerDao, col, attrlist);
-			
-			if(country!= )
-		
-					
-		}
-		
-//		EntityResult resultado = this.daoHelper.query(this.customerDao, keyMap, attrList, "queryCheckCountry");
-//		return resultado;
-
-		
-		//mirar atributo country cuando se cambie customers
-	//	ValidateFields.emptyField(attrList, CustomerDao.ATTR_COUNTRY);
-	
-	}	*/
+	/*
+	 * @Override public EntityResult checkCountryQuery(Map<String, Object> keyMap,
+	 * List<String> attrList) throws OntimizeJEERuntimeException { EntityResult
+	 * resultado = new EntityResultMapImpl(); try{ List<String> attrlist =
+	 * Arrays.asList(CustomerDao.ATTR_COUNTRY); Map<String, Object> col = new
+	 * HashMap<>(); col.put(CustomerDao.ATTR_COUNTRY,
+	 * attrMap.get(CustomerDao.ATTR_COUNTRY)); EntityResult country=
+	 * this.daoHelper.query(this.customerDao, col, attrlist);
+	 * 
+	 * if(country!= )
+	 * 
+	 * 
+	 * }
+	 * 
+	 * // EntityResult resultado = this.daoHelper.query(this.customerDao, keyMap,
+	 * attrList, "queryCheckCountry"); // return resultado;
+	 * 
+	 * 
+	 * //mirar atributo country cuando se cambie customers //
+	 * ValidateFields.emptyField(attrList, CustomerDao.ATTR_COUNTRY);
+	 * 
+	 * }
+	 */
 
 }
