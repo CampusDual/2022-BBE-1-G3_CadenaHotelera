@@ -188,7 +188,7 @@ public class ControlFields {
 				case COUNTRY:
 					if ((keyMap.get(key) instanceof String)) {
 	System.err.println("TODO - validar countries de verdad....");
-						ValidateFields.country(key);
+						ValidateFields.country((String)keyMap.get(key));
 						validType = true;
 					}
 					break;

@@ -1,6 +1,8 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -12,6 +14,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -61,7 +64,7 @@ class HotelServiceTest {
 	@Mock
 	DefaultOntimizeDaoHelper daoHelper;
 
-	@Mock
+	@Spy
 	ControlFields cf;
 
 	@InjectMocks
@@ -113,17 +116,30 @@ class HotelServiceTest {
 		}
 
 		@Test
+		@DisplayName("ControlFields usar validate() map y list")
+		void testHotelQueryControlFieldsValidate() {
+			service.hotelQuery(TestingTools.getMapEmpty(), getColumsName());
+			try {
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyList());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("excepción no capturada: " + e.getMessage());
+			}
+		}
+
+		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testHotelQueryOK() {
 			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
 
 			// válido: HashMap vacio (sin filtros)
 			EntityResult entityResult = service.hotelQuery(TestingTools.getMapEmpty(), getColumsName());
-			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode(), entityResult.getMessage());
 
 			// válido: HashMap con filtro que existe (sin filtros)
 			entityResult = service.hotelQuery(getFilterId(), getColumsName());
-			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode(), entityResult.getMessage());
 
 		}
 
@@ -171,15 +187,15 @@ class HotelServiceTest {
 //			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
 //
 //			entityResult = service.hotelQuery(TestingTools.getMapKeyNoExist(), getColumsName());
-//			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+//						assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
 //
 //			//valor erroneo en filtro
 //			entityResult = service.hotelQuery(getFilterIdWrongValue(), getColumsName());
-//			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+//						assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
 //			
 //			//null
 //			entityResult = service.hotelQuery(null, getColumsName());
-//			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+//						assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
 //			
 //			entityResult = service.hotelQuery(TestingTools.getMapEmpty(), null);
 //			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
@@ -206,7 +222,7 @@ class HotelServiceTest {
 //					HotelDao.ATTR_IS_OPEN);
 //			doReturn(getSpecificHotelData(keyMap, attrList)).when(daoHelper).query(any(), anyMap(), anyList());
 //			EntityResult entityResult = service.hotelQuery(new HashMap<>(), new ArrayList<>());
-//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
+//						assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode(), entityResult.getMessage());
 //			assertEquals(1, entityResult.calculateRecordNumber());
 //			assertEquals(2, entityResult.getRecordValues(0).get(HotelDao.ATTR_ID));
 //		}
@@ -227,7 +243,7 @@ class HotelServiceTest {
 //			doReturn(getSpecificHotelData(keyMap, attrList)).when(daoHelper).query(any(), anyMap(), anyList(),
 //					anyString());
 //			EntityResult entityResult = service.hotelDataQuery(new HashMap<>(), new ArrayList<>());
-//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
+//						assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode(), entityResult.getMessage());
 //			assertEquals(1, entityResult.calculateRecordNumber());
 //			assertEquals(2, entityResult.getRecordValues(0).get(HotelDao.ATTR_ID));
 //		}
@@ -246,7 +262,7 @@ class HotelServiceTest {
 //					HotelDao.ATTR_IS_OPEN);
 //			when(daoHelper.query(any(), anyMap(), anyList())).thenReturn(getSpecificHotelData(keyMap, attrList));
 //			EntityResult entityResult = service.hotelQuery(new HashMap<>(), new ArrayList<>());
-//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
+//						assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode(), entityResult.getMessage());
 //			assertEquals(0, entityResult.calculateRecordNumber());
 //		}
 
@@ -265,7 +281,7 @@ class HotelServiceTest {
 //					HotelDao.ATTR_IS_OPEN);
 //			when(daoHelper.query(any(), anyMap(), anyList())).thenReturn(getSpecificHotelData(keyMap, attrList));
 //			EntityResult entityResult = service.hotelQuery(new HashMap<>(), new ArrayList<>());
-//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
+//						assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode(), entityResult.getMessage());
 //			assertEquals(1, entityResult.calculateRecordNumber());
 //			assertEquals(random, entityResult.getRecordValues(0).get(HotelDao.ATTR_ID));
 //		}
@@ -394,17 +410,30 @@ class HotelServiceTest {
 		}
 
 		@Test
+		@DisplayName("ControlFields usar validate() map ")
+		void testHotelInsertControlFieldsValidate() {
+			service.hotelInsert(TestingTools.getMapEmpty());
+			try {
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("excepción no capturada: " + e.getMessage());
+
+			}
+		}
+
+		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testhotelInsertOK() {
-			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
+			doReturn(new EntityResultMapImpl()).when(daoHelper).insert(any(), anyMap());
 
 			// válido: HashMap campos mínimos
 			EntityResult entityResult = service.hotelInsert(getMapRequiredInsert());
-			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode(), entityResult.getMessage());
 
 			// válido: HashMap campos mínimos y mas
 			entityResult = service.hotelInsert(getMapRequiredInsertExtended());
-			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode(), entityResult.getMessage());
 
 		}
 
@@ -416,24 +445,39 @@ class HotelServiceTest {
 				// lanzamos todas las excepciones de Validate para comprobar que están bien
 				// recojidas.
 				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
-				entityResult = service.hotelInsert(TestingTools.getMapEmpty(), getColumsName());
+				entityResult = service.hotelInsert(TestingTools.getMapEmpty());
 				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
 
 				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
-				entityResult = service.hotelInsert(TestingTools.getMapEmpty(), getColumsName());
+				entityResult = service.hotelInsert(TestingTools.getMapEmpty());
 				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
 
 				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
-				entityResult = service.hotelInsert(TestingTools.getMapEmpty(), getColumsName());
+				entityResult = service.hotelInsert(TestingTools.getMapEmpty());
 				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
 
 				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
-				entityResult = service.hotelInsert(TestingTools.getMapEmpty(), getColumsName());
+				entityResult = service.hotelInsert(TestingTools.getMapEmpty());
 				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
 
 				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
-				entityResult = service.hotelInsert(TestingTools.getMapEmpty(), getColumsName());
+				entityResult = service.hotelInsert(TestingTools.getMapEmpty());
 				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+
+				reset(cf);
+				// extra para controlar required:
+				entityResult = service.hotelInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+				assertNotEquals(ErrorMessage.CREATION_ERROR, entityResult.getMessage(), entityResult.getMessage());
+				System.out.println(entityResult.getMessage());
+				assertFalse(entityResult.getMessage().isEmpty(), entityResult.getMessage());
+
+				// extra para controlar restricted:
+				entityResult = service.hotelInsert(getMapRequiredInsertExtendedWidthRestricted());
+				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+				assertNotEquals(ErrorMessage.CREATION_ERROR, entityResult.getMessage(), entityResult.getMessage());
+				System.out.println(entityResult.getMessage());
+				assertFalse(entityResult.getMessage().isEmpty(), entityResult.getMessage());
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -471,7 +515,7 @@ class HotelServiceTest {
 //			resultado.setMessage("Hotel registrado");
 //			when(daoHelper.insert(any(), anyMap())).thenReturn(resultado);
 //			EntityResult entityResult = service.hotelInsert(attrMap);
-//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
+//						assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode(), entityResult.getMessage());
 //			assertEquals(entityResult.getMessage(), "Hotel registrado");
 //		}
 //
@@ -495,7 +539,7 @@ class HotelServiceTest {
 //			};
 //			when(daoHelper.insert(any(), anyMap())).thenThrow(DuplicateKeyException.class);
 //			EntityResult entityResult = service.hotelInsert(attrMap);
-//			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+//						assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
 //			assertEquals(entityResult.getMessage(), ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 //		}
 //
@@ -522,7 +566,7 @@ class HotelServiceTest {
 //			// vf.when(() -> ValidateFields.required(anyMap(),
 //			// anyString())).thenThrow(MissingFieldsException.class);
 //			EntityResult entityResult = service.hotelInsert(attrMap);
-//			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+//						assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
 //			assertEquals(ErrorMessage.CREATION_ERROR + "El campo " + HotelDao.ATTR_NAME + " es nulo",
 //					entityResult.getMessage());
 //			// }
@@ -530,7 +574,7 @@ class HotelServiceTest {
 ////			doThrow().when(ValidateFields.required(anyMap(), anyString())).thenThrow(MissingFieldsException.class);
 ////			when(daoHelper.insert(any(),anyMap())).thenThrow(new MissingFieldsException("El campo " + HotelDao.ATTR_NAME + " es nulo"));
 ////    		entityResult = service.hotelInsert(anyMap());
-////			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+////						assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
 //
 //		}
 //	}
@@ -570,7 +614,7 @@ class HotelServiceTest {
 //
 //			when(daoHelper.update(any(), anyMap(), anyMap())).thenReturn(resultado);
 //			EntityResult entityResult = service.hotelUpdate(attrMap, keyMap);
-//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
+//						assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode(), entityResult.getMessage());
 //			assertEquals(entityResult.getMessage(), "Hotel actualizado");
 //		}
 //
@@ -599,7 +643,7 @@ class HotelServiceTest {
 //			};
 //			when(daoHelper.update(any(), anyMap(), anyMap())).thenThrow(DuplicateKeyException.class);
 //			EntityResult entityResult = service.hotelUpdate(attrMap, keyMap);
-//			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+//						assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
 //			assertEquals(entityResult.getMessage(), ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
 //		}
 
@@ -625,7 +669,25 @@ class HotelServiceTest {
 				put(HotelDao.ATTR_CITY, "Vigo");
 				put(HotelDao.ATTR_CP, "36211");
 				put(HotelDao.ATTR_STATE, "Galicia");
-				put(HotelDao.ATTR_COUNTRY, "Spain");
+				put(HotelDao.ATTR_COUNTRY, "ES");
+				put(HotelDao.ATTR_PHONE, "+34 986 111 111");
+				put(HotelDao.ATTR_EMAIL, "hotel1@atomicHotels.com");
+				put(HotelDao.ATTR_DESCRIPTION, "Faltan campos no nullables");
+				put(HotelDao.ATTR_IS_OPEN, 1);
+			}
+		};
+	}
+	Map<String, Object> getMapRequiredInsertExtendedWidthRestricted() {
+		
+		return new HashMap<>() {
+			{
+				put(HotelDao.ATTR_ID, "1");
+				put(HotelDao.ATTR_NAME, "Hotel 23");
+				put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 1");
+				put(HotelDao.ATTR_CITY, "Vigo");
+				put(HotelDao.ATTR_CP, "36211");
+				put(HotelDao.ATTR_STATE, "Galicia");
+				put(HotelDao.ATTR_COUNTRY, "ES");
 				put(HotelDao.ATTR_PHONE, "+34 986 111 111");
 				put(HotelDao.ATTR_EMAIL, "hotel1@atomicHotels.com");
 				put(HotelDao.ATTR_DESCRIPTION, "Faltan campos no nullables");
@@ -652,7 +714,7 @@ class HotelServiceTest {
 //                put(HotelDao.ATTR_IS_OPEN, 1);	
 //			}};			
 //			EntityResult entityResult = service.hotelInsert(attrMap);
-//			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
+//						assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
 //    		assertEquals(entityResult.getMessage(), ErrorMessage.CREATION_ERROR+e.getMessage());
 //    	}
 //	}
