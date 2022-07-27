@@ -35,6 +35,9 @@ public class FeatureService implements IFeatureService {
 	private FeatureDao featureDao;
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
+	
+	@Autowired
+	ControlFields cf;
 
 	@Override
 	public EntityResult featureQuery(Map<String, Object> keyMap, List<String> attrList)
@@ -43,7 +46,7 @@ public class FeatureService implements IFeatureService {
 		EntityResult resultado = new EntityResultWrong();
 		try {
 
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			cf.addBasics(FeatureDao.fields);
 			cf.validate(keyMap);
 
@@ -67,7 +70,7 @@ public class FeatureService implements IFeatureService {
 			List<String> required = new ArrayList<String>() {{
 				add(FeatureDao.ATTR_NAME);
 			}};
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			cf.addBasics(FeatureDao.fields);
 			cf.setRequired(required);
 			cf.validate(attrMap);
@@ -101,7 +104,7 @@ public class FeatureService implements IFeatureService {
 			List<String> requiredFilter = new ArrayList<String>() {{
 				add(FeatureDao.ATTR_ID);
 			}};	
-			ControlFields cf = new ControlFields();		
+			cf.reset();		
 			cf.addBasics(FeatureDao.fields);
 			cf.setRequired(requiredFilter);
 			cf.setOptional(false);//No será aceptado ningún campo que no esté en required
@@ -113,10 +116,10 @@ public class FeatureService implements IFeatureService {
 			List<String> restrictedData = new ArrayList<String>() {{
 				add(FeatureDao.ATTR_ID);//El id no se puede actualizar
 			}};
-			ControlFields cd = new ControlFields();
-			cd.addBasics(FeatureDao.fields);
-			cd.setRestricted(restrictedData);
-			cd.validate(attrMap);
+			cf.reset();
+			cf.addBasics(FeatureDao.fields);
+			cf.setRestricted(restrictedData);
+			cf.validate(attrMap);
 			
 			resultado = this.daoHelper.update(this.featureDao, attrMap, keyMap);
 			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
@@ -145,7 +148,7 @@ public class FeatureService implements IFeatureService {
 			List<String> required = new ArrayList<String>() {{
 				add(FeatureDao.ATTR_ID);
 			}};
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			cf.addBasics(FeatureDao.fields);
 			cf.setRequired(required);
 			cf.setOptional(false);
