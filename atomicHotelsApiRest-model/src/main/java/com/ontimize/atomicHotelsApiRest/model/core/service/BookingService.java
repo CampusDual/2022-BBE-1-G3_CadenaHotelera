@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IBookingService;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IRoomService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomTypeDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultExtraTools;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
@@ -45,20 +48,55 @@ public class BookingService implements IBookingService {
 	IRoomService roomService;
 
 	@Override
-	public EntityResult bookingQuery(Map<Object, Object> keyMap, List<String> attrList)
+	public EntityResult bookingQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
-		return this.daoHelper.query(this.bookingDao, keyMap, attrList);
+		
+		EntityResult resultado =new EntityResultWrong();
+		try {
+
+			ControlFields cf = new ControlFields();
+			cf.addBasics(BookingDao.fields);		
+			cf.validate(keyMap);
+
+			cf.validate(attrList);
+			
+			resultado=this.daoHelper.query(this.bookingDao, keyMap, attrList);
+		}catch(ValidateException e) {
+			resultado= new EntityResultWrong(e.getMessage());
+		}catch(Exception e) {
+			resultado= new EntityResultWrong(ErrorMessage.ERROR);
+		}
+		return resultado;
 	}
 
 	@Override
 	public EntityResult bookingInfoQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
-		return this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryInfoBooking");
+		EntityResult resultado =new EntityResultWrong();
+		try {
+
+			ControlFields cf = new ControlFields();
+			cf.addBasics(BookingDao.fields);
+			cf.addBasics(RoomDao.fields);
+			cf.addBasics(RoomTypeDao.fields);
+			cf.addBasics(HotelDao.fields);
+			cf.validate(keyMap);
+
+			cf.validate(attrList);  
+			
+			resultado=this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryInfoBooking");
+		}catch(ValidateException e) {
+			resultado= new EntityResultWrong(e.getMessage());
+		}catch(Exception e) {
+			resultado= new EntityResultWrong(ErrorMessage.ERROR);
+		}
+		
+		return resultado;
 	}
 
 	@Override
 	public EntityResult bookingInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
-		EntityResult resultado = new EntityResultMapImpl();
+		EntityResult resultado = new EntityResultWrong();
 		try {
 			ValidateFields.required(attrMap, BookingDao.ATTR_START, BookingDao.ATTR_END, BookingDao.ATTR_ROOM_ID,
 					BookingDao.ATTR_CUSTOMER_ID);
@@ -75,7 +113,7 @@ public class BookingService implements IBookingService {
 			} else {
 				resultado = new EntityResultWrong(ErrorMessage.DATA_START_BEFORE_TODAY);
 			}
-		} catch (EntityResultRequiredException | MissingFieldsException | InvalidFieldsValuesException e) {
+		} catch (EntityResultRequiredException | ValidateException e) {
 			System.err.println(e.getMessage());
 			resultado = new EntityResultWrong(e.getMessage());
 		}
