@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sound.midi.SysexMessage;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -22,8 +20,6 @@ import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingServiceExtraDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelServiceExtraDao;
-import com.ontimize.atomicHotelsApiRest.model.core.dao.ReceiptDao;
-import com.ontimize.atomicHotelsApiRest.model.core.dao.ServicesXtraDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
@@ -31,10 +27,7 @@ import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
-import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
-
-import ch.qos.logback.core.recovery.ResilientSyslogOutputStream;
 
 @Service("BookingServiceExtraService")
 @Lazy
@@ -82,13 +75,7 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 		EntityResult resultado = new EntityResultWrong();
 		try {
 			ControlFields cf = new ControlFields();
-			List<String> required = new ArrayList<String>() {
-				{
-					add(BookingServiceExtraDao.ATTR_ID_SXT);
-					add(BookingServiceExtraDao.ATTR_ID_BKG);
-					add(BookingServiceExtraDao.ATTR_ID_UNITS);
-				}
-			};
+			List<String> required = Arrays.asList(BookingServiceExtraDao.ATTR_ID_SXT,BookingServiceExtraDao.ATTR_ID_BKG,BookingServiceExtraDao.ATTR_ID_UNITS);
 			cf.addBasics(BookingServiceExtraDao.fields);
 			cf.setRequired(required);
 			cf.setOptional(false);
@@ -176,51 +163,50 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 	}
 
 	/*
-	 * Se puede eliminar servicios extra de reservas en progreso. en el json
-	 * introducir bsx_bkg_id -> reserva activo y bsx_id -> número de servicios
-	 * asignadoa a reserva.
+	 * Se elimina servicio extra de BOOKING IN PROGRESS las otros estados no deja eliminarlo, si no esta o esta eliminado
+	 * se muestra mensaje de servicio 
 	 */
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public EntityResult bookingServiceExtraDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 
-//TODO revisar, comentado porque da error
-//			EntityResult auxEntity = this.daoHelper.query(this.bookingServiceExtraDao,
-//					EntityResultTools.keysvalues(ReceiptDao.ATTR_ID, keyMap.get(ReceiptDao.ATTR_ID)),
-//					EntityResultTools.attributes(ReceiptDao.ATTR_ID));
-//			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
-//				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
-//			} else {
-//				resultado = this.daoHelper.delete(this.receiptDao, keyMap);
-//				resultado.setMessage("Receipt eliminada");
-//			}
-
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			ValidateFields.required(keyMap, BookingServiceExtraDao.ATTR_ID);
-
-			if (bookingService.getBookingStatus(keyMap.get(bookingServiceExtraDao.ATTR_ID_BKG))
+				ValidateFields.required(keyMap, BookingServiceExtraDao.ATTR_ID);
+				ControlFields cf = new ControlFields();
+				List<String> required = Arrays.asList(BookingServiceExtraDao.ATTR_ID);
+				cf.addBasics(BookingServiceExtraDao.fields);
+				cf.setRequired(required);
+				cf.setOptional(false);
+				cf.validate(keyMap);
+		
+			
+			List<String> filter = Arrays.asList(bookingServiceExtraDao.ATTR_ID_BKG);
+			EntityResult registro = this.daoHelper.query(this.bookingServiceExtraDao, keyMap, filter);
+			// Si da un resultado vacío es que el servcio no está asociado al hotel de la reserva
+			if (bookingService.getBookingStatus(registro.getRecordValues(0).get(bookingServiceExtraDao.ATTR_ID_BKG))
 					.equals(BookingDao.Status.CANCELED)) {
-				resultado.setMessage("La reserva de este servicio esta cancelada no se pueden eliminar.");
-			} else if (bookingService.getBookingStatus(keyMap.get(bookingServiceExtraDao.ATTR_ID_BKG))
+				resultado = new EntityResultWrong("La reserva de este servicio esta cancelada no se pueden eliminar.");
+			} else if (bookingService.getBookingStatus(registro.getRecordValues(0).get(bookingServiceExtraDao.ATTR_ID_BKG))
 					.equals(BookingDao.Status.COMPLETED)) {
-				resultado.setMessage("La reserva de este servicio esta completada no se se pueden eliminar.");
-			} else if (bookingService.getBookingStatus(keyMap.get(bookingServiceExtraDao.ATTR_ID_BKG))
+				resultado = new EntityResultWrong("La reserva de este servicio esta completada no se pueden eliminar.");
+			} else if (bookingService.getBookingStatus(registro.getRecordValues(0).get(bookingServiceExtraDao.ATTR_ID_BKG))
 					.equals(BookingDao.Status.IN_PROGRESS)) {
 				System.err.println("eliminando");
 				resultado = this.daoHelper.delete(this.bookingServiceExtraDao, keyMap); // eliminamos servicio extra.
 				resultado.setMessage(" Servicio " + keyMap.get(BookingServiceExtraDao.ATTR_ID) + "  Extra eliminado.");
-			} else if (bookingService.getBookingStatus(keyMap.get(bookingServiceExtraDao.ATTR_ID_BKG))
+			} else if (bookingService.getBookingStatus(registro.getRecordValues(0).get(bookingServiceExtraDao.ATTR_ID_BKG))
 					.equals(BookingDao.Status.CONFIRMED)) {
-				resultado.setMessage("La Reserva esta confirmada no se puede eliminar servicios extra.");
-			}
+				resultado = new EntityResultWrong("La reserva de este servicio esta confirmada no se pueden eliminar.");
+			} 
 		} catch (MissingFieldsException e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + e.getMessage());
 		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
 		} catch (Exception e) {
-			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR);
+			//nullable no existe.
+			resultado = new EntityResultWrong("El servicio no existe pruebe con otro - "+ErrorMessage.DELETE_ERROR);
 		}
 		return resultado;
 	}
