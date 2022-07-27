@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,7 +25,7 @@ import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
  * @author Ar
  *
  */
-public class Tools {
+public class TestingTools {
 
 
 //	public static void main(String[] args) {
@@ -88,5 +89,32 @@ public class Tools {
 		LocalDate yesterday = LocalDate.now().minusDays(1);
 		return Date.from(yesterday.atStartOfDay(ZoneId.systemDefault()).toInstant());
 	}
-
+	
+/**FILTROS Y COLUMNAS**/
+	public static HashMap<String, Object> getMapEmpty() {
+		return new HashMap<>();			
+	};
+	
+	public static List<String> getListEmpty() {
+		return new ArrayList<>();			
+	};
+	
+	public static HashMap<String, Object> getMapKeyNoExist() {
+		HashMap<String, Object> filters = new HashMap<>() {
+			{
+				put("valor de algo que no debería existir", "valor de algo que no debería existir");
+			}
+		};
+		return filters;
+	};
+	
+	public static List<String> getListColumsNoExist() {
+		List<String> columns = new ArrayList<>() {
+			{
+				add("en un lugar de la mancha...");
+				add("uno dos tres cuatro cinco y seis");
+			}
+		};
+		return columns;
+	}
 }
