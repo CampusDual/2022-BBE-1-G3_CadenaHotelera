@@ -163,6 +163,8 @@ public class RoomTypeFeatureService implements IRoomTypeFeatureService{
 
 		} catch (ValidateException | LiadaPardaException e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + e.getMessage());
+		} catch (DataIntegrityViolationException e) {
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR);
