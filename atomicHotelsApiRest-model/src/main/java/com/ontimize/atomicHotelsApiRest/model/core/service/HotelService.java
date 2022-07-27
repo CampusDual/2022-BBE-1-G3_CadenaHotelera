@@ -47,7 +47,7 @@ public class HotelService implements IHotelService {
 
 	@Autowired
 	ControlFields cf;
-	
+
 	@Override
 	public EntityResult hotelQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
@@ -60,16 +60,10 @@ public class HotelService implements IHotelService {
 //			cf.setOptional(true);
 			cf.validate(keyMap);
 			cf.validate(attrList);
-			
-//			cf.addBasics(HotelDao.fields);			
-//			cf.setOptional(true);//El resto de los campos de fields serán aceptados, por defecto true			
-//			cf.validate(keyMap);
-
-//			cf.validate(attrList);// reutilizamos los mismos criterios para validar attrList
 
 			resultado = this.daoHelper.query(this.hotelDao, keyMap, attrList);
 
-		} catch (MissingFieldsException e) {
+		} catch (ValidateException e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(e.getMessage());
 
@@ -86,7 +80,7 @@ public class HotelService implements IHotelService {
 		EntityResult resultado = new EntityResultWrong();
 		try {
 
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			List<String> required = new ArrayList<String>() {
 				{
 					add(HotelDao.ATTR_NAME);
@@ -107,7 +101,6 @@ public class HotelService implements IHotelService {
 			cf.addBasics(HotelDao.fields);
 			cf.setRequired(required);
 			cf.setRestricted(restricted);
-//			cf.setOptional(true);//El resto de los campos de fields serán aceptados. No es neceario ponerlo
 			cf.validate(attrMap);
 
 			resultado = this.daoHelper.insert(this.hotelDao, attrMap);

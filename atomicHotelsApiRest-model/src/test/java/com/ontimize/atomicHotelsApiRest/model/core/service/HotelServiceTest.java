@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.description;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -69,57 +70,48 @@ class HotelServiceTest {
 	@Autowired
 	HotelDao hotelDao;
 
-//	@Autowired
-//	ValidateFields vf;
+	// datos entrada
+
+	HashMap<String, Object> getFilterId() {
+		HashMap<String, Object> filters = new HashMap<>() {
+			{
+				put(HotelDao.ATTR_ID, 1);
+			}
+		};
+		return filters;
+	};
+
+	HashMap<String, Object> getFilterIdWrongValue() {
+		HashMap<String, Object> filters = new HashMap<>() {
+			{
+				put(HotelDao.ATTR_ID, "albaricoque");
+			}
+		};
+		return filters;
+	};
+
+	List<String> getColumsName() {
+		List<String> columns = new ArrayList<>() {
+			{
+				add(HotelDao.ATTR_NAME);
+			}
+		};
+		return columns;
+	}
+	// fin datos entrada
 
 	@Nested
 	@DisplayName("Test for Hotel queries")
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	public class HotelQuery {
-		// datos entrada
-
-		HashMap<String, Object> getFilterId() {
-			HashMap<String, Object> filters = new HashMap<>() {
-				{
-					put(HotelDao.ATTR_ID, 1);
-				}
-			};
-			return filters;
-		};
-
-		HashMap<String, Object> getFilterIdWrongValue() {
-			HashMap<String, Object> filters = new HashMap<>() {
-				{
-					put(HotelDao.ATTR_ID, "albaricoque");
-				}
-			};
-			return filters;
-		};
-
-		List<String> getColumsName() {
-			List<String> columns = new ArrayList<>() {
-				{
-					add(HotelDao.ATTR_NAME);
-				}
-			};
-			return columns;
-		}
-
-		// fin datos entrada
 
 		@Test
-		@DisplayName("ControlFields usar teset()")
+		@DisplayName("ControlFields usar reset()")
 		void testHotelQueryControlFieldsReset() {
-			//doThrow(new MissingFieldsException("test")).when(cf).reset();
-			verify(cf, times(1)).reset();
-			//assertTrue(, "no se llama al metodo cf.reset()");
-
-//			EntityResult entityResult = service.hotelQuery(TestingTools.getMapEmpty(), getColumsName());
-//			System.out.println("resultado: " + entityResult.getMessage());
-//			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
-			
+			service.hotelQuery(TestingTools.getMapEmpty(), getColumsName());
+			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
 		}
-		
+
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testHotelQueryOK() {
@@ -139,12 +131,29 @@ class HotelServiceTest {
 		@DisplayName("Valores de entrada NO válidos")
 		void testHotelQueryKO() {
 			try {
-				doThrow(new MissingFieldsException("test")).when(cf).validate(anyMap());			
-				
-				EntityResult entityResult = service.hotelQuery(TestingTools.getMapEmpty(), getColumsName());
-				System.out.println("resultado: " + entityResult.getMessage());
+				EntityResult entityResult;
+				// lanzamos todas las excepciones de Validate para comprobar que están bien
+				// recojidas.
+				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
+				entityResult = service.hotelQuery(TestingTools.getMapEmpty(), getColumsName());
 				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
-//			}
+
+				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
+				entityResult = service.hotelQuery(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+
+				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
+				entityResult = service.hotelQuery(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+
+				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
+				entityResult = service.hotelQuery(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+
+				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
+				entityResult = service.hotelQuery(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+
 			} catch (Exception e) {
 				e.printStackTrace();
 				fail("excepción no capturada: " + e.getMessage());
@@ -372,6 +381,67 @@ class HotelServiceTest {
 
 	}
 
+	@Nested
+	@DisplayName("Test for Hotel inserts")
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	public class HotelInsert {
+
+		@Test
+		@DisplayName("ControlFields usar reset()")
+		void testhotelInsertControlFieldsReset() {
+			service.hotelInsert(TestingTools.getMapEmpty());
+			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
+		}
+
+		@Test
+		@DisplayName("Valores de entrada válidos")
+		void testhotelInsertOK() {
+			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
+
+			// válido: HashMap campos mínimos
+			EntityResult entityResult = service.hotelInsert(getMapRequiredInsert());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
+
+			// válido: HashMap campos mínimos y mas
+			entityResult = service.hotelInsert(getMapRequiredInsertExtended());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
+
+		}
+
+		@Test
+		@DisplayName("Valores de entrada NO válidos")
+		void testhotelInsertKO() {
+			try {
+				EntityResult entityResult;
+				// lanzamos todas las excepciones de Validate para comprobar que están bien
+				// recojidas.
+				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
+				entityResult = service.hotelInsert(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+
+				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
+				entityResult = service.hotelInsert(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+
+				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
+				entityResult = service.hotelInsert(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+
+				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
+				entityResult = service.hotelInsert(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+
+				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
+				entityResult = service.hotelInsert(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("excepción no capturada: " + e.getMessage());
+			}
+
+		}
+	}
 //	@Nested
 //	@DisplayName("Test for Hotel inserts")
 //	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -532,6 +602,37 @@ class HotelServiceTest {
 //			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
 //			assertEquals(entityResult.getMessage(), ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
 //		}
+
+	Map<String, Object> getMapRequiredInsert() {
+		return new HashMap<>() {
+			{
+				put(HotelDao.ATTR_NAME, "Hotel 23");
+				put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 1");
+				put(HotelDao.ATTR_CITY, "Vigo");
+				put(HotelDao.ATTR_CP, "36211");
+				put(HotelDao.ATTR_STATE, "Galicia");
+				put(HotelDao.ATTR_COUNTRY, "ES");
+			}
+		};
+	}
+
+	Map<String, Object> getMapRequiredInsertExtended() {
+
+		return new HashMap<>() {
+			{
+				put(HotelDao.ATTR_NAME, "Hotel 23");
+				put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 1");
+				put(HotelDao.ATTR_CITY, "Vigo");
+				put(HotelDao.ATTR_CP, "36211");
+				put(HotelDao.ATTR_STATE, "Galicia");
+				put(HotelDao.ATTR_COUNTRY, "Spain");
+				put(HotelDao.ATTR_PHONE, "+34 986 111 111");
+				put(HotelDao.ATTR_EMAIL, "hotel1@atomicHotels.com");
+				put(HotelDao.ATTR_DESCRIPTION, "Faltan campos no nullables");
+				put(HotelDao.ATTR_IS_OPEN, 1);
+			}
+		};
+	}
 
 //    	@Test
 //		@DisplayName("Missing Fields")

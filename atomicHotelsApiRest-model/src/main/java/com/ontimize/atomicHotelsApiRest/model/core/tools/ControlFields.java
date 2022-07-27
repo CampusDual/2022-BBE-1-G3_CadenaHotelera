@@ -11,7 +11,12 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsExcepti
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.RestrictedFieldException;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.TypeCodes.type;
 
-
+/**
+ *  Validador de campos y valores de keyMaps (filtros) y attrList (columnas), según el tipado que asignamos en el e Dao \n
+ *  Cambia el tipo a algunos valores (Date pasa Strings a Date en el propio keyMap)
+ * @author Ar
+ *
+ */
 public class ControlFields {
 
 	private Map<String, type> fields;;
