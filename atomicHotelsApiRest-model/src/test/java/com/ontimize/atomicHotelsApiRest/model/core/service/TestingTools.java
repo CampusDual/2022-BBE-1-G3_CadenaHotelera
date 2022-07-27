@@ -17,16 +17,16 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.EntityResultRequired
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
 import com.ontimize.jee.common.dto.EntityResult;
+import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
-
 
 /**
  * Metodos para teastear
+ * 
  * @author Ar
  *
  */
 public class TestingTools {
-
 
 //	public static void main(String[] args) {
 //		System.out.println(getNowString());
@@ -38,67 +38,74 @@ public class TestingTools {
 //	}
 	static SimpleDateFormat dateFormat = ValidateFields.dateFormat;
 	static DateTimeFormatter localDateFormat = DateTimeFormatter.ofPattern(dateFormat.toPattern());
-	
+
 	/**
-	 *Fecha actual de HOY (sin horas/minutos)  
+	 * Fecha actual de HOY (sin horas/minutos)
+	 * 
 	 * @return String
 	 */
 	public static String getNowString() {
 		return LocalDate.now().format(localDateFormat);
 	}
-	
+
 	/**
-	 *Fecha actual de MAÑANA (sin horas/minutos)  
+	 * Fecha actual de MAÑANA (sin horas/minutos)
+	 * 
 	 * @return String
 	 */
 	public static String getTomorrowString() {
 		LocalDate tomorrow = LocalDate.now().plusDays(1);
 		return tomorrow.format(localDateFormat);
 	}
+
 	/**
-	 *Fecha actual de MAÑANA (sin horas/minutos)  
+	 * Fecha actual de MAÑANA (sin horas/minutos)
+	 * 
 	 * @return String
 	 */
 	public static String getYesterdayString() {
 		LocalDate yesterday = LocalDate.now().minusDays(1);
 		return yesterday.format(localDateFormat);
 	}
-	
+
 	/**
-	 * Fecha actual de HOY al principio del día 
+	 * Fecha actual de HOY al principio del día
+	 * 
 	 * @return Date
 	 */
-	public static Date getNow() {        
+	public static Date getNow() {
 		return Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
 	}
-	
+
 	/**
-	 * Fecha actual de MAÑANA al principio del día 
+	 * Fecha actual de MAÑANA al principio del día
+	 * 
 	 * @return Date
 	 */
 	public static Date getTomorrow() {
 		LocalDate tomorrow = LocalDate.now().plusDays(1);
 		return Date.from(tomorrow.atStartOfDay(ZoneId.systemDefault()).toInstant());
 	}
-	
+
 	/**
-	 * Fecha actual de AYER al principio del día 
+	 * Fecha actual de AYER al principio del día
+	 * 
 	 * @return Date
 	 */
 	public static Date getYesterday() {
 		LocalDate yesterday = LocalDate.now().minusDays(1);
 		return Date.from(yesterday.atStartOfDay(ZoneId.systemDefault()).toInstant());
 	}
-	
-/**FILTROS Y COLUMNAS**/
+
+	/** FILTROS Y COLUMNAS **/
 	public static HashMap<String, Object> getMapEmpty() {
-		return new HashMap<>();			
+		return new HashMap<>();
 	};
-	
+
 	public static List<String> getListEmpty() {
-		return new ArrayList<>();			
+		return new ArrayList<>();
 	};
-	
+
 	public static HashMap<String, Object> getMapKeyNoExist() {
 		HashMap<String, Object> filters = new HashMap<>() {
 			{
@@ -107,7 +114,7 @@ public class TestingTools {
 		};
 		return filters;
 	};
-	
+
 	public static List<String> getListColumsNoExist() {
 		List<String> columns = new ArrayList<>() {
 			{
@@ -116,5 +123,11 @@ public class TestingTools {
 			}
 		};
 		return columns;
+	}
+
+	public static EntityResult getEntityOneRecord() {
+		EntityResult subQueryER = new EntityResultMapImpl();
+		subQueryER.addRecord(new HashMap());
+		return subQueryER;
 	}
 }

@@ -69,7 +69,7 @@ public class HotelService implements IHotelService {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.ERROR);
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
 	}
@@ -112,7 +112,7 @@ public class HotelService implements IHotelService {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 		} catch (Exception e) {
 			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 
 		// OPCION A (comprobando si el registro ya existe)
@@ -173,7 +173,7 @@ public class HotelService implements IHotelService {
 					add(HotelDao.ATTR_ID);
 				}
 			};
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			cf.addBasics(HotelDao.fields);
 			cf.setRequired(requiredFilter);
 			cf.setOptional(false);// No será aceptado ningún campo que no esté en required
@@ -185,11 +185,10 @@ public class HotelService implements IHotelService {
 					add(HotelDao.ATTR_ID);// El id no se puede actualizar
 				}
 			};
-			ControlFields cd = new ControlFields();
-			cd.addBasics(HotelDao.fields);
-			cd.setRestricted(restrictedData);
-//			cd.setOptional(true); //No es necesario ponerlo
-			cd.validate(attrMap);
+			cf.reset();
+			cf.addBasics(HotelDao.fields);
+			cf.setRestricted(restrictedData);			
+			cf.validate(attrMap);
 
 			resultado = this.daoHelper.update(this.hotelDao, attrMap, keyMap);
 
@@ -209,7 +208,7 @@ public class HotelService implements IHotelService {
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
 		} catch (Exception e) {
 			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR);
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
 	}
@@ -224,7 +223,7 @@ public class HotelService implements IHotelService {
 					add(HotelDao.ATTR_ID);
 				}
 			};
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			cf.addBasics(HotelDao.fields);
 			cf.setRequired(required);
 			cf.setOptional(false);
@@ -251,7 +250,7 @@ public class HotelService implements IHotelService {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
 		} catch (Exception e) {
 			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR);
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
 	}
@@ -271,7 +270,7 @@ public class HotelService implements IHotelService {
 		} catch (ValidateException e) {
 			queryRes = new EntityResultWrong(e.getMessage());
 		} catch (Exception e) {
-			queryRes = new EntityResultWrong(ErrorMessage.ERROR);
+			queryRes = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 
 		return queryRes;

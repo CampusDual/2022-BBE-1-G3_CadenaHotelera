@@ -46,6 +46,7 @@ public class ErrorMessage {
 	public static final String NO_BOOKING_ID = "El número de reserva no existe";
 	
 	public static final String ERROR = "Error";
+	public static final String UNKNOWN_ERROR = "Error desconocido";
 	public static final String INTERNAL_CAGADA = "Error interno";
 	
 }
