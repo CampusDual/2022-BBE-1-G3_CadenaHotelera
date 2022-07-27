@@ -33,16 +33,19 @@ public class CreditCardService implements ICreditCardService{
 	private CreditCardDao creditCardDao;
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
+	
+	@Autowired
+	ControlFields cf;
 
 	@Override 
 	public EntityResult creditCardQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado=new EntityResultWrong();
 		try {
-		ControlFields controllerFilterandColumns =new ControlFields();
-		controllerFilterandColumns.addBasics(CreditCardDao.fields);
-		controllerFilterandColumns.validate(keyMap);
-		controllerFilterandColumns.validate(attrList);
+		cf.reset();
+		cf.addBasics(CreditCardDao.fields);
+		cf.validate(keyMap);
+		cf.validate(attrList);
 		return this.daoHelper.query(this.creditCardDao, keyMap, attrList);
 		}catch(ValidateException e) {
 			e.getMessage();
@@ -60,24 +63,24 @@ public class CreditCardService implements ICreditCardService{
 		
 		EntityResult resultado = new EntityResultWrong();
 		try { 
-			ControlFields controller=new ControlFields();
-			controller.addBasics(CreditCardDao.fields);
+			cf.reset();
+			cf.addBasics(CreditCardDao.fields);
 			List<String> required=new ArrayList<>() {
 			{
 				add(CreditCardDao.ATTR_NUMBER);
 				add(CreditCardDao.ATTR_DATE_EXPIRY);
 			}
 			};
-			controller.setRequired(required);
+			cf.setRequired(required);
 			
 			List<String> restricted=new ArrayList(){
 				{
 				add(CreditCardDao.ATTR_ID);
 			}
 				};
-			controller.setRestricted(restricted);
+			cf.setRestricted(restricted);
 			//controller.setOptional(false);yo digo que salta sin esto estefania dicq que no tengo idea
-			controller.validate(attrMap);
+			cf.validate(attrMap);
 			
 			resultado = this.daoHelper.insert(this.creditCardDao, attrMap);	
 			resultado.setMessage("Tarjeta registrada");
@@ -100,16 +103,16 @@ public class CreditCardService implements ICreditCardService{
 	public EntityResult creditCardDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado=new EntityResultWrong();
 		try {
-			ControlFields ControllerFilter=new ControlFields();
-			ControllerFilter.addBasics(creditCardDao.fields);
+			cf.reset();
+			cf.addBasics(creditCardDao.fields);
 			List<String> required=new ArrayList<>() {
 				{
 					add(CreditCardDao.ATTR_ID);
 				}
 				};
-			ControllerFilter.setRequired(required);
-			ControllerFilter.setOptional(false);
-			ControllerFilter.validate(keyMap);
+			cf.setRequired(required);
+			cf.setOptional(false);
+			cf.validate(keyMap);
 			
 			Map<String,Object> consultaKeyMap=new HashMap<>()
 			{
