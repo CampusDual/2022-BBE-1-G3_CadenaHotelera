@@ -418,7 +418,7 @@ class HotelServiceTest {
 		void testhotelDeleteKO() {
 			try {
 				// lanzamos todas las excepciones de Validate para comprobar que están bien
-				// recojidas.
+				// recogidas.
 				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
 				eR = service.hotelDelete(TestingTools.getMapEmpty());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
@@ -445,9 +445,9 @@ class HotelServiceTest {
 				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
 				// lanzamos todas las excepciones de SQL para comprobar que están bien
-				// recojidas.
+				// recogidas.
 				doThrow(DataIntegrityViolationException.class).when(cf).validate(anyMap());
-				eR = service.hotelUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+				eR = service.hotelDelete(TestingTools.getMapEmpty());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 

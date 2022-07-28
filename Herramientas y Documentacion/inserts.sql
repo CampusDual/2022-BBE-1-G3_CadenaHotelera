@@ -26,10 +26,12 @@ INSERT INTO public.beds_combo (bdc_name, bdc_slots) VALUES ('Cama individual y c
 INSERT INTO public.beds_combo (bdc_name, bdc_slots) VALUES ('Dos camas individuales y una King-size',4);
 
 --STATUS_BOOKING
+/*
 INSERT INTO public.status_booking (stb_name) VALUES ('confirmada');
 INSERT INTO public.status_booking (stb_name) VALUES ('pendiente');
 INSERT INTO public.status_booking (stb_name) VALUES ('cancelada');
 INSERT INTO public.status_booking (stb_name) VALUES ('completada');
+*/
 
 --ROOM_TYPES
 INSERT INTO public.room_types (rmt_name,rmt_description,rmt_price,rmt_bdc_id) VALUES('Habitaci�n econ�mica simple','Habitaci�n b�sica individual',30.4,1);
@@ -373,7 +375,7 @@ INSERT INTO public.customers (cst_name, cst_surnames, cst_email, cst_birth_date,
 INSERT INTO public.customers (cst_name, cst_surnames, cst_email, cst_birth_date, cst_dni, cst_address, cst_nationality,cst_phone, cst_creditcard, cst_valid_date) VALUES ('Julia','Ondas', 'jul345@gmail.com', '05/05/1980', '78945678A', 'Calle caramelo, num56, 6, La Puebla, M�xico', 'Mexicana', '+52 4831212891', '8865987650129900', '01/12/26' );
 
 --BOOKINGS
-INSERT INTO public.bookings (bkg_stb_id, bkg_cst_id, bkg_rm_id,bkg_observations,bkg_checkin,bkg_checkout) VALUES (1,2,1,'dentro todo','2022-01-10','2022-01-17');
+I/*NSERT INTO public.bookings (bkg_stb_id, bkg_cst_id, bkg_rm_id,bkg_observations,bkg_checkin,bkg_checkout) VALUES (1,2,1,'dentro todo','2022-01-10','2022-01-17');
 INSERT INTO public.bookings (bkg_stb_id, bkg_cst_id, bkg_rm_id,bkg_observations,bkg_checkin,bkg_checkout) VALUES (1,2,1,'todo fuera','2022-01-01','2022-02-04');
 INSERT INTO public.bookings (bkg_stb_id, bkg_cst_id, bkg_rm_id,bkg_observations,bkg_checkin,bkg_checkout) VALUES (1,2,1,'dentro checkout','2022-01-01','2022-01-06');
 INSERT INTO public.bookings (bkg_stb_id, bkg_cst_id, bkg_rm_id,bkg_observations,bkg_checkin,bkg_checkout) VALUES (1,2,3,'dentro todo 2','2022-01-19','2022-01-25');
@@ -382,7 +384,16 @@ INSERT INTO public.bookings (bkg_stb_id, bkg_cst_id, bkg_rm_id,bkg_observations,
 INSERT INTO public.bookings (bkg_stb_id, bkg_cst_id, bkg_rm_id,bkg_observations,bkg_checkin,bkg_checkout) VALUES (1,2,3,'fuera checkout -limite checkout','2022-01-04','2022-01-05');
 INSERT INTO public.bookings (bkg_stb_id, bkg_cst_id, bkg_rm_id,bkg_observations,bkg_checkin,bkg_checkout) VALUES (1,2,3,'fuera todo, limite checkin-rangeout','2023-01-20','2023-01-21');
 INSERT INTO public.bookings (bkg_stb_id, bkg_cst_id, bkg_rm_id,bkg_observations,bkg_checkin,bkg_checkout) VALUES (1,2,3,'fuera todo','2023-01-21','2023-01-26');
-
+*/
+INSERT INTO public.bookings (bkg_cst_id, bkg_rm_id,bkg_observations,bkg_start,bkg_end) VALUES (2,1,'dentro todo','2022-01-10','2022-01-17');
+INSERT INTO public.bookings (bkg_cst_id, bkg_rm_id,bkg_observations,bkg_start,bkg_end) VALUES (2,1,'todo fuera','2022-01-01','2022-02-04');
+INSERT INTO public.bookings (bkg_cst_id, bkg_rm_id,bkg_observations,bkg_start,bkg_end) VALUES (2,1,'dentro checkout','2022-01-01','2022-01-06');
+INSERT INTO public.bookings (bkg_cst_id, bkg_rm_id,bkg_observations,bkg_start,bkg_end) VALUES (2,3,'dentro todo 2','2022-01-19','2022-01-25');
+INSERT INTO public.bookings (bkg_cst_id, bkg_rm_id,bkg_observations,bkg_start,bkg_end) VALUES (1,1,'dentro checkin','2022-07-24','2022-02-02');
+INSERT INTO public.bookings (bkg_cst_id, bkg_rm_id,bkg_observations,bkg_start,bkg_end) VALUES (2,3,'dentro limite checkin','2022-01-05','2022-01-06');
+INSERT INTO public.bookings (bkg_cst_id, bkg_rm_id,bkg_observations,bkg_start,bkg_end) VALUES (2,3,'fuera checkout -limite checkout','2022-01-04','2022-01-05');
+INSERT INTO public.bookings (bkg_cst_id, bkg_rm_id,bkg_observations,bkg_start,bkg_end) VALUES (2,3,'fuera todo, limite checkin-rangeout','2023-01-20','2023-01-21');
+INSERT INTO public.bookings (bkg_cst_id, bkg_rm_id,bkg_observations,bkg_start,bkg_end) VALUES (2,3,'fuera todo','2023-01-21','2023-01-26');
 
 --FEATURES
 INSERT INTO public.features (ftr_name, ftr_description) VALUES ('Zona Wifi','Wifi hotspot a trav�s de un proceso de autenticaci�n o login.');
