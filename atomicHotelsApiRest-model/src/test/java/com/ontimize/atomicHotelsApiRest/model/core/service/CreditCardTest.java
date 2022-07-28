@@ -1,270 +1,307 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.Mockito.description;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
-import java.sql.Types;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
+
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
+
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.RestrictedFieldException;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.CreditCardDao;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
+
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
-import com.ontimize.atomicHotelsApiRest.model.core.dao.CreditCardDao;
-import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
-import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
+
 
 @ExtendWith(MockitoExtension.class)
-public class CreditCardTest {
+class CreditCardTest {
 
 	@Mock
 	DefaultOntimizeDaoHelper daoHelper;
 
+	@Spy
+	ControlFields cf;
+	
 	@InjectMocks
 	CreditCardService service;
 
 	@Autowired
-	CreditCardDao creditCardDao;
-	@Autowired
-	ValidateFields vf;
+	CreditCardDao dao;
 
-	// @Mock/@Autowired/@InjectMocks
-	MissingFieldsException e;
+	EntityResult eR;
 	
 	@Nested
 	@DisplayName("Test for creditCard queries")
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	public class CreditCardQuery { 
-
+		//creditCardQuery
 		@Test
-		@DisplayName("Obtain all data from CreditCard table")
-		void when_queryOnlyWithAllColumns_return_allCreditCardData() {
-			doReturn(getCreditAllCardData()).when(daoHelper).query(any(), anyMap(), anyList());
-			EntityResult entityResult = service.creditCardQuery (new HashMap<>(), new ArrayList<>());
-			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-			assertEquals(3, entityResult.calculateRecordNumber());
-		}
- 
-		@Test
-		@DisplayName("Obtain all data columns from CreditCard table when crd_id is -> 2")
-		void when_queryAllColumns_return_specificData() {
-			HashMap<String, Object> keyMap = new HashMap<>() {
-				{
-					put(CreditCardDao.ATTR_ID, 2);
-				}
-			};
-			List<String> attrList = Arrays.asList(CreditCardDao.ATTR_ID, CreditCardDao.ATTR_NUMBER, CreditCardDao.ATTR_DATE_EXPIRY);
-			doReturn(getSpecificCreditCardData(keyMap, attrList)).when(daoHelper).query(any(), anyMap(), anyList());
-			EntityResult entityResult = service.creditCardQuery(new HashMap<>(), new ArrayList<>());
-			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-			assertEquals(1, entityResult.calculateRecordNumber());
-			assertEquals(2, entityResult.getRecordValues(0).get(CreditCardDao.ATTR_ID));
+		@DisplayName("ControlFields usar reset()")
+		void testCreditCardQueryControlFieldsReset() {
+			service.creditCardQuery(TestingTools.getMapEmpty(), getColumsName());
+			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
 		}
 
 		@Test
-		@DisplayName("Obtain all data columns from CreditCard table when cdc_id not exist")
-		void when_queryAllColumnsNotExisting_return_empty() {
-			HashMap<String, Object> keyMap = new HashMap<>() {
-				{
-					put(CreditCardDao.ATTR_ID, 5);
-				}
-			};
-			List<String> attrList = Arrays.asList(CreditCardDao.ATTR_ID, CreditCardDao.ATTR_NUMBER, CreditCardDao.ATTR_DATE_EXPIRY);
-			when(daoHelper.query(any(), anyMap(), anyList())).thenReturn(getSpecificCreditCardData(keyMap, attrList));
-			EntityResult entityResult = service.creditCardQuery(new HashMap<>(), new ArrayList<>());
-			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-			assertEquals(0, entityResult.calculateRecordNumber());
-		}
-
-//		@ParameterizedTest(name = "Obtain data with cdc_id -> {1}")
-//		@MethodSource("randomIDGenerator")
-//		@DisplayName("Obtain all data columns from CreditCard table when cdc_id is random")
-//		void when_queryAllColumnsWithRandomValue_return_specificData(int random) {
-//			HashMap<String, Object> keyMap = new HashMap<>() {
-//				{
-//					put(CreditCardDao.ATTR_ID, random);
-//				}  
-//			};
-//			List<String> attrList = Arrays.asList(CreditCardDao.ATTR_ID, CreditCardDao.ATTR_NUMBER, CreditCardDao.ATTR_DATE_EXPIRY);
-//			when(daoHelper.query(any(), anyMap(), anyList())).thenReturn(getSpecificCreditCardData(keyMap, attrList));
-//			EntityResult entityResult = service.creditCardQuery(new HashMap<>(), new ArrayList<>());
-//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-//			assertEquals(1, entityResult.calculateRecordNumber());
-//			assertEquals(random, entityResult.getRecordValues(0).get(CreditCardDao.ATTR_ID));
-//		}
-
-		public EntityResult getCreditAllCardData() {
-			List<String> columnList = Arrays.asList(CreditCardDao.ATTR_ID, CreditCardDao.ATTR_NUMBER,CreditCardDao.ATTR_DATE_EXPIRY);
-			EntityResult er = new EntityResultMapImpl(columnList);
-			er.addRecord(new HashMap<String, Object>() {
-				{
-					put(CreditCardDao.ATTR_ID, 1);
-					put(CreditCardDao.ATTR_NUMBER, "11111111111111");
-					put(CreditCardDao.ATTR_DATE_EXPIRY,"2022-07-29");
-				}
-			});
-			er.addRecord(new HashMap<String, Object>() {
-				{
-					put(CreditCardDao.ATTR_ID, 2);
-					put(CreditCardDao.ATTR_NUMBER, "22222222222222");
-					put(CreditCardDao.ATTR_DATE_EXPIRY,"2022-07-30");
-				}
-			});
-			er.addRecord(new HashMap<String, Object>() {
-				{
-					put(CreditCardDao.ATTR_ID, 2);
-					put(CreditCardDao.ATTR_NUMBER, "22222222222222");
-					put(CreditCardDao.ATTR_DATE_EXPIRY,"2022-07-30");
-				}
-			});
-			er.setCode(EntityResult.OPERATION_SUCCESSFUL);
-			er.setColumnSQLTypes(new HashMap<String, Number>() {
-				{
-					put(CreditCardDao.ATTR_ID, Types.INTEGER);
-					put(CreditCardDao.ATTR_NUMBER, Types.BIGINT);
-					put(CreditCardDao.ATTR_DATE_EXPIRY , Types.DATE);
-				}
-			});
-			return er;
-		}
-
-		public EntityResult getSpecificCreditCardData(Map<String, Object> keyValues, List<String> attributes) {
-			EntityResult allData = this.getCreditAllCardData();
-			int recordIndex = allData.getRecordIndex(keyValues);
-			HashMap<String, Object> recordValues = (HashMap) allData.getRecordValues(recordIndex);
-			List<String> columnList = Arrays.asList(CreditCardDao.ATTR_ID, CreditCardDao.ATTR_NUMBER,CreditCardDao.ATTR_DATE_EXPIRY);
-			EntityResult er = new EntityResultMapImpl(columnList);
-			if (recordValues != null) {
-				er.addRecord(recordValues);
+		@DisplayName("ControlFields usar validate() map y list")
+		void testCreditCardQueryControlFieldsValidate() {
+			service.creditCardQuery(TestingTools.getMapEmpty(), getColumsName());
+			try {
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyList());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("excepción no capturada: " + e.getMessage());
 			}
-			er.setCode(EntityResult.OPERATION_SUCCESSFUL);
-			er.setColumnSQLTypes(new HashMap<String, Number>() {
-				{
-					put(CreditCardDao.ATTR_ID, Types.INTEGER);
-					put(CreditCardDao.ATTR_NUMBER, Types.BIGINT);
-					put(CreditCardDao.ATTR_DATE_EXPIRY , Types.DATE);
-				}
-			});
-			return er;
 		}
 
-		List<Integer> randomIDGenerator() {
-			List<Integer> list = new ArrayList<>();
-			for (int i = 0; i < 5; i++) {
-				list.add(ThreadLocalRandom.current().nextInt(1, 4));
+		@Test
+		@DisplayName("Valores de entrada válidos")
+		void testCreditCardQueryOK() {
+			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
+
+			// válido: HashMap vacio (sin filtros)
+			eR = service.creditCardQuery(TestingTools.getMapEmpty(), getColumsName());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+
+			// válido: HashMap con filtro que existe (sin filtros)
+			eR = service.creditCardQuery(getMapId(), getColumsName());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+
+		}
+
+		@Test
+		@DisplayName("Valores de entrada NO válidos")
+		void testCreditCardKO() {
+			try {
+				// lanzamos todas las excepciones de Validate para comprobar que están bien
+				// recojidas.
+				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
+				eR = service.creditCardQuery(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
+				eR = service.creditCardQuery(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
+				eR = service.creditCardQuery(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
+				eR = service.creditCardQuery(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
+				eR = service.creditCardQuery(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("excepción no capturada: " + e.getMessage());
 			}
-			return list;
-		}
 
+		}
+		
 	}
- 
+	
 	@Nested
-	@DisplayName("Test for CreditCard inserts")
+	@DisplayName("Test for Credit Cards inserts")
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	class InsertQuery {
+	public class CreditCardInsert {
 
 		@Test
-		@DisplayName("Insert CreditCard")
-		void when_creditcard_insert_is_succsessfull() {
-			Map<String, Object> attrMap = new HashMap<>() {
-				{
-					put(CreditCardDao.ATTR_ID, 2);
-					put(CreditCardDao.ATTR_NUMBER, 12345678911234L);
-					put(CreditCardDao.ATTR_DATE_EXPIRY,"2022-07-30");
-				}
-			};
-			EntityResult resultado = new EntityResultMapImpl();
-			resultado.addRecord(attrMap);
-			resultado.setCode(EntityResult.OPERATION_SUCCESSFUL);
-			resultado.setMessage("Tarjeta registrada");
-			doReturn(resultado).when(daoHelper).insert(any(),anyMap());
-			EntityResult entityResult = service.creditCardInsert(attrMap);
-			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-			assertEquals(entityResult.getMessage(), "Tarjeta registrada");
+		@DisplayName("ControlFields usar reset()")
+		void testhotelInsertControlFieldsReset() {
+			service.creditCardInsert(TestingTools.getMapEmpty());
+			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
 		}
 
 		@Test
-		@DisplayName("Duplicated Key")
-		void when_already_exist() {
-			Map<String, Object> attrMap = new HashMap<>() {
-				{
-					put(CreditCardDao.ATTR_ID, 2);
-					put(CreditCardDao.ATTR_NUMBER, 22222222222222L);
-					put(CreditCardDao.ATTR_DATE_EXPIRY,"2022-07-30");
-				}
-			};
-			when(daoHelper.insert(any(), anyMap())).thenThrow(DuplicateKeyException.class);
-			EntityResult entityResult = service.creditCardInsert(attrMap);
-			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-			assertEquals(entityResult.getMessage(), ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+		@DisplayName("ControlFields usar validate() map ")
+		void testCreditCardInsertControlFieldsValidate() {
+			service.creditCardInsert(TestingTools.getMapEmpty());
+			try {
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("excepción no capturada: " + e.getMessage());
+
+			}
 		}
 
 		@Test
-		@DisplayName("Miss Field Number")
-		void when_Unable_Insert_Number() {
-			Map<String, Object> attrMap = new HashMap<>() {
-				{
-					put(CreditCardDao.ATTR_ID, 2);
-					put(CreditCardDao.ATTR_NUMBER, null);
-					put(CreditCardDao.ATTR_DATE_EXPIRY,"2022-07-30");
-				}	
-			};
-				EntityResult entityResult = service.creditCardInsert(attrMap);
-				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-				assertEquals(ErrorMessage.CREATION_ERROR,entityResult.getMessage());
+		@DisplayName("Valores de entrada válidos")
+		void testCreditCardInsertOK() {
+			doReturn(new EntityResultMapImpl()).when(daoHelper).insert(any(), anyMap());
+
+			// válido: HashMap campos mínimos
+			eR = service.creditCardInsert(getMapRequiredInsert());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+
+			// válido: HashMap campos mínimos y mas
+			eR = service.creditCardInsert(getMapRequiredInsertExtended());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
 
 		}
-		@Test
-		@DisplayName("Miss Field Expiry")
-		void when_Unable_Insert_Expiry() {
-			Map<String, Object> attrMap = new HashMap<>() {
-				{
-					put(CreditCardDao.ATTR_ID, 2);
-					put(CreditCardDao.ATTR_NUMBER,222222222222L );
-					put(CreditCardDao.ATTR_DATE_EXPIRY,null);
-				}	
-			};
-				EntityResult entityResult = service.creditCardInsert(attrMap);
-				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-				assertEquals(ErrorMessage.CREATION_ERROR ,entityResult.getMessage());
 
-		}
 		@Test
-		@DisplayName("Negative number")
-		void when_Number_isNegative() {
-			Map<String, Object> attrMap = new HashMap<>() {
-				{
-					put(CreditCardDao.ATTR_ID, 2);
-					put(CreditCardDao.ATTR_NUMBER, (-12345678911234L));
-					put(CreditCardDao.ATTR_DATE_EXPIRY,"2022-07-30");
-				}	
-			};
-				EntityResult entityResult = service.creditCardInsert(attrMap);
-				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-				assertEquals(ErrorMessage.NEGATIVE_OR_CERO_NOT_ALLOWED ,entityResult.getMessage());
+		@DisplayName("Valores de entrada NO válidos")
+		void testCreditCardInsertKO() {
+			try {
+				// lanzamos todas las excepciones de Validate para comprobar que están bien
+				// recojidas.
+				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
+				eR = service.creditCardInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
+				eR = service.creditCardInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
+				eR = service.creditCardInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
+				eR = service.creditCardInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
+				eR = service.creditCardInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				reset(cf);
+				// extra para controlar required:
+				eR = service.creditCardInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+				System.out.println(eR.getMessage());
+				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
+
+				// extra para controlar restricted:
+				eR = service.creditCardInsert(getMapRequiredInsertExtendedWidthRestricted());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+				System.out.println(eR.getMessage());
+				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("excepción no capturada: " + e.getMessage());
+			}
 
 		}
 	}
+		
+
+	// datos entrada
+
+	Map<String, Object> getMapRequiredInsert() {
+		return new HashMap<>() {
+			{
+				put(dao.ATTR_NUMBER, 12345678901234L);
+				put(dao.ATTR_DATE_EXPIRY,"2023-01-04");
+			
+			}
+		};
+	}
+
+	Map<String, Object> getMapUpdate() {
+		return getMapRequiredInsert();
+	}
+
+	
+
+	Map<String, Object> getMapRequiredInsertExtended() {
+
+		return new HashMap<>() {
+			{
+				put(dao.ATTR_NUMBER, 12345678901234L);
+				put(dao.ATTR_DATE_EXPIRY,"2023-01-04");
+			}
+		};
+	}
+	
+	Map<String, Object> getMapRequiredInsertExtendedWidthRestricted() {
+
+		return new HashMap<>() {
+			{
+				put(dao.ATTR_ID, "1");
+				put(dao.ATTR_NUMBER, "12345678901234");
+				put(dao.ATTR_DATE_EXPIRY,"2023-01-04");
+			}
+		};
+	}
+
+	Map<String, Object> getMapRequiredDeletetExtendedWidthRestricted() {
+		return getMapRequiredInsertExtendedWidthRestricted();
+	}
 	
 	
-	
+	HashMap<String, Object> getMapId() {
+		HashMap<String, Object> filters = new HashMap<>() {
+			{
+				put(dao.ATTR_ID, 1);
+			}
+		};
+		return filters;
+	};
+
+	List<String> getColumsName() {
+		List<String> columns = new ArrayList<>() {
+			{
+				add(dao.ATTR_NUMBER);
+			}
+		};
+		return columns;
+	}
 	
 	
 	

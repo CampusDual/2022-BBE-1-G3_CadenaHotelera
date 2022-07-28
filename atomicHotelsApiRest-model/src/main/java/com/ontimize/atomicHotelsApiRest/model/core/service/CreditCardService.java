@@ -93,7 +93,7 @@ public class CreditCardService implements ICreditCardService{
 			resultado =new EntityResultWrong(ErrorMessage.CREATION_ERROR+e.getMessage());
 		}
 		catch(Exception e) {
-			resultado=new EntityResultWrong(e.getMessage());
+			resultado=new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 			e.printStackTrace();
 		}
 		return resultado;
