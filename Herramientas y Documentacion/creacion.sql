@@ -267,3 +267,14 @@ CREATE TABLE public.bookings_services_extra(
 	FOREIGN KEY (bsx_sxt_id) REFERENCES public.servicesxtra(sxt_id),
 	FOREIGN KEY (bsx_bkg_id) REFERENCES public.bookings(bkg_id)
 );
+
+
+--BG - 140
+--DROP TABLE bookings_guests;
+CREATE TABLE bookings_guests(
+	bkg_id INTEGER NOT NULL,
+	cst_id INTEGER NOT NULL,
+	FOREIGN KEY(bkg_id) REFERENCES bookings(bkg_id),
+	FOREIGN KEY(cst_id) REFERENCES customers(cst_id),
+	PRIMARY KEY (bkg_id,cst_id)
+);
