@@ -361,6 +361,7 @@ INSERT INTO public.hotels_services (htl_id, srv_id) VALUES (13, 10 );
 --�ltima columna, credita card, no llevar�a d�a
 
 --CUSTOMERS
+/*
 INSERT INTO public.customers (cst_name, cst_surnames, cst_email, cst_birth_date, cst_dni, cst_address, cst_nationality,cst_phone, cst_creditcard, cst_valid_date) VALUES ('John','Smith', 'johnSmth123@gmail.com', '01/22/1980', '12345678A', '10, Downing Street, London, SWIA 2AA, United Kingdom', 'Ingl�s', '+44 07987654321', '4321987650129900', '01/10/22' );
 INSERT INTO public.customers (cst_name, cst_surnames, cst_email, cst_birth_date, cst_dni, cst_address, cst_nationality,cst_phone, cst_creditcard, cst_valid_date) VALUES ('Nayib','Bukele', 'naybuk@gmail.com', '06/24/1981', '023773088', '4A Calle Poniente, San Salvador, El Salvador', 'Salvadore�o', '+503 211304', '3455687650129900', '01/12/24' );
 INSERT INTO public.customers (cst_name, cst_surnames, cst_email, cst_birth_date, cst_dni, cst_address, cst_nationality,cst_phone, cst_creditcard, cst_valid_date) VALUES ('Diego','Guerra Goya', 'guerrita78@gmail.com', '03/20/1978', '23898620A', 'Av.Oza, num 3, 4Izq, A Coru�a, ', 'Espa�ol', '+34 636443658', '9221678950129455', '01/08/23' );
@@ -373,6 +374,7 @@ INSERT INTO public.customers (cst_name, cst_surnames, cst_email, cst_birth_date,
 INSERT INTO public.customers (cst_name, cst_surnames, cst_email, cst_birth_date, cst_dni, cst_address, cst_nationality,cst_phone, cst_creditcard, cst_valid_date) VALUES ('Paco','Soria Lobo', 'pacobo@gmail.com', '04/12/1977', '44645678A', 'Av artabria, num56, 3, Murcia, Espa�a', 'Espa�ol', '+34 34567654321', '9871987650129900', '01/07/27' );
 INSERT INTO public.customers (cst_name, cst_surnames, cst_email, cst_birth_date, cst_dni, cst_address, cst_nationality,cst_phone, cst_creditcard, cst_valid_date) VALUES ('Juana','Prudant', 'juapru@gmail.com', '09/17/1967', '67845678A', 'Calle lobo, num45, 4Der, Toledo, Espa�a', 'Espa�ol', '+34 07987654321', '4556787650129900', '01/11/25' );
 INSERT INTO public.customers (cst_name, cst_surnames, cst_email, cst_birth_date, cst_dni, cst_address, cst_nationality,cst_phone, cst_creditcard, cst_valid_date) VALUES ('Julia','Ondas', 'jul345@gmail.com', '05/05/1980', '78945678A', 'Calle caramelo, num56, 6, La Puebla, M�xico', 'Mexicana', '+52 4831212891', '8865987650129900', '01/12/26' );
+*/
 
 --BOOKINGS
 I/*NSERT INTO public.bookings (bkg_stb_id, bkg_cst_id, bkg_rm_id,bkg_observations,bkg_checkin,bkg_checkout) VALUES (1,2,1,'dentro todo','2022-01-10','2022-01-17');

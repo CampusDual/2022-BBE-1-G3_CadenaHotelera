@@ -161,7 +161,7 @@ public class BookingService implements IBookingService {
 				}
 			};
 			cf.reset();
-			cf.addBasics(HotelDao.fields);
+			cf.addBasics(BookingDao.fields);
 			cf.setRequired(requiredFilter);
 			cf.setOptional(false);
 			cf.validate(keyMap);
@@ -173,7 +173,7 @@ public class BookingService implements IBookingService {
 				}
 			};
 			cf.reset();
-			cf.addBasics(HotelDao.fields);
+			cf.addBasics(BookingDao.fields);
 			cf.setRequired(requiredData);
 			cf.setOptional(false);
 			cf.validate(attrMap);

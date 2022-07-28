@@ -355,7 +355,6 @@ class HotelServiceTest {
 	@DisplayName("Test for Hotel deletes")
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	public class HotelDelete {
-//TODO PENDIENTE TERMINAR DELETE
 		@Test
 		@DisplayName("ControlFields usar reset()")
 		void testhotelDeleteControlFieldsReset() {
