@@ -86,6 +86,7 @@ public class BookingService implements IBookingService {
 			cf.addBasics(RoomDao.fields);
 			cf.addBasics(RoomTypeDao.fields);
 			cf.addBasics(HotelDao.fields);
+			cf.addBasics(CustomerDao.fields);
 			cf.validate(keyMap);
 
 			cf.validate(attrList);
