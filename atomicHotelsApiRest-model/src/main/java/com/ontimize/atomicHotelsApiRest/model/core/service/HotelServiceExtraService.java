@@ -80,7 +80,7 @@ public class HotelServiceExtraService implements IHotelServiceExtraService {
 				}
 			};
 
-			cf.addBasics(HotelDao.fields);
+			cf.addBasics(HotelServiceExtraDao.fields);
 			cf.setRequired(required);
 			cf.setRestricted(restricted);
 			cf.validate(attrMap);

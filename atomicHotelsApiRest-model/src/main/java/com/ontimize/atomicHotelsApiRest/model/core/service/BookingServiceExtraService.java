@@ -65,7 +65,7 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (Exception e) {
-			resultado = new EntityResultWrong(ErrorMessage.ERROR);
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
 	}
@@ -74,7 +74,7 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 	@Override
 	// Registra el servicio si la reserva esta activa en progreso.
 	public EntityResult bookingServiceExtraInsert(Map<String, Object> attrMap)
-			throws OntimizeJEERuntimeException, MissingFieldsException {
+			throws OntimizeJEERuntimeException {
 
 		EntityResult resultado = new EntityResultWrong();
 		try {
@@ -127,6 +127,7 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 				List<String> listaPrecioServicio = new ArrayList<String>() {
 					{
 						add(HotelServiceExtraDao.ATTR_PRECIO);
+						add(HotelServiceExtraDao.ATTR_ID_SXT);
 					}
 				};
 
@@ -242,7 +243,7 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
 		}catch(Exception e) {
-			resultado = new EntityResultWrong(ErrorMessage.ERROR);
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
 	}
