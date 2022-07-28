@@ -86,8 +86,10 @@ public class FeatureService implements IFeatureService {
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 
+		} catch (DataIntegrityViolationException e) {
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);
 		} catch (Exception e) {
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 
 		return resultado;
@@ -134,7 +136,7 @@ public class FeatureService implements IFeatureService {
 		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
 		} catch (Exception e) {
-			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR);
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
 	}
@@ -175,7 +177,7 @@ public class FeatureService implements IFeatureService {
 		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
 		} catch (Exception e) {
-			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR);
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
 	}
