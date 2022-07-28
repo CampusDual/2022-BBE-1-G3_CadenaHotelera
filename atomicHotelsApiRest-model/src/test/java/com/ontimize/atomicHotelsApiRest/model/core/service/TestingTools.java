@@ -127,7 +127,9 @@ public class TestingTools {
 
 	public static EntityResult getEntityOneRecord() {
 		EntityResult subQueryER = new EntityResultMapImpl();
-		subQueryER.addRecord(new HashMap());
+		subQueryER.addRecord(new HashMap() {{
+			put("CLAVE","VALOR");
+		}});
 		return subQueryER;
 	}
 }

@@ -73,7 +73,7 @@ class HotelServiceTest {
 	HotelService service;
 
 	@Autowired
-	HotelDao hotelDao;
+	HotelDao dao;
 
 	EntityResult eR;
 
@@ -382,7 +382,7 @@ class HotelServiceTest {
 			doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(),anyList());
 			doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
 
-			// válido: HashMap campos mínimos
+			// válido: HashMap campo único y exclusivo
 			eR = service.hotelDelete(getMapId());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
  
@@ -392,15 +392,26 @@ class HotelServiceTest {
 		@DisplayName("Valores Subcontulta Error")
 		void testhotelDeleteSubQueryKO() {
 			doReturn(new EntityResultWrong()).when(daoHelper).query(any(), anyMap(),anyList());
-			doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
+//			doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
 			
 			// 
 			eR = service.hotelDelete(getMapId());
 			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 			assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-
 		}
-
+		
+		@Test
+		@DisplayName("Valores Subcontulta Error")
+		void testhotelDeleteSubQueryNoResults() {
+			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(),anyList());
+//			doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
+			
+			// 
+			eR = service.hotelDelete(getMapId());
+			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+			assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+		}
+		
 		@Test
 		@DisplayName("Valores de entrada NO válidos")
 		void testhotelDeleteKO() {
@@ -467,12 +478,12 @@ class HotelServiceTest {
 	Map<String, Object> getMapRequiredInsert() {
 		return new HashMap<>() {
 			{
-				put(HotelDao.ATTR_NAME, "Hotel 23");
-				put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 1");
-				put(HotelDao.ATTR_CITY, "Vigo");
-				put(HotelDao.ATTR_CP, "36211");
-				put(HotelDao.ATTR_STATE, "Galicia");
-				put(HotelDao.ATTR_COUNTRY, "ES");
+				put(dao.ATTR_NAME, "Hotel 23");
+				put(dao.ATTR_STREET, "Avenida Sin Nombre Nº 1");
+				put(dao.ATTR_CITY, "Vigo");
+				put(dao.ATTR_CP, "36211");
+				put(dao.ATTR_STATE, "Galicia");
+				put(dao.ATTR_COUNTRY, "ES");
 			}
 		};
 	}
@@ -487,16 +498,16 @@ class HotelServiceTest {
 
 		return new HashMap<>() {
 			{
-				put(HotelDao.ATTR_NAME, "Hotel 23");
-				put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 1");
-				put(HotelDao.ATTR_CITY, "Vigo");
-				put(HotelDao.ATTR_CP, "36211");
-				put(HotelDao.ATTR_STATE, "Galicia");
-				put(HotelDao.ATTR_COUNTRY, "ES");
-				put(HotelDao.ATTR_PHONE, "+34 986 111 111");
-				put(HotelDao.ATTR_EMAIL, "hotel1@atomicHotels.com");
-				put(HotelDao.ATTR_DESCRIPTION, "Faltan campos no nullables");
-				put(HotelDao.ATTR_IS_OPEN, 1);
+				put(dao.ATTR_NAME, "Hotel 23");
+				put(dao.ATTR_STREET, "Avenida Sin Nombre Nº 1");
+				put(dao.ATTR_CITY, "Vigo");
+				put(dao.ATTR_CP, "36211");
+				put(dao.ATTR_STATE, "Galicia");
+				put(dao.ATTR_COUNTRY, "ES");
+				put(dao.ATTR_PHONE, "+34 986 111 111");
+				put(dao.ATTR_EMAIL, "hotel1@atomicHotels.com");
+				put(dao.ATTR_DESCRIPTION, "Faltan campos no nullables");
+				put(dao.ATTR_IS_OPEN, 1);
 			}
 		};
 	}
@@ -505,17 +516,17 @@ class HotelServiceTest {
 
 		return new HashMap<>() {
 			{
-				put(HotelDao.ATTR_ID, "1");
-				put(HotelDao.ATTR_NAME, "Hotel 23");
-				put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 1");
-				put(HotelDao.ATTR_CITY, "Vigo");
-				put(HotelDao.ATTR_CP, "36211");
-				put(HotelDao.ATTR_STATE, "Galicia");
-				put(HotelDao.ATTR_COUNTRY, "ES");
-				put(HotelDao.ATTR_PHONE, "+34 986 111 111");
-				put(HotelDao.ATTR_EMAIL, "hotel1@atomicHotels.com");
-				put(HotelDao.ATTR_DESCRIPTION, "Faltan campos no nullables");
-				put(HotelDao.ATTR_IS_OPEN, 1);
+				put(dao.ATTR_ID, "1");
+				put(dao.ATTR_NAME, "Hotel 23");
+				put(dao.ATTR_STREET, "Avenida Sin Nombre Nº 1");
+				put(dao.ATTR_CITY, "Vigo");
+				put(dao.ATTR_CP, "36211");
+				put(dao.ATTR_STATE, "Galicia");
+				put(dao.ATTR_COUNTRY, "ES");
+				put(dao.ATTR_PHONE, "+34 986 111 111");
+				put(dao.ATTR_EMAIL, "hotel1@atomicHotels.com");
+				put(dao.ATTR_DESCRIPTION, "Faltan campos no nullables");
+				put(dao.ATTR_IS_OPEN, 1);
 			}
 		};
 	}
@@ -527,7 +538,7 @@ class HotelServiceTest {
 	HashMap<String, Object> getMapId() {
 		HashMap<String, Object> filters = new HashMap<>() {
 			{
-				put(HotelDao.ATTR_ID, 1);
+				put(dao.ATTR_ID, 1);
 			}
 		};
 		return filters;
@@ -536,7 +547,7 @@ class HotelServiceTest {
 //		HashMap<String, Object> getMapIdWrongValue() {
 //			HashMap<String, Object> filters = new HashMap<>() {
 //				{
-//					put(HotelDao.ATTR_ID, "albaricoque");
+//					put(hoteldao.ATTR_ID, "albaricoque");
 //				}
 //			};
 //			return filters;
@@ -545,7 +556,7 @@ class HotelServiceTest {
 	List<String> getColumsName() {
 		List<String> columns = new ArrayList<>() {
 			{
-				add(HotelDao.ATTR_NAME);
+				add(dao.ATTR_NAME);
 			}
 		};
 		return columns;
@@ -590,18 +601,18 @@ class HotelServiceTest {
 //	void when_queryAllColumns_return_specificData() {
 //		HashMap<String, Object> keyMap = new HashMap<>() {
 //			{
-//				put(HotelDao.ATTR_ID, 2);
+//				put(hoteldao.ATTR_ID, 2);
 //			}
 //		};
-//		List<String> attrList = Arrays.asList(HotelDao.ATTR_ID, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET,
-//				HotelDao.ATTR_CITY, HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY,
-//				HotelDao.ATTR_PHONE, HotelDao.ATTR_PHONE, HotelDao.ATTR_EMAIL, HotelDao.ATTR_DESCRIPTION,
-//				HotelDao.ATTR_IS_OPEN);
+//		List<String> attrList = Arrays.asList(hoteldao.ATTR_ID, hoteldao.ATTR_NAME, hoteldao.ATTR_STREET,
+//				hoteldao.ATTR_CITY, hoteldao.ATTR_CP, hoteldao.ATTR_STATE, hoteldao.ATTR_COUNTRY,
+//				hoteldao.ATTR_PHONE, hoteldao.ATTR_PHONE, hoteldao.ATTR_EMAIL, hoteldao.ATTR_DESCRIPTION,
+//				hoteldao.ATTR_IS_OPEN);
 //		doReturn(getSpecificHotelData(keyMap, attrList)).when(daoHelper).query(any(), anyMap(), anyList());
 //		eR = service.hotelQuery(new HashMap<>(), new ArrayList<>());
 //					assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
 //		assertEquals(1, eR.calculateRecordNumber());
-//		assertEquals(2, eR.getRecordValues(0).get(HotelDao.ATTR_ID));
+//		assertEquals(2, eR.getRecordValues(0).get(hoteldao.ATTR_ID));
 //	}
 //
 //	@Test
@@ -609,20 +620,20 @@ class HotelServiceTest {
 //	void when_queryOnlyWithAllColumns_return_allHotelsData_fromPersonalizedQuery() {
 //		HashMap<String, Object> keyMap = new HashMap<>() {
 //			{
-//				put(HotelDao.ATTR_ID, 2);
+//				put(hoteldao.ATTR_ID, 2);
 //			}
 //		};
-//		List<String> attrList = Arrays.asList(HotelDao.ATTR_ID, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET,
-//				HotelDao.ATTR_CITY, HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY,
-//				HotelDao.ATTR_PHONE, HotelDao.ATTR_PHONE, HotelDao.ATTR_EMAIL, HotelDao.ATTR_DESCRIPTION,
-//				HotelDao.ATTR_IS_OPEN);
+//		List<String> attrList = Arrays.asList(hoteldao.ATTR_ID, hoteldao.ATTR_NAME, hoteldao.ATTR_STREET,
+//				hoteldao.ATTR_CITY, hoteldao.ATTR_CP, hoteldao.ATTR_STATE, hoteldao.ATTR_COUNTRY,
+//				hoteldao.ATTR_PHONE, hoteldao.ATTR_PHONE, hoteldao.ATTR_EMAIL, hoteldao.ATTR_DESCRIPTION,
+//				hoteldao.ATTR_IS_OPEN);
 //
 //		doReturn(getSpecificHotelData(keyMap, attrList)).when(daoHelper).query(any(), anyMap(), anyList(),
 //				anyString());
 //		eR = service.hotelDataQuery(new HashMap<>(), new ArrayList<>());
 //					assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
 //		assertEquals(1, eR.calculateRecordNumber());
-//		assertEquals(2, eR.getRecordValues(0).get(HotelDao.ATTR_ID));
+//		assertEquals(2, eR.getRecordValues(0).get(hoteldao.ATTR_ID));
 //	}
 
 //	@Test
@@ -630,13 +641,13 @@ class HotelServiceTest {
 //	void when_queryAllColumnsNotExisting_return_empty() {
 //		HashMap<String, Object> keyMap = new HashMap<>() {
 //			{
-//				put(HotelDao.ATTR_ID, 5);
+//				put(hoteldao.ATTR_ID, 5);
 //			}
 //		};
-//		List<String> attrList = Arrays.asList(HotelDao.ATTR_ID, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET,
-//				HotelDao.ATTR_CITY, HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY,
-//				HotelDao.ATTR_PHONE, HotelDao.ATTR_PHONE, HotelDao.ATTR_EMAIL, HotelDao.ATTR_DESCRIPTION,
-//				HotelDao.ATTR_IS_OPEN);
+//		List<String> attrList = Arrays.asList(hoteldao.ATTR_ID, hoteldao.ATTR_NAME, hoteldao.ATTR_STREET,
+//				hoteldao.ATTR_CITY, hoteldao.ATTR_CP, hoteldao.ATTR_STATE, hoteldao.ATTR_COUNTRY,
+//				hoteldao.ATTR_PHONE, hoteldao.ATTR_PHONE, hoteldao.ATTR_EMAIL, hoteldao.ATTR_DESCRIPTION,
+//				hoteldao.ATTR_IS_OPEN);
 //		when(daoHelper.query(any(), anyMap(), anyList())).thenReturn(getSpecificHotelData(keyMap, attrList));
 //		eR = service.hotelQuery(new HashMap<>(), new ArrayList<>());
 //					assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
@@ -649,85 +660,85 @@ class HotelServiceTest {
 //	void when_queryAllColumnsWithRandomValue_return_specificData(int random) {
 //		HashMap<String, Object> keyMap = new HashMap<>() {
 //			{
-//				put(HotelDao.ATTR_ID, random);
+//				put(hoteldao.ATTR_ID, random);
 //			}
 //		};
-//		List<String> attrList = Arrays.asList(HotelDao.ATTR_ID, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET,
-//				HotelDao.ATTR_CITY, HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY,
-//				HotelDao.ATTR_PHONE, HotelDao.ATTR_PHONE, HotelDao.ATTR_EMAIL, HotelDao.ATTR_DESCRIPTION,
-//				HotelDao.ATTR_IS_OPEN);
+//		List<String> attrList = Arrays.asList(hoteldao.ATTR_ID, hoteldao.ATTR_NAME, hoteldao.ATTR_STREET,
+//				hoteldao.ATTR_CITY, hoteldao.ATTR_CP, hoteldao.ATTR_STATE, hoteldao.ATTR_COUNTRY,
+//				hoteldao.ATTR_PHONE, hoteldao.ATTR_PHONE, hoteldao.ATTR_EMAIL, hoteldao.ATTR_DESCRIPTION,
+//				hoteldao.ATTR_IS_OPEN);
 //		when(daoHelper.query(any(), anyMap(), anyList())).thenReturn(getSpecificHotelData(keyMap, attrList));
 //		eR = service.hotelQuery(new HashMap<>(), new ArrayList<>());
 //					assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
 //		assertEquals(1, eR.calculateRecordNumber());
-//		assertEquals(random, eR.getRecordValues(0).get(HotelDao.ATTR_ID));
+//		assertEquals(random, eR.getRecordValues(0).get(hoteldao.ATTR_ID));
 //	}
 //
 //	public EntityResult getAllHotelsData() {
-//		List<String> columnList = Arrays.asList(HotelDao.ATTR_ID, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET,
-//				HotelDao.ATTR_CITY, HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY,
-//				HotelDao.ATTR_PHONE, HotelDao.ATTR_PHONE, HotelDao.ATTR_EMAIL, HotelDao.ATTR_DESCRIPTION,
-//				HotelDao.ATTR_IS_OPEN);
+//		List<String> columnList = Arrays.asList(hoteldao.ATTR_ID, hoteldao.ATTR_NAME, hoteldao.ATTR_STREET,
+//				hoteldao.ATTR_CITY, hoteldao.ATTR_CP, hoteldao.ATTR_STATE, hoteldao.ATTR_COUNTRY,
+//				hoteldao.ATTR_PHONE, hoteldao.ATTR_PHONE, hoteldao.ATTR_EMAIL, hoteldao.ATTR_DESCRIPTION,
+//				hoteldao.ATTR_IS_OPEN);
 //		EntityResult er = new EntityResultMapImpl(columnList);
 //		er.addRecord(new HashMap<String, Object>() {
 //			{
-//				put(HotelDao.ATTR_ID, 1);
-//				put(HotelDao.ATTR_NAME, "Hotel 1");
-//				put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 1");
-//				put(HotelDao.ATTR_CITY, "Vigo");
-//				put(HotelDao.ATTR_CP, "36211");
-//				put(HotelDao.ATTR_STATE, "Galicia");
-//				put(HotelDao.ATTR_COUNTRY, "Spain");
-//				put(HotelDao.ATTR_PHONE, "+34 986 111 111");
-//				put(HotelDao.ATTR_EMAIL, "hotel1@atomicHotels.com");
-//				put(HotelDao.ATTR_DESCRIPTION, "Hotel para pruebas unitarias");
-//				put(HotelDao.ATTR_IS_OPEN, 1);
+//				put(hoteldao.ATTR_ID, 1);
+//				put(hoteldao.ATTR_NAME, "Hotel 1");
+//				put(hoteldao.ATTR_STREET, "Avenida Sin Nombre Nº 1");
+//				put(hoteldao.ATTR_CITY, "Vigo");
+//				put(hoteldao.ATTR_CP, "36211");
+//				put(hoteldao.ATTR_STATE, "Galicia");
+//				put(hoteldao.ATTR_COUNTRY, "Spain");
+//				put(hoteldao.ATTR_PHONE, "+34 986 111 111");
+//				put(hoteldao.ATTR_EMAIL, "hotel1@atomicHotels.com");
+//				put(hoteldao.ATTR_DESCRIPTION, "Hotel para pruebas unitarias");
+//				put(hoteldao.ATTR_IS_OPEN, 1);
 //			}
 //		});
 //		er.addRecord(new HashMap<String, Object>() {
 //			{
-//				put(HotelDao.ATTR_ID, 2);
-//				put(HotelDao.ATTR_NAME, "Hotel 2");
-//				put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 2");
-//				put(HotelDao.ATTR_CITY, "Vigo");
-//				put(HotelDao.ATTR_CP, "36211");
-//				put(HotelDao.ATTR_STATE, "Galicia");
-//				put(HotelDao.ATTR_COUNTRY, "Spain");
-//				put(HotelDao.ATTR_PHONE, "+34 986 222 222");
-//				put(HotelDao.ATTR_EMAIL, "hotel2@atomicHotels.com");
-//				put(HotelDao.ATTR_DESCRIPTION, "Hotel para pruebas unitarias");
-//				put(HotelDao.ATTR_IS_OPEN, 1);
+//				put(hoteldao.ATTR_ID, 2);
+//				put(hoteldao.ATTR_NAME, "Hotel 2");
+//				put(hoteldao.ATTR_STREET, "Avenida Sin Nombre Nº 2");
+//				put(hoteldao.ATTR_CITY, "Vigo");
+//				put(hoteldao.ATTR_CP, "36211");
+//				put(hoteldao.ATTR_STATE, "Galicia");
+//				put(hoteldao.ATTR_COUNTRY, "Spain");
+//				put(hoteldao.ATTR_PHONE, "+34 986 222 222");
+//				put(hoteldao.ATTR_EMAIL, "hotel2@atomicHotels.com");
+//				put(hoteldao.ATTR_DESCRIPTION, "Hotel para pruebas unitarias");
+//				put(hoteldao.ATTR_IS_OPEN, 1);
 //			}
 //		});
 //		er.addRecord(new HashMap<String, Object>() {
 //			{
-//				put(HotelDao.ATTR_ID, 3);
-//				put(HotelDao.ATTR_NAME, "Hotel 3");
-//				put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 3");
-//				put(HotelDao.ATTR_CITY, "Vigo");
-//				put(HotelDao.ATTR_CP, "36211");
-//				put(HotelDao.ATTR_STATE, "Galicia");
-//				put(HotelDao.ATTR_COUNTRY, "Spain");
-//				put(HotelDao.ATTR_PHONE, "+34 986 333 333");
-//				put(HotelDao.ATTR_EMAIL, "hotel3@atomicHotels.com");
-//				put(HotelDao.ATTR_DESCRIPTION, "Hotel para pruebas unitarias");
-//				put(HotelDao.ATTR_IS_OPEN, 0);
+//				put(hoteldao.ATTR_ID, 3);
+//				put(hoteldao.ATTR_NAME, "Hotel 3");
+//				put(hoteldao.ATTR_STREET, "Avenida Sin Nombre Nº 3");
+//				put(hoteldao.ATTR_CITY, "Vigo");
+//				put(hoteldao.ATTR_CP, "36211");
+//				put(hoteldao.ATTR_STATE, "Galicia");
+//				put(hoteldao.ATTR_COUNTRY, "Spain");
+//				put(hoteldao.ATTR_PHONE, "+34 986 333 333");
+//				put(hoteldao.ATTR_EMAIL, "hotel3@atomicHotels.com");
+//				put(hoteldao.ATTR_DESCRIPTION, "Hotel para pruebas unitarias");
+//				put(hoteldao.ATTR_IS_OPEN, 0);
 //			}
 //		});
 //		er.setCode(EntityResult.OPERATION_SUCCESSFUL);
 //		er.setColumnSQLTypes(new HashMap<String, Number>() {
 //			{
-//				put(HotelDao.ATTR_ID, Types.INTEGER);
-//				put(HotelDao.ATTR_NAME, Types.VARCHAR);
-//				put(HotelDao.ATTR_STREET, Types.VARCHAR);
-//				put(HotelDao.ATTR_CITY, Types.VARCHAR);
-//				put(HotelDao.ATTR_CP, Types.VARCHAR);
-//				put(HotelDao.ATTR_STATE, Types.VARCHAR);
-//				put(HotelDao.ATTR_COUNTRY, Types.VARCHAR);
-//				put(HotelDao.ATTR_PHONE, Types.VARCHAR);
-//				put(HotelDao.ATTR_EMAIL, Types.VARCHAR);
-//				put(HotelDao.ATTR_DESCRIPTION, Types.VARCHAR);
-//				put(HotelDao.ATTR_IS_OPEN, Types.BINARY);
+//				put(hoteldao.ATTR_ID, Types.INTEGER);
+//				put(hoteldao.ATTR_NAME, Types.VARCHAR);
+//				put(hoteldao.ATTR_STREET, Types.VARCHAR);
+//				put(hoteldao.ATTR_CITY, Types.VARCHAR);
+//				put(hoteldao.ATTR_CP, Types.VARCHAR);
+//				put(hoteldao.ATTR_STATE, Types.VARCHAR);
+//				put(hoteldao.ATTR_COUNTRY, Types.VARCHAR);
+//				put(hoteldao.ATTR_PHONE, Types.VARCHAR);
+//				put(hoteldao.ATTR_EMAIL, Types.VARCHAR);
+//				put(hoteldao.ATTR_DESCRIPTION, Types.VARCHAR);
+//				put(hoteldao.ATTR_IS_OPEN, Types.BINARY);
 //			}
 //		});
 //		return er;
@@ -737,10 +748,10 @@ class HotelServiceTest {
 //		EntityResult allData = this.getAllHotelsData();
 //		int recordIndex = allData.getRecordIndex(keyValues);
 //		HashMap<String, Object> recordValues = (HashMap) allData.getRecordValues(recordIndex);
-//		List<String> columnList = Arrays.asList(HotelDao.ATTR_ID, HotelDao.ATTR_NAME, HotelDao.ATTR_STREET,
-//				HotelDao.ATTR_CITY, HotelDao.ATTR_CP, HotelDao.ATTR_STATE, HotelDao.ATTR_COUNTRY,
-//				HotelDao.ATTR_PHONE, HotelDao.ATTR_PHONE, HotelDao.ATTR_EMAIL, HotelDao.ATTR_DESCRIPTION,
-//				HotelDao.ATTR_IS_OPEN);
+//		List<String> columnList = Arrays.asList(hoteldao.ATTR_ID, hoteldao.ATTR_NAME, hoteldao.ATTR_STREET,
+//				hoteldao.ATTR_CITY, hoteldao.ATTR_CP, hoteldao.ATTR_STATE, hoteldao.ATTR_COUNTRY,
+//				hoteldao.ATTR_PHONE, hoteldao.ATTR_PHONE, hoteldao.ATTR_EMAIL, hoteldao.ATTR_DESCRIPTION,
+//				hoteldao.ATTR_IS_OPEN);
 //		EntityResult er = new EntityResultMapImpl(columnList);
 //		if (recordValues != null) {
 //			er.addRecord(recordValues);
@@ -748,17 +759,17 @@ class HotelServiceTest {
 //		er.setCode(EntityResult.OPERATION_SUCCESSFUL);
 //		er.setColumnSQLTypes(new HashMap<String, Number>() {
 //			{
-//				put(HotelDao.ATTR_ID, Types.INTEGER);
-//				put(HotelDao.ATTR_NAME, Types.VARCHAR);
-//				put(HotelDao.ATTR_STREET, Types.VARCHAR);
-//				put(HotelDao.ATTR_CITY, Types.VARCHAR);
-//				put(HotelDao.ATTR_CP, Types.VARCHAR);
-//				put(HotelDao.ATTR_STATE, Types.VARCHAR);
-//				put(HotelDao.ATTR_COUNTRY, Types.VARCHAR);
-//				put(HotelDao.ATTR_PHONE, Types.VARCHAR);
-//				put(HotelDao.ATTR_EMAIL, Types.VARCHAR);
-//				put(HotelDao.ATTR_DESCRIPTION, Types.VARCHAR);
-//				put(HotelDao.ATTR_IS_OPEN, Types.BINARY);
+//				put(hoteldao.ATTR_ID, Types.INTEGER);
+//				put(hoteldao.ATTR_NAME, Types.VARCHAR);
+//				put(hoteldao.ATTR_STREET, Types.VARCHAR);
+//				put(hoteldao.ATTR_CITY, Types.VARCHAR);
+//				put(hoteldao.ATTR_CP, Types.VARCHAR);
+//				put(hoteldao.ATTR_STATE, Types.VARCHAR);
+//				put(hoteldao.ATTR_COUNTRY, Types.VARCHAR);
+//				put(hoteldao.ATTR_PHONE, Types.VARCHAR);
+//				put(hoteldao.ATTR_EMAIL, Types.VARCHAR);
+//				put(hoteldao.ATTR_DESCRIPTION, Types.VARCHAR);
+//				put(hoteldao.ATTR_IS_OPEN, Types.BINARY);
 //			}
 //		});
 //		return er;
@@ -777,17 +788,17 @@ class HotelServiceTest {
 //		void when_unable_insert() {
 //			when(daoHelper.insert(any(),anyMap())).thenThrow(MissingFieldsException.class);
 //			Map<String, Object> attrMap = new HashMap<>() {{
-//				put(HotelDao.ATTR_ID, 1);
-////                put(HotelDao.ATTR_NAME, "Hotel 23");
-////                put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 1");
-//                put(HotelDao.ATTR_CITY, "Vigo");
-//                put(HotelDao.ATTR_CP, "36211");
-//                put(HotelDao.ATTR_STATE, "Galicia");
-//                put(HotelDao.ATTR_COUNTRY, "Spain");
-//                put(HotelDao.ATTR_PHONE, "+34 986 111 111");
-//                put(HotelDao.ATTR_EMAIL, "hotel1@atomicHotels.com");
-//                put(HotelDao.ATTR_DESCRIPTION, "Faltan campos no nullables");
-//                put(HotelDao.ATTR_IS_OPEN, 1);	
+//				put(hoteldao.ATTR_ID, 1);
+////                put(hoteldao.ATTR_NAME, "Hotel 23");
+////                put(hoteldao.ATTR_STREET, "Avenida Sin Nombre Nº 1");
+//                put(hoteldao.ATTR_CITY, "Vigo");
+//                put(hoteldao.ATTR_CP, "36211");
+//                put(hoteldao.ATTR_STATE, "Galicia");
+//                put(hoteldao.ATTR_COUNTRY, "Spain");
+//                put(hoteldao.ATTR_PHONE, "+34 986 111 111");
+//                put(hoteldao.ATTR_EMAIL, "hotel1@atomicHotels.com");
+//                put(hoteldao.ATTR_DESCRIPTION, "Faltan campos no nullables");
+//                put(hoteldao.ATTR_IS_OPEN, 1);	
 //			}};			
 //			eR = service.hotelInsert(attrMap);
 //						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
@@ -805,17 +816,17 @@ class HotelServiceTest {
 //		void when_hotel_insert_is_succsessfull() {
 //			Map<String, Object> attrMap = new HashMap<>() {
 //				{
-//					put(HotelDao.ATTR_ID, 1);
-//					put(HotelDao.ATTR_NAME, "Hotel 1");
-//					put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 1");
-//					put(HotelDao.ATTR_CITY, "Vigo");
-//					put(HotelDao.ATTR_CP, "36211");
-//					put(HotelDao.ATTR_STATE, "Galicia");
-//					put(HotelDao.ATTR_COUNTRY, "Spain");
-//					put(HotelDao.ATTR_PHONE, "+34 986 111 111");
-//					put(HotelDao.ATTR_EMAIL, "hotel1@atomicHotels.com");
-//					put(HotelDao.ATTR_DESCRIPTION, "Hotel a registrar");
-//					put(HotelDao.ATTR_IS_OPEN, 1);
+//					put(hoteldao.ATTR_ID, 1);
+//					put(hoteldao.ATTR_NAME, "Hotel 1");
+//					put(hoteldao.ATTR_STREET, "Avenida Sin Nombre Nº 1");
+//					put(hoteldao.ATTR_CITY, "Vigo");
+//					put(hoteldao.ATTR_CP, "36211");
+//					put(hoteldao.ATTR_STATE, "Galicia");
+//					put(hoteldao.ATTR_COUNTRY, "Spain");
+//					put(hoteldao.ATTR_PHONE, "+34 986 111 111");
+//					put(hoteldao.ATTR_EMAIL, "hotel1@atomicHotels.com");
+//					put(hoteldao.ATTR_DESCRIPTION, "Hotel a registrar");
+//					put(hoteldao.ATTR_IS_OPEN, 1);
 //				}
 //			};
 //			EntityResult resultado = new EntityResultMapImpl();
@@ -833,17 +844,17 @@ class HotelServiceTest {
 //		void when_already_exist() {
 //			Map<String, Object> attrMap = new HashMap<>() {
 //				{
-//					put(HotelDao.ATTR_ID, 1);
-//					put(HotelDao.ATTR_NAME, "Hotel 1");
-//					put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 1");
-//					put(HotelDao.ATTR_CITY, "Vigo");
-//					put(HotelDao.ATTR_CP, "36211");
-//					put(HotelDao.ATTR_STATE, "Galicia");
-//					put(HotelDao.ATTR_COUNTRY, "Spain");
-//					put(HotelDao.ATTR_PHONE, "+34 986 111 111");
-//					put(HotelDao.ATTR_EMAIL, "hotel1@atomicHotels.com");
-//					put(HotelDao.ATTR_DESCRIPTION, "Este hotel ya estaría registrado");
-//					put(HotelDao.ATTR_IS_OPEN, 1);
+//					put(hoteldao.ATTR_ID, 1);
+//					put(hoteldao.ATTR_NAME, "Hotel 1");
+//					put(hoteldao.ATTR_STREET, "Avenida Sin Nombre Nº 1");
+//					put(hoteldao.ATTR_CITY, "Vigo");
+//					put(hoteldao.ATTR_CP, "36211");
+//					put(hoteldao.ATTR_STATE, "Galicia");
+//					put(hoteldao.ATTR_COUNTRY, "Spain");
+//					put(hoteldao.ATTR_PHONE, "+34 986 111 111");
+//					put(hoteldao.ATTR_EMAIL, "hotel1@atomicHotels.com");
+//					put(hoteldao.ATTR_DESCRIPTION, "Este hotel ya estaría registrado");
+//					put(hoteldao.ATTR_IS_OPEN, 1);
 //				}
 //			};
 //			when(daoHelper.insert(any(), anyMap())).thenThrow(DuplicateKeyException.class);
@@ -857,17 +868,17 @@ class HotelServiceTest {
 //		void when_unable_insert() {
 //			Map<String, Object> attrMap = new HashMap<>() {
 //				{
-//					put(HotelDao.ATTR_ID, 1);
-//					put(HotelDao.ATTR_NAME, null);
-//					put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 1");
-//					put(HotelDao.ATTR_CITY, "Vigo");
-//					put(HotelDao.ATTR_CP, "36211");
-//					put(HotelDao.ATTR_STATE, "Galicia");
-//					put(HotelDao.ATTR_COUNTRY, "Spain");
-//					put(HotelDao.ATTR_PHONE, "+34 986 111 111");
-//					put(HotelDao.ATTR_EMAIL, "hotel1@atomicHotels.com");
-//					put(HotelDao.ATTR_DESCRIPTION, "Faltan campos no nullables");
-//					put(HotelDao.ATTR_IS_OPEN, 1);
+//					put(hoteldao.ATTR_ID, 1);
+//					put(hoteldao.ATTR_NAME, null);
+//					put(hoteldao.ATTR_STREET, "Avenida Sin Nombre Nº 1");
+//					put(hoteldao.ATTR_CITY, "Vigo");
+//					put(hoteldao.ATTR_CP, "36211");
+//					put(hoteldao.ATTR_STATE, "Galicia");
+//					put(hoteldao.ATTR_COUNTRY, "Spain");
+//					put(hoteldao.ATTR_PHONE, "+34 986 111 111");
+//					put(hoteldao.ATTR_EMAIL, "hotel1@atomicHotels.com");
+//					put(hoteldao.ATTR_DESCRIPTION, "Faltan campos no nullables");
+//					put(hoteldao.ATTR_IS_OPEN, 1);
 //				}
 //			};
 //			// try (MockedStatic<ValidateFields> vf =
@@ -876,12 +887,12 @@ class HotelServiceTest {
 //			// anyString())).thenThrow(MissingFieldsException.class);
 //			eR = service.hotelInsert(attrMap);
 //						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//			assertEquals(ErrorMessage.CREATION_ERROR + "El campo " + HotelDao.ATTR_NAME + " es nulo",
+//			assertEquals(ErrorMessage.CREATION_ERROR + "El campo " + hoteldao.ATTR_NAME + " es nulo",
 //					eR.getMessage());
 //			// }
 //
 ////			doThrow().when(ValidateFields.required(anyMap(), anyString())).thenThrow(MissingFieldsException.class);
-////			when(daoHelper.insert(any(),anyMap())).thenThrow(new MissingFieldsException("El campo " + HotelDao.ATTR_NAME + " es nulo"));
+////			when(daoHelper.insert(any(),anyMap())).thenThrow(new MissingFieldsException("El campo " + hoteldao.ATTR_NAME + " es nulo"));
 ////    		eR = service.hotelInsert(anyMap());
 ////						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 //
@@ -898,22 +909,22 @@ class HotelServiceTest {
 //		void when_hotel_insert_is_succsessfull() {
 //			Map<String, Object> attrMap = new HashMap<>() {
 //				{
-//					put(HotelDao.ATTR_ID, 1);
+//					put(hoteldao.ATTR_ID, 1);
 //				}
 //			};
 //			Map<String, Object> keyMap = new HashMap<>() {
 //				{
-//					put(HotelDao.ATTR_ID, 1);
-//					put(HotelDao.ATTR_NAME, "Hotel 1 actualizado");
-//					put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 1 actualizado");
-//					put(HotelDao.ATTR_CITY, "Vigo actualizado");
-//					put(HotelDao.ATTR_CP, "36211 actualizado");
-//					put(HotelDao.ATTR_STATE, "Galicia");
-//					put(HotelDao.ATTR_COUNTRY, "Spain");
-//					put(HotelDao.ATTR_PHONE, "+34 986 111 111");
-//					put(HotelDao.ATTR_EMAIL, "hotel1@atomicHotels.com");
-//					put(HotelDao.ATTR_DESCRIPTION, "Hotel actualizado");
-//					put(HotelDao.ATTR_IS_OPEN, 0);
+//					put(hoteldao.ATTR_ID, 1);
+//					put(hoteldao.ATTR_NAME, "Hotel 1 actualizado");
+//					put(hoteldao.ATTR_STREET, "Avenida Sin Nombre Nº 1 actualizado");
+//					put(hoteldao.ATTR_CITY, "Vigo actualizado");
+//					put(hoteldao.ATTR_CP, "36211 actualizado");
+//					put(hoteldao.ATTR_STATE, "Galicia");
+//					put(hoteldao.ATTR_COUNTRY, "Spain");
+//					put(hoteldao.ATTR_PHONE, "+34 986 111 111");
+//					put(hoteldao.ATTR_EMAIL, "hotel1@atomicHotels.com");
+//					put(hoteldao.ATTR_DESCRIPTION, "Hotel actualizado");
+//					put(hoteldao.ATTR_IS_OPEN, 0);
 //				}
 //			};
 //			EntityResult resultado = new EntityResultMapImpl();
@@ -932,22 +943,22 @@ class HotelServiceTest {
 //		void when_already_exist() {
 //			Map<String, Object> attrMap = new HashMap<>() {
 //				{
-//					put(HotelDao.ATTR_ID, 2);
+//					put(hoteldao.ATTR_ID, 2);
 //				}
 //			};
 //			Map<String, Object> keyMap = new HashMap<>() {
 //				{
-//					put(HotelDao.ATTR_ID, 2);// ???
-//					put(HotelDao.ATTR_NAME, "Hotel 1");// Este hotel ya existe
-//					put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 1 actualizado");
-//					put(HotelDao.ATTR_CITY, "Vigo actualizado");
-//					put(HotelDao.ATTR_CP, "36211 actualizado");
-//					put(HotelDao.ATTR_STATE, "Galicia");
-//					put(HotelDao.ATTR_COUNTRY, "Spain");
-//					put(HotelDao.ATTR_PHONE, "+34 986 111 111");
-//					put(HotelDao.ATTR_EMAIL, "hotel1@atomicHotels.com");
-//					put(HotelDao.ATTR_DESCRIPTION, "Hotel actualizado");
-//					put(HotelDao.ATTR_IS_OPEN, 1);
+//					put(hoteldao.ATTR_ID, 2);// ???
+//					put(hoteldao.ATTR_NAME, "Hotel 1");// Este hotel ya existe
+//					put(hoteldao.ATTR_STREET, "Avenida Sin Nombre Nº 1 actualizado");
+//					put(hoteldao.ATTR_CITY, "Vigo actualizado");
+//					put(hoteldao.ATTR_CP, "36211 actualizado");
+//					put(hoteldao.ATTR_STATE, "Galicia");
+//					put(hoteldao.ATTR_COUNTRY, "Spain");
+//					put(hoteldao.ATTR_PHONE, "+34 986 111 111");
+//					put(hoteldao.ATTR_EMAIL, "hotel1@atomicHotels.com");
+//					put(hoteldao.ATTR_DESCRIPTION, "Hotel actualizado");
+//					put(hoteldao.ATTR_IS_OPEN, 1);
 //				}
 //			};
 //			when(daoHelper.update(any(), anyMap(), anyMap())).thenThrow(DuplicateKeyException.class);

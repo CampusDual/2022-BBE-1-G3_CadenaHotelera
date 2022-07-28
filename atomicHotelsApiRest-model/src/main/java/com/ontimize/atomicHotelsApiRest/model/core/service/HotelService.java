@@ -229,13 +229,13 @@ public class HotelService implements IHotelService {
 			cf.setOptional(false);
 			cf.validate(keyMap);
 
-			Map<String, Object> consultaKeyMap = new HashMap<>() {
+			Map<String, Object> subConsultaKeyMap = new HashMap<>() {
 				{
 					put(HotelDao.ATTR_ID, keyMap.get(HotelDao.ATTR_ID));
 				}
 			};
 
-			EntityResult auxEntity = hotelQuery(consultaKeyMap, EntityResultTools.attributes(HotelDao.ATTR_ID));
+			EntityResult auxEntity = hotelQuery(subConsultaKeyMap, EntityResultTools.attributes(HotelDao.ATTR_ID));
 
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
 				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
