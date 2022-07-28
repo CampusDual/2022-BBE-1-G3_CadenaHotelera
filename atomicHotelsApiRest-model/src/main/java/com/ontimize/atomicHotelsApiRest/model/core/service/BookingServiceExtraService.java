@@ -28,6 +28,7 @@ import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
+import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 
 @Service("BookingServiceExtraService")
@@ -45,7 +46,7 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 
 	@Autowired
 	private HotelServiceExtraService hotelServiceExtraService;
-	
+
 	@Autowired
 	ControlFields cf;
 
@@ -73,15 +74,17 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 	@SuppressWarnings("unchecked")
 	@Override
 	// Registra el servicio si la reserva esta activa en progreso.
-	public EntityResult bookingServiceExtraInsert(Map<String, Object> attrMap)
-			throws OntimizeJEERuntimeException {
+	public EntityResult bookingServiceExtraInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 
 		EntityResult resultado = new EntityResultWrong();
 		try {
 			cf.reset();
-			List<String> required = Arrays.asList(BookingServiceExtraDao.ATTR_ID_SXT,BookingServiceExtraDao.ATTR_ID_BKG,BookingServiceExtraDao.ATTR_ID_UNITS);
+			List<String> required = Arrays.asList(BookingServiceExtraDao.ATTR_ID_SXT,
+					BookingServiceExtraDao.ATTR_ID_BKG, BookingServiceExtraDao.ATTR_ID_UNITS);
+			List<String> restricted = Arrays.asList(BookingServiceExtraDao.ATTR_ID, BookingServiceExtraDao.ATTR_PRECIO);
 			cf.addBasics(BookingServiceExtraDao.fields);
 			cf.setRequired(required);
+			cf.setRestricted(restricted);
 			cf.setOptional(false);
 			cf.validate(attrMap);
 
@@ -115,6 +118,7 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 						add(HotelDao.ATTR_ID);
 					}
 				};
+				
 				EntityResult hotel = bookingService.bookingsHotelsQuery(keyMapReserva, listaRefrenciaHotel);
 
 				// Precio del servicio
@@ -135,11 +139,9 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 				EntityResult precio = hotelServiceExtraService.hotelServiceExtraQuery(keyMapServicioDelHotel,
 						listaPrecioServicio);
 
-				// Si da un resultado vacío es que el servcio no está asociado al hotel de la reserva
+				// Si da un resultado vacío es que el servcio no está asociado al hotel de la
+				// reserva
 				if (precio.getRecordValues(0).get(HotelServiceExtraDao.ATTR_ID_SXT) != null) {
-
-//					EntityResult precio = this.daoHelper.query(bookingServiceExtraDao, EntityResultTools.keysvalues(BookingServiceExtraDao.ATTR_ID_BKG,attrMap.get(BookingServiceExtraDao.ATTR_ID_BKG)), 
-//							EntityResultTools.attributes(BookingServiceExtraDao.ATTR_PRECIO));
 
 					attrMap.put(BookingServiceExtraDao.ATTR_PRECIO,
 							precio.getRecordValues(0).get(HotelServiceExtraDao.ATTR_PRECIO));
@@ -162,14 +164,14 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);
 		} catch (Exception e) {
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
 	}
 
 	/*
-	 * Se elimina servicio extra de BOOKING IN PROGRESS las otros estados no deja eliminarlo, si no esta o esta eliminado
-	 * se muestra mensaje de servicio 
+	 * Se elimina servicio extra de BOOKING IN PROGRESS las otros estados no deja
+	 * eliminarlo, si no esta o esta eliminado se muestra mensaje de servicio
 	 */
 
 	@SuppressWarnings("unchecked")
@@ -177,45 +179,70 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 	public EntityResult bookingServiceExtraDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 
 		EntityResult resultado = new EntityResultMapImpl();
+
 		try {
 
-				cf.reset();
-				List<String> required = Arrays.asList(BookingServiceExtraDao.ATTR_ID);
-				cf.addBasics(BookingServiceExtraDao.fields);
-				cf.setRequired(required);
-				cf.setOptional(false);
-				cf.validate(keyMap);
-		
-			
-			List<String> filter = Arrays.asList(bookingServiceExtraDao.ATTR_ID_BKG);
-			EntityResult registro = this.daoHelper.query(this.bookingServiceExtraDao, keyMap, filter);
-			// Si da un resultado vacío es que el servcio no está asociado al hotel de la reserva
-			if (bookingService.getBookingStatus(registro.getRecordValues(0).get(bookingServiceExtraDao.ATTR_ID_BKG))
-					.equals(BookingDao.Status.CANCELED)) {
-				resultado = new EntityResultWrong("La reserva de este servicio esta cancelada no se pueden eliminar.");
-			} else if (bookingService.getBookingStatus(registro.getRecordValues(0).get(bookingServiceExtraDao.ATTR_ID_BKG))
-					.equals(BookingDao.Status.COMPLETED)) {
-				resultado = new EntityResultWrong("La reserva de este servicio esta completada no se pueden eliminar.");
-			} else if (bookingService.getBookingStatus(registro.getRecordValues(0).get(bookingServiceExtraDao.ATTR_ID_BKG))
-					.equals(BookingDao.Status.IN_PROGRESS)) {
-				System.err.println("eliminando");
-				resultado = this.daoHelper.delete(this.bookingServiceExtraDao, keyMap); // eliminamos servicio extra.
-				resultado.setMessage(" Servicio " + keyMap.get(BookingServiceExtraDao.ATTR_ID) + "  Extra eliminado.");
-			} else if (bookingService.getBookingStatus(registro.getRecordValues(0).get(bookingServiceExtraDao.ATTR_ID_BKG))
-					.equals(BookingDao.Status.CONFIRMED)) {
-				resultado = new EntityResultWrong("La reserva de este servicio esta confirmada no se pueden eliminar.");
-			} 
+			cf.reset();
+			List<String> required = Arrays.asList(BookingServiceExtraDao.ATTR_ID);
+			cf.addBasics(BookingServiceExtraDao.fields);
+			cf.setRequired(required);
+			cf.setOptional(false);
+			cf.validate(keyMap);
+
+			Map<String, Object> subConsultaKeyMap = new HashMap<>() {
+				{
+					put(BookingServiceExtraDao.ATTR_ID, keyMap.get(BookingServiceExtraDao.ATTR_ID));
+				}
+			}; 
+			EntityResult auxEntity = bookingServiceExtraQuery(subConsultaKeyMap,
+					EntityResultTools.attributes(BookingServiceExtraDao.ATTR_ID, BookingServiceExtraDao.ATTR_ID_BKG));
+
+			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
+				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
+
+			} else {
+
+				if (bookingService
+						.getBookingStatus(auxEntity.getRecordValues(0).get(bookingServiceExtraDao.ATTR_ID_BKG))
+						.equals(BookingDao.Status.CANCELED)) {
+					resultado = new EntityResultWrong(
+							"La reserva de este servicio esta cancelada, no se pueden eliminar su servcio extra asociado.");
+
+				} else if (bookingService
+						.getBookingStatus(auxEntity.getRecordValues(0).get(bookingServiceExtraDao.ATTR_ID_BKG))
+						.equals(BookingDao.Status.COMPLETED)) {
+					resultado = new EntityResultWrong(
+							"La reserva de este servicio esta completada, no se pueden eliminar su servcio extra asociado.");
+
+				} else if (bookingService
+						.getBookingStatus(auxEntity.getRecordValues(0).get(bookingServiceExtraDao.ATTR_ID_BKG))
+						.equals(BookingDao.Status.CONFIRMED)) {
+					resultado = new EntityResultWrong(
+							"La reserva de este servicio esta confirmada, no se pueden eliminar su servcio extra asociado.");
+
+				} else if (bookingService
+						.getBookingStatus(auxEntity.getRecordValues(0).get(bookingServiceExtraDao.ATTR_ID_BKG))
+						.equals(BookingDao.Status.IN_PROGRESS)) {
+					System.err.println("eliminando");
+					resultado = this.daoHelper.delete(this.bookingServiceExtraDao, keyMap); // eliminamos servicio
+																							// extra.
+					resultado.setMessage("Booking Service Extra eliminado");
+
+				}
+
+			}
+
 		} catch (ValidateException e) {
+			resultado = new EntityResultWrong(e.getMessage());
+		} catch (EntityResultRequiredException e) {
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
 		} catch (Exception e) {
-			//nullable no existe.
-			resultado = new EntityResultWrong("El servicio no existe pruebe con otro - "+ErrorMessage.DELETE_ERROR);
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
 	}
-
 
 	@Override
 	/**
@@ -242,13 +269,11 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 					"queryServciosExtraPrecioUnidadesTotal");
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
-		}catch(Exception e) {
+		} catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
 	}
-	
-
 
 	@Override
 	/**
@@ -272,12 +297,12 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 			cf.addBasics(ServicesXtraDao.fields);
 			cf.setRequired(required);
 			cf.validate(keyMap);
-			
+
 			resultado = this.daoHelper.query(this.bookingServiceExtraDao, keyMap, attrList,
 					"queryServiciosExtraNombreDescripcionUnidadesPrecioFecha");
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
-		}catch (Exception e) {
+		} catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}
 		return resultado;
