@@ -63,7 +63,7 @@ public class CustomerService implements ICustomerService {
 
 			resultado = this.daoHelper.query(this.customerDao, keyMap, attrList);
 		} catch (Exception e) {
-			resultado = new EntityResultWrong(ErrorMessage.ERROR);
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
 	}
@@ -78,14 +78,21 @@ public class CustomerService implements ICustomerService {
 
 			List<String> required = new ArrayList<String>() {
 				{// TODO AÑADIR TODOS LOS QUE NO SEAN NULABLES
-					// TODO también habría que obligar a que guardaran la tarjeta??? Qué pasa ahora que hay una tabla aparte para ellas??
-					add(CustomerDao.ATTR_VAT_NUMBER);
+					// TODO también habría que obligar a que guardaran la tarjeta??? Qué pasa ahora
+					// que hay una tabla aparte para ellas??
 					add(CustomerDao.ATTR_NAME);
+					add(CustomerDao.ATTR_PHONE);
+					add(CustomerDao.ATTR_COUNTRY);
+
+					add(CustomerDao.ATTR_VAT_NUMBER);
 				}
 			};
-			List<String> restricted = new ArrayList<String>() {//TODO VER SI HAY ALGÚN CAMPO MÁS QUE UNA EMPRESA NO ADMITE
+			List<String> restricted = new ArrayList<String>() {// TODO VER SI HAY ALGÚN CAMPO MÁS QUE UNA EMPRESA NO
+																// ADMITE
 				{
 					add(CustomerDao.ATTR_ID);
+					add(CustomerDao.ATTR_SURNAME);
+					add(CustomerDao.ATTR_BIRTH_DATE);
 					add(CustomerDao.ATTR_IDEN_DOC);
 				}
 			};
@@ -93,20 +100,31 @@ public class CustomerService implements ICustomerService {
 			cf.addBasics(CustomerDao.fields);
 			cf.setRequired(required);
 			cf.setRestricted(restricted);
-			cf.setOptional(true);
+//			cf.setOptional(true);
 			cf.validate(attrMap);
 
-			resultado = this.daoHelper.insert(this.customerDao, attrMap);
-			resultado.setMessage("Business Customer registrado");
+			Map<String, Object> subConsultaKeyMap = new HashMap<>() {
+				{
+					put(CustomerDao.ATTR_VAT_NUMBER, attrMap.get(CustomerDao.ATTR_VAT_NUMBER));
+				}
+			};
+
+			EntityResult auxEntity = customerQuery(subConsultaKeyMap,
+					EntityResultTools.attributes(CustomerDao.ATTR_VAT_NUMBER));
+			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros, insertamos
+				resultado = this.daoHelper.insert(this.customerDao, attrMap);
+
+				resultado.setMessage("Business Customer registrado");
+			} else {
+				resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+			}
 
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
-
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
-
 		} catch (Exception e) {
-			resultado = new EntityResultWrong(ErrorMessage.ERROR);
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
 	}
@@ -118,13 +136,15 @@ public class CustomerService implements ICustomerService {
 
 			List<String> required = new ArrayList<String>() {
 				{// TODO AÑADIR TODOS LOS QUE NO SEAN NULABLES
-					// TODO también habría que obligar a que guardaran la tarjeta??? Qué pasa ahora que hay una tabla aparte para ellas??
+					// TODO también habría que obligar a que guardaran la tarjeta??? Qué pasa ahora
+					// que hay una tabla aparte para ellas??
 					add(CustomerDao.ATTR_IDEN_DOC);
 					add(CustomerDao.ATTR_NAME);
 					add(CustomerDao.ATTR_SURNAME);
 				}
 			};
-			List<String> restricted = new ArrayList<String>() {//TODO VER SI HAY ALGÚN CAMPO MÁS QUE UN CLIENTE PARTICULAR NO ADMITE
+			List<String> restricted = new ArrayList<String>() {// TODO VER SI HAY ALGÚN CAMPO MÁS QUE UN CLIENTE
+																// PARTICULAR NO ADMITE
 				{
 					add(CustomerDao.ATTR_ID);
 					add(CustomerDao.ATTR_VAT_NUMBER);
@@ -137,8 +157,19 @@ public class CustomerService implements ICustomerService {
 			cf.setOptional(true);
 			cf.validate(attrMap);
 
-			resultado = this.daoHelper.insert(this.customerDao, attrMap);
-			resultado.setMessage("Regular Customer registrado");
+//			Map<String, Object> subConsultaKeyMap = new HashMap<>() {
+//				{
+//					put(CustomerDao.ATTR_IDEN_DOC, attrMap.get(CustomerDao.ATTR_IDEN_DOC));
+//				}
+//			};
+//			
+//			EntityResult auxEntity = customerQuery(subConsultaKeyMap, EntityResultTools.attributes(CustomerDao.ATTR_VAT_NUMBER));
+//			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros, insertamos
+//				resultado = this.daoHelper.insert(this.customerDao, attrMap);
+//				resultado.setMessage("Regular Customer registrado");				
+//			}else {
+//				resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+//			}
 
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
@@ -147,7 +178,7 @@ public class CustomerService implements ICustomerService {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 
 		} catch (Exception e) {
-			resultado = new EntityResultWrong(ErrorMessage.ERROR);
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
 	}

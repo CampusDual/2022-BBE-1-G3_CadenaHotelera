@@ -49,4 +49,6 @@ public class ErrorMessage {
 	public static final String ERROR = UNKNOWN_ERROR ;
 	public static final String INTERNAL_CAGADA = "Error interno";
 	
+	public static final String NO_BASIC_EXPRESSION = "No se permiten Basics Expresions";
+	
 }

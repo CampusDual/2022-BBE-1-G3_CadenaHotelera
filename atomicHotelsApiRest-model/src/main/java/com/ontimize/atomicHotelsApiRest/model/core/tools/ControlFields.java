@@ -13,10 +13,13 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.RestrictedFieldException;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.TypeCodes.type;
+import com.ontimize.jee.common.db.SQLStatementBuilder;
 
 /**
- *  Validador de campos y valores de keyMaps (filtros) y attrList (columnas), según el tipado que asignamos en el e Dao \n
- *  Cambia el tipo a algunos valores (Date pasa Strings a Date en el propio keyMap)
+ * Validador de campos y valores de keyMaps (filtros) y attrList (columnas),
+ * según el tipado que asignamos en el e Dao \n Cambia el tipo a algunos valores
+ * (Date pasa Strings a Date en el propio keyMap)
+ * 
  * @author Ar
  *
  */
@@ -31,21 +34,26 @@ public class ControlFields {
 	private boolean optional;
 	private boolean noEmptyList;
 	private boolean noWildcard;
+	private boolean allowBasicExpression;
 
 	public ControlFields() {
 		reset();
 	}
-	
+
 	public void reset() {
 		fields = new HashMap<String, type>();
 		restricted = null;
 		required = null;
 		optional = true;
-		noEmptyList = true; //solo para las Listas no los HashMap
+		noEmptyList = true; // solo para las Listas no los HashMap
 		noWildcard = true;
-		
+		allowBasicExpression = false;
 	}
-	
+
+	public void setAllowBasicExpression(boolean allowBasicExpression) {
+		this.allowBasicExpression = allowBasicExpression;
+	}
+
 	public void addBasics(Map<String, type> fields) {
 		this.fields.putAll(fields);
 	}
@@ -62,8 +70,6 @@ public class ControlFields {
 		this.optional = optional;
 	}
 
-	
-	
 	public boolean isNoEmptyList() {
 		return noEmptyList;
 	}
@@ -91,15 +97,20 @@ public class ControlFields {
 	 */
 	public void validate(Map<String, Object> keyMap) throws MissingFieldsException, RestrictedFieldException,
 			InvalidFieldsException, InvalidFieldsValuesException, LiadaPardaException {
+
+		if (keyMap == null) {
+			throw new MissingFieldsException(ErrorMessage.NO_NULL_DATA);
+		}
 		
-			if(keyMap == null) {
-				throw new MissingFieldsException(ErrorMessage.NO_NULL_DATA);
-			}
-		
+		// no podemos hacer este metodo, porque
+//		if( !allowBasicExpression && keyMap.containsKey(SQLStatementBuilder.ExtendedSQLConditionValuesProcessor.EXPRESSION_KEY)) {		
+//			throw new InvalidFieldsException(ErrorMessage.NO_BASIC_EXPRESSION);
+//		}
+
 		if (required != null) {
 			for (String key : required) {
 				if (!keyMap.containsKey(key)) {
-					throw new MissingFieldsException(ErrorMessage.REQUIRED_FIELD);
+					throw new MissingFieldsException(ErrorMessage.REQUIRED_FIELD + key);
 				}
 			}
 		}
@@ -123,12 +134,12 @@ public class ControlFields {
 //validar typos y valores
 		for (String key : keyMap.keySet()) {
 			boolean validType = false;
-			
-			if (fields.containsKey(key)) {				
-				if(keyMap.get(key) == null) {
+
+			if (fields.containsKey(key)) {
+				if (keyMap.get(key) == null) {
 					throw new MissingFieldsException(ErrorMessage.NO_NULL_VALUE + key);
 				}
-				
+
 				switch (fields.get(key)) {
 				case STRING:
 					if ((keyMap.get(key) instanceof String)) {
@@ -155,7 +166,7 @@ public class ControlFields {
 					break;
 
 				case PRICE:
-					if (keyMap.get(key) instanceof Integer || keyMap.get(key) instanceof Double) {						
+					if (keyMap.get(key) instanceof Integer || keyMap.get(key) instanceof Double) {
 						ValidateFields.formatprice(keyMap.get(key));
 						validType = true;
 					}
@@ -163,7 +174,7 @@ public class ControlFields {
 
 				case CREDIT_CARD:
 					if (keyMap.get(key) instanceof Long) {
-						
+
 						ValidateFields.invalidCreditCard((Long) keyMap.get(key));
 						validType = true;
 					}
@@ -184,17 +195,17 @@ public class ControlFields {
 
 				case COUNTRY:
 					if ((keyMap.get(key) instanceof String)) {
-						ValidateFields.country((String)keyMap.get(key));
+						ValidateFields.country((String) keyMap.get(key));
 						validType = true;
 					}
 					break;
 
-				case DATETIME://diferenciar al devolver los datos
+				case DATETIME:// diferenciar al devolver los datos
 				case DATE:
 					if ((keyMap.get(key) instanceof String)) {
 						keyMap.replace(key, ValidateFields.stringToDate((String) keyMap.get(key)));
 						validType = true;
-					}					
+					}
 					break;
 
 				case EMAIL:
@@ -216,9 +227,9 @@ public class ControlFields {
 						validType = true;
 					}
 					break;
-					
+
 				default:
-					throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE+ key);
+					throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + key);
 				}
 
 				if (!validType) {
@@ -247,18 +258,18 @@ public class ControlFields {
 	 */
 	public void validate(List<String> columns)
 			throws MissingFieldsException, RestrictedFieldException, LiadaPardaException, InvalidFieldsException {
-		
-		if(columns == null) {
+
+		if (columns == null) {
 			throw new MissingFieldsException(ErrorMessage.NO_NULL_DATA);
 		}
-	
+
 		if (noEmptyList) {
 			int minimuSize = 1;
-			
+
 			if (noWildcard && columns.contains("*")) {
 				minimuSize++;
 			}
-					
+
 			if (columns.size() < minimuSize) {
 				throw new MissingFieldsException(ErrorMessage.REQUIRED_MINIMUM_COLUMS);
 			}

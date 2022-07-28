@@ -411,11 +411,11 @@ INSERT INTO public.customers (cst_name, cst_surname, cst_email, 			cst_birth_dat
 */
 --empresas
 INSERT INTO public.customers (cst_name, 		cst_email, 				 cst_vat_number , 	cst_address , 							cst_city,	cst_zip_code,	cst_state, 	cst_cnt_iso, 	cst_phone, 			cst_agree_spam) 
-					VALUES ('Imatia S.L.',	'hola@imatia.com', 'C944557', 				'Edificio Citexvi, Fonte das Abelleiras, s/n ·',	'Vigo',	'36310',		'Pontevedra','ES', 			'+34 986 34 27 74',  0 );
+					VALUES ('Imatia S.L.',	'hola@imatia.com', 'C944557', 				'Edificio Citexvi, Fonte das Abelleiras, s/n ·',	'Vigo',	'36310',		'Pontevedra','ES', 			'0034986342774',  0 );
 INSERT INTO public.customers (cst_name, 		cst_email, 				 cst_vat_number , 	cst_address , 			cst_city,	cst_zip_code,	cst_state, 	cst_cnt_iso, 	cst_phone, 			cst_agree_spam) 
 						VALUES ('Xunta de Galicia S.L.',	'info@xunta.gal', 'Q34351255', 		'plz del sol 1	',	'Santiago de Compostela',	'15001',		'A Coruña',			'ES', 			'+3498122411',  0 );					
 INSERT INTO public.customers (cst_name, 		cst_email, 				 cst_vat_number , 	cst_address , 			cst_city,	cst_zip_code,	cst_state, 	cst_cnt_iso, 	cst_phone, 			cst_agree_spam) 
-						VALUES ('Reporteros Viajeros S.A.',	'reporterosviajeros@gmail.com', 'B1235544', 		'10, Downing Street',	'London',	'SWIA 2AA',		'',			'UK', 			'+44 07987654321',  0 );
+						VALUES ('Reporteros Viajeros S.A.',	'reporterosviajeros@gmail.com', 'B1235544', 		'10, Downing Street',	'Braga',	'4000-122',		'',			'PT', 			'+44 07987654321',  0 );
 
 					
 --BOOKINGS
