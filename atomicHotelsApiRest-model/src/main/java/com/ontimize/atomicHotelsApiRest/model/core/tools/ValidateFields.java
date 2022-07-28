@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.NumberFormat;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingColumnsException;
@@ -246,12 +248,10 @@ public class ValidateFields {
 	public static void formatprice(Object object) throws InvalidFieldsValuesException {
 		String pre = "" + object;
 		String comprueba = pre.substring(pre.indexOf(".") + 1);
-		System.err.println(pre);
 		if (comprueba.length() > 2) {
 			throw new InvalidFieldsValuesException("Introduce solo 2 decimales");
 		} else {
 			BigDecimal comprobado = new BigDecimal(pre);
-			System.err.println(comprobado + "/");
 		}
 
 	}
@@ -484,6 +484,32 @@ public class ValidateFields {
 		if (country.length() != 2 || country.compareTo(country.toUpperCase()) != 0) {
 			throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + country);
 		}
+	}
+	
+	public static void isPhone(Object object) throws InvalidFieldsValuesException {
+		String phone =""+ object;
+		if(phone.charAt(0)=='+') {
+			String comprueba = phone.substring(phone.indexOf("+")+1);
+			List<Integer> numberPhone = new ArrayList<>();
+			for(int i=0;i<comprueba.length();i++) {
+				try {
+					 numberPhone.add((int)comprueba.charAt(i));
+				}catch(NumberFormatException e)
+				{
+					System.out.println(e.getMessage());
+				}
+		}
+
+	}
+
+		
+		/*if (comprueba.length() > 10) {
+			throw new InvalidFieldsValuesException("Introduce solo 2 decimales");
+		} else {
+			BigDecimal comprobado = new BigDecimal(pre);
+			System.err.println(comprobado + "/");
+		}*/
+
 	}
 
 }
