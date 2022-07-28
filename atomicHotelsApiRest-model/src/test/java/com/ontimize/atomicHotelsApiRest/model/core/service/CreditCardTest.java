@@ -336,7 +336,7 @@ class CreditCardTest {
 				// recogidas.
 				doThrow(DataIntegrityViolationException.class).when(cf).validate(anyMap());
 				eR = service.creditCardDelete(TestingTools.getMapEmpty());
-				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertEquals(EntityResult.OPERATION_WRONG , eR.getCode(), eR.getMessage());
 				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
 				reset(cf); //para quitar doThrow anterior
