@@ -187,7 +187,7 @@ public class HotelService implements IHotelService {
 			};
 			cf.reset();
 			cf.addBasics(HotelDao.fields);
-			cf.setRestricted(restrictedData);			
+			cf.setRestricted(restrictedData);
 			cf.validate(attrMap);
 
 			resultado = this.daoHelper.update(this.hotelDao, attrMap, keyMap);
@@ -258,22 +258,25 @@ public class HotelService implements IHotelService {
 	@Override
 	public EntityResult hotelInfoQuery(Map<String, Object> keysValues, List<String> attrList)
 			throws OntimizeJEERuntimeException {
-		EntityResult queryRes = new EntityResultWrong();
-		try {
-			ControlFields cf = new ControlFields();
-			cf.addBasics(HotelDao.fields);
-			cf.validate(keysValues);
-
-			cf.validate(attrList);
-
-			queryRes = this.daoHelper.query(this.hotelDao, keysValues, attrList, "queryHotel");
-		} catch (ValidateException e) {
-			queryRes = new EntityResultWrong(e.getMessage());
-		} catch (Exception e) {
-			queryRes = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
-		}
-
-		return queryRes;
+// el InfoQuery lo utilizamos para obtener una query mas detallada con joins de
+// otras tablas.
+//		EntityResult queryRes = new EntityResultWrong();
+//		try {
+//			ControlFields cf = new ControlFields();
+//			cf.addBasics(HotelDao.fields);
+//			cf.validate(keysValues);
+//
+//			cf.validate(attrList);
+//
+//			queryRes = this.daoHelper.query(this.hotelDao, keysValues, attrList, "queryHotel");
+//		} catch (ValidateException e) {
+//			queryRes = new EntityResultWrong(e.getMessage());
+//		} catch (Exception e) {
+//			queryRes = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
+//		}
+//
+//		return queryRes;
+		return null;
 	}
 
 }

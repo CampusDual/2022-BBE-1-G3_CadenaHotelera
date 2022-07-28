@@ -82,6 +82,7 @@ class HotelServiceTest {
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	public class HotelQuery {
 
+		//hotelQuery
 		@Test
 		@DisplayName("ControlFields usar reset()")
 		void testHotelQueryControlFieldsReset() {
@@ -154,7 +155,7 @@ class HotelServiceTest {
 			}
 
 		}
-
+		
 	}
 
 	@Nested
@@ -401,7 +402,7 @@ class HotelServiceTest {
 		}
 		
 		@Test
-		@DisplayName("Valores Subcontulta Error")
+		@DisplayName("Valores Subconsultta 0 resultados")
 		void testhotelDeleteSubQueryNoResults() {
 			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(),anyList());
 //			doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
@@ -450,19 +451,17 @@ class HotelServiceTest {
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
-				reset(cf);
+				reset(cf); //para quitar doThrow anterior
 				// extra para controlar required:
 				eR = service.hotelDelete(TestingTools.getMapEmpty());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-				System.out.println(eR.getMessage());
 				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
 
 				// extra para controlar restricted:
 				eR = service.hotelDelete(getMapRequiredDeletetExtendedWidthRestricted());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-				System.out.println(eR.getMessage());
 				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
 
 			} catch (Exception e) {
