@@ -133,14 +133,14 @@ public class ReceiptService implements IReceiptService {
 				servicios.add(servicio);
 			}
 
-			calculoReceipt.put("serviciosExtra", servicios);
+			calculoReceipt.put(ReceiptDao.ATTR_SERVICIOS_EXTRA, servicios);
 
 			reciboCompleto.addRecord(calculoReceipt);
 
 		} catch (ValidateException e) {
 			reciboCompleto = new EntityResultWrong(ErrorMessage.RESULT_REQUIRED + e.getMessage());
 		} catch (Exception e) {
-			reciboCompleto = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
+			reciboCompleto = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return reciboCompleto;
 	}
@@ -242,7 +242,7 @@ public class ReceiptService implements IReceiptService {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
 	}
@@ -297,7 +297,7 @@ public class ReceiptService implements IReceiptService {
 				}
 			};
 
-			EntityResult auxEntity = receiptQuery(consultaKeyMap, EntityResultTools.attributes(HotelDao.ATTR_ID));
+			EntityResult auxEntity = receiptQuery(consultaKeyMap, EntityResultTools.attributes(ReceiptDao.ATTR_ID));
 
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
 				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
@@ -312,7 +312,7 @@ public class ReceiptService implements IReceiptService {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
 		} catch (Exception e) {
 			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR);
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
 	}
