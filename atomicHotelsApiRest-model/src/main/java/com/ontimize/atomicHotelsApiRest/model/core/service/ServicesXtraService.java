@@ -26,7 +26,6 @@ import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
 import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
-import com.ontimize.atomicHotelsApiRest.model.core.dao.BedComboDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.FeatureDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
@@ -56,11 +55,11 @@ public class ServicesXtraService implements IServicesXtraService{
 		EntityResult resultado = new EntityResultWrong();
 		try {
 		cf.reset();
-		cf.addBasics(BedComboDao.fields);
+		cf.addBasics(ServicesXtraDao.fields);
 		cf.validate(keyMap);
 		cf.validate(attrList);
 		return this.daoHelper.query(this.servicesXtraDao, keyMap, attrList);
-		}catch(ValidateException | LiadaPardaException e) {
+		}catch(ValidateException e) {
 			resultado=new EntityResultWrong(e.getMessage());
 		}catch(Exception e) {
 			resultado=new EntityResultWrong(ErrorMessage.ERROR);
@@ -91,7 +90,7 @@ public class ServicesXtraService implements IServicesXtraService{
 			resultado = this.daoHelper.insert(this.servicesXtraDao, attrMap);
 			resultado.setMessage("Extra service registered");
 
-		} catch (ValidateException | LiadaPardaException e) {
+		} catch (ValidateException e) {
 			resultado =  new EntityResultWrong(e.getMessage());
 			e.printStackTrace();		
 		}catch (DuplicateKeyException e) {
@@ -100,7 +99,7 @@ public class ServicesXtraService implements IServicesXtraService{
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);
 		}catch (Exception e) {
 			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
 	}
@@ -142,7 +141,7 @@ public class ServicesXtraService implements IServicesXtraService{
 				resultado.setMessage("Extra service updated");
 			}
 
-		} catch (ValidateException | LiadaPardaException e) {
+		} catch (ValidateException e) {
 			resultado =  new EntityResultWrong(e.getMessage());
 			e.printStackTrace();		
 		}catch (DuplicateKeyException e) {
@@ -151,7 +150,7 @@ public class ServicesXtraService implements IServicesXtraService{
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);
 		}catch (Exception e) {
 			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
 	}
@@ -189,14 +188,14 @@ public class ServicesXtraService implements IServicesXtraService{
 				resultado.setMessage("Extra service deleted");
 			}
 			
-		} catch (ValidateException | LiadaPardaException e) {
+		} catch (ValidateException  e) {
 			resultado =  new EntityResultWrong(e.getMessage());
 			e.printStackTrace();		
-		}catch (DuplicateKeyException e) {
+		}catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 		}catch (Exception e) {
 			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 	
 /*		try {

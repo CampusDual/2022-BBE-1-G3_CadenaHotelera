@@ -1,14 +1,22 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.description;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.sql.Types;
@@ -30,13 +38,22 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.RestrictedFieldException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.ServicesXtraDao;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
 import com.ontimize.jee.common.dto.EntityResult;
@@ -48,455 +65,464 @@ class ServicesXtraServiceTest {
 	@Mock
 	DefaultOntimizeDaoHelper daoHelper;
 
+	@Spy
+	ControlFields cf;
+	
 	@InjectMocks
 	ServicesXtraService service;
 
 	@Autowired
-	ServicesXtraDao servicesXtraDao;
-	@Autowired
-	ValidateFields vf;
-
+	ServicesXtraDao dao;
+	
+	EntityResult eR;
+	
 	@Nested
-	@DisplayName("Test for ServicesXtra queries")
+	@DisplayName("Test for Services Extra queries")
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	public class ServicesXtraQuery {
 		
-		@Test
-		@DisplayName("Obtain all data from ServicesXtra table")
-		void when_queryOnlyWithAllColumns_return_allServicesXtraData() {
-			doReturn(getAllServicesXtraData()).when(daoHelper).query(any(), anyMap(), anyList());
-			EntityResult entityResult = service.servicesXtraQuery(new HashMap<>(), new ArrayList<>());
-			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-			assertEquals(3, entityResult.calculateRecordNumber());
-		}
+		//servicesXtraQuery
+				@Test
+				@DisplayName("ControlFields usar reset()")
+				void testServicesXtraQueryControlFieldsReset() {
+					service.servicesXtraQuery(TestingTools.getMapEmpty(), getColumsName());
+					verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
+				}
 
-		@Test
-		@DisplayName("Obtain all data columns from ServicesXtra table when sxt_id is -> 2")
-		void when_queryAllColumns_return_specificData() { 
-			HashMap<String, Object> keyMap = new HashMap<>() {
-				{
-					put(ServicesXtraDao.ATTR_ID, 2);
+				@Test
+				@DisplayName("ControlFields usar validate() map y list")
+				void testServicesXtraQueryControlFieldsValidate() {
+					service.servicesXtraQuery(TestingTools.getMapEmpty(), getColumsName());
+					try {
+						verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
+						verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyList());
+					} catch (Exception e) {
+						e.printStackTrace();
+						fail("excepción no capturada: " + e.getMessage());
+					}
 				}
-			};
-			List<String> attrList = Arrays.asList(ServicesXtraDao.ATTR_ID, ServicesXtraDao.ATTR_NAME, ServicesXtraDao.ATTR_DESCRIPTION);
-			doReturn(getSpecificServicesXtraData(keyMap, attrList)).when(daoHelper).query(any(), anyMap(), anyList());
-			EntityResult entityResult = service.servicesXtraQuery(new HashMap<>(), new ArrayList<>());
-			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-			assertEquals(1, entityResult.calculateRecordNumber());
-			assertEquals(2, entityResult.getRecordValues(0).get(ServicesXtraDao.ATTR_ID));
-		}
-		
-		@Test
-		@DisplayName("Obtain all data from ServicesXtra table using a personalized query")
-		void when_queryOnlyWithAllColumns_return_allServicesXtraData_fromPersonalizedQuery() {
-			HashMap<String, Object> keyMap = new HashMap<>() {
-				{
-					put(ServicesXtraDao.ATTR_ID, 2);
-				} 
-			};
-			List<String> attrList = Arrays.asList(ServicesXtraDao.ATTR_ID, ServicesXtraDao.ATTR_NAME, ServicesXtraDao.ATTR_DESCRIPTION);
-			
-			doReturn(getSpecificServicesXtraData(keyMap, attrList)).when(daoHelper).query(any(), anyMap(), anyList());
-			EntityResult entityResult = service.servicesXtraQuery(new HashMap<>(), new ArrayList<>());
-			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-			assertEquals(1, entityResult.calculateRecordNumber());
-			assertEquals(2, entityResult.getRecordValues(0).get(ServicesXtraDao.ATTR_ID));
-		}
 
-		@Test
-		@DisplayName("Obtain all data columns from ServicesXtra table when sxt_id not exist")
-		void when_queryAllColumnsNotExisting_return_empty() {
-			HashMap<String, Object> keyMap = new HashMap<>() {
-				{
-					put(ServicesXtraDao.ATTR_ID, 56);
-				}
-			};
-			List<String> attrList = Arrays.asList(ServicesXtraDao.ATTR_ID, ServicesXtraDao.ATTR_NAME, ServicesXtraDao.ATTR_DESCRIPTION);
-			when(daoHelper.query(any(), anyMap(), anyList())).thenReturn(getSpecificServicesXtraData(keyMap, attrList));
-			EntityResult entityResult = service.servicesXtraQuery(new HashMap<>(), new ArrayList<>());
-			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-			assertEquals(0, entityResult.calculateRecordNumber());
-		}
+				@Test
+				@DisplayName("Valores de entrada válidos")
+				void testServicesXtraQueryOK() {
+					doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
 
-		@ParameterizedTest(name = "Obtain data with sxt_id -> {1}")
-		@MethodSource("randomIDGenerator")
-		@DisplayName("Obtain all data columns from ServicesXtra table when sxt_id is random")
-		void when_queryAllColumnsWithRandomValue_return_specificData(int random) {
-			HashMap<String, Object> keyMap = new HashMap<>() {
-				{
-					put(ServicesXtraDao.ATTR_ID, random);
-				}
-			};
-			List<String> attrList = Arrays.asList(ServicesXtraDao.ATTR_ID, ServicesXtraDao.ATTR_NAME, ServicesXtraDao.ATTR_DESCRIPTION);
-			when(daoHelper.query(any(), anyMap(), anyList())).thenReturn(getSpecificServicesXtraData(keyMap, attrList));
-			EntityResult entityResult = service.servicesXtraQuery(new HashMap<>(), new ArrayList<>());
-			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-			assertEquals(1, entityResult.calculateRecordNumber());
-			assertEquals(random, entityResult.getRecordValues(0).get(ServicesXtraDao.ATTR_ID));
-		}
+					// válido: HashMap vacio (sin filtros)
+					eR = service.servicesXtraQuery(TestingTools.getMapEmpty(), getColumsName());
+					assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
 
-		public EntityResult getAllServicesXtraData() {
-			List<String> columnList = Arrays.asList(ServicesXtraDao.ATTR_ID, ServicesXtraDao.ATTR_NAME, ServicesXtraDao.ATTR_DESCRIPTION);
-			EntityResult er = new EntityResultMapImpl(columnList);
-			er.addRecord(new HashMap<String, Object>() {
-				{
-					put(ServicesXtraDao.ATTR_ID, 1);
-					put(ServicesXtraDao.ATTR_NAME, "paseacanes");
-					put(ServicesXtraDao.ATTR_DESCRIPTION, "canes que pasean humanos");
-				}
-			});
-			er.addRecord(new HashMap<String, Object>() {
-				{
-					put(ServicesXtraDao.ATTR_ID, 2);
-					put(ServicesXtraDao.ATTR_NAME, "Gatería");
-					put(ServicesXtraDao.ATTR_DESCRIPTION, "Humanos domesticados por gatos");
-				}
-			});
-			er.addRecord(new HashMap<String, Object>() {
-				{
-					put(ServicesXtraDao.ATTR_ID, 3);
-					put(ServicesXtraDao.ATTR_NAME, "Pajarería");
-					put(ServicesXtraDao.ATTR_DESCRIPTION, "Vienen volando");
-				}
-			});
-			er.setCode(EntityResult.OPERATION_SUCCESSFUL);
-			er.setColumnSQLTypes(new HashMap<String, Number>() {
-				{
-					put(ServicesXtraDao.ATTR_ID, Types.INTEGER);
-					put(ServicesXtraDao.ATTR_NAME, Types.VARCHAR);
-					put(ServicesXtraDao.ATTR_DESCRIPTION, Types.VARCHAR);
-				}
-			});
-			return er;
-		}
+					// válido: HashMap con filtro que existe (sin filtros)
+					eR = service.servicesXtraQuery(getMapId(), getColumsName());
+					assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
 
-		public EntityResult getSpecificServicesXtraData(Map<String, Object> keyValues, List<String> attributes) {
-			EntityResult allData = this.getAllServicesXtraData();
-			int recordIndex = allData.getRecordIndex(keyValues);
-			HashMap<String, Object> recordValues = (HashMap) allData.getRecordValues(recordIndex);
-			List<String> columnList = Arrays.asList(ServicesXtraDao.ATTR_ID, ServicesXtraDao.ATTR_NAME,ServicesXtraDao.ATTR_DESCRIPTION);
-			EntityResult er = new EntityResultMapImpl(columnList);
-			if (recordValues != null) {
-				er.addRecord(recordValues);
+				}
+
+				@Test
+				@DisplayName("Valores de entrada NO válidos")
+				void testServicesXtraQueryKO() {
+					try {
+						// lanzamos todas las excepciones de Validate para comprobar que están bien recogidas.
+						
+						doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
+						eR = service.servicesXtraQuery(TestingTools.getMapEmpty(), getColumsName());
+						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+						assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+						doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
+						eR = service.servicesXtraQuery(TestingTools.getMapEmpty(), getColumsName());
+						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+						assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+						doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
+						eR = service.servicesXtraQuery(TestingTools.getMapEmpty(), getColumsName());
+						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+						assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+						doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
+						eR = service.servicesXtraQuery(TestingTools.getMapEmpty(), getColumsName());
+						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+						assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+						doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
+						eR = service.servicesXtraQuery(TestingTools.getMapEmpty(), getColumsName());
+						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+						assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+					} catch (Exception e) {
+						e.printStackTrace();
+						fail("excepción no capturada: " + e.getMessage());
+					}
+
+				}
+				
 			}
-			er.setCode(EntityResult.OPERATION_SUCCESSFUL);
-			er.setColumnSQLTypes(new HashMap<String, Number>() {
-				{
-					put(ServicesXtraDao.ATTR_ID, Types.INTEGER);
-					put(ServicesXtraDao.ATTR_NAME, Types.VARCHAR);
-					put(ServicesXtraDao.ATTR_DESCRIPTION, Types.VARCHAR);
-				}
-			});
-			return er;
-		}
 
-		List<Integer> randomIDGenerator() {
-			List<Integer> list = new ArrayList<>();
-			for (int i = 0; i < 5; i++) {
-				list.add(ThreadLocalRandom.current().nextInt(1, 4));
-			}
-			return list;
-		}
-
-	}
 
 	@Nested
-	@DisplayName("Test for ServicesXtra inserts")
+	@DisplayName("Test for Services Extra inserts")
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	public class InsertQuery {
-
-		@Test
-		@DisplayName("Insert ServicesXtra")
-		void when_ServicesXtra_insert_is_succsessfull() {
-			Map<String, Object> attrMap = new HashMap<>() {
-				{
-					put(ServicesXtraDao.ATTR_ID, 1);
-					put(ServicesXtraDao.ATTR_NAME, "paseacanes");
-					put(ServicesXtraDao.ATTR_DESCRIPTION, "Servicio extra a registrar");
-				}
-			};
-			EntityResult resultado = new EntityResultMapImpl();
-			resultado.addRecord(attrMap);
-			resultado.setCode(EntityResult.OPERATION_SUCCESSFUL);
-			resultado.setMessage("Servicio extra registrado");
-			when(daoHelper.insert(any(), anyMap())).thenReturn(resultado);
-			EntityResult entityResult = service.servicesXtraInsert(attrMap);
-			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-			assertEquals(entityResult.getMessage(), "ServiceXtra registrado");
-		}
-
-		@Test
-		@DisplayName("Duplicated Key")
-		void when_already_exist() {
-			Map<String, Object> attrMap = new HashMap<>() {
-				{
-					put(ServicesXtraDao.ATTR_ID, 1);
-					put(ServicesXtraDao.ATTR_NAME, "paseacanes");
-					put(ServicesXtraDao.ATTR_DESCRIPTION, "Este Servicio extra ya estaría registrado");
-				}
-			};
-			when(daoHelper.insert(any(), anyMap())).thenThrow(DuplicateKeyException.class);
-			EntityResult entityResult = service.servicesXtraInsert(attrMap);
-			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-			assertEquals(entityResult.getMessage(), ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
-		}
+	public class ServicesXtraInsert {
 		
 		@Test
-		@DisplayName("Creation Failure")
-		void generic_fail() {
-			Map<String, Object> attrMap = new HashMap<>() {
-				{
-					put(ServicesXtraDao.ATTR_ID, 105); 		
-					put(ServicesXtraDao.ATTR_NAME, "paseacaness");
-					put(ServicesXtraDao.ATTR_DESCRIPTION, 6);		//puede q salte exception ya que no está contemplado un error de cast en descripción. PENDIENTE
-				}
-			};
-	//		when(daoHelper.insert(any(), anyMap())).thenThrow(Exception.class);		//?¿¿?¿??¿? Pq da error si lanzo la excepción
-			EntityResult entityResult = service.servicesXtraInsert(attrMap);
-			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-			assertEquals(entityResult.getMessage(), ErrorMessage.CREATION_ERROR);
+		@DisplayName("ControlFields usar reset()")
+		void testservicesXtraInsertControlFieldsReset() {
+			service.servicesXtraInsert(TestingTools.getMapEmpty());
+			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
 		}
-
+	
 		@Test
-		@DisplayName("Missing Fields")
-		void when_field_is_empty_null_insert() {
-			Map<String, Object> attrMap = new HashMap<>() {
-				{
-					put(ServicesXtraDao.ATTR_ID, 1);
-					put(ServicesXtraDao.ATTR_NAME, null);
-					put(ServicesXtraDao.ATTR_DESCRIPTION, "Faltan campos no nullables");
-				}
-			};
-			try (MockedStatic<ValidateFields> vf = Mockito.mockStatic(ValidateFields.class)) {
-				vf.when(() -> ValidateFields.required(anyMap(), anyString())).thenThrow(MissingFieldsException.class);
+		@DisplayName("ControlFields usar validate() map ")
+		void testServicesXtraInsertControlFieldsValidate() {
+			service.servicesXtraInsert(TestingTools.getMapEmpty());
+			try {
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("excepción no capturada: " + e.getMessage());
+	
 			}
-//				when(daoHelper.insert(any(), anyMap())).thenThrow(MissingFieldsException.class);
-				EntityResult entityResult = service.servicesXtraInsert(attrMap);
-				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-				assertEquals(entityResult.getMessage(), ErrorMessage.REQUIRED_FIELD);
-		//		assertEquals(ErrorMessage.CREATION_ERROR + "El campo " + ServicesXtraDao.ATTR_NAME + " es nulo",entityResult.getMessage());
+		}
+	
+		@Test
+		@DisplayName("Valores de entrada válidos")
+		void testServicesXtraInsertOK() {
+			doReturn(new EntityResultMapImpl()).when(daoHelper).insert(any(), anyMap());
+	
+			// válido: HashMap campos mínimos
+			eR = service.servicesXtraInsert(getMapRequiredInsert());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+	
+			// válido: HashMap campos mínimos y mas
+			eR = service.servicesXtraInsert(getMapRequiredInsertExtended());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+	
+		}
+	
+		@Test
+		@DisplayName("Valores de entrada NO válidos")
+		void testServicesXtraInsertKO() {
+			try {
+				// lanzamos todas las excepciones de Validate para comprobar que están bien
+				// recojidas.
+				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
+				eR = service.servicesXtraInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+	
+				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
+				eR = service.servicesXtraInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+	
+				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
+				eR = service.servicesXtraInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+	
+				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
+				eR = service.servicesXtraInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+	
+				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
+				eR = service.servicesXtraInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+	
+				reset(cf);
+				// extra para controlar required:
+				eR = service.servicesXtraInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+				System.out.println(eR.getMessage());
+				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
+	
+				// extra para controlar restricted:
+				eR = service.servicesXtraInsert(getMapRequiredInsertExtendedWidthRestricted());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+				System.out.println(eR.getMessage());
+				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
+	
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("excepción no capturada: " + e.getMessage());
+			}
+	
 		}
 	}
 
-	@Nested
-	@DisplayName("Test for servicesXtra updates")
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	public class UpdateQuery {
+@Nested
+@DisplayName("Test for Services Extra updates")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+public class ServicesXtraUpdate {
 
-		@Test
-		@DisplayName("Update servicesXtra")
-		void when_servicesXtra_update_is_succsessfull() {
-			Map<String, Object> attrMap = new HashMap<>() {
-				{
-					put(ServicesXtraDao.ATTR_ID, 1);
-				}
-			};
-			Map<String, Object> keyMap = new HashMap<>() {
-				{
-					put(ServicesXtraDao.ATTR_ID, 1);
-					put(ServicesXtraDao.ATTR_NAME, "1 actualizado");
-					put(ServicesXtraDao.ATTR_DESCRIPTION, "servicio extra actualizado");
-				}
-			};
-			EntityResult resultado = new EntityResultMapImpl();
-			resultado.addRecord(keyMap);
-			resultado.setCode(EntityResult.OPERATION_SUCCESSFUL);
-			resultado.setMessage("Servicio extra actualizado");
+	@Test
+	@DisplayName("ControlFields usar reset()")
+	void testServicesXtraUpdateControlFieldsReset() {
+		service.servicesXtraUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+		verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
+	}
 
-			when(daoHelper.update(any(), anyMap(), anyMap())).thenReturn(resultado);
-			EntityResult entityResult = service.servicesXtraUpdate(attrMap, keyMap);
-			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode());
-			assertEquals(entityResult.getMessage(), "ServiceXtra actualizado");
+	@Test
+	@DisplayName("ControlFields usar validate() map ")
+	void testServicesXtraUpdateControlFieldsValidate() {
+		service.servicesXtraUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+		try {
+			verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("excepción no capturada: " + e.getMessage());
 		}
+	}
 
-		@Test
-		@DisplayName("Duplicated Key")
-		void when_already_exist() {
-			Map<String, Object> attrMap = new HashMap<>() {
-				{
-					put(ServicesXtraDao.ATTR_ID, 2);
-				}
-			};
-			Map<String, Object> keyMap = new HashMap<>() {
-				{
-					put(ServicesXtraDao.ATTR_ID, 2);// ???
-					put(ServicesXtraDao.ATTR_NAME, "paseahumanos");// Este servicio extra ya existe
-					put(ServicesXtraDao.ATTR_DESCRIPTION, "servicio actualizado");
-				}
-			};
-			when(daoHelper.update(any(), anyMap(), anyMap())).thenThrow(DuplicateKeyException.class);
-			EntityResult entityResult = service.servicesXtraUpdate(attrMap, keyMap);
-			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-			assertEquals(entityResult.getMessage(), ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
-		}
+	@Test
+	@DisplayName("Valores de entrada válidos")
+	void testServicesXtraUpdateOK() {
+		doReturn(new EntityResultMapImpl()).when(daoHelper).update(any(), anyMap(), anyMap());
 
-    	@Test
-		@DisplayName("Update Failure")
-    	void when_unable_update() {
-    		Map<String, Object> attrMap = new HashMap<>() {
-				{
-					put(ServicesXtraDao.ATTR_ID, 1);
-				}
-			};
-			Map<String, Object> keyMap = new HashMap<>() {
-				{
-					put(ServicesXtraDao.ATTR_ID, 1);
-					put(ServicesXtraDao.ATTR_NAME, "/&");
-					put(ServicesXtraDao.ATTR_DESCRIPTION, "actualízame");
-				}
-			};
-//			when(daoHelper.update(any(), anyMap(), anyMap())).thenThrow(Exception.class);	////?¿¿?¿??¿? Pq da error si lanzo la excepción
-			EntityResult entityResult = service.servicesXtraUpdate(attrMap, keyMap);
-			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-			assertEquals(entityResult.getMessage(), ErrorMessage.UPDATE_ERROR);
-			
-		}
-    	
-    	@Test
-		@DisplayName("Missing Fields")			//emptyField o required?¿?¿? cuál ponemos. La excepción DataIntegrityViolationException de update, ya estaría comprobada en este test
-		void when_field_is_empty_null_update() {
-    		Map<String, Object> attrMap = new HashMap<>() {
-				{
-					put(ServicesXtraDao.ATTR_ID, null);
-				}
-			};
-			Map<String, Object> keyMap = new HashMap<>() {
-				{
-					put(ServicesXtraDao.ATTR_ID, 1);
-					put(ServicesXtraDao.ATTR_NAME, "campo");
-					put(ServicesXtraDao.ATTR_DESCRIPTION, "Faltan campos no nullables");
-				}
-			};
-			try (MockedStatic<ValidateFields> vf = Mockito.mockStatic(ValidateFields.class)) {
-				vf.when(() -> ValidateFields.required(anyMap(), anyString())).thenThrow(MissingFieldsException.class);
-			}
-//				when(daoHelper.update(any(), anyMap(), anyMap())).thenThrow(MissingFieldsException.class);
-				EntityResult entityResult = service.servicesXtraUpdate(attrMap, keyMap);
-				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-				assertEquals(entityResult.getMessage(), ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
-		}
-    	
-    	@Test
-		@DisplayName("Required Fields")			
-		void when_field_data_is_not_correct() {
-    		Map<String, Object> attrMap = new HashMap<>() {
-				{
-					put(ServicesXtraDao.ATTR_ID, 1);
-				}
-			};
-			Map<String, Object> keyMap = new HashMap<>() {
-				{
-					put(ServicesXtraDao.ATTR_ID,1 );
-					put(ServicesXtraDao.ATTR_NAME, "");
-					put(ServicesXtraDao.ATTR_DESCRIPTION, "Faltan campos no nullables");
-				}
-			};
-			/*
-			 * try (MockedStatic<ValidateFields> vf =
-			 * Mockito.mockStatic(ValidateFields.class)) { vf.when(() ->
-			 * ValidateFields.required(anyMap(),
-			 * anyString())).thenThrow(MissingFieldsException.class); }
-			 */
-				when(daoHelper.update(any(), anyMap(), anyMap())).thenThrow(DataIntegrityViolationException.class);
-				EntityResult entityResult = service.servicesXtraUpdate(attrMap, keyMap);
-				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-				assertEquals(entityResult.getMessage(), ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
-		}
+		// válido: HashMap campos y filtros
+		eR = service.servicesXtraUpdate(getMapUpdate(), getMapId());
+		assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
 
 	}
 
-	@Nested
-	@DisplayName("Test for servicesXtra delete")
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	public class DeleteQuery {
+	@Test
+	@DisplayName("Valores de entrada NO válidos")
+	void testServicesXtraUpdateKO() {
+		try {
+			// lanzamos todas las excepciones de Validate para comprobar que están bien recogidas.
+			doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
+			eR = service.servicesXtraUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+			assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
-		@Test
-		@DisplayName("Delete ok")
-		void when_servicesXtra_delete_ok() {
+			doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
+			eR = service.servicesXtraUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+			assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
-			Map<String, Object> keyMapID = new HashMap<>() {
-				{
-					put(ServicesXtraDao.ATTR_ID, 1);
-				}
-			};
-			EntityResult result = new EntityResultMapImpl();
-			result.addRecord(keyMapID);
-			when(
-					daoHelper.query(any(), anyMap(), anyList())		//en q estado capturamos el daohelper.query(con cualquier genérico)
-					
-					).thenReturn(result);
+			doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
+			eR = service.servicesXtraUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+			assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
-			when(daoHelper.delete(any(), anyMap())).thenReturn(new EntityResultMapImpl());
-					
-			EntityResult entityResult = service.servicesXtraDelete(keyMapID);
-			assertEquals(EntityResult.OPERATION_SUCCESSFUL, entityResult.getCode(), entityResult.getMessage());
-			assertEquals(entityResult.getMessage(), "Servicio extra eliminado");
+			doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
+			eR = service.servicesXtraUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+			assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+			doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
+			eR = service.servicesXtraUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+			assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+			// lanzamos todas las excepciones de SQL para comprobar que están bien recogidas.
+			doThrow(DuplicateKeyException.class).when(cf).validate(anyMap());
+			eR = service.servicesXtraUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+			assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+			doThrow(DataIntegrityViolationException.class).when(cf).validate(anyMap());
+			eR = service.servicesXtraUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+			assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+			reset(cf);
+			// extra para controlar required:
+			eR = service.servicesXtraUpdate(getMapUpdate(), TestingTools.getMapEmpty());
+			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+			assertNotEquals(ErrorMessage.CREATION_ERROR, eR.getMessage(), eR.getMessage());
+			assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
+
+			// extra para controlar restricted:
+			eR = service.servicesXtraUpdate(getMapId(), getMapId());
+			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+			assertNotEquals(ErrorMessage.CREATION_ERROR, eR.getMessage(), eR.getMessage());
+			assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("excepción no capturada: " + e.getMessage());
 		}
-		
-		@Test
-		@DisplayName("Delete ko")		//?¿??NOMBRE?
-		void when_servicesXtra_delete_ko() {			//InvalidFieldsValuesException  (isInt)
-
-			Map<String, Object> keyMapID = new HashMap<>() {
-				{
-					put(ServicesXtraDao.ATTR_ID, "blabla");
-				}
-			};
-			EntityResult result = new EntityResultMapImpl();
-			result.addRecord(keyMapID);
-			lenient().when(				//omitir los stubs estrictos, stubbing indulgente.método estático Mockito.lenient() para habilitar el stubing indulgente en el método add de nuestra lista simulada.
-					daoHelper.query(any(), anyMap(), anyList())		//en q estado capturamos el daohelper.query(con cualquier genérico)
-					
-					).thenReturn(result);
-
-			lenient().when(daoHelper.delete(any(), anyMap())).thenReturn(new EntityResultMapImpl());
-					
-			EntityResult entityResult = service.servicesXtraDelete(keyMapID);
-			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode(), entityResult.getMessage());
-			assertEquals(entityResult.getMessage(), ErrorMessage.REQUIRED_FIELD);
-		}		
-		
-		
-		
-		
-		@Test
-		@DisplayName("Missing Fields")			//emptyField o required?¿?¿? cuál ponemos. La excepción DataIntegrityViolationException de update, ya estaría comprobada en este test
-		void when_field_is_empty_null_delete() {
-    		
-			/*
-			 * try (MockedStatic<ValidateFields> vf = Mockito.mockStatic(ValidateFields.class)) {
-//      vf.when(() -> ValidateFields.required(anyMap(), anyString())).thenThrow(MissingFieldsException.class);}
-//      when(daoHelper.insert(any(), anyMap())).thenThrow(MissingFieldsException.class);
-			 */
-			
-			Map<String, Object> attrMap = new HashMap<>() {
-				{
-					put(ServicesXtraDao.ATTR_NAME, "loco");
-					
-				}
-			};
-				try (MockedStatic<ValidateFields> vf = Mockito.mockStatic(ValidateFields.class)) {
-					vf.when(() -> ValidateFields.required(anyMap(), anyString())).thenThrow(MissingFieldsException.class);
-				}
-				EntityResult entityResult = service.servicesXtraDelete(attrMap);
-				assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-				assertEquals(entityResult.getMessage(), ErrorMessage.REQUIRED_FIELD);
-			}
-
-		@Test
-		@DisplayName("Generic failure")
-		void when_already_exist() {
-			Map<String, Object> attrMap = new HashMap<>() {
-				{
-					put(ServicesXtraDao.ATTR_ID, 1);
-				}
-			};
-			EntityResult entityResult = service.servicesXtraDelete(attrMap);
-			assertEquals(EntityResult.OPERATION_WRONG, entityResult.getCode());
-			assertEquals(entityResult.getMessage(), ErrorMessage.DELETE_ERROR);
-		}
-
-		
 
 	}
 }
+
+@Nested
+@DisplayName("Test for Sservices Extra deletes")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+public class ServicesXtraDelete {
+//TODO PENDIENTE TERMINAR DELETE
+	@Test
+	@DisplayName("ControlFields usar reset()")
+	void testServicesXtraDeleteControlFieldsReset() {
+		service.servicesXtraDelete(TestingTools.getMapEmpty());
+		verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
+	}
+
+	@Test
+	@DisplayName("ControlFields usar validate() map ")
+	void testServicesXtraDeleteControlFieldsValidate() {
+		service.servicesXtraDelete(TestingTools.getMapEmpty());
+		try {
+			verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("excepción no capturada: " + e.getMessage());
+		}
+	}
+
+	@Test
+	@DisplayName("Valores de entrada válidos")
+	void testServicesXtraDeleteOK() {
+		
+		doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(),anyList());
+		doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
+
+		// válido: HashMap campo único y exclusivo
+		eR = service.servicesXtraDelete(getMapId());
+		assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+	}
+	
+	@Test
+	@DisplayName("Valores Subcontulta Error")
+	void testServicesXtraDeleteSubQueryKO() {
+		doReturn(new EntityResultWrong()).when(daoHelper).query(any(), anyMap(),anyList());
+//		doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
+		
+		eR = service.servicesXtraDelete(getMapId());
+		assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+		assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+	}
+	
+	@Test
+	@DisplayName("Valores Subconsulta 0 resultados")
+	void testServicesXtraDeleteSubQueryNoResults() {
+		doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(),anyList());
+//		doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
+		
+		eR = service.servicesXtraDelete(getMapId());
+		assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+		assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+	}
+	
+	@Test
+	@DisplayName("Valores de entrada NO válidos")
+	void testServicesXtraDeleteKO() {
+		try {
+			// lanzamos todas las excepciones de Validate para comprobar que están bien
+			// recojidas.
+			doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
+			eR = service.servicesXtraDelete(TestingTools.getMapEmpty());
+			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+			assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+			doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
+			eR = service.servicesXtraDelete(TestingTools.getMapEmpty());
+			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+			assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+			doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
+			eR = service.servicesXtraDelete(TestingTools.getMapEmpty());
+			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+			assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+			doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
+			eR = service.servicesXtraDelete(TestingTools.getMapEmpty());
+			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+			assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+			doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
+			eR = service.servicesXtraDelete(TestingTools.getMapEmpty());
+			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+			assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+			// lanzamos todas las excepciones de SQL para comprobar que están bien
+			// recojidas.
+			doThrow(DataIntegrityViolationException.class).when(cf).validate(anyMap());
+			eR = service.servicesXtraDelete(TestingTools.getMapEmpty());
+			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+			assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+			reset(cf); //para quitar doThrow anterior
+			// extra para controlar required:
+			eR = service.servicesXtraDelete(TestingTools.getMapEmpty());
+			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+			assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+			assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
+
+			// extra para controlar restricted:
+			eR = service.servicesXtraDelete(getMapRequiredDeletetExtendedWidthRestricted());
+			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+			assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+			assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("excepción no capturada: " + e.getMessage());
+		}
+	}
+}
+
+	// datos entrada
+	
+	Map<String, Object> getMapRequiredInsert() {
+		return new HashMap<>() {
+			{
+				put(dao.ATTR_NAME, "Nombre");
+				
+			}
+		};
+	}
+	
+	Map<String, Object> getMapUpdate() {
+		return getMapRequiredInsert();
+	}
+	
+	
+	
+	Map<String, Object> getMapRequiredInsertExtended() {
+	
+		return new HashMap<>() {
+			{
+				put(dao.ATTR_NAME, "Nombre");
+				put(dao.ATTR_DESCRIPTION, "descriptivo");
+			}
+		};
+	}
+	
+	Map<String, Object> getMapRequiredInsertExtendedWidthRestricted() {
+	
+		return new HashMap<>() {
+			{
+				put(dao.ATTR_ID, "1");
+				put(dao.ATTR_NAME, "Nombre");
+				put(dao.ATTR_DESCRIPTION, "descriptivo");
+			}
+		};
+	}
+	
+	Map<String, Object> getMapRequiredDeletetExtendedWidthRestricted() {
+		return getMapRequiredInsertExtendedWidthRestricted();
+	}
+	
+	HashMap<String, Object> getMapId() {
+		HashMap<String, Object> filters = new HashMap<>() {
+			{
+				put(dao.ATTR_ID, 1);
+			}
+		};
+		return filters;
+	};
+	
+	List<String> getColumsName() {
+		List<String> columns = new ArrayList<>() {
+			{
+				add(dao.ATTR_NAME);
+			}
+		};
+		return columns;
+	}
+}
+		
