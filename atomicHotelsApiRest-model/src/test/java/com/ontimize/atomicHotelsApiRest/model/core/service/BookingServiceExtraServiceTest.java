@@ -254,7 +254,7 @@ class BookingServiceExtraServiceTest {
 				
 				
 				reset(cf);
-				doThrow(new EntityResultRequiredException(ErrorMessage.RESULT_REQUIRED + " " + ErrorMessage.NO_BOOKING_ID)).when(bookingServiceMock).getBookingStatus(any());	
+				doThrow(EntityResultRequiredException.class).when(bookingServiceMock).getBookingStatus(any());	
 				eR = service.bookingServiceExtraInsert(getMapRequiredInsert());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 				assertEquals(ErrorMessage.RESULT_REQUIRED + " " + ErrorMessage.NO_BOOKING_ID, eR.getMessage(), eR.getMessage());
@@ -398,6 +398,91 @@ class BookingServiceExtraServiceTest {
 
 		}
 	}
+	
+	
+	@Nested
+	@DisplayName("Test for BookingExtraServicePriceUnitsTotal queries")
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	public class BookingExtraServicePriceUnitsTotalQuery {
+
+		@Test
+		@DisplayName("ControlFields usar reset()")
+		void testBookingExtraServicePriceUnitsTotalQueryControlFieldsReset() {
+			service.bookingExtraServicePriceUnitsTotalQuery(TestingTools.getMapEmpty(), getColumsName());
+			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
+		}
+
+		@Test
+		@DisplayName("ControlFields usar validate() map") //No valida la lista
+		void testBookingExtraServicePriceUnitsTotalQueryControlFieldsValidate() {
+			service.bookingExtraServicePriceUnitsTotalQuery(TestingTools.getMapEmpty(), getColumsName());
+			try {
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("excepción no capturada: " + e.getMessage());
+			}
+		}
+		
+		//PENDIENTE!!
+
+//		@Test
+//		@DisplayName("Valores de entrada válidos")
+//		void testBookingExtraServicePriceUnitsTotalQueryQueryOK() {
+//			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
+//
+////			// válido: HashMap vacio (sin filtros)
+////			eR = service.bookingExtraServicePriceUnitsTotalQuery(TestingTools.getMapEmpty(), getColumsName());
+////			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+//
+//			// válido: HashMap con filtro que existe (sin filtros)
+//			doReturn(new EntityResultMapImpl()).when(daoHelper).query(bookingServiceExtraDao, getBookingId(),getPrecioServcioUnidadesTotal());
+//			eR = service.bookingExtraServicePriceUnitsTotalQuery(getBookingId(), getPrecioServcioUnidadesTotal());
+//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+
+		}
+				
+//
+//		@Test
+//		@DisplayName("Valores de entrada NO válidos")
+//		void testBookingServiceExtraQueryKO() {
+//			try {
+//				// lanzamos todas las excepciones de Validate para comprobar que están bien
+//				// recojidas.
+//				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
+//				eR = service.bookingServiceExtraQuery(TestingTools.getMapEmpty(), getColumsName());
+//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+//
+//				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
+//				eR = service.bookingServiceExtraQuery(TestingTools.getMapEmpty(), getColumsName());
+//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+//
+//				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
+//				eR = service.bookingServiceExtraQuery(TestingTools.getMapEmpty(), getColumsName());
+//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+//
+//				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
+//				eR = service.bookingServiceExtraQuery(TestingTools.getMapEmpty(), getColumsName());
+//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+//
+//				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
+//				eR = service.bookingServiceExtraQuery(TestingTools.getMapEmpty(), getColumsName());
+//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+//				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+//				
+//
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//				fail("excepción no capturada: " + e.getMessage());
+//			}
+//
+//		}
+//
+//	}
 
 	// datos entrada
 
@@ -419,31 +504,18 @@ class BookingServiceExtraServiceTest {
 		};
 		return filters;
 	};
-//
-//	Map<String, Object> getMapUpdate() {
-//		return getMapRequiredInsert();
-//	}
-
 	
+	HashMap<String, Object> getBookingId() {
+		HashMap<String, Object> filters = new HashMap<>() {
+			{
+				put(BookingServiceExtraDao.ATTR_ID_BKG, 1);
+			}
+		};
+		return filters;
+	};
 
-//	Map<String, Object> getMapRequiredInsertExtended() {
-//
-//		return new HashMap<>() {
-//			{
-//				put(HotelDao.ATTR_NAME, "Hotel 23");
-//				put(HotelDao.ATTR_STREET, "Avenida Sin Nombre Nº 1");
-//				put(HotelDao.ATTR_CITY, "Vigo");
-//				put(HotelDao.ATTR_CP, "36211");
-//				put(HotelDao.ATTR_STATE, "Galicia");
-//				put(HotelDao.ATTR_COUNTRY, "ES");
-//				put(HotelDao.ATTR_PHONE, "+34 986 111 111");
-//				put(HotelDao.ATTR_EMAIL, "hotel1@atomicHotels.com");
-//				put(HotelDao.ATTR_DESCRIPTION, "Faltan campos no nullables");
-//				put(HotelDao.ATTR_IS_OPEN, 1);
-//			}
-//		};
-//	}
-//
+
+
 	Map<String, Object> getMapRequiredInsertExtendedWidthRestricted() {
 
 		return new HashMap<>() {
@@ -493,16 +565,6 @@ class BookingServiceExtraServiceTest {
 		return er;
 	}
 
-	//
-//		HashMap<String, Object> getMapIdWrongValue() {
-//			HashMap<String, Object> filters = new HashMap<>() {
-//				{
-//					put(HotelDao.ATTR_ID, "albaricoque");
-//				}
-//			};
-//			return filters;
-//		};
-
 	List<String> getColumsName() {
 		List<String> columns = new ArrayList<>() {
 			{
@@ -511,17 +573,20 @@ class BookingServiceExtraServiceTest {
 		};
 		return columns;
 	}
-//	// fin datos entrada
-
-
-
-
-
-
-
-
-
-
+	
+	List<String> getPrecioServcioUnidadesTotal() {
+		List<String> columns = new ArrayList<>() {
+			{
+				add(BookingServiceExtraDao.ATTR_ID_BKG);
+				add(BookingServiceExtraDao.ATTR_ID_UNITS);
+				add(BookingServiceExtraDao.ATTR_PRECIO);				
+				add("total");
+			}
+		};
+		return columns;
+	}
+	
+	// fin datos entrada
 
 }
 
