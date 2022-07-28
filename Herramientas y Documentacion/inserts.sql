@@ -375,9 +375,51 @@ INSERT INTO public.customers (cst_name, cst_surnames, cst_email, cst_birth_date,
 INSERT INTO public.customers (cst_name, cst_surnames, cst_email, cst_birth_date, cst_dni, cst_address, cst_nationality,cst_phone, cst_creditcard, cst_valid_date) VALUES ('Juana','Prudant', 'juapru@gmail.com', '09/17/1967', '67845678A', 'Calle lobo, num45, 4Der, Toledo, Espa�a', 'Espa�ol', '+34 07987654321', '4556787650129900', '01/11/25' );
 INSERT INTO public.customers (cst_name, cst_surnames, cst_email, cst_birth_date, cst_dni, cst_address, cst_nationality,cst_phone, cst_creditcard, cst_valid_date) VALUES ('Julia','Ondas', 'jul345@gmail.com', '05/05/1980', '78945678A', 'Calle caramelo, num56, 6, La Puebla, M�xico', 'Mexicana', '+52 4831212891', '8865987650129900', '01/12/26' );
 */
+--particulares
+INSERT INTO public.customers (cst_name, cst_surname, cst_email, 			cst_birth_date, cst_identity_document, 	cst_address , 		cst_city,	cst_zip_code,	cst_state, 	cst_cnt_iso, 	cst_phone, 			cst_agree_spam) 
+						VALUES ('John','Smith', 	'johnSmth123@gmail.com', '01/22/1980', '12345678A', 			'10, Downing Street','London','SWIA 2AA',		'',			'GB', 			'+44 07987654321', 	0);
+					
+INSERT INTO public.customers (cst_name, cst_surname, cst_email, 			cst_birth_date, cst_identity_document, 	cst_address , 		cst_city,	cst_zip_code,	cst_state, 	cst_cnt_iso, 	cst_phone, 			cst_agree_spam)
+						VALUES ('Nayib','Bukele', 'naybuk@gmail.com', 		'06/24/1981', 	'023773088', 			'4A Calle Poniente',' San Salvador', '2232224',	'',			'SV', 		'+503 211304', 0 );
 
+INSERT INTO public.customers (cst_name, cst_surname, cst_email, 			cst_birth_date, cst_identity_document, 	cst_address , 		cst_city,	cst_zip_code,	cst_state, 	cst_cnt_iso, 	cst_phone, 		cst_agree_spam)
+						VALUES('Diego','Guerra Goya', 'guerrita78@gmail.com', '03/20/1978', '23898620A', 			'Av.Oza, num 3 4Izq','A Coruña', '15001', 		'A Coruña',	'ES', 			'+34 636443658', 0);
+
+INSERT INTO public.customers (cst_name, cst_surname, cst_email, 			cst_birth_date, 	cst_identity_document, 	cst_address , 		cst_city,	cst_zip_code,	cst_state, 	cst_cnt_iso, 	cst_phone, 			cst_agree_spam)
+						VALUES ('Ana','López Estrada', 'anitadinamita@terra.es', '11/11/1984', '98765432A', 			'Av.Porto, num78, 7','Vigo',	'36201',		'Pontevedra', 'ES', '+34 07987654321', 1);
+
+INSERT INTO public.customers (cst_name, cst_surname, cst_email, 			cst_birth_date, cst_identity_document, 	cst_address , 		cst_city,	cst_zip_code,	cst_state, 	cst_cnt_iso, 	cst_phone, 			cst_agree_spam)
+						VALUES ('Adam','Smith', 'capital4life@outlook.com', '10/27/1953', '12876543A', 				'Charlotte Square,6', 'Edimburgo','78504',		'Escocía', 'GB','+44 7700123456', 1);
+
+INSERT INTO public.customers (cst_name, cst_surname, cst_email, 			cst_birth_date, cst_identity_document, 	cst_address , 			cst_city,	cst_zip_code,	cst_state, 	cst_cnt_iso, 	cst_phone, 			cst_agree_spam)
+						VALUES ('Elder','Santos', 'elder3@gmail.com', '01/22/1960', '14775678A',					'Rua nova, 56, 3Der',' Oporto', 	'4000-015',		'',			'PT', 			'+351 079876543', 0);
+
+INSERT INTO public.customers (cst_name, cst_surname, cst_email, 			cst_birth_date, cst_identity_document, 	cst_address , 			cst_city,	cst_zip_code,	cst_state, 	cst_cnt_iso, 	cst_phone, 			cst_agree_spam)
+						VALUES ('Paloma','Solana Torres', 'Patomareado@hotmail.com', '12/20/2000', '78345978A', 	'Calle �palo, num5, 6, ','Madrid', '28010',			'Madrid',	'ES', '+34 78987994321', 0 );
+
+INSERT INTO public.customers (cst_name, cst_surname, cst_email, 			cst_birth_date, cst_identity_document, 	cst_address , 		cst_city,	cst_zip_code,	cst_state, 	cst_cnt_iso, 	cst_phone, 			cst_agree_spam)
+						VALUES ('Anatoli','Karpov', 'jaquealrey@gmail.com', '01/23/1959', '77845678A', 'Calle Kr�glaia, 67, 8,',  		'Moscow', 	'12321321',		'',			'RU', 			'+812 633676543', 1);
+/*
+INSERT INTO public.customers (cst_name, cst_surname, cst_email, 			cst_birth_date, cst_identity_document, 	cst_address , 		cst_city,	cst_zip_code,	cst_state, 	cst_cnt_iso, 	cst_phone, 			cst_agree_spam)
+						VALUES ('Antonio','Castilla L�pez', 'antopez@gmail.com', '01/11/1999', '44346678A', 'Plaza real, 34, 5I, Zaragoza, Espa�a', 'Espa�ol', '+34 96387654321', 0);
+INSERT INTO public.customers (cst_name, cst_surname, cst_email, 			cst_birth_date, cst_identity_document, 	cst_address , 		cst_city,	cst_zip_code,	cst_state, 	cst_cnt_iso, 	cst_phone, 			cst_agree_spam)
+						VALUES ('Paco','Soria Lobo', 'pacobo@gmail.com', '04/12/1977', '44645678A', 'Av artabria, num56, 3, Murcia, Espa�a', 'Espa�ol', '+34 34567654321', 1);
+INSERT INTO public.customers (cst_name, cst_surname, cst_email, 			cst_birth_date, cst_identity_document, 	cst_address , 		cst_city,	cst_zip_code,	cst_state, 	cst_cnt_iso, 	cst_phone)
+						VALUES ('Juana','Prudant', 'juapru@gmail.com', '09/17/1967', '67845678A', 'Calle lobo, num45, 4Der, Toledo, Espa�a', 'Espa�ol', '+34 07987654321');
+INSERT INTO public.customers (cst_name, cst_surname, cst_email, 			cst_birth_date, cst_identity_document, 	cst_address , 		cst_city,	cst_zip_code,	cst_state, 	cst_cnt_iso, 	cst_phone)
+						VALUES ('Julia','Ondas', 'jul345@gmail.com', '05/05/1980', '78945678A', 'Calle caramelo, num56, 6, La Puebla, M�xico', 'Mexicana', '+52 4831212891');
+*/
+--empresas
+INSERT INTO public.customers (cst_name, 		cst_email, 				 cst_vat_number , 	cst_address , 							cst_city,	cst_zip_code,	cst_state, 	cst_cnt_iso, 	cst_phone, 			cst_agree_spam) 
+					VALUES ('Imatia S.L.',	'hola@imatia.com', 'C944557', 				'Edificio Citexvi, Fonte das Abelleiras, s/n ·',	'Vigo',	'36310',		'Pontevedra','ES', 			'+34 986 34 27 74',  0 );
+INSERT INTO public.customers (cst_name, 		cst_email, 				 cst_vat_number , 	cst_address , 			cst_city,	cst_zip_code,	cst_state, 	cst_cnt_iso, 	cst_phone, 			cst_agree_spam) 
+						VALUES ('Xunta de Galicia S.L.',	'info@xunta.gal', 'Q34351255', 		'plz del sol 1	',	'Santiago de Compostela',	'15001',		'A Coruña',			'ES', 			'+3498122411',  0 );					
+INSERT INTO public.customers (cst_name, 		cst_email, 				 cst_vat_number , 	cst_address , 			cst_city,	cst_zip_code,	cst_state, 	cst_cnt_iso, 	cst_phone, 			cst_agree_spam) 
+						VALUES ('Reporteros Viajeros S.A.',	'reporterosviajeros@gmail.com', 'B1235544', 		'10, Downing Street',	'London',	'SWIA 2AA',		'',			'UK', 			'+44 07987654321',  0 );
+
+					
 --BOOKINGS
-I/*NSERT INTO public.bookings (bkg_stb_id, bkg_cst_id, bkg_rm_id,bkg_observations,bkg_checkin,bkg_checkout) VALUES (1,2,1,'dentro todo','2022-01-10','2022-01-17');
+/*INSERT INTO public.bookings (bkg_stb_id, bkg_cst_id, bkg_rm_id,bkg_observations,bkg_checkin,bkg_checkout) VALUES (1,2,1,'dentro todo','2022-01-10','2022-01-17');
 INSERT INTO public.bookings (bkg_stb_id, bkg_cst_id, bkg_rm_id,bkg_observations,bkg_checkin,bkg_checkout) VALUES (1,2,1,'todo fuera','2022-01-01','2022-02-04');
 INSERT INTO public.bookings (bkg_stb_id, bkg_cst_id, bkg_rm_id,bkg_observations,bkg_checkin,bkg_checkout) VALUES (1,2,1,'dentro checkout','2022-01-01','2022-01-06');
 INSERT INTO public.bookings (bkg_stb_id, bkg_cst_id, bkg_rm_id,bkg_observations,bkg_checkin,bkg_checkout) VALUES (1,2,3,'dentro todo 2','2022-01-19','2022-01-25');

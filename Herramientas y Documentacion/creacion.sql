@@ -91,11 +91,12 @@ CREATE TABLE public.rooms (
 	--cst_registration_date DATE DEFAULT CURRENT_DATE
 );*/
 
-/*
+
 ALTER TABLE public.customers ADD cst_cnt_iso char(2)  NULL;
 ALTER TABLE public.customers ADD FOREIGN KEY(cst_cnt_iso) REFERENCES countries(cnt_iso);
 UPDATE public.customers  set cst_cnt_iso = 'ES';
 ALTER TABLE public.customers ALTER COLUMN cst_cnt_iso SET NOT NULL;
+ALTER TABLE public.customers RENAME COLUMN cst_surnames TO cst_surname;
 
 ALTER TABLE public.customers ADD cst_identity_document varchar(20);
 ALTER TABLE public.customers ADD cst_vat_number varchar(20);
@@ -104,16 +105,18 @@ UPDATE public.customers set cst_identity_document = cst_dni;
 
 ALTER TABLE public.customers ADD cst_city varchar(255);
 ALTER TABLE public.customers ADD cst_state varchar(255);
+ALTER TABLE public.customers ADD cst_canceled timestamp ;
 ALTER TABLE public.customers ADD cst_agree_spam int2 DEFAULT 0 ;
+ALTER TABLE public.customers ADD cst_address varchar(255);
+ALTER TABLE public.customers ADD cst_zip_code varchar(255);
 UPDATE public.customers set cst_agree_spam = (case when mailagreement then 1 else 0 end );
 
 ALTER TABLE public.customers DROP COLUMN  cst_dni;
 ALTER TABLE public.customers DROP COLUMN  cst_nationality;
-ALTER TABLE public.customers DROP COLUMN  cst_address;
 ALTER TABLE public.customers DROP COLUMN  cst_creditcard;
 ALTER TABLE public.customers DROP COLUMN  cst_valid_date;
 ALTER TABLE public.customers DROP COLUMN  mailagreement;
-*/
+
 
 -- BG-141 -- Tabla pendiente de añadir, reemplazando a la anterior
 CREATE TABLE public.customers (
@@ -126,11 +129,13 @@ CREATE TABLE public.customers (
 	cst_birth_date date,	
 	cst_city varchar(255),
 	cst_state varchar(255),	
-	cst_cnt_iso char(2),
+	cst_zip_code varchar(255),	
+	cst_cnt_iso char(2) NOT NULL,
 	cst_phone varchar(15) NOT NULL,
 	cst_email varchar(50) NOT NULL,	
 	cst_agree_spam int2 DEFAULT 0 NOT NULL,
-	cst_canceled timestamp 
+	cst_canceled timestamp,
+	cst_creation timestamp default now() NOT NULL 
 
 	FOREIGN KEY(cst_cnt_iso) REFERENCES countries(cnt_iso)	
 
