@@ -505,9 +505,9 @@ public class ValidateFields {
 		Pattern pat = Pattern.compile(regex);
 		Matcher mat = pat.matcher(phone.toString());
 		if (mat.matches()) {
-
+			
 		} else {
-			throw new InvalidFieldsValuesException(ErrorMessage.INVALID_MAIL);
+			throw new InvalidFieldsValuesException(ErrorMessage.INVALID_PHONE);
 		}
 	}
 
