@@ -14,14 +14,18 @@ import com.ontimize.jee.server.dao.jdbc.OntimizeJdbcDaoSupport;
 @Lazy
 @ConfigurationFile(configurationFile = "dao/BookingGuestDao.xml", configurationFilePlaceholder = "dao/placeholders.properties")
 public class BookingGuestDao extends OntimizeJdbcDaoSupport {
-
-	public static final String ATTR_BKG_ID = "bkg_id";
-	public static final String ATTR_CST_ID = "cst_id";
+	
+	public static final String TAG = "bgs_";
+	public static final String ATTR_ID = TAG +"id";
+	public static final String ATTR_BKG_ID = TAG+"bkg_id";
+	public static final String ATTR_CST_ID = TAG+"cst_id";
+	public static final String ATTR_REGISTRATION_DATE = TAG+"registration_date";
 
 	public static final Map<String, type> fields = new HashMap<>() {
 		{
 			put(ATTR_BKG_ID, type.INTEGER);
 			put(ATTR_BKG_ID, type.INTEGER);
+			put(ATTR_REGISTRATION_DATE, type.DATETIME);
 		}
 	};
 }

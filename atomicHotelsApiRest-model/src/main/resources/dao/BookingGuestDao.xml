@@ -3,11 +3,10 @@
 xsi:schemaLocation="http://www.ontimize.com/schema/jdbc http://www.ontimize.com/schema/jdbc/ontimize-jdbc-dao.xsd" 
 catalog="" schema="${mainschema}" table="bookings_guests" datasource="mainDataSource" sqlhandler="dbSQLStatementHandler">
 	<DeleteKeys>
-		<Column>bkg_id</Column>
-		<Column>cst_id</Column>
+		<Column>bgs__id</Column>
 	</DeleteKeys>
 	<UpdateKeys>
-		<Column>bkg_id</Column>
-		<Column>cst_id</Column>
+		<Column>bgs_id</Column>
 	</UpdateKeys>
+	<GeneratedKey>bgs_id</GeneratedKey>	
 </JdbcEntitySetup>
