@@ -448,8 +448,7 @@ public class BookingService implements IBookingService {
 	}
 	
 	@Override
-	public EntityResult BookedRoomForAddingExtraServicesQuery (Map<String, Object> keyMap, List<String> attrList)
-			throws OntimizeJEERuntimeException {
+	public EntityResult booking_now_by_room_numberQuery (Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException {
 		
 		EntityResult resultado = new EntityResultWrong();
 		try {
