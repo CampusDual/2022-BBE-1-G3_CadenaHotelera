@@ -486,30 +486,20 @@ public class ValidateFields {
 		}
 	}
 	
+	/* 
+	 * comprueba los números de telefono con + o sin el delante, no permite otro 
+	 * caracter.
+	 */
+	
 	public static void isPhone(Object object) throws InvalidFieldsValuesException {
-		String phone =""+ object;
-		if(phone.charAt(0)=='+') {
-			String comprueba = phone.substring(phone.indexOf("+")+1);
-			List<Integer> numberPhone = new ArrayList<>();
-			for(int i=0;i<comprueba.length();i++) {
-				try {
-					 numberPhone.add((int)comprueba.charAt(i));
-				}catch(NumberFormatException e)
-				{
-					System.out.println(e.getMessage());
-				}
-		}
+		String regex = "[+]?\\d{8,20}$";
+		Pattern pat = Pattern.compile(regex);
+		Matcher mat = pat.matcher(object.toString());
+		if (mat.matches()) {
 
-	}
-
-		
-		/*if (comprueba.length() > 10) {
-			throw new InvalidFieldsValuesException("Introduce solo 2 decimales");
 		} else {
-			BigDecimal comprobado = new BigDecimal(pre);
-			System.err.println(comprobado + "/");
-		}*/
-
+			throw new InvalidFieldsValuesException(ErrorMessage.INVALID_MAIL);
+		}
 	}
 
 }
