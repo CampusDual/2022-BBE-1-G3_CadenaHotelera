@@ -20,5 +20,7 @@ public interface ICustomerService {
 //	public EntityResult checkCountryQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
 	public EntityResult businessCustomerInsert (Map<String, Object> attrMap) throws OntimizeJEERuntimeException;
 	public EntityResult regularCustomerInsert (Map<String, Object> attrMap) throws OntimizeJEERuntimeException;
+	EntityResult customerCancelUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
+			throws OntimizeJEERuntimeException;
 
 }

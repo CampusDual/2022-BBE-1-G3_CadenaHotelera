@@ -278,6 +278,34 @@ public class CustomerService implements ICustomerService {
 
 	}
 
+	@Override
+	public EntityResult customerCancelUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
+			throws OntimizeJEERuntimeException {
+//action cancel user
+		EntityResult resultado = new EntityResultMapImpl();
+		try {
+			ValidateFields.required(keyMap, CustomerDao.ATTR_ID);
+			resultado = this.daoHelper.update(this.customerDao, attrMap, keyMap);
+			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
+				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
+			} else {
+				resultado.setMessage("Customer actualizado");
+			}
+		} catch (MissingFieldsException e) {
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + e.getMessage());
+		} catch (DuplicateKeyException e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
+		} catch (DataIntegrityViolationException e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR);
+		}
+		return resultado;
+	}
+
 	/**
 	 * Creamos dos métodos para leer, mostrar y restringir mails de customers. En el
 	 * primero llamamos al método alojado en la Interfaz y lo sobreescribimos, para

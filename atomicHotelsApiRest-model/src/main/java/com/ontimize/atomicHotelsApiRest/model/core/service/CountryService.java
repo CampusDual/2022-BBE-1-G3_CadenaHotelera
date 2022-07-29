@@ -66,7 +66,7 @@ public class CountryService implements ICountryService {
 	
 	@Override
 	public Map<String,String> mapCountries(){
-		System.err.println(mapCountries);
+//		System.err.println(mapCountries);
 		if(mapCountries == null) {
 			List<String> attrList = new ArrayList<>() {{
 				add(CountryDao.ATTR_ISO);
