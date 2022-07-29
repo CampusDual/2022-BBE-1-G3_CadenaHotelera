@@ -13,9 +13,12 @@ import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.service.IBookingService;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IRoomService;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.BedComboDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingGuestDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.ReceiptDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomTypeDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
@@ -436,6 +439,7 @@ public class BookingService implements IBookingService {
 			cf.addBasics(HotelDao.fields); 
 			cf.setRequired(required);
 	        cf.validate(keyMap);
+
 	        
 			resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryBookingsHotel");
 
@@ -480,6 +484,45 @@ public class BookingService implements IBookingService {
 				resultado.setMessage("Búsqueda correcta");
 			}
 						
+		} catch (ValidateException e) {
+			resultado = new EntityResultWrong(e.getMessage());
+		} catch (Exception e) {
+			resultado = new EntityResultWrong(ErrorMessage.ERROR);
+		}
+		return resultado;
+	}
+	
+	/**
+	 * Dado un número de reserva, la capacidad total de todas las habitaciones de esa reserva
+	 * 
+	 * @param keyMap
+	 * @param attrList
+	 * @return EntityResult
+	 * @throws OntimizeJEERuntimeException 
+	 */
+	@Override
+	public EntityResult bookingSlotsInfoQuery(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException {
+
+		EntityResult resultado = new EntityResultWrong();
+		try {
+			List<String> required = new ArrayList<String>() {
+				{
+					add(BookingDao.ATTR_ID);
+				}
+			};
+			cf.reset();
+			cf.addBasics(BookingDao.fields);
+//			cf.addBasics(RoomDao.fields);
+//			cf.addBasics(RoomTypeDao.fields);
+//			cf.addBasics(BedComboDao.fields);
+			cf.setRequired(required);
+			cf.setOptional(false);
+			cf.validate(keyMap);
+			
+
+
+			resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList,"queryBookingSlotsInfo");
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (Exception e) {

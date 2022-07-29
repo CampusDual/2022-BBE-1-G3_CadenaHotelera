@@ -76,6 +76,21 @@ catalog="" schema="${mainschema}" table="bookings" datasource="mainDataSource" s
 			    ]]>
 			</Sentence>
 		</Query>
+		<Query id="queryBookingSlotsInfo">
+			<Sentence>
+				<![CDATA[
+				    SELECT
+				     	SUM(bdc_slots) as total_slots
+				    FROM
+				     	bookings
+				   	LEFT JOIN rooms ON rm_id = bkg_rm_id
+				   	LEFT JOIN room_types ON rmt_id = rm_rmt_id 
+				   	LEFT JOIN beds_combo ON bdc_id = rmt_bdc_id  				    					    		
+				    #WHERE#			
+				    GROUP BY bkg_id	    
+			    ]]>
+			</Sentence>
+		</Query>
 	</Queries>			
 </JdbcEntitySetup>
 
