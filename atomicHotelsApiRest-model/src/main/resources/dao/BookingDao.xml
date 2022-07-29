@@ -59,6 +59,24 @@ catalog="" schema="${mainschema}" table="bookings" datasource="mainDataSource" s
 				    #WHERE#				    
 			    ]]>
 			</Sentence>
-		</Query>	
+		</Query>			
+  <Query id="queryBookedRoomForAddingExtraServices">
+			<Sentence>
+				<![CDATA[
+				    SELECT
+				     	#COLUMNS#
+				    FROM
+				     	bookings
+				   	LEFT JOIN rooms ON rm_id = bkg_rm_id
+				    WHERE bkg_canceled is null 
+				    	AND bkg_checkout is null 
+				    	AND bkg_checkin < now()
+				    	AND bkg_end > now()	
+				    #WHERE_CONCAT#					    
+			    ]]>
+			</Sentence>
+		</Query>
 	</Queries>			
 </JdbcEntitySetup>
+
+

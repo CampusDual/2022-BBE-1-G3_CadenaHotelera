@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "0ecd89f4-274f-4dc5-a0d7-8461ffdb9532",
+		"_postman_id": "ea2c7b0c-183a-40b0-b667-468e08fb049b",
 		"name": "Bookings",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -58,6 +58,51 @@
 					"path": [
 						"bookings",
 						"booking",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R Booked Room For Adding Extra Services",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"bkg_id\": 18\r\n    },\r\n    \"columns\": \r\n        [\"bkg_id\",\r\n        \"rm_htl_id\",\r\n        \"rm_number\",\r\n        \"rm_rmt_id\",\r\n        \"bkg_cst_id\",\r\n        \"bkg_rm_id\",\r\n        \"bkg_observations\",\r\n        \"bkg_start\",\r\n        \"bkg_end\",\r\n        \"bkg_checkin\",\r\n        \"bkg_checkout\",\r\n        \"bkg_created\", \r\n        \"rm_status\"]    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookings/BookedRoomForAddingExtraServices/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookings",
+						"BookedRoomForAddingExtraServices",
 						"search"
 					]
 				}
