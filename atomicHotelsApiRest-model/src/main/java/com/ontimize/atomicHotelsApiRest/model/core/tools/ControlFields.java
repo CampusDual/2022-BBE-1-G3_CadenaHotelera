@@ -205,6 +205,9 @@ public class ControlFields {
 					if ((keyMap.get(key) instanceof String)) {
 						keyMap.replace(key, ValidateFields.stringToDate((String) keyMap.get(key)));
 						validType = true;
+					}else if ((keyMap.get(key) instanceof String)) {
+						keyMap.replace(key, ValidateFields.stringToDate((String) keyMap.get(key)));
+						validType = true;
 					}
 					break;
 
