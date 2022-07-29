@@ -340,7 +340,6 @@ public class BookingService implements IBookingService {
 
 		keyMap.remove(BookingDao.ATTR_START);
 		keyMap.remove(BookingDao.ATTR_END);
-
 	}
 
 //	public BookingDao.Status getBookingStatus(EntityResult consultaER) throws EntityResultRequiredException {
@@ -382,7 +381,6 @@ public class BookingService implements IBookingService {
 		} else {
 			throw new EntityResultRequiredException("Error al consultar estado de la reserva");
 		}
-
 	}
 
 	/**
@@ -479,11 +477,10 @@ public class BookingService implements IBookingService {
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
 				resultado = new EntityResultWrong(ErrorMessage.INVALID_FILTER_FIELD_ID);
 			} else {
-		//		resultado = this.daoHelper.query(this.bookingDao, keyMap);
+
 				resultado.setMessage("Búsqueda correcta");
 			}
-			
-			
+						
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (Exception e) {
