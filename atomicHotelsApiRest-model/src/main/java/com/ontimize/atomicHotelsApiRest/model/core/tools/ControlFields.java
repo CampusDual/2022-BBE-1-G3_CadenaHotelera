@@ -103,6 +103,7 @@ public class ControlFields {
 	 * @throws InvalidFieldsValuesException
 	 * @throws LiadaPardaException
 	 */
+	@SuppressWarnings("static-access")
 	public void validate(Map<String, Object> keyMap) throws MissingFieldsException, RestrictedFieldException,
 			InvalidFieldsException, InvalidFieldsValuesException, LiadaPardaException {
 
@@ -197,6 +198,7 @@ public class ControlFields {
 
 				case PHONE:
 					if ((keyMap.get(key) instanceof String)) {
+						vF.isPhone((String) keyMap.get(key));
 						validType = true;
 					}
 					break;

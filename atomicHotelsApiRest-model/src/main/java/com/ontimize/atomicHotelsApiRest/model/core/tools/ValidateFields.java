@@ -500,10 +500,10 @@ public class ValidateFields {
 	 * caracter.
 	 */
 
-	public static void isPhone(Object object) throws InvalidFieldsValuesException {
+	public static void isPhone(String phone) throws InvalidFieldsValuesException {
 		String regex = "[+]?\\d{8,20}$";
 		Pattern pat = Pattern.compile(regex);
-		Matcher mat = pat.matcher(object.toString());
+		Matcher mat = pat.matcher(phone.toString());
 		if (mat.matches()) {
 
 		} else {
