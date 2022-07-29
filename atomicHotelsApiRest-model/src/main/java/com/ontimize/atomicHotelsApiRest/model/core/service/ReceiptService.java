@@ -125,7 +125,7 @@ public class ReceiptService implements IReceiptService {
 
 			// El resultado de esto se añade dentro del resultado de la siguente
 			EntityResult serviciosExtra = bookingServiceExtraService
-					.ExtraServicesNameDescriptionUnitsPriceDateQuery(keyMapServciosExtra, listaServiciosExtra);
+					.extraServicesNameDescriptionUnitsPriceDateQuery(keyMapServciosExtra, listaServiciosExtra);
 
 			List<Object> servicios = new ArrayList<Object>();
 			for (int i = 0; i < serviciosExtra.calculateRecordNumber(); i++) {

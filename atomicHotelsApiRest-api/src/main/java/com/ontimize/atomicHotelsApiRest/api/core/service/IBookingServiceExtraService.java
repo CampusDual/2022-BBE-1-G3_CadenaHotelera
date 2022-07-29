@@ -14,5 +14,5 @@ public interface IBookingServiceExtraService {
 	// public EntityResult bookingServiceExtraUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
 	 public EntityResult bookingServiceExtraDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
 	 public EntityResult bookingExtraServicePriceUnitsTotalQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
-	 public EntityResult ExtraServicesNameDescriptionUnitsPriceDateQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
+	 public EntityResult extraServicesNameDescriptionUnitsPriceDateQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
 }

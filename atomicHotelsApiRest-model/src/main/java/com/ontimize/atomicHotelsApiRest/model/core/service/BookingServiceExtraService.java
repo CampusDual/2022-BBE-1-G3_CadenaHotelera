@@ -285,7 +285,7 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 	 * @return EntityResult
 	 * @throws OntimizeJEERuntimeException
 	 */
-	public EntityResult ExtraServicesNameDescriptionUnitsPriceDateQuery(Map<String, Object> keyMap,
+	public EntityResult extraServicesNameDescriptionUnitsPriceDateQuery(Map<String, Object> keyMap,
 			List<String> attrList) throws OntimizeJEERuntimeException {
 
 		EntityResult resultado = new EntityResultMapImpl();
