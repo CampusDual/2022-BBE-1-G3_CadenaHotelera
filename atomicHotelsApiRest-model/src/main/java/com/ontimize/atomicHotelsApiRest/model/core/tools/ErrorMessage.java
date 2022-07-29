@@ -42,6 +42,7 @@ public class ErrorMessage {
 	public static final String REQUIRED_TYPE = " - Tipo requerido - ";
 	public static final String NO_NULL_DATA= "No se admiten datos null";
 	public static final String NO_NULL_VALUE = "No se admite valor null - ";
+	public static final String NO_GUEST_IN_NOT_CONFIRMED_BOOKING = "No se puede añadir un huesped a una reserva si esta no se encuentra está en estado 'CONFIRMED'";
 	public static final String NO_RECEIPT_FOR_UNFINISH_BOOKING = "No se puede generar un recibo de una reserva que no está completada";
 	public static final String NO_BOOKING_ID = "El número de reserva no existe";
 	

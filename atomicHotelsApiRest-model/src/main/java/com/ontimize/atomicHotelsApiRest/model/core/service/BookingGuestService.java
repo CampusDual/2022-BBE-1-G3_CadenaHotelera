@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IBookingGuestService;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingGuestDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.ReceiptDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
@@ -27,6 +29,9 @@ public class BookingGuestService implements IBookingGuestService {
 	private BookingGuestDao bookingGuestDao;
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
+	
+	@Autowired
+	private BookingService bookingService;
 
 	@Autowired
 	ControlFields cf;
@@ -70,14 +75,22 @@ public class BookingGuestService implements IBookingGuestService {
 				}
 			};
 
-			cf.addBasics(HotelDao.fields);
+			cf.addBasics(BookingGuestDao.fields);
 			cf.setRequired(required);
 			cf.setRestricted(restricted);
 			cf.setOptional(false);
 			cf.validate(attrMap);
 			
+			if (bookingService.getBookingStatus(attrMap.get(BookingGuestDao.ATTR_BKG_ID))
+					.equals(BookingDao.Status.CONFIRMED)) {
+				
+				resultado = this.daoHelper.insert(this.bookingGuestDao, attrMap);
+			}else {
+				resultado = new EntityResultWrong(ErrorMessage.NO_GUEST_IN_NOT_CONFIRMED_BOOKING);
+			}
 			
-		resultado = this.daoHelper.insert(this.bookingGuestDao, attrMap);
+			
+		
 		
 		}catch(ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
