@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.NumberFormat;
+import org.springframework.stereotype.Component;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingColumnsException;
@@ -25,16 +26,20 @@ import com.ontimize.atomicHotelsApiRest.model.core.service.CountryService;
 
 import repositories.Countries;
 
+@Component
 public class ValidateFields {
 
 	public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd") {
 		{
 			setLenient(false);
 		}
-	};;
+	};
 
 	public ValidateFields() {
 	}
+
+	@Autowired
+	ICountryService countryService;
 
 	/**
 	 * Comprueba si existe las claves facilitadas en el HashMap, y lanza excepción
@@ -464,7 +469,8 @@ public class ValidateFields {
 	}
 
 	/**
-	 * Comprueba si el numero de entrada es 1 o 0  
+	 * Comprueba si el numero de entrada es 1 o 0
+	 * 
 	 * @param booleano en formato numero
 	 * @throws InvalidFieldsValuesException
 	 */
@@ -474,23 +480,26 @@ public class ValidateFields {
 		}
 	}
 
-//	@Autowired
-//	static CountryService  countryService;
-
-	public static void country(String country) throws InvalidFieldsValuesException {
-//		if(!countryService.mapCountries().containsKey(country)) {
-//			throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + country);		
-//		}
-		if (country.length() != 2 || country.compareTo(country.toUpperCase()) != 0) {
+	/**
+	 * Valida que el codigo iso de pais es válido
+	 * 
+	 * @param country Codigo iso, por ejemplo ES o GB
+	 * @throws InvalidFieldsValuesException Si el valor es incorrecto.
+	 */
+	public void country(String country) throws InvalidFieldsValuesException {
+		if (!countryService.mapCountries().containsKey(country)) {
 			throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + country);
 		}
+//		if (country.length() != 2 || country.compareTo(country.toUpperCase()) != 0) {
+//			throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + country);
+//		}
 	}
-	
-	/* 
-	 * comprueba los números de telefono con + o sin el delante, no permite otro 
+
+	/*
+	 * comprueba los números de telefono con + o sin el delante, no permite otro
 	 * caracter.
 	 */
-	
+
 	public static void isPhone(Object object) throws InvalidFieldsValuesException {
 		String regex = "[+]?\\d{8,20}$";
 		Pattern pat = Pattern.compile(regex);

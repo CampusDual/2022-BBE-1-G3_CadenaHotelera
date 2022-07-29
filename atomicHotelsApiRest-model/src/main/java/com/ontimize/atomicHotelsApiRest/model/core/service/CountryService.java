@@ -45,16 +45,19 @@ public class CountryService implements ICountryService {
 	public EntityResult countryQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
-//		cf.reset();
-//		cf.addBasics(CountryDao.fields); 
+		cf.reset();
+		cf.addBasics(CountryDao.fields); 
 		try {
-//			cf.validate(keyMap);
-//			cf.validate(attrList);
+			cf.validate(keyMap);
+			cf.validate(attrList);
+			if(daoHelper == null) {
+				System.err.println("daoHelper en country service es nulo");
+			}
 			resultado = this.daoHelper.query(this.countryDao, keyMap, attrList);
-//		} catch (ValidateException e) {
-//			resultado =  new EntityResultWrong(e.getMessage());
-//			e.printStackTrace();
+		} catch (ValidateException e) {
+			resultado =  new EntityResultWrong(e.getMessage());
 		}catch(Exception e) {
+			e.printStackTrace();
 			resultado =  new EntityResultWrong(ErrorMessage.ERROR);
 		}
 		
@@ -63,6 +66,7 @@ public class CountryService implements ICountryService {
 	
 	@Override
 	public Map<String,String> mapCountries(){
+		System.err.println(mapCountries);
 		if(mapCountries == null) {
 			List<String> attrList = new ArrayList<>() {{
 				add(CountryDao.ATTR_ISO);
@@ -72,7 +76,7 @@ public class CountryService implements ICountryService {
 			
 			this.mapCountries = new HashMap<>();							
 			for(int i = 0 ; i < er.calculateRecordNumber();i++) {
-				System.out.println(er.getRecordValues(i));
+//				System.out.println(er.getRecordValues(i));
 				mapCountries.put((String) er.getRecordValues(i).get(CountryDao.ATTR_ISO),(String) er.getRecordValues(i).get(CountryDao.ATTR_NAME));		
 			}				
 			System.out.println();
