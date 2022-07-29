@@ -61,7 +61,7 @@ public class CustomerService implements ICustomerService {
 			cf.validate(keyMap);
 			cf.validate(attrList);
 
-			resultado = this.daoHelper.query(this.customerDao, keyMap, attrList);
+			resultado = this.daoHelper.query(this.customerDao, keyMap, attrList, "queryBasic");
 		} catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}

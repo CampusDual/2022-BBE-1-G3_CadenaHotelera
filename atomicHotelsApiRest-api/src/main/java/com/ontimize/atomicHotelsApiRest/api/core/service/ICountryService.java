@@ -9,4 +9,5 @@ import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
 
 public interface ICountryService {
 	public EntityResult countryQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
+	Map<String, String> mapCountries();
 }

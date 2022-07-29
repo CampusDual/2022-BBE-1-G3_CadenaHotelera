@@ -45,15 +45,15 @@ public class CountryService implements ICountryService {
 	public EntityResult countryQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
-		cf.reset();
-		cf.addBasics(CountryDao.fields);
+//		cf.reset();
+//		cf.addBasics(CountryDao.fields); 
 		try {
-			cf.validate(keyMap);
-			cf.validate(attrList);
+//			cf.validate(keyMap);
+//			cf.validate(attrList);
 			resultado = this.daoHelper.query(this.countryDao, keyMap, attrList);
-		} catch (ValidateException e) {
-			resultado =  new EntityResultWrong(e.getMessage());
-			e.printStackTrace();
+//		} catch (ValidateException e) {
+//			resultado =  new EntityResultWrong(e.getMessage());
+//			e.printStackTrace();
 		}catch(Exception e) {
 			resultado =  new EntityResultWrong(ErrorMessage.ERROR);
 		}
@@ -61,6 +61,7 @@ public class CountryService implements ICountryService {
 		return resultado;
 	}
 	
+	@Override
 	public Map<String,String> mapCountries(){
 		if(mapCountries == null) {
 			List<String> attrList = new ArrayList<>() {{

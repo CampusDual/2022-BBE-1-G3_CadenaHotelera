@@ -18,7 +18,21 @@ catalog="" schema="${mainschema}" table="customers" datasource="mainDataSource" 
 					FROM
 					customers
 					WHERE 
-					mailagreement is true	
+					cst_agree_spam = 1,
+					cst_canceled is null	
+					#WHERE_CONCAT#						     					     
+				]]>
+			</Sentence>
+		</Query>
+		<Query id="queryBasic">
+			<Sentence>
+				<![CDATA[
+					SELECT
+					#COLUMNS#
+					FROM
+					customers
+					WHERE 
+					cst_canceled is null	
 					#WHERE_CONCAT#						     					     
 				]]>
 			</Sentence>

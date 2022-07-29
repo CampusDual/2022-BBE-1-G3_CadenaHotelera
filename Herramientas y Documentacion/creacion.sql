@@ -135,7 +135,7 @@ CREATE TABLE public.customers (
 	cst_email varchar(50) NOT NULL,	
 	cst_agree_spam int2 DEFAULT 0 NOT NULL,
 	cst_canceled timestamp,
-	cst_creation timestamp default now() NOT NULL 
+	cst_created timestamp default now() NOT NULL 
 
 	FOREIGN KEY(cst_cnt_iso) REFERENCES countries(cnt_iso)	
 
