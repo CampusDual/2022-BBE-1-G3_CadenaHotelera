@@ -20,12 +20,15 @@ public class BookingGuestDao extends OntimizeJdbcDaoSupport {
 	public static final String ATTR_BKG_ID = TAG+"bkg_id";
 	public static final String ATTR_CST_ID = TAG+"cst_id";
 	public static final String ATTR_REGISTRATION_DATE = TAG+"registration_date";
+	public static final String ATTR_TOTAL_GUESTS ="total_guests";
 
 	public static final Map<String, type> fields = new HashMap<>() {
 		{
+			put(ATTR_ID,type.INTEGER);
 			put(ATTR_BKG_ID, type.INTEGER);
-			put(ATTR_BKG_ID, type.INTEGER);
+			put(ATTR_CST_ID, type.INTEGER);
 			put(ATTR_REGISTRATION_DATE, type.DATETIME);
+			put(ATTR_TOTAL_GUESTS, type.INTEGER);
 		}
 	};
 }

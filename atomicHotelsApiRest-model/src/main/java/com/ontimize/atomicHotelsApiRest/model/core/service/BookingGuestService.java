@@ -1,13 +1,17 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.EntityResultRequiredException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IBookingGuestService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
@@ -35,7 +39,8 @@ public class BookingGuestService implements IBookingGuestService {
 
 	@Autowired
 	ControlFields cf;
-
+	
+	@Override
 	public EntityResult bookingGuestQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
@@ -51,12 +56,55 @@ public class BookingGuestService implements IBookingGuestService {
 			resultado = new EntityResultWrong(e.getMessage());
 		
 		} catch (Exception e) {
+			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		
 		return resultado;
 	}
-
+	
+	@Override
+	public EntityResult guestCountQuery(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException {
+		EntityResult resultado = new EntityResultWrong();
+		try {
+			
+			List<String> required = new ArrayList<String>() {
+				{
+					add(BookingGuestDao.ATTR_BKG_ID);
+				}
+			};
+			cf.reset();
+			cf.addBasics(BookingGuestDao.fields);
+			cf.setRequired(required);
+			cf.setOptional(false);
+			cf.validate(keyMap);
+			
+			
+			List<String> requiredList = new ArrayList<String>() {
+				{
+					add(BookingGuestDao.ATTR_TOTAL_GUESTS);
+				}
+			};
+			cf.reset();
+			cf.addBasics(BookingGuestDao.fields);
+			cf.setRequired(requiredList);
+			cf.setOptional(false);
+			cf.validate(attrList);
+			
+			resultado = this.daoHelper.query(this.bookingGuestDao, keyMap, attrList,"queryGuestCount");
+		
+		}catch(ValidateException e) {
+			resultado = new EntityResultWrong(e.getMessage());
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
+		}
+		return resultado;
+	}
+	
+	@Override
 	public EntityResult bookingGuestInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 		try {
@@ -84,6 +132,22 @@ public class BookingGuestService implements IBookingGuestService {
 			if (bookingService.getBookingStatus(attrMap.get(BookingGuestDao.ATTR_BKG_ID))
 					.equals(BookingDao.Status.CONFIRMED)) {
 				
+				Map<String,Object> reserva = new HashMap<String,Object>(){{
+					put(BookingGuestDao.ATTR_BKG_ID,attrMap.get(BookingGuestDao.ATTR_BKG_ID));
+				}};
+				
+				List<String> totalGuests = new ArrayList<String>() {{
+					add(BookingGuestDao.ATTR_TOTAL_GUESTS);
+				}};
+				
+				EntityResult guestCount = this.guestCountQuery(reserva, totalGuests);
+				
+				long total = (long) guestCount.getRecordValues(0).get(BookingGuestDao.ATTR_TOTAL_GUESTS);
+				
+				if(total>0) {
+					return resultado = new EntityResultWrong("Funciona!!!"+total);
+				}
+				
 				resultado = this.daoHelper.insert(this.bookingGuestDao, attrMap);
 			}else {
 				resultado = new EntityResultWrong(ErrorMessage.NO_GUEST_IN_NOT_CONFIRMED_BOOKING);
@@ -91,15 +155,23 @@ public class BookingGuestService implements IBookingGuestService {
 			
 			
 		
-		
+		}catch(EntityResultRequiredException e) {
+			resultado = new EntityResultWrong(ErrorMessage.NO_BOOKING_ID);
+		} catch (DuplicateKeyException e) {
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+		} catch (DataIntegrityViolationException e) {
+			resultado = new EntityResultWrong(ErrorMessage.NO_CUSTOMER_ID);	
 		}catch(ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
+			
 		}catch(Exception e) {
+			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
 	}
-
+	
+	@Override
 	public EntityResult bookingGuestDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 

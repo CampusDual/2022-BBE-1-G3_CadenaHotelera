@@ -9,4 +9,17 @@ catalog="" schema="${mainschema}" table="bookings_guests" datasource="mainDataSo
 		<Column>bgs_id</Column>
 	</UpdateKeys>
 	<GeneratedKey>bgs_id</GeneratedKey>	
+	<Queries>
+		<Query id="queryGuestCount">
+			<Sentence>
+				<![CDATA[
+				  SELECT 
+				  COUNT(bgs_cst_id) AS total_guests
+				  FROM bookings_guests 
+				  #WHERE#
+				  GROUP BY bgs_bkg_id		    
+			    ]]>
+			</Sentence>
+		</Query>
+	</Queries>		
 </JdbcEntitySetup>

@@ -8,7 +8,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.service.IBookingGuestService;
 import com.ontimize.jee.server.rest.ORestController;
 
 @RestController 
-@RequestMapping("/bookingGuest") 
+@RequestMapping("/bookingsGuests") 
 public class BookingGuestRestController extends ORestController<IBookingGuestService>{
 
 	 @Autowired 
