@@ -588,69 +588,162 @@ class BookingServiceTest {
 				
 			}
 	
-	// datos entrada
+	@Nested
+	@DisplayName("Test for booking now by room number Query")
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	class booking_now_by_room_numberQuery {
+		//bookingQuery
+				@Test
+				@DisplayName("ControlFields usar reset()")
+				void testBookingQueryControlFieldsReset() {
+					service.booking_now_by_room_numberQuery(TestingTools.getMapEmpty(), getColumsName());
+					verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
+				}
 
-	Map<String, Object> getMapRequiredInsert() {
-		return new HashMap<>() {
-			{
-				put(dao.ATTR_CUSTOMER_ID, 1);
-				put(dao.ATTR_ROOM_ID, 1);
-				put(dao.ATTR_START, "2022-07-25");
-				put(dao.ATTR_END, "2022-08-12");
-				put(dao.ATTR_CREATED, "2022-07-12");
+				@Test
+				@DisplayName("ControlFields usar validate() map")
+				void testBooking_now_by_room_numberQueryControlFieldsValidate() {
+					service.booking_now_by_room_numberQuery(TestingTools.getMapEmpty(), getColumsName());
+					try {
+						verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
+					
+					} catch (Exception e) {
+						e.printStackTrace();
+						fail("excepción no capturada: " + e.getMessage());
+					}
+				}
+
+				@Test
+				@DisplayName("Valores de entrada válidos")
+				void testBooking_now_by_room_numberQueryOK() {
+					
+					doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
+
+					// válido: HashMap campos mínimos
+					eR = service.booking_now_by_room_numberQuery(getMapRequiredInsert(),getColumsName());
+					assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+
+					// válido: HashMap campos mínimos y mas
+					eR = service.booking_now_by_room_numberQuery(getMapRequiredInsertExtended(),getColumsName());
+					assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+					
+					
+					
+					
+				/*	
+					doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
+
+					// válido: HashMap con filtro que existe (sin filtros)
+					eR = service.booking_now_by_room_numberQuery(getMapId(), getColumsName());
+					assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+*/
+				}
+
+				@Test
+				@DisplayName("Valores de entrada NO válidos")
+				void testbooking_now_by_room_numberQueryKO() {
+					try {
+						// lanzamos todas las excepciones de Validate para comprobar que están bien recogidas.
+						doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
+						eR = service.booking_now_by_room_numberQuery(TestingTools.getMapEmpty(), getColumsName());
+						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+						assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+						doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
+						eR = service.booking_now_by_room_numberQuery(TestingTools.getMapEmpty(), getColumsName());
+						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+						assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+						doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
+						eR = service.booking_now_by_room_numberQuery(TestingTools.getMapEmpty(), getColumsName());
+						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+						assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+						doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
+						eR = service.booking_now_by_room_numberQuery(TestingTools.getMapEmpty(), getColumsName());
+						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+						assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+						doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
+						eR = service.booking_now_by_room_numberQuery(TestingTools.getMapEmpty(), getColumsName());
+						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+						assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+					} catch (Exception e) {
+						e.printStackTrace();
+						fail("excepción no capturada: " + e.getMessage());
+					}
+
+				}
+				
 			}
-		};
-	}
-
-	Map<String, Object> getMapUpdate() {
-		return getMapRequiredInsert();
-	}
-
 	
+	// datos entrada
+	
+	  Map<String, Object> getMapRequiredInsert() { 
+		  return new HashMap<>() { 
+			  {
+				  put(dao.ATTR_ID, 1);
+	  
+			  } 
+		  }; 
+	  }
+	  
+	  Map<String, Object> getMapUpdate() { 
+		  return getMapRequiredInsert(); 
+	  }
 
-	Map<String, Object> getMapRequiredInsertExtended() {
-
-		return new HashMap<>() {
-			{
-				put(dao.ATTR_CUSTOMER_ID, 1);
-				put(dao.ATTR_ROOM_ID, 1);
-				put(dao.ATTR_START, "2022-07-25");
-				put(dao.ATTR_END, "2022-08-12");
-				put(dao.ATTR_CREATED, "2022-07-20 10:40:23.225");
-				put(dao.ATTR_OBSERVATIONS, "tudo bom");
-				put(dao.ATTR_CHECKIN, "2022-07-26 09:02:02.748");
-				put(dao.ATTR_CHECKOUT, "2022-08-12 09:02:02.748");
-				put(dao.ATTR_CANCELED, "2022-08-12 09:02:02.748");
-			}
-		};
-	}
-
-	Map<String, Object> getMapRequiredInsertExtendedWidthRestricted() {
-
-		return new HashMap<>() {
-			{
-				put(dao.ATTR_ID, "1");
-				put(dao.ATTR_CUSTOMER_ID, 1);
-				put(dao.ATTR_ROOM_ID, 1);
-				put(dao.ATTR_START, "2022-07-25");
-				put(dao.ATTR_END, "2022-08-12");
-				put(dao.ATTR_CREATED, "2022-07-20 10:40:23.225");
-				put(dao.ATTR_OBSERVATIONS, "tudo bom");
-				put(dao.ATTR_CHECKIN, "2022-07-26 09:02:02.748");
-				put(dao.ATTR_CHECKOUT, "2022-08-12 09:02:02.748");
-				put(dao.ATTR_CANCELED, null);
-			}
-		};
-	}
-
-	Map<String, Object> getMapRequiredDeletetExtendedWidthRestricted() {
-		return getMapRequiredInsertExtendedWidthRestricted();
-	}
-
+	  Map<String, Object> getMapRequiredInsertExtended() {
+	  
+		  return new HashMap<>() { 
+			  { 
+				  put(dao.ATTR_CUSTOMER_ID, 1);
+				  put(dao.ATTR_ROOM_ID, 1); 
+				  put(dao.ATTR_START, "2022-07-25");
+				  put(dao.ATTR_END, "2022-08-12"); 
+				  put(dao.ATTR_CREATED, "2022-07-20 10:40:23.225"); 
+				  put(dao.ATTR_OBSERVATIONS, "tudo bom");
+				  put(dao.ATTR_CHECKIN, "2022-07-26 09:02:02.748"); 
+				  put(dao.ATTR_CHECKOUT, "2022-08-12 09:02:02.748"); 
+				  put(dao.ATTR_CANCELED, "2022-08-12 09:02:02.748"); 
+			  } 
+		  }; 
+	  }
+	  
+	  Map<String, Object> getMapRequiredInsertExtendedWidthRestricted() {
+	  
+		  return new HashMap<>() { 
+			  { 
+				  put(dao.ATTR_ID, "1"); 
+				  put(dao.ATTR_CUSTOMER_ID, 1); 
+				  put(dao.ATTR_ROOM_ID, 1); 
+				  put(dao.ATTR_START, "2022-07-25");
+				  put(dao.ATTR_END, "2022-08-12"); 
+				  put(dao.ATTR_CREATED, "2022-07-20 10:40:23.225"); 
+				  put(dao.ATTR_OBSERVATIONS, "tudo bom");
+				  put(dao.ATTR_CHECKIN, "2022-07-26 09:02:02.748"); 
+				  put(dao.ATTR_CHECKOUT, "2022-08-12 09:02:02.748"); 
+	//			  put(dao.ATTR_CANCELED, null); 
+			  } 
+		  }; 
+	  }
+	  
+	  Map<String, Object> getMapRequiredDeletetExtendedWidthRestricted() { return
+	  getMapRequiredInsertExtendedWidthRestricted(); }
+	 
 	HashMap<String, Object> getMapId() {
 		HashMap<String, Object> filters = new HashMap<>() {
 			{
 				put(dao.ATTR_ID, 1);
+/*				put(dao.ATTR_CUSTOMER_ID, 1); 
+				put(dao.ATTR_ROOM_ID, 1); 
+				put(dao.ATTR_START, "2022-07-25");
+				put(dao.ATTR_END, "2022-08-12"); 
+				put(dao.ATTR_CREATED,"2022-07-20 10:40:23.225"); 
+				put(dao.ATTR_OBSERVATIONS, "tudo bom");
+				put(dao.ATTR_CHECKIN, "2022-07-26 09:02:02.748"); 
+*/
+				
 			}
 		};
 		return filters;
