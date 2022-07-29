@@ -115,17 +115,19 @@ public class ReceiptService implements IReceiptService {
 			Map<String, Object> keyMapServciosExtra = new HashMap<String, Object>();
 			keyMapServciosExtra.put(BookingServiceExtraDao.ATTR_ID_BKG,
 					reciboSimple.getRecordValues(0).get(ReceiptDao.ATTR_BOOKING_ID));
+			
+			List<String> listaCualquiera = new ArrayList<String>();
 
-			List<String> listaServiciosExtra = new ArrayList<String>();
-			listaServiciosExtra.add(ServicesXtraDao.ATTR_NAME);
-			listaServiciosExtra.add(ServicesXtraDao.ATTR_DESCRIPTION);
-			listaServiciosExtra.add(BookingServiceExtraDao.ATTR_ID_UNITS);
-			listaServiciosExtra.add(BookingServiceExtraDao.ATTR_PRECIO);
-			listaServiciosExtra.add(BookingServiceExtraDao.ATTR_DATE);
+//			List<String> listaServiciosExtra = new ArrayList<String>();
+//			listaServiciosExtra.add(ServicesXtraDao.ATTR_NAME);
+//			listaServiciosExtra.add(ServicesXtraDao.ATTR_DESCRIPTION);
+//			listaServiciosExtra.add(BookingServiceExtraDao.ATTR_ID_UNITS);
+//			listaServiciosExtra.add(BookingServiceExtraDao.ATTR_PRECIO);
+//			listaServiciosExtra.add(BookingServiceExtraDao.ATTR_DATE);
 
-			// El resultado de esto se añade dentro del resultado de la siguente
+			// El resultado de esto se añade dentro del resultado de la siguente	
 			EntityResult serviciosExtra = bookingServiceExtraService
-					.extraServicesNameDescriptionUnitsPriceDateQuery(keyMapServciosExtra, listaServiciosExtra);
+					.extraServicesNameDescriptionUnitsPriceDateQuery(keyMapServciosExtra, listaCualquiera);//Devuelve unos atributos fijos independientemente de la lista que se le pase
 
 			List<Object> servicios = new ArrayList<Object>();
 			for (int i = 0; i < serviciosExtra.calculateRecordNumber(); i++) {
@@ -188,16 +190,19 @@ public class ReceiptService implements IReceiptService {
 
 				attrMap.put(ReceiptDao.ATTR_TOTAL_ROOM, totalHabitacion);
 				attrMap.put(ReceiptDao.ATTR_DIAS, dias);
+				
+				List<String> listaCualquiera = new ArrayList<String>();
 
 				// Cálculo del precio total de los servcios extras
-				List<String> reciboServiciosExtra = new ArrayList<String>();
-				reciboServiciosExtra.add(BookingServiceExtraDao.ATTR_ID_BKG);
-				reciboServiciosExtra.add(BookingServiceExtraDao.ATTR_PRECIO);
-				reciboServiciosExtra.add(BookingServiceExtraDao.ATTR_ID_UNITS);
-				reciboServiciosExtra.add("total");
-
+//				List<String> reciboServiciosExtra = new ArrayList<String>();
+//				reciboServiciosExtra.add(BookingServiceExtraDao.ATTR_ID_BKG);
+//				reciboServiciosExtra.add(BookingServiceExtraDao.ATTR_PRECIO);
+//				reciboServiciosExtra.add(BookingServiceExtraDao.ATTR_ID_UNITS);
+//				reciboServiciosExtra.add("total");
+				
+				//Devuelve unos atributos fijos independientemente de la lista que se le pase
 				EntityResult servicios = bookingServiceExtraService.bookingExtraServicePriceUnitsTotalQuery(bsx_bkg_id,
-						reciboServiciosExtra);
+						listaCualquiera);
 
 				BigDecimal totalTodosServiciosExtra = new BigDecimal(0);
 

@@ -55,6 +55,8 @@ import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 
+import kotlin.collections.EmptyList;
+
 @ExtendWith(MockitoExtension.class)
 class BookingServiceExtraServiceTest {
 
@@ -412,23 +414,36 @@ class BookingServiceExtraServiceTest {
 		}
 
 		@Test
-		@DisplayName("ControlFields usar validate() map") // No valida la lista
+		@DisplayName("ControlFields usar validate() map") 
 		void testBookingExtraServicePriceUnitsTotalQueryControlFieldsValidate() {
 			service.bookingExtraServicePriceUnitsTotalQuery(TestingTools.getMapEmpty(), getColumsName());
 			try {
-				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());		
 			} catch (Exception e) {
 				e.printStackTrace();
 				fail("excepción no capturada: " + e.getMessage());
 			}
 		}
+		
+		//TODO testear que usa el validador en lista
+//		@Test
+//		@DisplayName("ControlFields usar validate() list") 
+//		void testBookingExtraServicePriceUnitsTotalQueryControlFieldsValidateList() {
+//			service.bookingExtraServicePriceUnitsTotalQuery(TestingTools.getMapEmpty(), getColumsName());
+//			try {
+//				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyList());	
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//				fail("excepción no capturada: " + e.getMessage());
+//			}
+//		}
 
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testBookingExtraServicePriceUnitsTotalQueryOK() {
 			doReturn(getEntityResultPrecioServcioUnidadesTotal()).when(daoHelper).query(any(), anyMap(), anyList(),
 					anyString());
-			eR = service.bookingExtraServicePriceUnitsTotalQuery(getBookingId(), getPrecioServcioUnidadesTotal());
+			eR = service.bookingExtraServicePriceUnitsTotalQuery(getBookingId(),new ArrayList());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
 
 		}
@@ -486,7 +501,7 @@ class BookingServiceExtraServiceTest {
 		}
 
 		@Test
-		@DisplayName("ControlFields usar validate() map") // No valida la lista
+		@DisplayName("ControlFields usar validate() map") 
 		void testExtraServicesNameDescriptionUnitsPriceDateQuerysTotalQueryControlFieldsValidate() {
 			service.extraServicesNameDescriptionUnitsPriceDateQuery(TestingTools.getMapEmpty(), getColumsName());
 			try {
@@ -496,6 +511,19 @@ class BookingServiceExtraServiceTest {
 				fail("excepción no capturada: " + e.getMessage());
 			}
 		}
+		
+		//TODO testear que usa el validador en lista
+//		@Test
+//		@DisplayName("ControlFields usar validate() list") 
+//		void testBookingExtraServicePriceUnitsTotalQueryControlFieldsValidateList() {
+//			service.extraServicesNameDescriptionUnitsPriceDateQuery(TestingTools.getMapEmpty(), getColumsName());
+//			try {
+//				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyList());	
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//				fail("excepción no capturada: " + e.getMessage());
+//			}
+//		}
 
 		@Test
 		@DisplayName("Valores de entrada válidos")
@@ -503,7 +531,7 @@ class BookingServiceExtraServiceTest {
 			doReturn(getEntityResultListaServciosExtra()).when(daoHelper).query(any(), anyMap(), anyList(),
 					anyString());
 			eR = service.extraServicesNameDescriptionUnitsPriceDateQuery(getBookingId(),
-					getListaServciosExtra());
+					new ArrayList());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
 
 		}

@@ -264,6 +264,10 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 			cf.addBasics(BookingServiceExtraDao.fields);
 			cf.setRequired(required);
 			cf.validate(keyMap);
+			
+			cf.reset();
+			cf.setNoEmptyList(false);
+			cf.validate(attrList);
 
 			resultado = this.daoHelper.query(this.bookingServiceExtraDao, keyMap, attrList,
 					"queryServciosExtraPrecioUnidadesTotal");
@@ -297,6 +301,10 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 			cf.addBasics(ServicesXtraDao.fields);
 			cf.setRequired(required);
 			cf.validate(keyMap);
+			
+			cf.reset();
+			cf.setNoEmptyList(false);
+			cf.validate(attrList);
 
 			resultado = this.daoHelper.query(this.bookingServiceExtraDao, keyMap, attrList,
 					"queryServiciosExtraNombreDescripcionUnidadesPrecioFecha");
