@@ -340,7 +340,6 @@ public class BookingService implements IBookingService {
 
 		keyMap.remove(BookingDao.ATTR_START);
 		keyMap.remove(BookingDao.ATTR_END);
-
 	}
 
 //	public BookingDao.Status getBookingStatus(EntityResult consultaER) throws EntityResultRequiredException {
@@ -382,7 +381,6 @@ public class BookingService implements IBookingService {
 		} else {
 			throw new EntityResultRequiredException("Error al consultar estado de la reserva");
 		}
-
 	}
 
 	/**
@@ -441,6 +439,48 @@ public class BookingService implements IBookingService {
 	        
 			resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryBookingsHotel");
 
+		} catch (ValidateException e) {
+			resultado = new EntityResultWrong(e.getMessage());
+		} catch (Exception e) {
+			resultado = new EntityResultWrong(ErrorMessage.ERROR);
+		}
+		return resultado;
+	}
+	
+	@Override
+	public EntityResult BookedRoomForAddingExtraServicesQuery (Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException {
+		
+		EntityResult resultado = new EntityResultWrong();
+		try {
+			List<String> required = new ArrayList<String>() {
+				{
+					add(BookingDao.ATTR_ID);
+				}
+			};
+			cf.reset();
+			cf.addBasics(BookingDao.fields); 
+			cf.addBasics(RoomDao.fields);  
+			cf.setRequired(required);
+	        cf.validate(keyMap);
+	        
+			resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryBookedRoomForAddingExtraServices");
+
+			Map<String, Object> subConsultaKeyMap = new HashMap<>() {
+				{
+					put(BookingDao.ATTR_ID, keyMap.get(BookingDao.ATTR_ID));
+				}
+			};
+
+			EntityResult auxEntity = bookingQuery(subConsultaKeyMap, EntityResultTools.attributes(BookingDao.ATTR_ID));
+
+			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
+				resultado = new EntityResultWrong(ErrorMessage.INVALID_FILTER_FIELD_ID);
+			} else {
+
+				resultado.setMessage("Búsqueda correcta");
+			}
+						
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (Exception e) {

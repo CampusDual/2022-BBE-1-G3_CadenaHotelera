@@ -24,6 +24,7 @@ public class ErrorMessage {
 //ERRORES DE QUERY
 	public static final String SUBQUERY_ERROR = "Error de subconsulta  ";	 
 	public static final String RESULT_REQUIRED = "Datos requeridos no encontrados";
+	public static final String INVALID_FILTER_FIELD_ID = "Identificador utilizado en el filtro no existe";
 	
 	 
 //ERRORES VARIOS	 

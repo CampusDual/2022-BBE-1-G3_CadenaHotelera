@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesE
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.RestrictedFieldException;
+import com.ontimize.atomicHotelsApiRest.api.core.service.ICountryService;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.TypeCodes.type;
 import com.ontimize.jee.common.db.SQLStatementBuilder;
 
@@ -26,7 +28,6 @@ import com.ontimize.jee.common.db.SQLStatementBuilder;
  */
 
 @Component
-@Lazy(value = true)
 public class ControlFields {
 
 	private Map<String, type> fields;;
@@ -36,6 +37,12 @@ public class ControlFields {
 	private boolean noEmptyList;
 	private boolean noWildcard;
 	private boolean allowBasicExpression;
+
+	@Autowired
+	ICountryService countryService;
+	
+	@Autowired
+	ValidateFields vF;
 
 	public ControlFields() {
 		reset();
@@ -96,13 +103,14 @@ public class ControlFields {
 	 * @throws InvalidFieldsValuesException
 	 * @throws LiadaPardaException
 	 */
+	@SuppressWarnings("static-access")
 	public void validate(Map<String, Object> keyMap) throws MissingFieldsException, RestrictedFieldException,
 			InvalidFieldsException, InvalidFieldsValuesException, LiadaPardaException {
 
 		if (keyMap == null) {
 			throw new MissingFieldsException(ErrorMessage.NO_NULL_DATA);
 		}
-		
+
 		// no podemos hacer este metodo, porque
 //		if( !allowBasicExpression && keyMap.containsKey(SQLStatementBuilder.ExtendedSQLConditionValuesProcessor.EXPRESSION_KEY)) {		
 //			throw new InvalidFieldsException(ErrorMessage.NO_BASIC_EXPRESSION);
@@ -168,7 +176,7 @@ public class ControlFields {
 
 				case PRICE:
 					if (keyMap.get(key) instanceof Integer || keyMap.get(key) instanceof Double) {
-						ValidateFields.formatprice(keyMap.get(key));
+						vF.formatprice(keyMap.get(key));
 						validType = true;
 					}
 					break;
@@ -176,27 +184,29 @@ public class ControlFields {
 				case CREDIT_CARD:
 					if (keyMap.get(key) instanceof Long) {
 
-						ValidateFields.invalidCreditCard((Long) keyMap.get(key));
+						vF.invalidCreditCard((Long) keyMap.get(key));
 						validType = true;
 					}
 					break;
 
 				case EXPIRATION_DATE:
 					if ((keyMap.get(key) instanceof String)) {
-						ValidateFields.validDateExpiry((String) keyMap.get(key));
+						vF.validDateExpiry((String) keyMap.get(key));
 						validType = true;
 					}
 					break;
 
 				case PHONE:
 					if ((keyMap.get(key) instanceof String)) {
+						vF.isPhone((String) keyMap.get(key));
 						validType = true;
 					}
 					break;
 
 				case COUNTRY:
 					if ((keyMap.get(key) instanceof String)) {
-						ValidateFields.country((String) keyMap.get(key));
+						vF.country((String) keyMap.get(key));
+						String country = (String) keyMap.get(key);
 						validType = true;
 					}
 					break;
@@ -204,29 +214,29 @@ public class ControlFields {
 				case DATETIME:// diferenciar al devolver los datos
 				case DATE:
 					if ((keyMap.get(key) instanceof String)) {
-						keyMap.replace(key, ValidateFields.stringToDate((String) keyMap.get(key)));
+						keyMap.replace(key, vF.stringToDate((String) keyMap.get(key)));
 						validType = true;
-					}else if ((keyMap.get(key) instanceof Date)) {
+					} else if ((keyMap.get(key) instanceof Date)) {
 						validType = true;
 					}
 					break;
 
 				case EMAIL:
 					if ((keyMap.get(key) instanceof String)) {
-						ValidateFields.checkMail((String) keyMap.get(key));
+						vF.checkMail((String) keyMap.get(key));
 						validType = true;
 					}
 					break;
 				case INTEGER_UNSIGNED:
 					if ((keyMap.get(key) instanceof Integer)) {
-						ValidateFields.NegativeNotAllowed((Integer) keyMap.get(key));
+						vF.NegativeNotAllowed((Integer) keyMap.get(key));
 						validType = true;
 					}
 					break;
 
 				case BOOLEAN:
 					if ((keyMap.get(key) instanceof Integer)) {
-						ValidateFields.isBoolean((Integer) keyMap.get(key));
+						vF.isBoolean((Integer) keyMap.get(key));
 						validType = true;
 					}
 					break;
