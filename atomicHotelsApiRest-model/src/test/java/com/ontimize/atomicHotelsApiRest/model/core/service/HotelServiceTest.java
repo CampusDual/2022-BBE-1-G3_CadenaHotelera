@@ -99,7 +99,7 @@ class HotelServiceTest {
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyList());
 			} catch (Exception e) {
 				e.printStackTrace();
-				fail("excepción no capturada: " + e.getMessage());
+				fail(ErrorMessage.UNCATCH_EXCEPTION + e.getMessage());
 			}
 		}
 
@@ -151,7 +151,7 @@ class HotelServiceTest {
 
 			} catch (Exception e) {
 				e.printStackTrace();
-				fail("excepción no capturada: " + e.getMessage());
+				fail(ErrorMessage.UNCATCH_EXCEPTION + e.getMessage());
 			}
 
 		}
@@ -178,7 +178,7 @@ class HotelServiceTest {
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
 			} catch (Exception e) {
 				e.printStackTrace();
-				fail("excepción no capturada: " + e.getMessage());
+				fail(ErrorMessage.UNCATCH_EXCEPTION + e.getMessage());
 
 			}
 		}
@@ -246,7 +246,7 @@ class HotelServiceTest {
 
 			} catch (Exception e) {
 				e.printStackTrace();
-				fail("excepción no capturada: " + e.getMessage());
+				fail(ErrorMessage.UNCATCH_EXCEPTION + e.getMessage());
 			}
 
 		}
@@ -272,7 +272,7 @@ class HotelServiceTest {
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
 			} catch (Exception e) {
 				e.printStackTrace();
-				fail("excepción no capturada: " + e.getMessage());
+				fail(ErrorMessage.UNCATCH_EXCEPTION + e.getMessage());
 			}
 		}
 
@@ -280,6 +280,12 @@ class HotelServiceTest {
 		@DisplayName("Valores de entrada válidos")
 		void testhotelUpdateOK() {
 			doReturn(new EntityResultMapImpl()).when(daoHelper).update(any(), anyMap(), anyMap());
+			try {
+				doNothing().when(cf).validate(anyMap());									
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCATCH_EXCEPTION + e.getMessage());
+			}
 			// válido: HashMap campos y filtros
 			eR = service.hotelUpdate(getMapUpdate(), getMapId());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
@@ -344,7 +350,7 @@ class HotelServiceTest {
 
 			} catch (Exception e) {
 				e.printStackTrace();
-				fail("excepción no capturada: " + e.getMessage());
+				fail(ErrorMessage.UNCATCH_EXCEPTION + e.getMessage());
 			}
 
 		}
@@ -369,7 +375,7 @@ class HotelServiceTest {
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
 			} catch (Exception e) {
 				e.printStackTrace();
-				fail("excepción no capturada: " + e.getMessage());
+				fail(ErrorMessage.UNCATCH_EXCEPTION + e.getMessage());
 
 			}
 		}
@@ -464,7 +470,7 @@ class HotelServiceTest {
 
 			} catch (Exception e) {
 				e.printStackTrace();
-				fail("excepción no capturada: " + e.getMessage());
+				fail(ErrorMessage.UNCATCH_EXCEPTION + e.getMessage());
 			}
 
 		}

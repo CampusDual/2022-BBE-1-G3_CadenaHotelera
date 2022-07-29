@@ -8,11 +8,13 @@ import static org.mockito.Mockito.description;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -47,9 +49,6 @@ class CountryServiceTest {
 	@Spy
 	ControlFields cf;
 
-	@Mock
-	ValidateFields vF;
-	
 	@InjectMocks
 	CountryService service;
 
@@ -66,11 +65,11 @@ class CountryServiceTest {
 		// CountryQuery
 		@Test
 		@DisplayName("ControlFields usar reset()")
-		void testHotelQueryControlFieldsReset() {
+		void testCountryQueryControlFieldsReset() {
 			service.countryQuery(TestingTools.getMapEmpty(), getColumsName());
 			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
 		}
-		
+
 		@Test
 		@DisplayName("ControlFields usar validate() map y list")
 		void testCountryQueryControlFieldsValidate() {
@@ -80,7 +79,7 @@ class CountryServiceTest {
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyList());
 			} catch (Exception e) {
 				e.printStackTrace();
-				fail("excepción no capturada: " + e.getMessage());
+				fail(ErrorMessage.UNCATCH_EXCEPTION + e.getMessage());
 			}
 		}
 
@@ -89,12 +88,12 @@ class CountryServiceTest {
 		void testCountryQueryOK() {
 			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
 			try {
-				doNothing().when(cf).validate(anyList());			
+				doNothing().when(cf).validate(anyMap());
 			} catch (Exception e) {
 				e.printStackTrace();
-				fail("excepción no capturada: " + e.getMessage());
+				fail(ErrorMessage.UNCATCH_EXCEPTION + e.getMessage());
 			}
-			
+
 			// válido: HashMap vacio (sin filtros)
 			eR = service.countryQuery(TestingTools.getMapEmpty(), getColumsName());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
@@ -139,13 +138,43 @@ class CountryServiceTest {
 
 			} catch (Exception e) {
 				e.printStackTrace();
-				fail("excepción no capturada: " + e.getMessage());
+				fail(ErrorMessage.UNCATCH_EXCEPTION + e.getMessage());
 			}
 
 		}
 	}
-	
-	//datos
+
+	@Nested
+	@DisplayName("Test for mapCountries quer")
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	public class MapCountries {
+
+		@Test
+		@DisplayName("Obtener map")
+		void testCountryQueryControlFieldsReset() {
+			doReturn(getERCountries()).when(daoHelper).query(any(), anyMap(), anyList());
+			try {
+				doNothing().when(cf).validate(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCATCH_EXCEPTION + e.getMessage());
+			}
+			Map<String, String> resultado = service.mapCountries();
+			assertTrue(resultado.containsKey("ES"));
+			assertTrue(resultado.containsKey("GB"));
+			assertTrue(resultado.containsKey("PT"));
+			
+			//consulta sin null (no debe llamar a daoHelper
+			reset(daoHelper);
+			resultado = service.mapCountries();
+			assertTrue(resultado.containsKey("ES"));
+			assertTrue(resultado.containsKey("GB"));
+			assertTrue(resultado.containsKey("PT"));
+		}
+
+	}
+
+	// datos
 
 	List<String> getColumsName() {
 		List<String> columns = new ArrayList<>() {
@@ -155,7 +184,7 @@ class CountryServiceTest {
 		};
 		return columns;
 	}
-	
+
 	HashMap<String, Object> getMapIso() {
 		HashMap<String, Object> filters = new HashMap<>() {
 			{
@@ -164,4 +193,27 @@ class CountryServiceTest {
 		};
 		return filters;
 	};
+
+	EntityResult getERCountries() {
+		EntityResult er = new EntityResultMapImpl();
+		er.addRecord(new HashMap<>() {
+			{
+				put(dao.ATTR_ISO, "ES");
+				put(dao.ATTR_NAME, "España");
+			}
+		});
+		er.addRecord(new HashMap<>() {
+			{
+				put(dao.ATTR_ISO, "GB");
+				put(dao.ATTR_NAME, "Reino Unido");
+			}
+		});
+		er.addRecord(new HashMap<>() {
+			{
+				put(dao.ATTR_ISO, "PT");
+				put(dao.ATTR_NAME, "Portugal");
+			}
+		});
+		return er;
+	}
 }

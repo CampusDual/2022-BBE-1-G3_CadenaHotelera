@@ -84,7 +84,7 @@ public class CustomerService implements ICustomerService {
 					add(CustomerDao.ATTR_NAME);
 					add(CustomerDao.ATTR_PHONE);
 					add(CustomerDao.ATTR_COUNTRY);
-
+					
 					add(CustomerDao.ATTR_VAT_NUMBER);
 				}
 			};
