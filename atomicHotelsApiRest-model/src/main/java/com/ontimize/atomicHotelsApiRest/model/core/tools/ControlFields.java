@@ -41,7 +41,7 @@ public class ControlFields {
 
 	@Autowired
 	ICountryService countryService;
-	
+
 	@Autowired
 	ValidateFields vF;
 
@@ -288,44 +288,44 @@ public class ControlFields {
 			if (columns.size() < minimuSize) {
 				throw new MissingFieldsException(ErrorMessage.REQUIRED_MINIMUM_COLUMS);
 			}
-		}else {
+
+			if (required != null) {
+				for (String key : required) {
+					if (!columns.contains(key)) {
+						throw new MissingFieldsException(ErrorMessage.REQUIRED_FIELD);
+					}
+				}
+			}
+
+			if (restricted != null) {
+				for (String key : restricted) {
+					if (columns.contains(key)) {
+						throw new RestrictedFieldException(ErrorMessage.INVALID_FIELD + key);
+					}
+				}
+			}
+
+			if (!optional && required == null) {
+				throw new LiadaPardaException(ErrorMessage.INTERNAL_CAGADA);
+			} else {
+				if (!optional && (required.size() != columns.size())) {
+					throw new InvalidFieldsException(ErrorMessage.ALLOWED_FIELDS + required.toString());
+				}
+			}
+
+			for (String key : columns) {
+				if (!fields.containsKey(key)) {
+					throw new InvalidFieldsException(ErrorMessage.INVALID_FIELD + key);
+				}
+			}
+		} else { // si tiene que ser lista vacía;
 			if (noWildcard && columns.contains("*")) {
 				columns.remove("*");
 			}
 			if (columns.size() > 0) {
 				throw new InvalidFieldsException(ErrorMessage.NO_ALLOW_COLUMS);
-			}else {
-				columns.add("null"); //para saltarse los filtros de ontimize			
-			}
-		}
-
-		if (required != null) {
-			for (String key : required) {
-				if (!columns.contains(key)) {
-					throw new MissingFieldsException(ErrorMessage.REQUIRED_FIELD);
-				}
-			}
-		}
-
-		if (restricted != null) {
-			for (String key : restricted) {
-				if (columns.contains(key)) {
-					throw new RestrictedFieldException(ErrorMessage.INVALID_FIELD + key);
-				}
-			}
-		}
-
-		if (!optional && required == null) {
-			throw new LiadaPardaException(ErrorMessage.INTERNAL_CAGADA);
-		} else {
-			if (!optional && (required.size() != columns.size())) {
-				throw new InvalidFieldsException(ErrorMessage.ALLOWED_FIELDS + required.toString());
-			}
-		}
-
-		for (String key : columns) {
-			if (!fields.containsKey(key)) {
-				throw new InvalidFieldsException(ErrorMessage.INVALID_FIELD + key);
+			} else {
+				columns.add("null"); // para saltarse los filtros de ontimize
 			}
 		}
 	}
