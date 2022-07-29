@@ -46,7 +46,7 @@ public class CountryService implements ICountryService {
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 //		cf.reset();
-//		cf.addBasics(CountryDao.fields);
+//		cf.addBasics(CountryDao.fields); 
 		try {
 //			cf.validate(keyMap);
 //			cf.validate(attrList);

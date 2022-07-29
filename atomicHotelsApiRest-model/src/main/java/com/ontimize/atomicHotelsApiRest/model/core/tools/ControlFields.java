@@ -1,5 +1,6 @@
 package com.ontimize.atomicHotelsApiRest.model.core.tools;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -205,8 +206,7 @@ public class ControlFields {
 					if ((keyMap.get(key) instanceof String)) {
 						keyMap.replace(key, ValidateFields.stringToDate((String) keyMap.get(key)));
 						validType = true;
-					}else if ((keyMap.get(key) instanceof String)) {
-						keyMap.replace(key, ValidateFields.stringToDate((String) keyMap.get(key)));
+					}else if ((keyMap.get(key) instanceof Date)) {
 						validType = true;
 					}
 					break;
