@@ -79,7 +79,7 @@ class CountryServiceTest {
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyList());
 			} catch (Exception e) {
 				e.printStackTrace();
-				fail(ErrorMessage.UNCATCH_EXCEPTION + e.getMessage());
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
 			}
 		}
 
@@ -91,7 +91,7 @@ class CountryServiceTest {
 				doNothing().when(cf).validate(anyMap());
 			} catch (Exception e) {
 				e.printStackTrace();
-				fail(ErrorMessage.UNCATCH_EXCEPTION + e.getMessage());
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
 			}
 
 			// válido: HashMap vacio (sin filtros)
@@ -138,7 +138,7 @@ class CountryServiceTest {
 
 			} catch (Exception e) {
 				e.printStackTrace();
-				fail(ErrorMessage.UNCATCH_EXCEPTION + e.getMessage());
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
 			}
 
 		}
@@ -157,7 +157,7 @@ class CountryServiceTest {
 				doNothing().when(cf).validate(anyMap());
 			} catch (Exception e) {
 				e.printStackTrace();
-				fail(ErrorMessage.UNCATCH_EXCEPTION + e.getMessage());
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
 			}
 			Map<String, String> resultado = service.mapCountries();
 			assertTrue(resultado.containsKey("ES"));

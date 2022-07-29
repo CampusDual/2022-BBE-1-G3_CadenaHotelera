@@ -79,9 +79,9 @@ public class CountryService implements ICountryService {
 //				System.out.println(er.getRecordValues(i));
 				mapCountries.put((String) er.getRecordValues(i).get(CountryDao.ATTR_ISO),(String) er.getRecordValues(i).get(CountryDao.ATTR_NAME));		
 			}				
-			System.out.println();
-			System.out.println("****************");
-			System.err.println(mapCountries);
+//			System.out.println();
+//			System.out.println("****************");
+//			System.err.println(mapCountries);
 		}
 		return mapCountries;
 	}
