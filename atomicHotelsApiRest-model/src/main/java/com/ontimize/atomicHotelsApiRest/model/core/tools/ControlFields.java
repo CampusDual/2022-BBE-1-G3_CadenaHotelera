@@ -36,6 +36,7 @@ public class ControlFields {
 	private boolean optional;
 	private boolean noEmptyList;
 	private boolean noWildcard;
+	private boolean noColumns;
 	private boolean allowBasicExpression;
 
 	@Autowired
@@ -55,6 +56,7 @@ public class ControlFields {
 		optional = true;
 		noEmptyList = true; // solo para las Listas no los HashMap
 		noWildcard = true;
+		noColumns = false;
 		allowBasicExpression = false;
 	}
 
@@ -285,6 +287,15 @@ public class ControlFields {
 
 			if (columns.size() < minimuSize) {
 				throw new MissingFieldsException(ErrorMessage.REQUIRED_MINIMUM_COLUMS);
+			}
+		}else {
+			if (noWildcard && columns.contains("*")) {
+				columns.remove("*");
+			}
+			if (columns.size() > 0) {
+				throw new InvalidFieldsException(ErrorMessage.NO_ALLOW_COLUMS);
+			}else {
+				columns.add("null"); //para saltarse los filtros de ontimize			
 			}
 		}
 

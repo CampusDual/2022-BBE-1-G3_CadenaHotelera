@@ -53,5 +53,6 @@ public class ErrorMessage {
 	public static final String INTERNAL_CAGADA = "Error interno";
 	
 	public static final String NO_BASIC_EXPRESSION = "No se permiten Basics Expresions";
-	
+	public static final String NO_ALLOW_COLUMS = "Esta consulta no permite especificar las Columnas de retorno";
+
 }

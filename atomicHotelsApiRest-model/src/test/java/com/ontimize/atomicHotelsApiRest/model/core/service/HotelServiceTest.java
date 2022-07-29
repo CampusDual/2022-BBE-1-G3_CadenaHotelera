@@ -280,7 +280,6 @@ class HotelServiceTest {
 		@DisplayName("Valores de entrada válidos")
 		void testhotelUpdateOK() {
 			doReturn(new EntityResultMapImpl()).when(daoHelper).update(any(), anyMap(), anyMap());
-
 			// válido: HashMap campos y filtros
 			eR = service.hotelUpdate(getMapUpdate(), getMapId());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());

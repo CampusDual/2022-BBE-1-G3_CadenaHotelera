@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.description;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
@@ -32,6 +33,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.RestrictedFieldExcep
 import com.ontimize.atomicHotelsApiRest.model.core.dao.CountryDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
@@ -45,6 +47,9 @@ class CountryServiceTest {
 	@Spy
 	ControlFields cf;
 
+	@Mock
+	ValidateFields vF;
+	
 	@InjectMocks
 	CountryService service;
 
@@ -54,7 +59,7 @@ class CountryServiceTest {
 	EntityResult eR;
 
 	@Nested
-	@DisplayName("Test for Hotel queries")
+	@DisplayName("Test for Country queries")
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	public class CountryQuery {
 
@@ -83,7 +88,13 @@ class CountryServiceTest {
 		@DisplayName("Valores de entrada válidos")
 		void testCountryQueryOK() {
 			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
-
+			try {
+				doNothing().when(cf).validate(anyList());			
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("excepción no capturada: " + e.getMessage());
+			}
+			
 			// válido: HashMap vacio (sin filtros)
 			eR = service.countryQuery(TestingTools.getMapEmpty(), getColumsName());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
@@ -100,9 +111,10 @@ class CountryServiceTest {
 			try {
 				// lanzamos todas las excepciones de Validate para comprobar que están bien
 				// recojidas.
-				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
+				doThrow(new MissingFieldsException("testing")).when(cf).validate(anyMap());
 				eR = service.countryQuery(TestingTools.getMapEmpty(), getColumsName());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertEquals("testing", eR.getMessage(), eR.getMessage());
 				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
 				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
