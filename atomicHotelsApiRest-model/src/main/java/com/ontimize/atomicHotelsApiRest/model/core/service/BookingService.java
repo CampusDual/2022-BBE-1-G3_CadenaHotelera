@@ -9,6 +9,8 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.service.IBookingService;
@@ -95,7 +97,7 @@ public class BookingService implements IBookingService {
 			cf.validate(attrList);
 
 			resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryInfoBooking");
-		} catch (ValidateException | LiadaPardaException e) {
+		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);
@@ -142,9 +144,16 @@ public class BookingService implements IBookingService {
 			} else {
 				resultado = new EntityResultWrong(ErrorMessage.DATA_START_BEFORE_TODAY);
 			}
-		} catch (EntityResultRequiredException | ValidateException | LiadaPardaException e) {
-			System.err.println(e.getMessage());
-			resultado = new EntityResultWrong(e.getMessage());
+		} catch (ValidateException e) {
+			resultado =  new EntityResultWrong(e.getMessage());
+			e.printStackTrace();		
+		}catch (DuplicateKeyException e) {
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+		}catch (DataIntegrityViolationException e) {
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);
+		}catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
 	}

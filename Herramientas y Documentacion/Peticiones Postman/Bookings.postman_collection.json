@@ -65,7 +65,7 @@
 			"response": []
 		},
 		{
-			"name": "-R Booked Room For Adding Extra Services",
+			"name": "-R booking_now_by_room_number",
 			"request": {
 				"auth": {
 					"type": "basic",
@@ -94,7 +94,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:33333/bookings/BookedRoomForAddingExtraServices/search",
+					"raw": "http://localhost:33333/bookings/booking_now_by_room_number/search",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -102,7 +102,7 @@
 					"port": "33333",
 					"path": [
 						"bookings",
-						"BookedRoomForAddingExtraServices",
+						"booking_now_by_room_number",
 						"search"
 					]
 				}
