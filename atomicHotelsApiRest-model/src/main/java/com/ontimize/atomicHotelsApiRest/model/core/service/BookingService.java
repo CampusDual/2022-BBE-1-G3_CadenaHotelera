@@ -264,7 +264,7 @@ public class BookingService implements IBookingService {
  	
 			bookingsInRangeBuilder(keyMap, attrList);
 			return this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryBasicBooking");
-		} catch (ValidateException e) {
+		} catch (ValidateException | LiadaPardaException e) {
 			System.err.println(e.getMessage());
 			return new EntityResultWrong(e.getMessage());
 		}
@@ -283,7 +283,7 @@ public class BookingService implements IBookingService {
 
 			bookingsInRangeBuilder(keyMap, attrList);
 			return this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryInfoBooking");
-		} catch (ValidateException e) {
+		} catch (ValidateException | LiadaPardaException e) {
 			System.err.println(e.getMessage());
 			return new EntityResultWrong(e.getMessage());
 		}
