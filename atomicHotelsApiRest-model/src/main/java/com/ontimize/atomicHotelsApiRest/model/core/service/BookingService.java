@@ -72,7 +72,7 @@ public class BookingService implements IBookingService {
 			cf.validate(attrList);
 
 			resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList);
-		} catch (ValidateException | LiadaPardaException e) {
+		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);
@@ -264,7 +264,7 @@ public class BookingService implements IBookingService {
  	
 			bookingsInRangeBuilder(keyMap, attrList);
 			return this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryBasicBooking");
-		} catch (ValidateException | LiadaPardaException e) {
+		} catch (ValidateException e) {
 			System.err.println(e.getMessage());
 			return new EntityResultWrong(e.getMessage());
 		}
@@ -283,7 +283,7 @@ public class BookingService implements IBookingService {
 
 			bookingsInRangeBuilder(keyMap, attrList);
 			return this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryInfoBooking");
-		} catch (ValidateException | LiadaPardaException e) {
+		} catch (ValidateException e) {
 			System.err.println(e.getMessage());
 			return new EntityResultWrong(e.getMessage());
 		}
