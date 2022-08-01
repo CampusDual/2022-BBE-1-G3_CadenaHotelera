@@ -42,6 +42,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.RestrictedFieldException;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingGuestDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.ReceiptDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomTypeDao;
@@ -595,15 +596,239 @@ class BookingServiceTest {
 			}
 	
 	@Nested
-	@DisplayName("Test for BookingExtraServicePriceUnitsTotal queries")
+	@DisplayName("Test for bookingSlotsInfo queries")
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	class BookingSlotsInfoQuery {
+		@Test
+		@DisplayName("ControlFields usar reset()")
+		void testBookingSlotsInfoQueryControlFieldsReset() {
+			service.bookingSlotsInfoQuery(TestingTools.getMapEmpty(), getbookingSlotsInfoColums());
+			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
+		}
+
+		@Test
+		@DisplayName("ControlFields usar validate() map y list") 
+		void testBookingSlotsInfoQueryControlFieldsValidateList() {
+			service.bookingSlotsInfoQuery(getMapRequiredBookingSlotsQuery(), getbookingSlotsInfoColums());
+			try {
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields map")).validate(anyMap());
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields list")).validate(anyList());	
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("excepción no capturada: " + e.getMessage());
+			}
+		}
+
+		@Test
+		@DisplayName("Valores de entrada válidos")
+		void testBookingSlotsInfoQueryOK() {
+			doReturn(getEntityResultbookingSlotsInfo()).when(daoHelper).query(any(), anyMap(), anyList(),
+					anyString());
+			eR = service.bookingSlotsInfoQuery(getMapRequiredBookingSlotsQuery(),
+					new ArrayList());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+
+		}
+
+		@Test
+		@DisplayName("Valores de entrada NO válidos")
+		void testBookingSlotsInfoQueryQueryKO() {
+			try {
+				// lanzamos todas las excepciones de Validate para comprobar que están bien
+				// recojidas.
+				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
+				eR = service.bookingSlotsInfoQuery(TestingTools.getMapEmpty(),
+						getbookingSlotsInfoColums());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
+				eR = service.bookingSlotsInfoQuery(TestingTools.getMapEmpty(),
+						getbookingSlotsInfoColums());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
+				eR = service.bookingSlotsInfoQuery(TestingTools.getMapEmpty(),
+						getbookingSlotsInfoColums());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
+				eR = service.bookingSlotsInfoQuery(TestingTools.getMapEmpty(),
+						getbookingSlotsInfoColums());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
+				eR = service.bookingSlotsInfoQuery(TestingTools.getMapEmpty(),
+						getbookingSlotsInfoColums());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("excepción no capturada: " + e.getMessage());
+			}
+
+		}
+		
+	}
+	
+	//datos bookingSlotsInfoQuery
+	
+	List<String> getbookingSlotsInfoColums() {
+		List<String> columns = new ArrayList<>() {
+			{
+				add(BookingGuestDao.ATTR_TOTAL_SLOTS);
+			}
+		};
+		return columns;
+	}
+	
+	 Map<String, Object> getMapRequiredBookingSlotsQuery() { 
+		  return new HashMap<>() { 
+			  {
+				  put(BookingDao.ATTR_ID, 1);
+	  
+			  } 
+		  }; 
+	  }
+	 
+	 EntityResult getEntityResultbookingSlotsInfo() {
+			EntityResult er = new EntityResultMapImpl();
+			er.addRecord(new HashMap<String, Object>() {
+				{
+					put(BookingGuestDao.ATTR_TOTAL_SLOTS,1L);
+				}
+			});
+			return er;
+		}
+	 
+		@Nested
+		@DisplayName("Test for bookingDaysUnitaryRoomPrice queries")
+		@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+		class BookingDaysUnitaryRoomPriceQuery {
+			@Test
+			@DisplayName("ControlFields usar reset()")
+			void testBookingDaysUnitaryRoomPriceQueryControlFieldsReset() {
+				service.bookingDaysUnitaryRoomPriceQuery(TestingTools.getMapEmpty(), getBookingDaysUnitaryRoomPriceColums());
+				verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
+			}
+
+			@Test
+			@DisplayName("ControlFields usar validate() map y list") 
+			void testBookingDaysUnitaryRoomPriceQueryControlFieldsValidateList() {
+				service.bookingSlotsInfoQuery(getMapRequiredBookingDaysUnitaryRoomPriceQuery(), getBookingDaysUnitaryRoomPriceColums());
+				try {
+					verify(cf, description("No se ha utilizado el metodo validate de ControlFields map")).validate(anyMap());
+					verify(cf, description("No se ha utilizado el metodo validate de ControlFields list")).validate(anyList());	
+				} catch (Exception e) {
+					e.printStackTrace();
+					fail("excepción no capturada: " + e.getMessage());
+				}
+			}
+
+			@Test
+			@DisplayName("Valores de entrada válidos")
+			void testBookingSlotsInfoQueryOK() {
+				doReturn(getEntityResultbookingSlotsInfo()).when(daoHelper).query(any(), anyMap(), anyList(),
+						anyString());
+				eR = service.bookingSlotsInfoQuery(getMapRequiredBookingDaysUnitaryRoomPriceQuery(),
+						new ArrayList());
+				assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+
+			}
+
+			@Test
+			@DisplayName("Valores de entrada NO válidos")
+			void testBookingDaysUnitaryRoomPriceQueryKO() {
+				try {
+					// lanzamos todas las excepciones de Validate para comprobar que están bien
+					// recojidas.
+					doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
+					eR = service.bookingDaysUnitaryRoomPriceQuery(TestingTools.getMapEmpty(),
+							getBookingDaysUnitaryRoomPriceColums());
+					assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+					assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+					doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
+					eR = service.bookingDaysUnitaryRoomPriceQuery(TestingTools.getMapEmpty(),
+							getBookingDaysUnitaryRoomPriceColums());
+					assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+					assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+					doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
+					eR = service.bookingDaysUnitaryRoomPriceQuery(TestingTools.getMapEmpty(),
+							getBookingDaysUnitaryRoomPriceColums());
+					assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+					assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+					doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
+					eR = service.bookingDaysUnitaryRoomPriceQuery(TestingTools.getMapEmpty(),
+							getBookingDaysUnitaryRoomPriceColums());
+					assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+					assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+					doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
+					eR = service.bookingDaysUnitaryRoomPriceQuery(TestingTools.getMapEmpty(),
+							getBookingDaysUnitaryRoomPriceColums());
+					assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+					assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				} catch (Exception e) {
+					e.printStackTrace();
+					fail("excepción no capturada: " + e.getMessage());
+				}
+
+			}
+			
+		}
+		
+		//datos bookingDaysUnitaryRoomPriceQuery
+		
+		List<String> getBookingDaysUnitaryRoomPriceColums() {
+			List<String> columns = new ArrayList<>() {
+				{
+					add(BookingDao.ATTR_ID);
+					add(RoomTypeDao.ATTR_PRICE);
+					add(ReceiptDao.ATTR_DIAS);
+				}
+			};
+			return columns;
+		}
+		
+		 Map<String, Object> getMapRequiredBookingDaysUnitaryRoomPriceQuery() { 
+			  return new HashMap<>() { 
+				  {
+					  put(BookingDao.ATTR_ID, 1);
+		  
+				  } 
+			  }; 
+		  }
+		 
+		 EntityResult getEntityResultBookingDaysUnitaryRoomPrice() {
+				EntityResult er = new EntityResultMapImpl();
+				er.addRecord(new HashMap<String, Object>() {
+					{
+						put(BookingDao.ATTR_ID,1);
+						put(RoomTypeDao.ATTR_PRICE,new BigDecimal(23));
+						put(ReceiptDao.ATTR_DIAS,1);
+						
+					}
+				});
+				return er;
+			}
+	
+	@Nested
+	@DisplayName("Test for booking_now_by_room_number queries")
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	public class booking_now_by_room_numberQuery {
 		
-		//bookingQuery
 		
 		@Test
 		@DisplayName("ControlFields usar reset()")
-		void testBookingQueryControlFieldsReset() {
+		void testBooking_now_by_room_numberQueryControlFieldsReset() {
 			service.booking_now_by_room_numberQuery(TestingTools.getMapEmpty(), getColumsName());
 			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
 		}

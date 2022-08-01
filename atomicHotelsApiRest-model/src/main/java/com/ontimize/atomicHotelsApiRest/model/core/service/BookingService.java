@@ -406,9 +406,9 @@ public class BookingService implements IBookingService {
 	 * Dado un bkg_id devuelve los días de esa reserva y el precio diario de la
 	 * habitación
 	 * 
-	 * @param keyMap
-	 * @param attrList
-	 * @return EntityResult
+	 * @param keyMap (BookingDao.ATTR_ID)
+	 * @param attrList (anyList())
+	 * @return EntityResult (BookingDao.ATTR_ID,RoomTypeDao.ATTR_PRICE,ReceiptDao.ATTR_DIAS)
 	 * @throws OntimizeJEERuntimeException
 	 */
 	@Override
@@ -533,9 +533,9 @@ public class BookingService implements IBookingService {
 	/**
 	 * Dado un número de reserva, la capacidad total de todas las habitaciones de esa reserva
 	 * 
-	 * @param keyMap
-	 * @param attrList
-	 * @return EntityResult
+	 * @param keyMap (BookingDao.ATTR_ID)
+	 * @param attrList (anyList())
+	 * @return EntityResult (BookingGuestDao.ATTR_TOTAL_SLOTS)
 	 * @throws OntimizeJEERuntimeException 
 	 */
 	@Override

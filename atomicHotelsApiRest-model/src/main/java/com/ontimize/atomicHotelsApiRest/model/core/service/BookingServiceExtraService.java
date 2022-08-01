@@ -20,6 +20,7 @@ import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingServiceExtraDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelServiceExtraDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.ReceiptDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.ServicesXtraDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
@@ -249,9 +250,9 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 	 * Dado un bsx_bkg_id devuelve los servcios extra de esa reserva, con sus
 	 * precios, las unidades y el total de cada registro
 	 * 
-	 * @param keyMap
-	 * @param attrList
-	 * @return EntityResult
+	 * @param keyMap (BookingServiceExtraDao.ATTR_ID_BKG)
+	 * @param attrList (anyList())
+	 * @return EntityResult (BookingServiceExtraDao.ATTR_ID_BKG, BookingServiceExtraDao.ATTR_ID_UNITS, BookingServiceExtraDao.ATTR_PRECIO,total)
 	 * @throws OntimizeJEERuntimeException
 	 */
 	public EntityResult bookingExtraServicePriceUnitsTotalQuery(Map<String, Object> keyMap, List<String> attrList)
@@ -284,9 +285,9 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 	 * Dado un bsx_bkg_id devuelve los servcios extra de la reserva (nombre,
 	 * descripcion, unidades, precio y fecha)
 	 * 
-	 * @param keyMap
-	 * @param attrList
-	 * @return EntityResult
+	 * @param keyMap (BookingServiceExtraDao.ATTR_ID_BKG)
+	 * @param attrList (anyList())
+	 * @return EntityResult (ServicesXtraDao.ATTR_NAME, ServicesXtraDao.ATTR_DESCRIPTION, BookingServiceExtraDao.ATTR_ID_UNITS, BookingServiceExtraDao.ATTR_PRECIO, BookingServiceExtraDao.ATTR_DATE)
 	 * @throws OntimizeJEERuntimeException
 	 */
 	public EntityResult extraServicesNameDescriptionUnitsPriceDateQuery(Map<String, Object> keyMap,

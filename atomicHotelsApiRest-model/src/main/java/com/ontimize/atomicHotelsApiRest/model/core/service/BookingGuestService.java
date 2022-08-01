@@ -74,8 +74,8 @@ public class BookingGuestService implements IBookingGuestService {
 	 * esa reserva
 	 * 
 	 * @param keyMap   (BookingGuestDao.ATTR_ATTR_BKG_ID)
-	 * @param attrList (BookingGuestDao.ATTR_TOTAL_GUESTS)
-	 * @throws OntimizeJEERuntimeException
+	 * @param attrList (anyList())
+	 * @throws OntimizeJEERuntimeException (BookingGuestDao.ATTR_TOTAL_GUESTS)
 	 */
 	@Override
 	public EntityResult guestCountQuery(Map<String, Object> keyMap, List<String> attrList)
@@ -183,11 +183,11 @@ public class BookingGuestService implements IBookingGuestService {
 					if (totalG < totalS) {
 						resultado = this.daoHelper.insert(this.bookingGuestDao, attrMap);
 					} else {
-						resultado = new EntityResultWrong("La reserva está completa. No admite más huéspedes");
+						resultado = new EntityResultWrong(ErrorMessage.BOOKING_COMPLETED_NO_MORE_GUESTS_ALLOWED);
 					}
 
 				} else {
-					resultado = new EntityResultWrong("Un huesped tiene que ser una persona física");
+					resultado = new EntityResultWrong(ErrorMessage.GUEST_MUST_BE_AN_INDIVIDUAL);
 				}
 
 			} else {

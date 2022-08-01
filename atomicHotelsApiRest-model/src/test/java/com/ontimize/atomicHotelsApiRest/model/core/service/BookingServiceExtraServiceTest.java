@@ -201,10 +201,6 @@ class BookingServiceExtraServiceTest {
 			eR = service.bookingServiceExtraInsert(getMapRequiredInsert());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
 
-//			// válido: HashMap campos mínimos y mas
-//			eR = service.bookingServiceExtraInsert(getMapRequiredInsertExtended());
-//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
-
 		}
 
 		@Test
@@ -314,9 +310,6 @@ class BookingServiceExtraServiceTest {
 		@DisplayName("Valores Subcontulta Error")
 		void testbookingServiceExtraDeleteSubQueryKO() {
 			doReturn(new EntityResultWrong()).when(daoHelper).query(any(), anyMap(), anyList());
-//			doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
-
-			//
 			eR = service.bookingServiceExtraDelete(getMapId());
 			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 			assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
@@ -326,9 +319,6 @@ class BookingServiceExtraServiceTest {
 		@DisplayName("Valores Subconsultta 0 resultados")
 		void testbookingServiceExtraDeleteSubQueryNoResults() {
 			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
-//			doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
-
-			//
 			eR = service.bookingServiceExtraDelete(getMapId());
 			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 			assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());

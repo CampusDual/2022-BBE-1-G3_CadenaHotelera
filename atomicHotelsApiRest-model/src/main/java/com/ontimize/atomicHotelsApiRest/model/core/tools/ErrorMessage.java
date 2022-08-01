@@ -49,6 +49,8 @@ public class ErrorMessage {
 	public static final String NO_RECEIPT_FOR_UNFINISH_BOOKING = "No se puede generar un recibo de una reserva que no está completada";
 	public static final String NO_BOOKING_ID = "El número de reserva no existe";
 	public static final String NO_CUSTOMER_ID = "El cliente no existe";
+	public static final String BOOKING_COMPLETED_NO_MORE_GUESTS_ALLOWED = "La reserva está completa. No admite más huéspedes";
+	public static final String GUEST_MUST_BE_AN_INDIVIDUAL = "Un huesped tiene que ser una persona física";
 	
 	public static final String UNKNOWN_ERROR = "Error desconocido";
 	public static final String ERROR = UNKNOWN_ERROR ;
