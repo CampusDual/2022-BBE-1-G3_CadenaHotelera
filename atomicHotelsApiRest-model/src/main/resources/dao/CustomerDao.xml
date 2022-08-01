@@ -18,8 +18,8 @@ catalog="" schema="${mainschema}" table="customers" datasource="mainDataSource" 
 					FROM
 					customers
 					WHERE 
-					cst_agree_spam = 1,
-					cst_canceled is null	
+					cst_agree_spam = 1 
+					AND cst_canceled is null	
 					#WHERE_CONCAT#						     					     
 				]]>
 			</Sentence>

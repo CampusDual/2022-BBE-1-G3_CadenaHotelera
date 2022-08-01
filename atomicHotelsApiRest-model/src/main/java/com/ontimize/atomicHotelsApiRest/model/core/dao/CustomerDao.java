@@ -41,24 +41,18 @@ public class CustomerDao extends OntimizeJdbcDaoSupport {
 	public static final String ATTR_CITY = TAG +"city";
 	public static final String ATTR_STATE = TAG +"state";
 	public static final String ATTR_ZIP_CODE = TAG +"zip_code";
-	public static final String ATTR_BIRTH_DATE = TAG+"birth_Date";
+	public static final String ATTR_BIRTH_DATE = TAG+"birth_date";
 	public static final String ATTR_AGREE_SPAM = TAG+"agree_spam";
 	public static final String ATTR_IDEN_DOC = TAG +"identity_document";
 	public static final String ATTR_VAT_NUMBER = TAG +"vat_number";
 	public static final String ATTR_PHONE = TAG+"phone";
 	public static final String ATTR_CREATION= TAG+"creation";
-	public static final String ATTR_CANCELED= TAG+"canceled";
+	public static final String ATTR_CANCELED= TAG+"canceled";	
+	public static final String NON_ATTR_ACTION = "action";
+	public enum Action{CANCEL}
 
-	
-	
-	
-	
-	
-	
-	//TODO pendiente cambiar todo esto!!!
+
 	public static final Map<String,type> fields = new HashMap<>() {{
-		
-
 		put(ATTR_ID,type.INTEGER);
 		put(ATTR_NAME,type.STRING);
 		put(ATTR_SURNAME,type.STRING);
@@ -75,9 +69,7 @@ public class CustomerDao extends OntimizeJdbcDaoSupport {
 		put(ATTR_PHONE,type.PHONE);
 		put(ATTR_CANCELED,type.DATETIME);
 		put(ATTR_CREATION,type.DATETIME);
-		
-		
-		
+		put(NON_ATTR_ACTION,type.CUSTOMER_ACTION);		
 	}};
 
 }

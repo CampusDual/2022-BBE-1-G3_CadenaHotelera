@@ -15,6 +15,8 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.RestrictedFieldException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.ICountryService;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.TypeCodes.type;
 import com.ontimize.jee.common.db.SQLStatementBuilder;
 
@@ -240,6 +242,33 @@ public class ControlFields {
 					if ((keyMap.get(key) instanceof Integer)) {
 						vF.isBoolean((Integer) keyMap.get(key));
 						validType = true;
+					}
+					break;
+
+				case BOOKING_ACTION:
+					if ((keyMap.get(key) instanceof BookingDao.Action)) {
+						validType = true;
+					} else if ((keyMap.get(key) instanceof String)) {
+						try {
+							keyMap.replace(key, BookingDao.Action.valueOf((String) keyMap.get(key)));
+							validType = true;
+						} catch (IllegalArgumentException e) {
+							validType = false;
+						}
+					}
+					break;
+
+				case CUSTOMER_ACTION:
+
+					if ((keyMap.get(key) instanceof CustomerDao.Action)) {
+						validType = true;
+					} else if ((keyMap.get(key) instanceof String)) {
+						try {
+							keyMap.replace(key, CustomerDao.Action.valueOf((String) keyMap.get(key)));
+							validType = true;
+						} catch (IllegalArgumentException e) {
+							validType = false;
+						}
 					}
 					break;
 

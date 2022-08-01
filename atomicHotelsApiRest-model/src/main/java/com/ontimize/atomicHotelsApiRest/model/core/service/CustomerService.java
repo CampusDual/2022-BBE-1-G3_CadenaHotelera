@@ -3,6 +3,7 @@ package com.ontimize.atomicHotelsApiRest.model.core.service;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +63,11 @@ public class CustomerService implements ICustomerService {
 			cf.validate(attrList);
 
 			resultado = this.daoHelper.query(this.customerDao, keyMap, attrList, "queryBasic");
+
+		} catch (ValidateException e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(e.getMessage());
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
@@ -84,7 +90,7 @@ public class CustomerService implements ICustomerService {
 					add(CustomerDao.ATTR_NAME);
 					add(CustomerDao.ATTR_PHONE);
 					add(CustomerDao.ATTR_COUNTRY);
-					
+
 					add(CustomerDao.ATTR_VAT_NUMBER);
 				}
 			};
@@ -101,7 +107,6 @@ public class CustomerService implements ICustomerService {
 			cf.addBasics(CustomerDao.fields);
 			cf.setRequired(required);
 			cf.setRestricted(restricted);
-//			cf.setOptional(true);
 			cf.validate(attrMap);
 
 			Map<String, Object> subConsultaKeyMap = new HashMap<>() {
@@ -140,9 +145,12 @@ public class CustomerService implements ICustomerService {
 				{// TODO AÑADIR TODOS LOS QUE NO SEAN NULABLES
 					// TODO también habría que obligar a que guardaran la tarjeta??? Qué pasa ahora
 					// que hay una tabla aparte para ellas??
-					add(CustomerDao.ATTR_IDEN_DOC);
 					add(CustomerDao.ATTR_NAME);
+					add(CustomerDao.ATTR_PHONE);
+					add(CustomerDao.ATTR_COUNTRY);
+					
 					add(CustomerDao.ATTR_SURNAME);
+					add(CustomerDao.ATTR_IDEN_DOC);
 				}
 			};
 			List<String> restricted = new ArrayList<String>() {// TODO VER SI HAY ALGÚN CAMPO MÁS QUE UN CLIENTE
@@ -156,22 +164,21 @@ public class CustomerService implements ICustomerService {
 			cf.addBasics(CustomerDao.fields);
 			cf.setRequired(required);
 			cf.setRestricted(restricted);
-			cf.setOptional(true);
 			cf.validate(attrMap);
 
-//			Map<String, Object> subConsultaKeyMap = new HashMap<>() {
-//				{
-//					put(CustomerDao.ATTR_IDEN_DOC, attrMap.get(CustomerDao.ATTR_IDEN_DOC));
-//				}
-//			};
+			Map<String, Object> subConsultaKeyMap = new HashMap<>() {
+				{
+					put(CustomerDao.ATTR_IDEN_DOC, attrMap.get(CustomerDao.ATTR_IDEN_DOC));
+				}
+			};
 //			
-//			EntityResult auxEntity = customerQuery(subConsultaKeyMap, EntityResultTools.attributes(CustomerDao.ATTR_VAT_NUMBER));
-//			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros, insertamos
-//				resultado = this.daoHelper.insert(this.customerDao, attrMap);
-//				resultado.setMessage("Regular Customer registrado");				
-//			}else {
-//				resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
-//			}
+			EntityResult auxEntity = customerQuery(subConsultaKeyMap, EntityResultTools.attributes(CustomerDao.ATTR_IDEN_DOC));
+			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros, insertamos
+				resultado = this.daoHelper.insert(this.customerDao, attrMap);
+				resultado.setMessage("Regular Customer registrado");				
+			}else {
+				resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+			}
 
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
@@ -235,7 +242,7 @@ public class CustomerService implements ICustomerService {
 			} else {
 				resultado.setMessage("Customer actualizado");
 			}
-		} catch (MissingFieldsException e) {
+		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + e.getMessage());
 		} catch (DuplicateKeyException e) {
 			e.printStackTrace();
@@ -253,27 +260,27 @@ public class CustomerService implements ICustomerService {
 	@Override
 	public EntityResult customerDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 
-		EntityResult resultado = new EntityResultMapImpl();
-		try {
-			ValidateFields.required(keyMap, CustomerDao.ATTR_ID);
-
-			EntityResult auxEntity = this.daoHelper.query(this.customerDao,
-					EntityResultTools.keysvalues(CustomerDao.ATTR_ID, keyMap.get(CustomerDao.ATTR_ID)),
-					EntityResultTools.attributes(CustomerDao.ATTR_ID));
-			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
-				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
-			} else {
-				resultado = this.daoHelper.delete(this.customerDao, keyMap);
-				resultado.setMessage("Customer eliminado");
-			}
-		} catch (MissingFieldsException e) {
-			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + e.getMessage());
-		} catch (DataIntegrityViolationException e) {
-			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
-		} catch (Exception e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR);
-		}
+		EntityResult resultado = new EntityResultWrong("Operación no disponible");
+//		try {
+//			ValidateFields.required(keyMap, CustomerDao.ATTR_ID);
+//
+//			EntityResult auxEntity = this.daoHelper.query(this.customerDao,
+//					EntityResultTools.keysvalues(CustomerDao.ATTR_ID, keyMap.get(CustomerDao.ATTR_ID)),
+//					EntityResultTools.attributes(CustomerDao.ATTR_ID));
+//			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
+//				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
+//			} else {
+//				resultado = this.daoHelper.delete(this.customerDao, keyMap);
+//				resultado.setMessage("Customer eliminado");
+//			}
+//		} catch (MissingFieldsException e) {
+//			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + e.getMessage());
+//		} catch (DataIntegrityViolationException e) {
+//			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR);
+//		}
 		return resultado;
 
 	}
@@ -281,17 +288,57 @@ public class CustomerService implements ICustomerService {
 	@Override
 	public EntityResult customerCancelUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
-//action cancel user
+//TODO no cancelar usuarios en uso  en booking si no finalizado la fecha.
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			ValidateFields.required(keyMap, CustomerDao.ATTR_ID);
-			resultado = this.daoHelper.update(this.customerDao, attrMap, keyMap);
-			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
+			cf.reset();
+			cf.addBasics(CustomerDao.fields);
+			cf.setRequired(new ArrayList<>() {
+				{
+					add(CustomerDao.ATTR_ID);
+				}
+			});
+			cf.setOptional(false);
+			cf.validate(keyMap);
+
+			cf.reset();
+			cf.addBasics(CustomerDao.fields);
+			cf.setRequired(new ArrayList<>() {
+				{
+					add(CustomerDao.NON_ATTR_ACTION);
+				}
+			});
+			cf.setOptional(false);
+			cf.validate(attrMap);
+
+			Map<String, Object> subConsultaKeyMap = new HashMap<>() {
+				{
+					put(CustomerDao.ATTR_ID, keyMap.get(CustomerDao.ATTR_ID));
+				}
+			};
+
+			EntityResult auxEntity = customerQuery(subConsultaKeyMap,
+					EntityResultTools.attributes(CustomerDao.ATTR_ID));
+
+			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
 				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
 			} else {
-				resultado.setMessage("Customer actualizado");
+
+				Map<String, Object> finalAttrMap = new HashMap<>() {
+					{
+						put(CustomerDao.ATTR_CANCELED, new Date());
+					}
+				};
+				resultado = this.daoHelper.update(this.customerDao, finalAttrMap, keyMap);
+
+				if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
+					resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
+				} else {
+					resultado = new EntityResultMapImpl();
+					resultado.setMessage("Customer canceled");
+				}
 			}
-		} catch (MissingFieldsException e) {
+		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + e.getMessage());
 		} catch (DuplicateKeyException e) {
 			e.printStackTrace();
@@ -301,7 +348,7 @@ public class CustomerService implements ICustomerService {
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
 		} catch (Exception e) {
 			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR);
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
 	}

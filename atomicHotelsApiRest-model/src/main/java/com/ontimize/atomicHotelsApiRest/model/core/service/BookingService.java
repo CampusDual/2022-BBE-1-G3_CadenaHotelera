@@ -17,6 +17,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.service.IBookingService;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IRoomService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BedComboDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao.Action;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingGuestDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
@@ -192,15 +193,15 @@ public class BookingService implements IBookingService {
 			cf.validate(attrMap);
 			 
 			//TODO pasar a ControlFields
-			BookingDao.Action action;
-			try {
-				action = BookingDao.Action.valueOf((String) attrMap.get(BookingDao.NON_ATTR_ACTION));
-				attrMap.remove(BookingDao.NON_ATTR_ACTION);
-			} catch (IllegalArgumentException e) {
-				throw new InvalidFieldsValuesException(
-						ErrorMessage.INVALID_ACTION + " - " + attrMap.get(BookingDao.NON_ATTR_ACTION));
-			}
-
+//			BookingDao.Action action;
+//			try {
+//				action = BookingDao.Action.valueOf((String) attrMap.get(BookingDao.NON_ATTR_ACTION));
+//				attrMap.remove(BookingDao.NON_ATTR_ACTION);
+//			} catch (IllegalArgumentException e) {
+//				throw new InvalidFieldsValuesException(
+//						ErrorMessage.INVALID_ACTION + " - " + attrMap.get(BookingDao.NON_ATTR_ACTION));
+//			}
+			 BookingDao.Action action = (Action) attrMap.get(BookingDao.NON_ATTR_ACTION);
 			BookingDao.Status status = getBookingStatus(keyMap.get(BookingDao.ATTR_ID));
 
 			switch (status) {
@@ -241,7 +242,8 @@ public class BookingService implements IBookingService {
 			System.err.println(e.getMessage());
 			resultadoER = new EntityResultWrong(e.getMessage());
 		}catch(Exception e) {
-			resultadoER = new EntityResultWrong(e.getMessage());
+			e.printStackTrace();
+			resultadoER = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultadoER;
 	}
@@ -273,6 +275,7 @@ public class BookingService implements IBookingService {
 	@Override
 	public EntityResult bookingsInRangeInfoQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
+		EntityResult resultado = new EntityResultWrong();
 		try {
 			cf.reset();
 			cf.addBasics(CustomerDao.fields);
@@ -282,11 +285,15 @@ public class BookingService implements IBookingService {
 			cf.addBasics(HotelDao.fields);
 
 			bookingsInRangeBuilder(keyMap, attrList);
-			return this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryInfoBooking");
+			resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryInfoBooking");
 		} catch (ValidateException | LiadaPardaException e) {
 			System.err.println(e.getMessage());
-			return new EntityResultWrong(e.getMessage());
+			resultado = new EntityResultWrong(e.getMessage());
+		}catch(Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
+		return resultado;
 	}
 
 	/**
