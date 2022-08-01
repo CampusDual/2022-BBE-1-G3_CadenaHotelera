@@ -56,7 +56,7 @@ public class CustomerService implements ICustomerService {
 	@Override
 	public EntityResult customerQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
-//TODO dividir esta consulta el bussiness y regular
+//TODO dividir esta consulta el bussiness y regular?
 		EntityResult resultado = new EntityResultWrong();
 		try {
 			cf.reset();
@@ -76,7 +76,30 @@ public class CustomerService implements ICustomerService {
 		}
 		return resultado;
 	}
+	@Override
+	public EntityResult customerValidBookingHolder(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException {
+//TODO dividir esta consulta el bussiness y regular?
+		EntityResult resultado = new EntityResultWrong();
+		try {
+			cf.reset();
+			cf.addBasics(CustomerDao.fields);
+			cf.validate(keyMap);
+			cf.validate(attrList);
 
+			resultado = this.daoHelper.query(this.customerDao, keyMap, attrList, "queryBasic");
+
+		} catch (ValidateException e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(e.getMessage());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
+		}
+		return resultado;
+	}
+	
 	public EntityResult customerBloquedQuery(Object customerId) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 
@@ -105,8 +128,6 @@ public class CustomerService implements ICustomerService {
 		return resultado;
 	}
 
-	// TODO HACER DOS MÉTODOS DISTINTOS DE INSERT PARA EMPRESA Y CLIENTE PARTICULAR
-	// O JUNTAR LOS DOS SIGUIENTES MÉTODOS EN UN SOLO??
 
 	@Override
 	public EntityResult businessCustomerInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
@@ -114,9 +135,7 @@ public class CustomerService implements ICustomerService {
 		try {
 
 			List<String> required = new ArrayList<String>() {
-				{// TODO AÑADIR TODOS LOS QUE NO SEAN NULABLES
-					// TODO también habría que obligar a que guardaran la tarjeta??? Qué pasa ahora
-					// que hay una tabla aparte para ellas??
+				{
 					add(CustomerDao.ATTR_NAME);
 					add(CustomerDao.ATTR_PHONE);
 					add(CustomerDao.ATTR_COUNTRY);
@@ -124,8 +143,7 @@ public class CustomerService implements ICustomerService {
 					add(CustomerDao.ATTR_VAT_NUMBER);
 				}
 			};
-			List<String> restricted = new ArrayList<String>() {// TODO VER SI HAY ALGÚN CAMPO MÁS QUE UNA EMPRESA NO
-																// ADMITE
+			List<String> restricted = new ArrayList<String>() {
 				{
 					add(CustomerDao.ATTR_ID);
 					add(CustomerDao.ATTR_SURNAME);
@@ -172,9 +190,7 @@ public class CustomerService implements ICustomerService {
 		try {
 
 			List<String> required = new ArrayList<String>() {
-				{// TODO AÑADIR TODOS LOS QUE NO SEAN NULABLES
-					// TODO también habría que obligar a que guardaran la tarjeta??? Qué pasa ahora
-					// que hay una tabla aparte para ellas??
+				{
 					add(CustomerDao.ATTR_NAME);
 					add(CustomerDao.ATTR_PHONE);
 					add(CustomerDao.ATTR_COUNTRY);
@@ -183,8 +199,7 @@ public class CustomerService implements ICustomerService {
 					add(CustomerDao.ATTR_IDEN_DOC);
 				}
 			};
-			List<String> restricted = new ArrayList<String>() {// TODO VER SI HAY ALGÚN CAMPO MÁS QUE UN CLIENTE
-																// PARTICULAR NO ADMITE
+			List<String> restricted = new ArrayList<String>() {
 				{
 					add(CustomerDao.ATTR_ID);
 					add(CustomerDao.ATTR_VAT_NUMBER);

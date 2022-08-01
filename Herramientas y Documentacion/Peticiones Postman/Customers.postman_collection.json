@@ -137,26 +137,11 @@
 		{
 			"name": "-R costumer",
 			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "demouser",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "demo",
-							"type": "string"
-						}
-					]
-				},
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\": {\r\n     \"cst_id\": 2\r\n    },\r\n    \"columns\": [\"cst_id\",\"cst_name\",\"cst_surname\",\"cst_email\",\"cst_birth_date\",\"cst_identity_document\",\"cst_address\",\"cst_phone\"]\r\n}",
+					"raw": "{\r\n    \"filter\": {\r\n     \"cst_id\": 38\r\n    },\r\n    \"columns\": [\"cst_id\",\"cst_name\",\"cst_surname\",\"cst_email\",\"cst_birth_date\",\"cst_identity_document\",\"cst_address\",\"cst_phone\"]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"

@@ -22,5 +22,6 @@ public interface ICustomerService {
 	public EntityResult regularCustomerInsert (Map<String, Object> attrMap) throws OntimizeJEERuntimeException;
 	EntityResult customerCancelUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException;
+	EntityResult customerValidBookingHolderObject()hrows OntimizeJEERuntimeException;
 
 }
