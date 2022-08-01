@@ -78,7 +78,7 @@ public class CustomerService implements ICustomerService {
 	}
 
 	@Override
-	public boolean isCustomerValidBookingHolderObject(Object customerId) throws OntimizeJEERuntimeException {
+	public boolean isCustomerValidBookingHolder(Object customerId) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 
 		Map<String, Object> keyMap = new HashMap<>();
