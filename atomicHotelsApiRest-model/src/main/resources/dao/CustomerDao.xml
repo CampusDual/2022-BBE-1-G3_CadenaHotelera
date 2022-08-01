@@ -46,6 +46,17 @@
 					]]>
 			</Sentence>
 		</Query>
+		<Query id="isCustomerValidBookingHolder">
+			<Sentence>
+				<![CDATA[
+				SELECT c.cst_id FROM customers c 
+					LEFT JOIN customers_creditcard ccc ON c.cst_id = ccc.cst_id  
+					LEFT JOIN creditcard cc ON ccc.crd_id = cc.crd_id   
+				WHERE cc.crd_date_expiry > now()
+				#WHERE_CONCAT#
+					]]>
+			</Sentence>
+		</Query>
 		<!-- falta modificar customers (BG-141) 		<Query id="queryCheckCountry"> -->
 		<!-- 			<Sentence> -->
 		<!-- 				<![CDATA[ -->

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.EntityResultRequiredException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
@@ -22,6 +23,6 @@ public interface ICustomerService {
 	public EntityResult regularCustomerInsert (Map<String, Object> attrMap) throws OntimizeJEERuntimeException;
 	EntityResult customerCancelUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException;
-	public boolean isCustomerValidBookingHolder(Object customerId) throws OntimizeJEERuntimeException;
+	public boolean isCustomerValidBookingHolder(Object customerId) throws OntimizeJEERuntimeException,  EntityResultRequiredException;
 
 }

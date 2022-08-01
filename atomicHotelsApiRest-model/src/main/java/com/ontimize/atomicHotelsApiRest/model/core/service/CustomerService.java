@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.EntityResultRequiredException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.ICustomerService;
@@ -78,25 +79,17 @@ public class CustomerService implements ICustomerService {
 	}
 
 	@Override
-	public boolean isCustomerValidBookingHolder(Object customerId) throws OntimizeJEERuntimeException {
+	public boolean isCustomerValidBookingHolder(Object customerId) throws OntimizeJEERuntimeException, EntityResultRequiredException {
 		EntityResult resultado = new EntityResultWrong();
 
 		Map<String, Object> keyMap = new HashMap<>();
-		/*
-		 * select bkg_cst_id, bgs_cst_id from bookings left join bookings_guests on
-		 * bgs_bkg_id = bkg_id left join customers on bkg_cst_id = cst_id where bkg_end
-		 * >= now() and bkg_checkout is null and bkg_canceled is null
-		 * 
-		 */
-		BasicField customer = new BasicField(BookingDao.ATTR_CUSTOMER_ID);
-		BasicField guest = new BasicField(BookingGuestDao.ATTR_CST_ID);
-		BasicExpression exp01 = new BasicExpression(customer, BasicOperator.EQUAL_OP, customerId);
-		BasicExpression exp02 = new BasicExpression(guest, BasicOperator.EQUAL_OP, customerId);
-		BasicExpression finaExp = new BasicExpression(exp01, BasicOperator.OR_OP, exp02);
-		EntityResultExtraTools.putBasicExpression(keyMap, finaExp);
+		
 		resultado = this.daoHelper.query(this.customerDao, keyMap,
-				EntityResultTools.attributes(BookingDao.ATTR_CUSTOMER_ID, BookingGuestDao.ATTR_CST_ID),
-				"queryBloquedCustomer");
+				EntityResultTools.attributes(CustomerDao.ATTR_ID),
+				"isCustomerValidBookingHolder");
+		if(resultado.getCode() != EntityResult.OPERATION_WRONG ) {
+			throw new EntityResultRequiredException();
+		}
 		if (resultado.getCode() != EntityResult.OPERATION_WRONG && resultado.calculateRecordNumber() == 0) {
 			return false;
 		} else {
@@ -106,7 +99,7 @@ public class CustomerService implements ICustomerService {
 	}
 
 	
-	public boolean isCustomerBloquedQuery(Object customerId) throws OntimizeJEERuntimeException {
+	public boolean isCustomerBloquedQuery(Object customerId) throws OntimizeJEERuntimeException, EntityResultRequiredException {
 		EntityResult resultado = new EntityResultWrong();
 
 		Map<String, Object> keyMap = new HashMap<>();
@@ -124,8 +117,11 @@ public class CustomerService implements ICustomerService {
 		EntityResultExtraTools.putBasicExpression(keyMap, finaExp);
 		resultado = this.daoHelper.query(this.customerDao, keyMap,
 				EntityResultTools.attributes(BookingDao.ATTR_CUSTOMER_ID, BookingGuestDao.ATTR_CST_ID),
-				"queryBloquedCustomer");
-		if (resultado.getCode() != EntityResult.OPERATION_WRONG && resultado.calculateRecordNumber() == 0) {
+				"queryBloquedCustomer");		
+		if(resultado.getCode() != EntityResult.OPERATION_WRONG ) {
+			throw new EntityResultRequiredException();
+		}
+		if (resultado.calculateRecordNumber() == 0) {
 			return false;
 		} else {
 			return true;
