@@ -76,58 +76,62 @@ public class CustomerService implements ICustomerService {
 		}
 		return resultado;
 	}
+
 	@Override
-	public EntityResult customerValidBookingHolder(Map<String, Object> keyMap, List<String> attrList)
-			throws OntimizeJEERuntimeException {
-//TODO dividir esta consulta el bussiness y regular?
+	public boolean customerValidBookingHolderObject(Object customerId) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
-		try {
-			cf.reset();
-			cf.addBasics(CustomerDao.fields);
-			cf.validate(keyMap);
-			cf.validate(attrList);
 
-			resultado = this.daoHelper.query(this.customerDao, keyMap, attrList, "queryBasic");
-
-		} catch (ValidateException e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(e.getMessage());
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
+		Map<String, Object> keyMap = new HashMap<>();
+		/*
+		 * select bkg_cst_id, bgs_cst_id from bookings left join bookings_guests on
+		 * bgs_bkg_id = bkg_id left join customers on bkg_cst_id = cst_id where bkg_end
+		 * >= now() and bkg_checkout is null and bkg_canceled is null
+		 * 
+		 */
+		BasicField customer = new BasicField(BookingDao.ATTR_CUSTOMER_ID);
+		BasicField guest = new BasicField(BookingGuestDao.ATTR_CST_ID);
+		BasicExpression exp01 = new BasicExpression(customer, BasicOperator.EQUAL_OP, customerId);
+		BasicExpression exp02 = new BasicExpression(guest, BasicOperator.EQUAL_OP, customerId);
+		BasicExpression finaExp = new BasicExpression(exp01, BasicOperator.OR_OP, exp02);
+		EntityResultExtraTools.putBasicExpression(keyMap, finaExp);
+		resultado = this.daoHelper.query(this.customerDao, keyMap,
+				EntityResultTools.attributes(BookingDao.ATTR_CUSTOMER_ID, BookingGuestDao.ATTR_CST_ID),
+				"queryBloquedCustomer");
+		if (resultado.getCode() != EntityResult.OPERATION_WRONG && resultado.calculateRecordNumber() == 0) {
+			return false;
+		} else {
+			return true;
 		}
-		return resultado;
+
 	}
+
 	
-	public EntityResult customerBloquedQuery(Object customerId) throws OntimizeJEERuntimeException {
+	public boolean isCustomerBloquedQuery(Object customerId) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 
-		try {
-			Map<String, Object> keyMap = new HashMap<>();
-			/*
-			  select bkg_cst_id, bgs_cst_id from bookings left join bookings_guests on
-			  bgs_bkg_id = bkg_id left join customers on bkg_cst_id = cst_id where bkg_end
-			  >= now() and bkg_checkout is null and bkg_canceled is null
-			 * 
-			 */
-			BasicField customer = new BasicField(BookingDao.ATTR_CUSTOMER_ID);
-			BasicField guest = new BasicField(BookingGuestDao.ATTR_CST_ID);
-			BasicExpression exp01 = new BasicExpression(customer, BasicOperator.EQUAL_OP, customerId);
-			BasicExpression exp02 = new BasicExpression(guest, BasicOperator.EQUAL_OP, customerId);
-			BasicExpression finaExp = new BasicExpression(exp01, BasicOperator.OR_OP, exp02);
-			EntityResultExtraTools.putBasicExpression(keyMap, finaExp);
-			resultado = this.daoHelper.query(this.customerDao, keyMap,
-					EntityResultTools.attributes(BookingDao.ATTR_CUSTOMER_ID, BookingGuestDao.ATTR_CST_ID),
-					"queryBloquedCustomer");
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
+		Map<String, Object> keyMap = new HashMap<>();
+		/*
+		 * select bkg_cst_id, bgs_cst_id from bookings left join bookings_guests on
+		 * bgs_bkg_id = bkg_id left join customers on bkg_cst_id = cst_id where bkg_end
+		 * >= now() and bkg_checkout is null and bkg_canceled is null
+		 * 
+		 */
+		BasicField customer = new BasicField(BookingDao.ATTR_CUSTOMER_ID);
+		BasicField guest = new BasicField(BookingGuestDao.ATTR_CST_ID);
+		BasicExpression exp01 = new BasicExpression(customer, BasicOperator.EQUAL_OP, customerId);
+		BasicExpression exp02 = new BasicExpression(guest, BasicOperator.EQUAL_OP, customerId);
+		BasicExpression finaExp = new BasicExpression(exp01, BasicOperator.OR_OP, exp02);
+		EntityResultExtraTools.putBasicExpression(keyMap, finaExp);
+		resultado = this.daoHelper.query(this.customerDao, keyMap,
+				EntityResultTools.attributes(BookingDao.ATTR_CUSTOMER_ID, BookingGuestDao.ATTR_CST_ID),
+				"queryBloquedCustomer");
+		if (resultado.getCode() != EntityResult.OPERATION_WRONG && resultado.calculateRecordNumber() == 0) {
+			return false;
+		} else {
+			return true;
 		}
-		return resultado;
-	}
 
+	}
 
 	@Override
 	public EntityResult businessCustomerInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
@@ -369,15 +373,7 @@ public class CustomerService implements ICustomerService {
 				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
 
 			} else {
-				auxEntity = customerBloquedQuery(keyMap.get(CustomerDao.ATTR_ID));
-				if (auxEntity.getCode() != EntityResult.OPERATION_WRONG && auxEntity.calculateRecordNumber() == 0) { // si
-																														// no
-																														// está
-																														// siendo
-																														// usado
-																														// el
-																														// cliente
-
+				if (!isCustomerBloquedQuery(keyMap.get(CustomerDao.ATTR_ID))) {
 					Map<String, Object> finalAttrMap = new HashMap<>() {
 						{
 							put(CustomerDao.ATTR_CANCELED, new Date());

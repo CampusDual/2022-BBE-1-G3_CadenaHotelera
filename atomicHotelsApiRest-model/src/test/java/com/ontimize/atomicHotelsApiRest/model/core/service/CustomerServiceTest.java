@@ -48,15 +48,15 @@ class CustomerServiceTest {
 	public class CustomerQuery {
 		@Test
 		@DisplayName("ControlFields usar reset()")
-		void testHotelQueryControlFieldsReset() {
-			service.hotelQuery(TestingTools.getMapEmpty(), getColumsName());
+		void testcustomerQueryControlFieldsReset() {
+			service.customerQuery(TestingTools.getMapEmpty(), getColumsName());
 			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
 		}
 
 		@Test
 		@DisplayName("ControlFields usar validate() map y list")
-		void testHotelQueryControlFieldsValidate() {
-			service.hotelQuery(TestingTools.getMapEmpty(), getColumsName());
+		void testcustomerQueryControlFieldsValidate() {
+			service.customerQuery(TestingTools.getMapEmpty(), getColumsName());
 			try {
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyList());
@@ -68,15 +68,15 @@ class CustomerServiceTest {
 
 		@Test
 		@DisplayName("Valores de entrada válidos")
-		void testHotelQueryOK() {
+		void testcustomerQueryOK() {
 			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
 
 			// válido: HashMap vacio (sin filtros)
-			eR = service.hotelQuery(TestingTools.getMapEmpty(), getColumsName());
+			eR = service.customerQuery(TestingTools.getMapEmpty(), getColumsName());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
 
 			// válido: HashMap con filtro que existe (sin filtros)
-			eR = service.hotelQuery(getMapId(), getColumsName());
+			eR = service.customerQuery(getMapId(), getColumsName());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
 
 		}
