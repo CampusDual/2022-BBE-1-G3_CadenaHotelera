@@ -17,6 +17,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IBookingGuestService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingGuestDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.ReceiptDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
@@ -37,6 +38,9 @@ public class BookingGuestService implements IBookingGuestService {
 	
 	@Autowired
 	private BookingService bookingService;
+	
+	@Autowired
+	private CustomerService customerService;
 
 	@Autowired
 	ControlFields cf;
@@ -106,46 +110,60 @@ public class BookingGuestService implements IBookingGuestService {
 			cf.addBasics(BookingGuestDao.fields);
 			cf.setRequired(required);
 			cf.setRestricted(restricted);
-			cf.setOptional(false);
+			cf.setOptional(false); 
 			cf.validate(attrMap);
 
 			if (bookingService.getBookingStatus(attrMap.get(BookingGuestDao.ATTR_BKG_ID))
 					.equals(BookingDao.Status.CONFIRMED)) {
 				
-				List<String> listaCualquiera = new ArrayList<String>();
-
-				Map<String, Object> reservaGuest = new HashMap<String, Object>() {
-					{
-						put(BookingGuestDao.ATTR_BKG_ID, attrMap.get(BookingGuestDao.ATTR_BKG_ID));
-					}
-				};
+				Map<String,Object> customerId = new HashMap<String,Object>(){{
+					put(CustomerDao.ATTR_ID,attrMap.get(BookingGuestDao.ATTR_CST_ID));
+				}};
 				
-				//Devuelve el atributo total_guests indepnedientemente de lo que se introduzca, por se le pasa una lista cualquiera
-				EntityResult guestCount = this.guestCountQuery(reservaGuest, listaCualquiera);
+				List<String> customerIdentityDocument = Arrays.asList(CustomerDao.ATTR_IDEN_DOC);
 				
-				long totalG = (long) guestCount.getRecordValues(0).get(BookingGuestDao.ATTR_TOTAL_GUESTS);
+				EntityResult regularCustomer = customerService.customerQuery(customerId, customerIdentityDocument);
+				
+				if(regularCustomer.getRecordValues(0).get(CustomerDao.ATTR_IDEN_DOC)!=null) {
+					List<String> listaCualquiera = new ArrayList<String>();
 
-				Map<String, Object> reserva = new HashMap<String, Object>() {
-					{
-						put(BookingDao.ATTR_ID, attrMap.get(BookingGuestDao.ATTR_BKG_ID));
+					Map<String, Object> reservaGuest = new HashMap<String, Object>() {
+						{
+							put(BookingGuestDao.ATTR_BKG_ID, attrMap.get(BookingGuestDao.ATTR_BKG_ID));
+						}
+					};
+					
+					//Devuelve el atributo total_guests indepnedientemente de lo que se introduzca, por se le pasa una lista cualquiera
+					EntityResult guestCount = this.guestCountQuery(reservaGuest, listaCualquiera);
+					
+					long totalG = (long) guestCount.getRecordValues(0).get(BookingGuestDao.ATTR_TOTAL_GUESTS);
+
+					Map<String, Object> reserva = new HashMap<String, Object>() {
+						{
+							put(BookingDao.ATTR_ID, attrMap.get(BookingGuestDao.ATTR_BKG_ID));
+						}
+					};
+
+					List<String> totalSlots = new ArrayList<String>() {
+						{
+							add(BookingGuestDao.ATTR_TOTAL_SLOTS);
+						}
+					};
+
+					EntityResult slotsCount = bookingService.bookingSlotsInfoQuery(reserva, totalSlots);
+
+					long totalS = (long) slotsCount.getRecordValues(0).get(BookingGuestDao.ATTR_TOTAL_SLOTS);
+
+					if (totalG < totalS) {
+						resultado = this.daoHelper.insert(this.bookingGuestDao, attrMap);
+					} else {
+						resultado = new EntityResultWrong("La reserva está completa. No admite más huéspedes");
 					}
-				};
-
-				List<String> totalSlots = new ArrayList<String>() {
-					{
-						add(BookingGuestDao.ATTR_TOTAL_SLOTS);
-					}
-				};
-
-				EntityResult slotsCount = bookingService.bookingSlotsInfoQuery(reserva, totalSlots);
-
-				long totalS = (long) slotsCount.getRecordValues(0).get(BookingGuestDao.ATTR_TOTAL_SLOTS);
-
-				if (totalG < totalS) {
-					resultado = this.daoHelper.insert(this.bookingGuestDao, attrMap);
-				} else {
-					resultado = new EntityResultWrong("La reserva está completa. No admite más huéspedes");
-				}
+					
+				}else {
+					resultado = new EntityResultWrong("Un huesped tiene que ser una persona física");
+				}		
+				
 			} else {
 				resultado = new EntityResultWrong(ErrorMessage.NO_GUEST_IN_NOT_CONFIRMED_BOOKING);
 			}
