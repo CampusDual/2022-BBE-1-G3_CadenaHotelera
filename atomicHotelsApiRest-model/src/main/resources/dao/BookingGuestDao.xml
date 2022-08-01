@@ -3,7 +3,7 @@
 xsi:schemaLocation="http://www.ontimize.com/schema/jdbc http://www.ontimize.com/schema/jdbc/ontimize-jdbc-dao.xsd" 
 catalog="" schema="${mainschema}" table="bookings_guests" datasource="mainDataSource" sqlhandler="dbSQLStatementHandler">
 	<DeleteKeys>
-		<Column>bgs__id</Column>
+		<Column>bgs_id</Column>
 	</DeleteKeys>
 	<UpdateKeys>
 		<Column>bgs_id</Column>

@@ -25,6 +25,7 @@ import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
+import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 
 @Service("BookingGuestService")
@@ -187,9 +188,46 @@ public class BookingGuestService implements IBookingGuestService {
 	@Override
 	public EntityResult bookingGuestDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
-
-		resultado = this.daoHelper.delete(this.bookingGuestDao, keyMap);
+		try {
+		cf.reset();
+		cf.addBasics(BookingGuestDao.fields);
+		List<String> required =  Arrays.asList(BookingGuestDao.ATTR_ID);
+		cf.setRequired(required);
+		cf.setOptional(false);
+		cf.validate(keyMap);
+		
+		Map <String,Object> consultaKeyMap=new HashMap<>() {
+			{
+				put(BookingGuestDao.ATTR_ID,keyMap.get(BookingGuestDao.ATTR_ID));
+				
+			}	
+		};
+		EntityResult auxEntity=bookingGuestQuery(consultaKeyMap,EntityResultTools.attributes(BookingGuestDao.ATTR_ID,BookingGuestDao.ATTR_BKG_ID));
+		if(auxEntity.calculateRecordNumber()==0) {
+			resultado=new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
+		}else {
+			if (bookingService.getBookingStatus(auxEntity.getRecordValues(0).get(BookingGuestDao.ATTR_BKG_ID))
+					.equals(BookingDao.Status.CONFIRMED)) {
+				
+				resultado=this.daoHelper.delete(this.bookingGuestDao, keyMap);
+				resultado.setMessage("Asociacion de Reserva y huesped borrado");
+				
+			}else {
+					resultado = new EntityResultWrong("Solo se puede borrar huesped antes de Check_in");
+					
+				}
+				
+		}
+		} catch (EntityResultRequiredException e) {
+			resultado = new EntityResultWrong(e.getMessage());
+		} catch (ValidateException e) {
+			resultado = new EntityResultWrong(e.getMessage());
+		} catch (DataIntegrityViolationException e) {
+			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.ERROR);
+		}
 		return resultado;
 	}
-
 }
