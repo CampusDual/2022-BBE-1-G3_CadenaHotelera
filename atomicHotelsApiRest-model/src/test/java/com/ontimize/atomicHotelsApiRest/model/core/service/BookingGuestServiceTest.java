@@ -181,27 +181,28 @@ class BookingGuestServiceTest {
 			}
 		}
 
-//		@Test
-//		@DisplayName("Valores de entrada válidos")
-//		void tesBookingGuestInsertOK() {
-//			doReturn(new EntityResultMapImpl()).when(daoHelper).insert(any(), anyMap());
-//			try {
-//				when(bookingServiceMock.getBookingStatus(any())).thenReturn(BookingDao.Status.CONFIRMED);
-//				when(customerServiceMock.customerQuery(anyMap(), anyList())).thenReturn(getCustomerIdentityDocument());
-//				when(hotelServiceExtraServiceMock.hotelServiceExtraQuery(anyMap(), anyList())).thenReturn(getPrice());
-//			} catch (EntityResultRequiredException e) {
-//				fail("Err");
-//				e.printStackTrace();
-//			}
-//			// válido: HashMap campos mínimos
-//			eR = service.bookingServiceExtraInsert(getMapRequiredInsert());
+		@Test
+		@DisplayName("Valores de entrada válidos")
+		void tesBookingGuestInsertOK() {
+			doReturn(new EntityResultMapImpl()).when(daoHelper).insert(any(), anyMap());
+			try {
+				when(bookingServiceMock.getBookingStatus(any())).thenReturn(BookingDao.Status.CONFIRMED);
+				when(customerServiceMock.customerQuery(anyMap(), anyList())).thenReturn(getCustomerIdentityDocument());
+				doReturn(getTotalGuests()).when(daoHelper).query(any(), anyMap(), anyList(),anyString());
+				when(bookingServiceMock.bookingSlotsInfoQuery(anyMap(), anyList())).thenReturn(getTotalSlots());
+			} catch (EntityResultRequiredException e) {
+				fail("Err");
+				e.printStackTrace();
+			}
+			// válido: HashMap campos mínimos
+			eR = service.bookingGuestInsert(getMapRequiredInsert());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+
+//			// válido: HashMap campos mínimos y mas
+//			eR = service.bookingServiceExtraInsert(getMapRequiredInsertExtended());
 //			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
-//
-////			// válido: HashMap campos mínimos y mas
-////			eR = service.bookingServiceExtraInsert(getMapRequiredInsertExtended());
-////			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
-//
-//		}
+
+		}
 //
 //		@Test
 //		@DisplayName("Valores de entrada NO válidos")
@@ -559,9 +560,8 @@ class BookingGuestServiceTest {
 	Map<String, Object> getMapRequiredInsert() {
 		return new HashMap<>() {
 			{
-				put(BookingServiceExtraDao.ATTR_ID_BKG, 1);
-				put(BookingServiceExtraDao.ATTR_ID_SXT, 1);
-				put(BookingServiceExtraDao.ATTR_ID_UNITS, 1);
+				put(BookingGuestDao.ATTR_BKG_ID, 1);
+				put(BookingGuestDao.ATTR_CST_ID, 1);
 			}
 		};
 	}
@@ -611,23 +611,22 @@ class BookingGuestServiceTest {
 		return er;
 	}
 
-	EntityResult getBookingServiceExtra() {
+	EntityResult getTotalSlots() {
 		EntityResult er = new EntityResultMapImpl();
 		er.addRecord(new HashMap<String, Object>() {
 			{
-				put(BookingServiceExtraDao.ATTR_ID, 1);
+				put(BookingGuestDao.ATTR_TOTAL_SLOTS, 2);
 			}
 		});
 		return er;
 	}
 	
 
-	EntityResult getPrice() {
+	EntityResult getTotalGuests() {
 		EntityResult er = new EntityResultMapImpl();
 		er.addRecord(new HashMap<String, Object>() {
 			{
-				put(HotelServiceExtraDao.ATTR_ID_SXT, 1);
-				put(HotelServiceExtraDao.ATTR_PRECIO, 22);
+				put(BookingGuestDao.ATTR_TOTAL_GUESTS, 1L);
 
 			}
 		});

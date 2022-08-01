@@ -98,7 +98,7 @@ public class BookingGuestService implements IBookingGuestService {
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
-	}
+	} 
 
 	@Override
 	public EntityResult bookingGuestInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
@@ -112,7 +112,7 @@ public class BookingGuestService implements IBookingGuestService {
 			cf.setRequired(required);
 			cf.setRestricted(restricted);
 			cf.setOptional(false); 
-			cf.validate(attrMap);
+			cf.validate(attrMap); 
 
 			if (bookingService.getBookingStatus(attrMap.get(BookingGuestDao.ATTR_BKG_ID))
 					.equals(BookingDao.Status.CONFIRMED)) {
@@ -137,7 +137,7 @@ public class BookingGuestService implements IBookingGuestService {
 					//Devuelve el atributo total_guests indepnedientemente de lo que se introduzca, por se le pasa una lista cualquiera
 					EntityResult guestCount = this.guestCountQuery(reservaGuest, listaCualquiera);
 					
-					long totalG = (long) guestCount.getRecordValues(0).get(BookingGuestDao.ATTR_TOTAL_GUESTS);
+					Long totalG = (Long) guestCount.getRecordValues(0).get(BookingGuestDao.ATTR_TOTAL_GUESTS);
 
 					Map<String, Object> reserva = new HashMap<String, Object>() {
 						{
@@ -153,7 +153,7 @@ public class BookingGuestService implements IBookingGuestService {
 
 					EntityResult slotsCount = bookingService.bookingSlotsInfoQuery(reserva, totalSlots);
 
-					long totalS = (long) slotsCount.getRecordValues(0).get(BookingGuestDao.ATTR_TOTAL_SLOTS);
+					Integer totalS = (Integer) slotsCount.getRecordValues(0).get(BookingGuestDao.ATTR_TOTAL_SLOTS);
 
 					if (totalG < totalS) {
 						resultado = this.daoHelper.insert(this.bookingGuestDao, attrMap);
