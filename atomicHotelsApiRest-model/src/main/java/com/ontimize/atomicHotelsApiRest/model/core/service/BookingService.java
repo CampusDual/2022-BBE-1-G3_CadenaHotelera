@@ -428,6 +428,10 @@ public class BookingService implements IBookingService {
 			cf.addBasics(RoomDao.fields); 
 			cf.setRequired(required);
 	        cf.validate(keyMap);
+	        
+	        cf.reset();
+			cf.setNoEmptyList(false);
+			cf.validate(attrList);
 	               
 			resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryDiasPrecioUnitarioHabitacion");
 
@@ -553,6 +557,10 @@ public class BookingService implements IBookingService {
 			cf.setRequired(required);
 			cf.setOptional(false);
 			cf.validate(keyMap);
+			
+			cf.reset();
+			cf.setNoEmptyList(false);
+			cf.validate(attrList);
 			
 
 
