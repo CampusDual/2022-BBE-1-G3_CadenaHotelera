@@ -1,0 +1,229 @@
+{
+	"info": {
+		"_postman_id": "914b88ea-1e21-415e-a22a-1c0325cdac7a",
+		"name": "BookingGuest",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "R - all bookingGuests",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:33333/bookingsGuests/bookingGuest?columns=bgs_id,bgs_bkg_id,bgs_cst_id,bgs_registration_date",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookingsGuests",
+						"bookingGuest"
+					],
+					"query": [
+						{
+							"key": "columns",
+							"value": "bgs_id,bgs_bkg_id,bgs_cst_id,bgs_registration_date"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "R - bookingGuest",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \"filter\":{    \r\n  \"bgs_bkg_id\":7\r\n },\r\n \"columns\":[\"bgs_id\",\"bgs_bkg_id\",\"bgs_cst_id\",\"bgs_registration_date\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookingsGuests/bookingGuest/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookingsGuests",
+						"bookingGuest",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "R - guestCount",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"bgs_bkg_id\":6\r\n    },\r\n    \"columns\":[\"total_guests\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookingsGuests/guestCount/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookingsGuests",
+						"guestCount",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "R- slotsCount",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"bkg_id\":1\r\n    },\r\n    \"columns\":[\"total_slots\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookings/bookingSlotsInfo/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookings",
+						"bookingSlotsInfo",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "C - bookingGuest",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"data\":{\r\n        \"bgs_bkg_id\":7,\r\n        \"bgs_cst_id\":8\r\n\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookingsGuests/bookingGuest",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookingsGuests",
+						"bookingGuest"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
