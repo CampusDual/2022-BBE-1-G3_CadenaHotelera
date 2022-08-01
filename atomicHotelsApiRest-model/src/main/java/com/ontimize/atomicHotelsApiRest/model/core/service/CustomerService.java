@@ -1,8 +1,6 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -12,27 +10,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.jdbc.SQLWarningException;
 import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.EntityResultRequiredException;
-import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
-import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
-import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
+
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.ICustomerService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingGuestDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
-import com.ontimize.atomicHotelsApiRest.model.core.dao.FeatureDao;
-import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
-import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultExtraTools;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
-import com.ontimize.jee.common.db.SQLStatementBuilder;
 import com.ontimize.jee.common.db.SQLStatementBuilder.BasicExpression;
 import com.ontimize.jee.common.db.SQLStatementBuilder.BasicField;
 import com.ontimize.jee.common.db.SQLStatementBuilder.BasicOperator;
@@ -79,15 +70,15 @@ public class CustomerService implements ICustomerService {
 	}
 
 	@Override
-	public boolean isCustomerValidBookingHolder(Object customerId) throws OntimizeJEERuntimeException, EntityResultRequiredException {
+	public boolean isCustomerValidBookingHolder(Object customerId)
+			throws OntimizeJEERuntimeException, EntityResultRequiredException {
 		EntityResult resultado = new EntityResultWrong();
 
 		Map<String, Object> keyMap = new HashMap<>();
-		
-		resultado = this.daoHelper.query(this.customerDao, keyMap,
-				EntityResultTools.attributes(CustomerDao.ATTR_ID),
+
+		resultado = this.daoHelper.query(this.customerDao, keyMap, EntityResultTools.attributes(CustomerDao.ATTR_ID),
 				"isCustomerValidBookingHolder");
-		if(resultado.getCode() != EntityResult.OPERATION_WRONG ) {
+		if (resultado.getCode() == EntityResult.OPERATION_WRONG) {
 			throw new EntityResultRequiredException();
 		}
 		if (resultado.getCode() != EntityResult.OPERATION_WRONG && resultado.calculateRecordNumber() == 0) {
@@ -98,8 +89,8 @@ public class CustomerService implements ICustomerService {
 
 	}
 
-	
-	public boolean isCustomerBloquedQuery(Object customerId) throws OntimizeJEERuntimeException, EntityResultRequiredException {
+	public boolean isCustomerBloquedQuery(Object customerId)
+			throws OntimizeJEERuntimeException, EntityResultRequiredException {
 		EntityResult resultado = new EntityResultWrong();
 
 		Map<String, Object> keyMap = new HashMap<>();
@@ -117,8 +108,8 @@ public class CustomerService implements ICustomerService {
 		EntityResultExtraTools.putBasicExpression(keyMap, finaExp);
 		resultado = this.daoHelper.query(this.customerDao, keyMap,
 				EntityResultTools.attributes(BookingDao.ATTR_CUSTOMER_ID, BookingGuestDao.ATTR_CST_ID),
-				"queryBloquedCustomer");		
-		if(resultado.getCode() != EntityResult.OPERATION_WRONG ) {
+				"queryBloquedCustomer");
+		if (resultado.getCode() == EntityResult.OPERATION_WRONG) {
 			throw new EntityResultRequiredException();
 		}
 		if (resultado.calculateRecordNumber() == 0) {

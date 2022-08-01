@@ -112,7 +112,7 @@ class HotelServiceTest {
 			eR = service.hotelQuery(TestingTools.getMapEmpty(), getColumsName());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
 
-			// válido: HashMap con filtro que existe (sin filtros)
+			// válido: HashMap con filtro que existe
 			eR = service.hotelQuery(getMapId(), getColumsName());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
 
