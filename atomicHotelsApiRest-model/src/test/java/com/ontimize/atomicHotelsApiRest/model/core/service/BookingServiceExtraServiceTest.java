@@ -413,30 +413,19 @@ class BookingServiceExtraServiceTest {
 			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
 		}
 
+		
 		@Test
-		@DisplayName("ControlFields usar validate() map") 
-		void testBookingExtraServicePriceUnitsTotalQueryControlFieldsValidate() {
-			service.bookingExtraServicePriceUnitsTotalQuery(TestingTools.getMapEmpty(), getColumsName());
+		@DisplayName("ControlFields usar validate() map y list") 
+		void testBookingExtraServicePriceUnitsTotalQueryControlFieldsValidateList() {
+			service.bookingExtraServicePriceUnitsTotalQuery(getBookingId(), getColumsName());
 			try {
-				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());		
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields map")).validate(anyMap());
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields list")).validate(anyList());	
 			} catch (Exception e) {
 				e.printStackTrace();
 				fail("excepción no capturada: " + e.getMessage());
 			}
 		}
-		
-		//TODO testear que usa el validador en lista
-//		@Test
-//		@DisplayName("ControlFields usar validate() list") 
-//		void testBookingExtraServicePriceUnitsTotalQueryControlFieldsValidateList() {
-//			service.bookingExtraServicePriceUnitsTotalQuery(TestingTools.getMapEmpty(), getColumsName());
-//			try {
-//				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyList());	
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				fail("excepción no capturada: " + e.getMessage());
-//			}
-//		}
 
 		@Test
 		@DisplayName("Valores de entrada válidos")
@@ -501,29 +490,17 @@ class BookingServiceExtraServiceTest {
 		}
 
 		@Test
-		@DisplayName("ControlFields usar validate() map") 
-		void testExtraServicesNameDescriptionUnitsPriceDateQuerysTotalQueryControlFieldsValidate() {
-			service.extraServicesNameDescriptionUnitsPriceDateQuery(TestingTools.getMapEmpty(), getColumsName());
+		@DisplayName("ControlFields usar validate() map y list") 
+		void testBookingExtraServicePriceUnitsTotalQueryControlFieldsValidateList() {
+			service.extraServicesNameDescriptionUnitsPriceDateQuery(getBookingId(), getColumsName());
 			try {
-				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields map")).validate(anyMap());
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields list")).validate(anyList());	
 			} catch (Exception e) {
 				e.printStackTrace();
 				fail("excepción no capturada: " + e.getMessage());
 			}
 		}
-		
-		//TODO testear que usa el validador en lista
-//		@Test
-//		@DisplayName("ControlFields usar validate() list") 
-//		void testBookingExtraServicePriceUnitsTotalQueryControlFieldsValidateList() {
-//			service.extraServicesNameDescriptionUnitsPriceDateQuery(TestingTools.getMapEmpty(), getColumsName());
-//			try {
-//				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyList());	
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				fail("excepción no capturada: " + e.getMessage());
-//			}
-//		}
 
 		@Test
 		@DisplayName("Valores de entrada válidos")
@@ -647,6 +624,7 @@ class BookingServiceExtraServiceTest {
 		});
 		return er;
 	}
+	
 
 	EntityResult getPrice() {
 		EntityResult er = new EntityResultMapImpl();
