@@ -21,6 +21,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsExcepti
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.ICustomerService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingGuestDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.FeatureDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
@@ -55,6 +56,7 @@ public class CustomerService implements ICustomerService {
 	@Override
 	public EntityResult customerQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
+//TODO dividir esta consulta el bussiness y regular
 		EntityResult resultado = new EntityResultWrong();
 		try {
 			cf.reset();
@@ -67,6 +69,34 @@ public class CustomerService implements ICustomerService {
 		} catch (ValidateException e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(e.getMessage());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
+		}
+		return resultado;
+	}
+
+	public EntityResult customerBloquedQuery(Object customerId) throws OntimizeJEERuntimeException {
+		EntityResult resultado = new EntityResultWrong();
+
+		try {
+			Map<String, Object> keyMap = new HashMap<>();
+			/*
+			  select bkg_cst_id, bgs_cst_id from bookings left join bookings_guests on
+			  bgs_bkg_id = bkg_id left join customers on bkg_cst_id = cst_id where bkg_end
+			  >= now() and bkg_checkout is null and bkg_canceled is null
+			 * 
+			 */
+			BasicField customer = new BasicField(BookingDao.ATTR_CUSTOMER_ID);
+			BasicField guest = new BasicField(BookingGuestDao.ATTR_CST_ID);
+			BasicExpression exp01 = new BasicExpression(customer, BasicOperator.EQUAL_OP, customerId);
+			BasicExpression exp02 = new BasicExpression(guest, BasicOperator.EQUAL_OP, customerId);
+			BasicExpression finaExp = new BasicExpression(exp01, BasicOperator.OR_OP, exp02);
+			EntityResultExtraTools.putBasicExpression(keyMap, finaExp);
+			resultado = this.daoHelper.query(this.customerDao, keyMap,
+					EntityResultTools.attributes(BookingDao.ATTR_CUSTOMER_ID, BookingGuestDao.ATTR_CST_ID),
+					"queryBloquedCustomer");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -148,7 +178,7 @@ public class CustomerService implements ICustomerService {
 					add(CustomerDao.ATTR_NAME);
 					add(CustomerDao.ATTR_PHONE);
 					add(CustomerDao.ATTR_COUNTRY);
-					
+
 					add(CustomerDao.ATTR_SURNAME);
 					add(CustomerDao.ATTR_IDEN_DOC);
 				}
@@ -172,11 +202,12 @@ public class CustomerService implements ICustomerService {
 				}
 			};
 //			
-			EntityResult auxEntity = customerQuery(subConsultaKeyMap, EntityResultTools.attributes(CustomerDao.ATTR_IDEN_DOC));
+			EntityResult auxEntity = customerQuery(subConsultaKeyMap,
+					EntityResultTools.attributes(CustomerDao.ATTR_IDEN_DOC));
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros, insertamos
 				resultado = this.daoHelper.insert(this.customerDao, attrMap);
-				resultado.setMessage("Regular Customer registrado");				
-			}else {
+				resultado.setMessage("Regular Customer registrado");
+			} else {
 				resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 			}
 
@@ -289,7 +320,7 @@ public class CustomerService implements ICustomerService {
 	public EntityResult customerCancelUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
 //TODO no cancelar usuarios en uso  en booking si no finalizado la fecha.
-		EntityResult resultado = new EntityResultMapImpl();
+		EntityResult resultado = new EntityResultWrong();
 		try {
 			cf.reset();
 			cf.addBasics(CustomerDao.fields);
@@ -319,23 +350,34 @@ public class CustomerService implements ICustomerService {
 
 			EntityResult auxEntity = customerQuery(subConsultaKeyMap,
 					EntityResultTools.attributes(CustomerDao.ATTR_ID));
-
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
 				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
+
 			} else {
+				auxEntity = customerBloquedQuery(keyMap.get(CustomerDao.ATTR_ID));
+				if (auxEntity.getCode() != EntityResult.OPERATION_WRONG && auxEntity.calculateRecordNumber() == 0) { // si
+																														// no
+																														// está
+																														// siendo
+																														// usado
+																														// el
+																														// cliente
 
-				Map<String, Object> finalAttrMap = new HashMap<>() {
-					{
-						put(CustomerDao.ATTR_CANCELED, new Date());
+					Map<String, Object> finalAttrMap = new HashMap<>() {
+						{
+							put(CustomerDao.ATTR_CANCELED, new Date());
+						}
+					};
+					resultado = this.daoHelper.update(this.customerDao, finalAttrMap, keyMap);
+
+					if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
+						resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
+					} else {
+						resultado = new EntityResultMapImpl();
+						resultado.setMessage("Customer canceled");
 					}
-				};
-				resultado = this.daoHelper.update(this.customerDao, finalAttrMap, keyMap);
-
-				if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
-					resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
 				} else {
-					resultado = new EntityResultMapImpl();
-					resultado.setMessage("Customer canceled");
+					resultado = new EntityResultWrong(ErrorMessage.BLOCKED_CUSTOMER);
 				}
 			}
 		} catch (ValidateException e) {

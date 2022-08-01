@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<JdbcEntitySetup xmlns="http://www.ontimize.com/schema/jdbc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-xsi:schemaLocation="http://www.ontimize.com/schema/jdbc http://www.ontimize.com/schema/jdbc/ontimize-jdbc-dao.xsd" 
-catalog="" schema="${mainschema}" table="customers" datasource="mainDataSource" sqlhandler="dbSQLStatementHandler">
+<JdbcEntitySetup xmlns="http://www.ontimize.com/schema/jdbc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ontimize.com/schema/jdbc http://www.ontimize.com/schema/jdbc/ontimize-jdbc-dao.xsd" catalog="" schema="${mainschema}" table="customers" datasource="mainDataSource" sqlhandler="dbSQLStatementHandler">
 	<DeleteKeys>
 		<Column>cst_id</Column>
 	</DeleteKeys>
 	<UpdateKeys>
 		<Column>cst_id</Column>
 	</UpdateKeys>
-	<GeneratedKey>cst_id</GeneratedKey>	
+	<GeneratedKey>cst_id</GeneratedKey>
 	<Queries>
 		<Query id="queryAgreementEmails">
 			<Sentence>
@@ -37,18 +35,29 @@ catalog="" schema="${mainschema}" table="customers" datasource="mainDataSource" 
 				]]>
 			</Sentence>
 		</Query>
-<!-- falta modificar customers (BG-141) 		<Query id="queryCheckCountry"> -->
-<!-- 			<Sentence> -->
-<!-- 				<![CDATA[ -->
-<!-- 					SELECT -->
-<!-- 					#COLUMNS# -->
-<!-- 					FROM -->
-<!-- 					customers -->
-<!-- 					WHERE  -->
-<!-- 					country	 -->
-<!-- 					#WHERE_CONCAT#						     					      -->
-<!-- 				]]> -->
-<!-- 			</Sentence> -->
-<!-- 		</Query> -->
+		<Query id="queryBloquedCustomer">
+			<Sentence>
+				<![CDATA[
+				SELECT bkg_cst_id, bgs_cst_id  FROM bookings 
+					LEFT JOIN bookings_guests on bgs_bkg_id = bkg_id
+					LEFT JOIN customers on bkg_cst_id = cst_id 
+				WHERE bkg_end >= now() and  bkg_checkout is null and bkg_canceled is null
+				#WHERE_CONCAT#
+					]]>
+			</Sentence>
+		</Query>
+		<!-- falta modificar customers (BG-141) 		<Query id="queryCheckCountry"> -->
+		<!-- 			<Sentence> -->
+		<!-- 				<![CDATA[ -->
+		<!-- 					SELECT -->
+		<!-- 					#COLUMNS# -->
+		<!-- 					FROM -->
+		<!-- 					customers -->
+		<!-- 					WHERE  -->
+		<!-- 					country	 -->
+		<!-- 					#WHERE_CONCAT#						     					      -->
+		<!-- 				]]> -->
+		<!-- 			</Sentence> -->
+		<!-- 		</Query> -->
 	</Queries>
 </JdbcEntitySetup>

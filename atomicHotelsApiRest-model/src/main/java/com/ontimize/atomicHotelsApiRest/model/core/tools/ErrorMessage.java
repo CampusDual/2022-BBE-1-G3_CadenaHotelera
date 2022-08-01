@@ -15,6 +15,7 @@ public class ErrorMessage {
 	public static final String UPDATE_ERROR_DUPLICATED_FIELD = "No es posible duplicar un registro";	 
 	public static final String UPDATE_ERROR_REQUIRED_FIELDS = "No es posible eliminar campos obligatorios";	 
 	public static final String UPDATE_ERROR_MISSING_FK = "No existe la referencia necesaria en otra tabla";
+	public static final String BLOCKED_CUSTOMER = "El cliente no puede ser modificado, está siendo usado";
  
 	 
 //ERRORES DE DELETE
@@ -56,5 +57,6 @@ public class ErrorMessage {
 	public static final String NO_BASIC_EXPRESSION = "No se permiten Basics Expresions";
 	public static final String NO_ALLOW_COLUMS = "Esta consulta no permite especificar las Columnas de retorno";
 	public static final String UNCAUGHT_EXCEPTION = "Esta consulta no permite especificar las Columnas de retorno";
+	
 
 }
