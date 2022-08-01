@@ -593,21 +593,6 @@ class BookingServiceTest {
 				}
 				
 			}
-/////
-
-				@Test
-				@DisplayName("ControlFields usar validate() map")
-				void testBooking_now_by_room_numberQueryControlFieldsValidate() {
-					service.booking_now_by_room_numberQuery(TestingTools.getMapEmpty(), getColumsName());
-					try {
-						verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
-					
-					} catch (Exception e) {
-						e.printStackTrace();
-						fail("excepción no capturada: " + e.getMessage());
-					}
-				}
-	//////
 	
 	@Nested
 	@DisplayName("Test for BookingExtraServicePriceUnitsTotal queries")
