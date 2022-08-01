@@ -159,7 +159,7 @@ class BookingGuestServiceTest {
 	@Nested
 	@DisplayName("Test for BookingGuest inserts")
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	public class HotelInsert {
+	public class BookingGuestInsert {
 
 		@Test
 		@DisplayName("ControlFields usar reset()")
@@ -198,360 +198,273 @@ class BookingGuestServiceTest {
 			eR = service.bookingGuestInsert(getMapRequiredInsert());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
 
-//			// válido: HashMap campos mínimos y mas
-//			eR = service.bookingServiceExtraInsert(getMapRequiredInsertExtended());
-//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+		}
+
+		@Test
+		@DisplayName("Valores de entrada NO válidos")
+		void testhotelInsertKO() {
+			try {
+				// lanzamos todas las excepciones de Validate para comprobar que están bien
+				// recojidas.
+				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
+				eR = service.bookingGuestInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
+				eR = service.bookingGuestInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
+				eR = service.bookingGuestInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
+				eR = service.bookingGuestInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
+				eR = service.bookingGuestInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				reset(cf);
+				// extra para controlar required:
+				eR = service.bookingGuestInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+				System.out.println(eR.getMessage());
+				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
+
+				// extra para controlar restricted:
+				eR = service.bookingGuestInsert(getMapRequiredInsertExtendedWidthRestricted());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+				System.out.println(eR.getMessage());
+				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
+
+				reset(cf);
+				doThrow(EntityResultRequiredException.class).when(bookingServiceMock).getBookingStatus(any());
+				eR = service.bookingGuestInsert(getMapRequiredInsert());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertEquals(ErrorMessage.NO_BOOKING_ID, eR.getMessage(),
+						eR.getMessage());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("excepción no capturada: " + e.getMessage());
+			}
+
+		}
+	}
+
+	@Nested
+	@DisplayName("Test for BookingGuest deletes")
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	public class BookingGuestDelete {
+		@Test
+		@DisplayName("ControlFields usar reset()")
+		void testBookingGuestDeleteControlFieldsReset() {
+			service.bookingGuestDelete(TestingTools.getMapEmpty());
+			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
+		}
+
+		@Test
+		@DisplayName("ControlFields usar validate() map ")
+		void testBookingGuestDeleteControlFieldsValidate() {
+			service.bookingGuestDelete(TestingTools.getMapEmpty());
+			try {
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("excepción no capturada: " + e.getMessage());
+
+			}
+		}
+
+		@Test
+		@DisplayName("Valores de entrada válidos")
+		void testbookingGuestDeleteOK() {
+
+			doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(), anyList());
+			doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
+			try {
+				when(bookingServiceMock.getBookingStatus(any())).thenReturn(BookingDao.Status.CONFIRMED);
+			} catch (EntityResultRequiredException e) {
+				fail("Err");
+				e.printStackTrace();
+			}
+			// válido: HashMap campo único y exclusivo
+			eR = service.bookingGuestDelete(getMapId());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+
+		}
+
+		@Test
+		@DisplayName("Valores Subcontulta Error")
+		void testbookingServiceExtraDeleteSubQueryKO() {
+			doReturn(new EntityResultWrong()).when(daoHelper).query(any(), anyMap(), anyList());
+
+			//
+			eR = service.bookingGuestDelete(getMapId());
+			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+			assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+		}
+
+		@Test
+		@DisplayName("Valores Subconsultta 0 resultados")
+		void testbookingServiceExtraDeleteSubQueryNoResults() {
+			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
+			eR = service.bookingGuestDelete(getMapId());
+			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+			assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+		}
+
+		@Test
+		@DisplayName("Valores de entrada NO válidos")
+		void testbookingServiceExtraDeleteKO() {
+			try {
+				// lanzamos todas las excepciones de Validate para comprobar que están bien
+				// recogidas.
+				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
+				eR = service.bookingGuestDelete(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
+				eR = service.bookingGuestDelete(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
+				eR = service.bookingGuestDelete(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
+				eR = service.bookingGuestDelete(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
+				eR = service.bookingGuestDelete(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				// lanzamos todas las excepciones de SQL para comprobar que están bien
+				// recogidas.
+				doThrow(DataIntegrityViolationException.class).when(cf).validate(anyMap());
+				eR = service.bookingGuestDelete(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				reset(cf); // para quitar doThrow anterior
+				// extra para controlar required:
+				eR = service.bookingGuestDelete(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
+
+				// extra para controlar restricted:
+				eR = service.bookingGuestDelete(getMapRequiredDeletetExtendedWidthRestricted());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
+
+				reset(cf);
+				when(daoHelper.query(any(), anyMap(), anyList())).thenReturn(getEntityResultIdBookingId());
+				doThrow(new EntityResultRequiredException("Error al consultar estado de la reserva"))
+						.when(bookingServiceMock).getBookingStatus(any());
+				eR = service.bookingGuestDelete(getMapId());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertEquals("Error al consultar estado de la reserva", eR.getMessage(), eR.getMessage());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("excepción no capturada: " + e.getMessage());
+			}
+
+		}
+	}
+
+	@Nested
+	@DisplayName("Test for GuestCount queries")
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	public class GuestCountQuery {
+
+		@Test
+		@DisplayName("ControlFields usar reset()")
+		void testGuestCountQueryQueryControlFieldsReset() {
+			service.guestCountQuery(TestingTools.getMapEmpty(), getColumsName());
+			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
+		}
+
+		
+		@Test
+		@DisplayName("ControlFields usar validate() map y list") 
+		void testGuestCountQueryControlFieldsValidateList() {
+			service.guestCountQuery(getBookingId(), getColumsName());
+			try {
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields map")).validate(anyMap());
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields list")).validate(anyList());	
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("excepción no capturada: " + e.getMessage());
+			}
+		}
+
+		@Test
+		@DisplayName("Valores de entrada válidos")
+		void testGuestCountQueryOK() {
+			doReturn(getEntityResultPrecioServcioUnidadesTotal()).when(daoHelper).query(any(), anyMap(), anyList(),
+					anyString());
+			eR = service.guestCountQuery(getBookingId(),new ArrayList());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
 
 		}
 //
-//		@Test
-//		@DisplayName("Valores de entrada NO válidos")
-//		void testhotelInsertKO() {
-//			try {
-//				// lanzamos todas las excepciones de Validate para comprobar que están bien
-//				// recojidas.
-//				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
-//				eR = service.bookingServiceExtraInsert(TestingTools.getMapEmpty());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
-//				eR = service.bookingServiceExtraInsert(TestingTools.getMapEmpty());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
-//				eR = service.bookingServiceExtraInsert(TestingTools.getMapEmpty());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
-//				eR = service.bookingServiceExtraInsert(TestingTools.getMapEmpty());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
-//				eR = service.bookingServiceExtraInsert(TestingTools.getMapEmpty());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				reset(cf);
-//				// extra para controlar required:
-//				eR = service.bookingServiceExtraInsert(TestingTools.getMapEmpty());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//				System.out.println(eR.getMessage());
-//				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
-//
-//				// extra para controlar restricted:
-//				eR = service.bookingServiceExtraInsert(getMapRequiredInsertExtendedWidthRestricted());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//				System.out.println(eR.getMessage());
-//				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
-//
-//				reset(cf);
-//				doThrow(EntityResultRequiredException.class).when(bookingServiceMock).getBookingStatus(any());
-//				eR = service.bookingServiceExtraInsert(getMapRequiredInsert());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertEquals(ErrorMessage.RESULT_REQUIRED + " " + ErrorMessage.NO_BOOKING_ID, eR.getMessage(),
-//						eR.getMessage());
-//
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				fail("excepción no capturada: " + e.getMessage());
-//			}
-//
-//		}
+		@Test
+		@DisplayName("Valores de entrada NO válidos")
+		void testGuestCountQueryKO() {
+			try {
+				// lanzamos todas las excepciones de Validate para comprobar que están bien
+				// recojidas.
+				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
+				eR = service.guestCountQuery(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
+				eR = service.guestCountQuery(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
+				eR = service.guestCountQuery(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
+				eR = service.guestCountQuery(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
+				eR = service.guestCountQuery(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("excepción no capturada: " + e.getMessage());
+			}
+
+		}
+
 	}
-//
-//	@Nested
-//	@DisplayName("Test for BookingServiceExtra deletes")
-//	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-//	public class HotelDelete {
-//		@Test
-//		@DisplayName("ControlFields usar reset()")
-//		void testbookingServiceExtraDeleteControlFieldsReset() {
-//			service.bookingServiceExtraDelete(TestingTools.getMapEmpty());
-//			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
-//		}
-//
-//		@Test
-//		@DisplayName("ControlFields usar validate() map ")
-//		void testBookingServiceExtraDeleteControlFieldsValidate() {
-//			service.bookingServiceExtraDelete(TestingTools.getMapEmpty());
-//			try {
-//				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				fail("excepción no capturada: " + e.getMessage());
-//
-//			}
-//		}
-//
-//		@Test
-//		@DisplayName("Valores de entrada válidos")
-//		void testbookingServiceExtraDeleteOK() {
-//
-//			doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(), anyList());
-//			doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
-//			try {
-//				when(bookingServiceMock.getBookingStatus(any())).thenReturn(BookingDao.Status.IN_PROGRESS);
-//			} catch (EntityResultRequiredException e) {
-//				fail("Err");
-//				e.printStackTrace();
-//			}
-//			// válido: HashMap campo único y exclusivo
-//			eR = service.bookingServiceExtraDelete(getMapId());
-//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
-//
-//		}
-//
-//		@Test
-//		@DisplayName("Valores Subcontulta Error")
-//		void testbookingServiceExtraDeleteSubQueryKO() {
-//			doReturn(new EntityResultWrong()).when(daoHelper).query(any(), anyMap(), anyList());
-////			doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
-//
-//			//
-//			eR = service.bookingServiceExtraDelete(getMapId());
-//			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//			assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//		}
-//
-//		@Test
-//		@DisplayName("Valores Subconsultta 0 resultados")
-//		void testbookingServiceExtraDeleteSubQueryNoResults() {
-//			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
-////			doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
-//
-//			//
-//			eR = service.bookingServiceExtraDelete(getMapId());
-//			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//			assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//		}
-//
-//		@Test
-//		@DisplayName("Valores de entrada NO válidos")
-//		void testbookingServiceExtraDeleteKO() {
-//			try {
-//				// lanzamos todas las excepciones de Validate para comprobar que están bien
-//				// recogidas.
-//				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
-//				eR = service.bookingServiceExtraDelete(TestingTools.getMapEmpty());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
-//				eR = service.bookingServiceExtraDelete(TestingTools.getMapEmpty());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
-//				eR = service.bookingServiceExtraDelete(TestingTools.getMapEmpty());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
-//				eR = service.bookingServiceExtraDelete(TestingTools.getMapEmpty());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
-//				eR = service.bookingServiceExtraDelete(TestingTools.getMapEmpty());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				// lanzamos todas las excepciones de SQL para comprobar que están bien
-//				// recogidas.
-//				doThrow(DataIntegrityViolationException.class).when(cf).validate(anyMap());
-//				eR = service.bookingServiceExtraDelete(TestingTools.getMapEmpty());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				reset(cf); // para quitar doThrow anterior
-//				// extra para controlar required:
-//				eR = service.bookingServiceExtraDelete(TestingTools.getMapEmpty());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
-//
-//				// extra para controlar restricted:
-//				eR = service.bookingServiceExtraDelete(getMapRequiredDeletetExtendedWidthRestricted());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
-//
-//				reset(cf);
-//				when(daoHelper.query(any(), anyMap(), anyList())).thenReturn(getBookingServiceExtra());
-//				doThrow(new EntityResultRequiredException("Error al consultar estado de la reserva"))
-//						.when(bookingServiceMock).getBookingStatus(any());
-//				eR = service.bookingServiceExtraDelete(getMapId());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertEquals("Error al consultar estado de la reserva", eR.getMessage(), eR.getMessage());
-//
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				fail("excepción no capturada: " + e.getMessage());
-//			}
-//
-//		}
-//	}
-//
-//	@Nested
-//	@DisplayName("Test for BookingExtraServicePriceUnitsTotal queries")
-//	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-//	public class BookingExtraServicePriceUnitsTotalQuery {
-//
-//		@Test
-//		@DisplayName("ControlFields usar reset()")
-//		void testBookingExtraServicePriceUnitsTotalQueryControlFieldsReset() {
-//			service.bookingExtraServicePriceUnitsTotalQuery(TestingTools.getMapEmpty(), getColumsName());
-//			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
-//		}
-//
-//		
-//		@Test
-//		@DisplayName("ControlFields usar validate() map y list") 
-//		void testBookingExtraServicePriceUnitsTotalQueryControlFieldsValidateList() {
-//			service.bookingExtraServicePriceUnitsTotalQuery(getBookingId(), getColumsName());
-//			try {
-//				verify(cf, description("No se ha utilizado el metodo validate de ControlFields map")).validate(anyMap());
-//				verify(cf, description("No se ha utilizado el metodo validate de ControlFields list")).validate(anyList());	
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				fail("excepción no capturada: " + e.getMessage());
-//			}
-//		}
-//
-//		@Test
-//		@DisplayName("Valores de entrada válidos")
-//		void testBookingExtraServicePriceUnitsTotalQueryOK() {
-//			doReturn(getEntityResultPrecioServcioUnidadesTotal()).when(daoHelper).query(any(), anyMap(), anyList(),
-//					anyString());
-//			eR = service.bookingExtraServicePriceUnitsTotalQuery(getBookingId(),new ArrayList());
-//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
-//
-//		}
-//
-//		@Test
-//		@DisplayName("Valores de entrada NO válidos")
-//		void testBookingExtraServicePriceUnitsTotalQueryKO() {
-//			try {
-//				// lanzamos todas las excepciones de Validate para comprobar que están bien
-//				// recojidas.
-//				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
-//				eR = service.bookingExtraServicePriceUnitsTotalQuery(TestingTools.getMapEmpty(), getColumsName());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
-//				eR = service.bookingExtraServicePriceUnitsTotalQuery(TestingTools.getMapEmpty(), getColumsName());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
-//				eR = service.bookingExtraServicePriceUnitsTotalQuery(TestingTools.getMapEmpty(), getColumsName());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
-//				eR = service.bookingExtraServicePriceUnitsTotalQuery(TestingTools.getMapEmpty(), getColumsName());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
-//				eR = service.bookingExtraServicePriceUnitsTotalQuery(TestingTools.getMapEmpty(), getColumsName());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				fail("excepción no capturada: " + e.getMessage());
-//			}
-//
-//		}
-//
-//	}
-//
-//	@Nested
-//	@DisplayName("Test for ExtraServicesNameDescriptionUnitsPriceDate queries")
-//	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-//	public class ExtraServicesNameDescriptionUnitsPriceDateQuery {
-//
-//		@Test
-//		@DisplayName("ControlFields usar reset()")
-//		void testExtraServicesNameDescriptionUnitsPriceDateQueryControlFieldsReset() {
-//			service.extraServicesNameDescriptionUnitsPriceDateQuery(TestingTools.getMapEmpty(), getColumsName());
-//			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
-//		}
-//
-//		@Test
-//		@DisplayName("ControlFields usar validate() map y list") 
-//		void testBookingExtraServicePriceUnitsTotalQueryControlFieldsValidateList() {
-//			service.extraServicesNameDescriptionUnitsPriceDateQuery(getBookingId(), getColumsName());
-//			try {
-//				verify(cf, description("No se ha utilizado el metodo validate de ControlFields map")).validate(anyMap());
-//				verify(cf, description("No se ha utilizado el metodo validate de ControlFields list")).validate(anyList());	
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				fail("excepción no capturada: " + e.getMessage());
-//			}
-//		}
-//
-//		@Test
-//		@DisplayName("Valores de entrada válidos")
-//		void testExtraServicesNameDescriptionUnitsPriceDateQueryOK() {
-//			doReturn(getEntityResultListaServciosExtra()).when(daoHelper).query(any(), anyMap(), anyList(),
-//					anyString());
-//			eR = service.extraServicesNameDescriptionUnitsPriceDateQuery(getBookingId(),
-//					new ArrayList());
-//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
-//
-//		}
-//
-//		@Test
-//		@DisplayName("Valores de entrada NO válidos")
-//		void testExtraServicesNameDescriptionUnitsPriceDateQueryKO() {
-//			try {
-//				// lanzamos todas las excepciones de Validate para comprobar que están bien
-//				// recojidas.
-//				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
-//				eR = service.extraServicesNameDescriptionUnitsPriceDateQuery(TestingTools.getMapEmpty(),
-//						getColumsName());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
-//				eR = service.extraServicesNameDescriptionUnitsPriceDateQuery(TestingTools.getMapEmpty(),
-//						getColumsName());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
-//				eR = service.extraServicesNameDescriptionUnitsPriceDateQuery(TestingTools.getMapEmpty(),
-//						getColumsName());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
-//				eR = service.extraServicesNameDescriptionUnitsPriceDateQuery(TestingTools.getMapEmpty(),
-//						getColumsName());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
-//				eR = service.extraServicesNameDescriptionUnitsPriceDateQuery(TestingTools.getMapEmpty(),
-//						getColumsName());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				fail("excepción no capturada: " + e.getMessage());
-//			}
-//
-//		}
 
 //	}
 
@@ -565,6 +478,8 @@ class BookingGuestServiceTest {
 			}
 		};
 	}
+	
+	
 
 	HashMap<String, Object> getMapId() {
 		HashMap<String, Object> filters = new HashMap<>() {
@@ -578,7 +493,7 @@ class BookingGuestServiceTest {
 	HashMap<String, Object> getBookingId() {
 		HashMap<String, Object> filters = new HashMap<>() {
 			{
-				put(BookingServiceExtraDao.ATTR_ID_BKG, 1);
+				put(BookingGuestDao.ATTR_BKG_ID, 1);
 			}
 		};
 		return filters;
@@ -588,11 +503,9 @@ class BookingGuestServiceTest {
 
 		return new HashMap<>() {
 			{
-				put(BookingServiceExtraDao.ATTR_ID, 1);
-				put(BookingServiceExtraDao.ATTR_ID_BKG, 1);
-				put(BookingServiceExtraDao.ATTR_ID_SXT, 1);
-				put(BookingServiceExtraDao.ATTR_ID_UNITS, 1);
-				put(BookingServiceExtraDao.ATTR_PRECIO, 12);
+				put(BookingGuestDao.ATTR_ID, 1);
+				put(BookingGuestDao.ATTR_REGISTRATION_DATE,TestingTools.getNowString());
+			
 			}
 		};
 	}
@@ -656,17 +569,20 @@ class BookingGuestServiceTest {
 		return er;
 	}
 
-	List<String> getPrecioServcioUnidadesTotal() {
-		List<String> columns = new ArrayList<>() {
+
+	EntityResult getEntityResultIdBookingId() {
+		EntityResult er = new EntityResultMapImpl();
+		er.addRecord(new HashMap<String, Object>() {
 			{
-				add(BookingServiceExtraDao.ATTR_ID_BKG);
-				add(BookingServiceExtraDao.ATTR_ID_UNITS);
-				add(BookingServiceExtraDao.ATTR_PRECIO);
-				add("total");
+				put(BookingGuestDao.ATTR_ID,1);
+				put(BookingGuestDao.ATTR_BKG_ID,1);
+
 			}
-		};
-		return columns;
+
+		});
+		return er;
 	}
+
 	
 	EntityResult getEntityResultListaServciosExtra() {
 		EntityResult er = new EntityResultMapImpl();
