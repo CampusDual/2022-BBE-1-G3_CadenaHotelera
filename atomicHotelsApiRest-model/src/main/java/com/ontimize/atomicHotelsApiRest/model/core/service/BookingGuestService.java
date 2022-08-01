@@ -36,16 +36,16 @@ public class BookingGuestService implements IBookingGuestService {
 	private BookingGuestDao bookingGuestDao;
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
-	
+
 	@Autowired
 	private BookingService bookingService;
-	
+
 	@Autowired
 	private CustomerService customerService;
 
 	@Autowired
 	ControlFields cf;
-	
+
 	@Override
 	public EntityResult bookingGuestQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
@@ -55,20 +55,28 @@ public class BookingGuestService implements IBookingGuestService {
 			cf.addBasics(BookingGuestDao.fields);
 			cf.validate(keyMap);
 			cf.validate(attrList);
-			
+
 			resultado = this.daoHelper.query(this.bookingGuestDao, keyMap, attrList);
-		
-		}catch(ValidateException e) {
+
+		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
-		
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
-		
+
 		return resultado;
 	}
-	
+
+	/**
+	 * Dado el id de una reserva, el número de huéspedes que ya están asociados a
+	 * esa reserva
+	 * 
+	 * @param keyMap   (BookingGuestDao.ATTR_ATTR_BKG_ID)
+	 * @param attrList (BookingGuestDao.ATTR_TOTAL_GUESTS)
+	 * @throws OntimizeJEERuntimeException
+	 */
 	@Override
 	public EntityResult guestCountQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
@@ -76,14 +84,13 @@ public class BookingGuestService implements IBookingGuestService {
 		try {
 
 			List<String> required = Arrays.asList(BookingGuestDao.ATTR_BKG_ID);
-				
+
 			cf.reset();
 			cf.addBasics(BookingGuestDao.fields);
 			cf.setRequired(required);
 			cf.setOptional(false);
 			cf.validate(keyMap);
 
-			//Poner todas las subconsultas que no aceptan attrList asi!!
 			cf.reset();
 			cf.setNoEmptyList(false);
 			cf.validate(attrList);
@@ -98,7 +105,7 @@ public class BookingGuestService implements IBookingGuestService {
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
-	} 
+	}
 
 	@Override
 	public EntityResult bookingGuestInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
@@ -106,26 +113,32 @@ public class BookingGuestService implements IBookingGuestService {
 		try {
 
 			cf.reset();
-			List<String> required =  Arrays.asList(BookingGuestDao.ATTR_BKG_ID,BookingGuestDao.ATTR_CST_ID);
-			List<String> restricted = Arrays.asList(BookingGuestDao.ATTR_ID,BookingGuestDao.ATTR_REGISTRATION_DATE);
+			List<String> required = Arrays.asList(BookingGuestDao.ATTR_BKG_ID, BookingGuestDao.ATTR_CST_ID);
+			List<String> restricted = Arrays.asList(BookingGuestDao.ATTR_ID, BookingGuestDao.ATTR_REGISTRATION_DATE);
 			cf.addBasics(BookingGuestDao.fields);
 			cf.setRequired(required);
 			cf.setRestricted(restricted);
-			cf.setOptional(false); 
-			cf.validate(attrMap); 
+			cf.setOptional(false);
+			cf.validate(attrMap);
 
+			// Para que una reserva admita un nuevo huesped, esta tiene que estar en estado
+			// 'CONFIRMED'
 			if (bookingService.getBookingStatus(attrMap.get(BookingGuestDao.ATTR_BKG_ID))
 					.equals(BookingDao.Status.CONFIRMED)) {
-				
-				Map<String,Object> customerId = new HashMap<String,Object>(){{
-					put(CustomerDao.ATTR_ID,attrMap.get(BookingGuestDao.ATTR_CST_ID));
-				}};
-				
+
+				Map<String, Object> customerId = new HashMap<String, Object>() {
+					{
+						put(CustomerDao.ATTR_ID, attrMap.get(BookingGuestDao.ATTR_CST_ID));
+					}
+				};
 				List<String> customerIdentityDocument = Arrays.asList(CustomerDao.ATTR_IDEN_DOC);
-				
+
+				// Devuelve el documento de identidad de un cliente en caso de que este lo tenga
 				EntityResult regularCustomer = customerService.customerQuery(customerId, customerIdentityDocument);
-				
-				if(regularCustomer.getRecordValues(0).get(CustomerDao.ATTR_IDEN_DOC)!=null) {
+
+				// Si el cliente no tiene documento de identidad, no es un persona física y por
+				// lo tanto no podrá ser un huesped
+				if (regularCustomer.getRecordValues(0).get(CustomerDao.ATTR_IDEN_DOC) != null) {
 					List<String> listaCualquiera = new ArrayList<String>();
 
 					Map<String, Object> reservaGuest = new HashMap<String, Object>() {
@@ -133,18 +146,20 @@ public class BookingGuestService implements IBookingGuestService {
 							put(BookingGuestDao.ATTR_BKG_ID, attrMap.get(BookingGuestDao.ATTR_BKG_ID));
 						}
 					};
-					
-					//Devuelve el atributo total_guests indepnedientemente de lo que se introduzca, por se le pasa una lista cualquiera
+
+					// Devuelve el atributo total_guests indepnedientemente de lo que se introduzca,
+					// por se le pasa una lista cualquiera
 					EntityResult guestCount = this.guestCountQuery(reservaGuest, listaCualquiera);
-					
-					long totalG=0;
-					
-					if(guestCount.calculateRecordNumber()>0) {
+
+					long totalG = 0;
+
+					// Si ya hay huespedes en esa reserva, se recoge cuantos son
+					if (guestCount.calculateRecordNumber() > 0) {
 						totalG = (long) guestCount.getRecordValues(0).get(BookingGuestDao.ATTR_TOTAL_GUESTS);
-					}else {
-						totalG=0;
+					} else {
+						// Si no hay huéspedes todavía en la reserva, el número actual será cero
+						totalG = 0;
 					}
-					
 
 					Map<String, Object> reserva = new HashMap<String, Object>() {
 						{
@@ -152,26 +167,29 @@ public class BookingGuestService implements IBookingGuestService {
 						}
 					};
 
-					List<String> totalSlots = new ArrayList<String>() {
+					List<String> totalSlots = new ArrayList<String>() { // Podría ser cualquier lista
 						{
 							add(BookingGuestDao.ATTR_TOTAL_SLOTS);
 						}
 					};
 
+					// Devuelve la capacidad total de todas las habitaciones que forman la reserva
 					EntityResult slotsCount = bookingService.bookingSlotsInfoQuery(reserva, totalSlots);
 
 					Long totalS = (Long) slotsCount.getRecordValues(0).get(BookingGuestDao.ATTR_TOTAL_SLOTS);
 
+					// Si el número de huéspedes que ya están asignados a las habitaciones de la
+					// reserva es inferior a la capacidad de la reserv, se podrán añadir más
 					if (totalG < totalS) {
 						resultado = this.daoHelper.insert(this.bookingGuestDao, attrMap);
 					} else {
 						resultado = new EntityResultWrong("La reserva está completa. No admite más huéspedes");
 					}
-					
-				}else {
+
+				} else {
 					resultado = new EntityResultWrong("Un huesped tiene que ser una persona física");
-				}		
-				
+				}
+
 			} else {
 				resultado = new EntityResultWrong(ErrorMessage.NO_GUEST_IN_NOT_CONFIRMED_BOOKING);
 			}
@@ -191,40 +209,42 @@ public class BookingGuestService implements IBookingGuestService {
 		}
 		return resultado;
 	}
-	
+
 	@Override
 	public EntityResult bookingGuestDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 		try {
-		cf.reset();
-		cf.addBasics(BookingGuestDao.fields);
-		List<String> required =  Arrays.asList(BookingGuestDao.ATTR_ID);
-		cf.setRequired(required);
-		cf.setOptional(false);
-		cf.validate(keyMap);
-		
-		Map <String,Object> consultaKeyMap=new HashMap<>() {
-			{
-				put(BookingGuestDao.ATTR_ID,keyMap.get(BookingGuestDao.ATTR_ID));
-				
-			}	
-		};
-		EntityResult auxEntity=bookingGuestQuery(consultaKeyMap,EntityResultTools.attributes(BookingGuestDao.ATTR_ID,BookingGuestDao.ATTR_BKG_ID));
-		if(auxEntity.calculateRecordNumber()==0) {
-			resultado=new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
-		}else {
-			if (bookingService.getBookingStatus(auxEntity.getRecordValues(0).get(BookingGuestDao.ATTR_BKG_ID))
-					.equals(BookingDao.Status.CONFIRMED)) {
-				
-				resultado=this.daoHelper.delete(this.bookingGuestDao, keyMap);
-				resultado.setMessage("Asociacion de Reserva y huesped borrado");
-				
-			}else {
-					resultado = new EntityResultWrong("Solo se puede borrar huesped antes de Check_in");
-					
+			cf.reset();
+			cf.addBasics(BookingGuestDao.fields);
+			List<String> required = Arrays.asList(BookingGuestDao.ATTR_ID);
+			cf.setRequired(required);
+			cf.setOptional(false);
+			cf.validate(keyMap);
+
+			Map<String, Object> consultaKeyMap = new HashMap<>() {
+				{
+					put(BookingGuestDao.ATTR_ID, keyMap.get(BookingGuestDao.ATTR_ID));
+
 				}
+			};
+			
+			EntityResult auxEntity = bookingGuestQuery(consultaKeyMap,
+					EntityResultTools.attributes(BookingGuestDao.ATTR_ID, BookingGuestDao.ATTR_BKG_ID));
+			if (auxEntity.calculateRecordNumber() == 0) {
+				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
+			} else {
 				
-		}
+				if (bookingService.getBookingStatus(auxEntity.getRecordValues(0).get(BookingGuestDao.ATTR_BKG_ID))
+						.equals(BookingDao.Status.CONFIRMED)) {
+
+					resultado = this.daoHelper.delete(this.bookingGuestDao, keyMap);
+					resultado.setMessage("Asociacion de Reserva y huesped borrado");
+
+				} else {
+					resultado = new EntityResultWrong("Solo se puede borrar huesped antes de Check_in");
+
+				}
+			}
 		} catch (EntityResultRequiredException e) {
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (ValidateException e) {
