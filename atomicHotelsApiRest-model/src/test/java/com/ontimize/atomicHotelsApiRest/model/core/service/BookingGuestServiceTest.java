@@ -615,7 +615,7 @@ class BookingGuestServiceTest {
 		EntityResult er = new EntityResultMapImpl();
 		er.addRecord(new HashMap<String, Object>() {
 			{
-				put(BookingGuestDao.ATTR_TOTAL_SLOTS, 2);
+				put(BookingGuestDao.ATTR_TOTAL_SLOTS, 2L);
 			}
 		});
 		return er;

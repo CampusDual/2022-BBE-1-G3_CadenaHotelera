@@ -137,7 +137,14 @@ public class BookingGuestService implements IBookingGuestService {
 					//Devuelve el atributo total_guests indepnedientemente de lo que se introduzca, por se le pasa una lista cualquiera
 					EntityResult guestCount = this.guestCountQuery(reservaGuest, listaCualquiera);
 					
-					Long totalG = (Long) guestCount.getRecordValues(0).get(BookingGuestDao.ATTR_TOTAL_GUESTS);
+					long totalG=0;
+					
+					if(guestCount.calculateRecordNumber()>0) {
+						totalG = (long) guestCount.getRecordValues(0).get(BookingGuestDao.ATTR_TOTAL_GUESTS);
+					}else {
+						totalG=0;
+					}
+					
 
 					Map<String, Object> reserva = new HashMap<String, Object>() {
 						{
@@ -153,7 +160,7 @@ public class BookingGuestService implements IBookingGuestService {
 
 					EntityResult slotsCount = bookingService.bookingSlotsInfoQuery(reserva, totalSlots);
 
-					Integer totalS = (Integer) slotsCount.getRecordValues(0).get(BookingGuestDao.ATTR_TOTAL_SLOTS);
+					Long totalS = (Long) slotsCount.getRecordValues(0).get(BookingGuestDao.ATTR_TOTAL_SLOTS);
 
 					if (totalG < totalS) {
 						resultado = this.daoHelper.insert(this.bookingGuestDao, attrMap);
