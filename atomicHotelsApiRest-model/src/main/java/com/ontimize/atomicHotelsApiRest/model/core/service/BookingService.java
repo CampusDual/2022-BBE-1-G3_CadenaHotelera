@@ -466,7 +466,7 @@ public class BookingService implements IBookingService {
 		}
 		return resultado;
 	}
-	
+	/*	
 	@Override
 	public EntityResult booking_now_by_room_numberQuery (Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException {
 		
@@ -477,36 +477,54 @@ public class BookingService implements IBookingService {
 					add(BookingDao.ATTR_ID);
 				}
 			};
-			cf.reset();
-			cf.addBasics(BookingDao.fields); 
-			cf.addBasics(RoomDao.fields);  
-			cf.setRequired(required);
-	        cf.validate(keyMap);
 	        
-			resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryBookedRoomForAddingExtraServices");
-
-			Map<String, Object> subConsultaKeyMap = new HashMap<>() {
-				{
-					put(BookingDao.ATTR_ID, keyMap.get(BookingDao.ATTR_ID));
-				}
-			};
-
-			EntityResult auxEntity = bookingQuery(subConsultaKeyMap, EntityResultTools.attributes(BookingDao.ATTR_ID));
-
-			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
+			resultado = infoRangeBooking( keyMap, attrList);
+			*
+			 * Map<String, Object> subConsultaKeyMap = new HashMap<>() { {
+			 * put(BookingDao.ATTR_ID, keyMap.get(BookingDao.ATTR_ID)); } };
+			 * 
+			 * EntityResult auxEntity = bookingQuery(subConsultaKeyMap,
+			 * EntityResultTools.attributes(BookingDao.ATTR_ID));
+			 
+			if (resultado.calculateRecordNumber() == 0) { // si no hay registros...
 				resultado = new EntityResultWrong(ErrorMessage.INVALID_FILTER_FIELD_ID);
 			} else {
-
 				resultado.setMessage("Búsqueda correcta");
 			}
-						
-		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
 		} catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}
 		return resultado;
 	}
+*/	
+	@Override
+	public EntityResult booking_now_by_room_numberQuery(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException {
+
+		EntityResult resultado = new EntityResultMapImpl();
+		try {
+			List<String> required = Arrays.asList(BookingDao.ATTR_ID);
+			cf.reset();
+			cf.addBasics(BookingDao.fields);
+			cf.setRequired(required);
+			cf.setOptional(false);
+			cf.validate(keyMap);
+			
+			cf.reset();
+			cf.addBasics(BookingDao.fields);
+			cf.addBasics(RoomDao.fields);
+			cf.validate(attrList);
+
+			resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList,
+					"queryBookedRoomForAddingExtraServices");
+		} catch (ValidateException e) {
+			resultado = new EntityResultWrong(e.getMessage());
+		} catch (Exception e) {
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
+		}
+		return resultado;
+	}
+	
 	
 	/**
 	 * Dado un número de reserva, la capacidad total de todas las habitaciones de esa reserva

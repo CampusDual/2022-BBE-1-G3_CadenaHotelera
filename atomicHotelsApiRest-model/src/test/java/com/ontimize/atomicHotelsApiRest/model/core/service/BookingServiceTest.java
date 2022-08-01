@@ -12,6 +12,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -42,6 +43,8 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsExcepti
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.RestrictedFieldException;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.ReceiptDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomTypeDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
@@ -53,6 +56,9 @@ import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 class BookingServiceTest {
 	@Mock
 	DefaultOntimizeDaoHelper daoHelper;
+	
+	@Mock
+	BookingService bookingServiceMock;
 
 	@Spy
 	ControlFields cf;
@@ -587,18 +593,7 @@ class BookingServiceTest {
 				}
 				
 			}
-	
-	@Nested
-	@DisplayName("Test for booking now by room number Query")
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	class booking_now_by_room_numberQuery {
-		//bookingQuery
-				@Test
-				@DisplayName("ControlFields usar reset()")
-				void testBookingQueryControlFieldsReset() {
-					service.booking_now_by_room_numberQuery(TestingTools.getMapEmpty(), getColumsName());
-					verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
-				}
+/////
 
 				@Test
 				@DisplayName("ControlFields usar validate() map")
@@ -612,31 +607,122 @@ class BookingServiceTest {
 						fail("excepción no capturada: " + e.getMessage());
 					}
 				}
+	//////
+	
+	@Nested
+	@DisplayName("Test for BookingExtraServicePriceUnitsTotal queries")
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	public class booking_now_by_room_numberQuery {
+		
+		//bookingQuery
+		
+		@Test
+		@DisplayName("ControlFields usar reset()")
+		void testBookingQueryControlFieldsReset() {
+			service.booking_now_by_room_numberQuery(TestingTools.getMapEmpty(), getColumsName());
+			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
+		}
 
+		
+		@Test
+		@DisplayName("ControlFields usar validate() map y list") 
+		void testBooking_now_by_room_numberQueryControlFieldsValidate() {
+			service.booking_now_by_room_numberQuery(getMapId(), getColumsName());
+			try {
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields map")).validate(anyMap());
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields list")).validate(anyList());	
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("excepción no capturada: " + e.getMessage());
+			}
+		}
+
+		@Test
+		@DisplayName("Valores de entrada válidos")
+		void testBooking_now_by_room_numberQueryOK() {
+/*			doReturn(getMapRequiredInsertExtendedWidthRestricted()).when(daoHelper).query(any(), anyMap(), anyList(),
+					anyString());
+			eR = service.booking_now_by_room_numberQuery(getMapId(),new ArrayList());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+*/
+
+//		doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(),anyList());
+		doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
+
+		// válido: HashMap campos mínimos
+		eR = service.booking_now_by_room_numberQuery(getMapRequiredInsert(), getColumsName());
+		assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+
+		}
+
+		@Test
+		@DisplayName("Valores de entrada NO válidos")
+		void testBookingExtraServicePriceUnitsTotalQueryKO() {
+			try {
+				// lanzamos todas las excepciones de Validate para comprobar que están bien
+				// recojidas.
+				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
+				eR = service.booking_now_by_room_numberQuery(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
+				eR = service.booking_now_by_room_numberQuery(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
+				eR = service.booking_now_by_room_numberQuery(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
+				eR = service.booking_now_by_room_numberQuery(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
+				eR = service.booking_now_by_room_numberQuery(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("excepción no capturada: " + e.getMessage());
+			}
+		}
+	}
+/*
 				@Test
 				@DisplayName("Valores de entrada válidos")
 				void testBooking_now_by_room_numberQueryOK() {
 					
+					doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(),anyList());
 					doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
 
 					// válido: HashMap campos mínimos
 					eR = service.booking_now_by_room_numberQuery(getMapRequiredInsert(),getColumsName());
 					assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
 
-					// válido: HashMap campos mínimos y mas
+					// válido: HashMap campos mínimos y más
 					eR = service.booking_now_by_room_numberQuery(getMapRequiredInsertExtended(),getColumsName());
 					assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
 					
 					
-					
-					
+					doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(),anyList());
+					doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
+			
+					// válido: HashMap campos mínimos
+					eR = service.booking_now_by_room_numberQuery(getMapRequiredInsert(), getColumsName());
+					assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+		 
 				/*	
 					doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
 
 					// válido: HashMap con filtro que existe (sin filtros)
 					eR = service.booking_now_by_room_numberQuery(getMapId(), getColumsName());
 					assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
-*/
+
 				}
 
 				@Test
@@ -677,7 +763,7 @@ class BookingServiceTest {
 				}
 				
 			}
-	
+*/	
 	// datos entrada
 	
 	  Map<String, Object> getMapRequiredInsert() { 
@@ -722,7 +808,7 @@ class BookingServiceTest {
 				  put(dao.ATTR_CREATED, "2022-07-20 10:40:23.225"); 
 				  put(dao.ATTR_OBSERVATIONS, "tudo bom");
 				  put(dao.ATTR_CHECKIN, "2022-07-26 09:02:02.748"); 
-				  put(dao.ATTR_CHECKOUT, "2022-08-12 09:02:02.748"); 
+	//			  put(dao.ATTR_CHECKOUT, "2022-08-12 09:02:02.748"); 
 	//			  put(dao.ATTR_CANCELED, null); 
 			  } 
 		  }; 
@@ -766,6 +852,34 @@ class BookingServiceTest {
 		};
 		return columns;
 	}
+	
+	EntityResult getReservasFechaActiva() {
+		EntityResult er = new EntityResultMapImpl();
+		er.addRecord(new HashMap<String, Object>() {
+			{
+				put(BookingDao.ATTR_ID,1);
+				put(RoomTypeDao.ATTR_PRICE,new BigDecimal(12));
+				put(ReceiptDao.ATTR_DIAS,2);
+			}
+		});
+		return er;
+	}
+	
+	 Map<String, Object> getMapVueltaValores() {
+		  
+		  return new HashMap<>() { 
+			  { 
+				  put(dao.ATTR_ROOM_ID, 1); 
+				  put(dao.ATTR_START, "2022-07-25");
+				  put(dao.ATTR_END, "2022-08-12"); 
+				  put(dao.ATTR_CREATED, "2022-07-20 10:40:23.225"); 
+				  put(dao.ATTR_OBSERVATIONS, "tudo bom");
+				  put(dao.ATTR_CHECKIN, "2022-07-26 09:02:02.748"); 
+				  put(dao.ATTR_CHECKOUT, "2022-08-12 09:02:02.748"); 
+				  put(dao.ATTR_CANCELED, "2022-08-12 09:02:02.748"); 
+			  } 
+		  }; 
+	  }
 	// fin datos entrada
 	
 	
