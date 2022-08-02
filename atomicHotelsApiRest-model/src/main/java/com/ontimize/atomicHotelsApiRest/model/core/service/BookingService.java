@@ -14,6 +14,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.service.IBookingService;
+import com.ontimize.atomicHotelsApiRest.api.core.service.ICustomerService;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IRoomService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BedComboDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
@@ -55,7 +56,9 @@ public class BookingService implements IBookingService {
 
 	@Autowired
 	private BookingGuestService bookingGuestsService;
-	
+
+	@Autowired
+	private ICustomerService customerService;
 
 	@Autowired
 	IRoomService roomService;
@@ -112,7 +115,8 @@ public class BookingService implements IBookingService {
 	}
 
 	@Override
-	public EntityResult bookingInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
+	public EntityResult bookingInsert(Map<String, Object> attrMap)
+			throws OntimizeJEERuntimeException, EntityResultRequiredException {
 		EntityResult resultado = new EntityResultWrong();
 		try {
 			cf.reset();
@@ -138,21 +142,28 @@ public class BookingService implements IBookingService {
 			cf.setRestricted(restricted);
 			cf.setOptional(false);
 			cf.validate(attrMap);
+			Boolean ValidCredit = customerService.isCustomerValidBookingHolder(attrMap.get(BookingDao.ATTR_CUSTOMER_ID));
 
-			if (ValidateFields.dataRange(attrMap.get(BookingDao.ATTR_START), attrMap.get(BookingDao.ATTR_END)) == 0) {
-				if (roomService.isRoomUnbookedgInRange(attrMap.get(BookingDao.ATTR_START),
-						attrMap.get(BookingDao.ATTR_END), attrMap.get(BookingDao.ATTR_ROOM_ID))) {
-					resultado = this.daoHelper.insert(this.bookingDao, attrMap);
+			if (ValidCredit.booleanValue()) {
+
+				if (ValidateFields.dataRange(attrMap.get(BookingDao.ATTR_START),
+						attrMap.get(BookingDao.ATTR_END)) == 0) {
+					if (roomService.isRoomUnbookedgInRange(attrMap.get(BookingDao.ATTR_START),
+							attrMap.get(BookingDao.ATTR_END), attrMap.get(BookingDao.ATTR_ROOM_ID))) {
+						resultado = this.daoHelper.insert(this.bookingDao, attrMap);
+					} else {
+						resultado = new EntityResultWrong("La habitación ya está reservada en esa franja de fechas.");
+					}
 				} else {
-					resultado = new EntityResultWrong("La habitación ya está reservada en esa franja de fechas.");
+					resultado = new EntityResultWrong(ErrorMessage.DATA_START_BEFORE_TODAY);
 				}
 			} else {
-				resultado = new EntityResultWrong(ErrorMessage.DATA_START_BEFORE_TODAY);
+				resultado = new EntityResultWrong("No se puede reservar, tarjeta no valida.");
 			}
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
 			e.printStackTrace();
-		}catch(EntityResultRequiredException e) {
+		} catch (EntityResultRequiredException e) {
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
@@ -164,6 +175,10 @@ public class BookingService implements IBookingService {
 		}
 		return resultado;
 	}
+
+	
+
+	
 
 	/**
 	 * Requiere el campo de filtrado (keyMap) ID y el campo de data (attrMap)
@@ -567,7 +582,9 @@ public class BookingService implements IBookingService {
 	 * 
 	 * @param keyMap   (BookingDao.ATTR_ID)
 	 * @param attrList (anyList())
-	 * @return EntityResult (BookingDao.ATTR_ID,HotelDao.ATTR_ID,CustomerDao.ATTR_NAME,CustomerDao.ATTR_SURNAME, total_guests, total_slots, rooms, guests
+	 * @return EntityResult
+	 *         (BookingDao.ATTR_ID,HotelDao.ATTR_ID,CustomerDao.ATTR_NAME,CustomerDao.ATTR_SURNAME,
+	 *         total_guests, total_slots, rooms, guests
 	 * @throws OntimizeJEERuntimeException
 	 */
 	@Override
@@ -586,8 +603,8 @@ public class BookingService implements IBookingService {
 			cf.setRequired(required);
 			cf.setOptional(false);
 			cf.validate(keyMap);
-			
-			//Devuelve todas las habitaciones de la reserva
+
+			// Devuelve todas las habitaciones de la reserva
 			EntityResult habitaciones = bookingHotelRoomRoomTypeQuery(keyMap, new ArrayList<String>());
 
 			Map<String, Object> bookingGuestsId = new HashMap<String, Object>() {
@@ -595,21 +612,22 @@ public class BookingService implements IBookingService {
 					put(BookingGuestDao.ATTR_BKG_ID, keyMap.get(BookingDao.ATTR_ID));
 				}
 			};
-			
-			//Devuelve todos los huéspedes de la reserva
-			EntityResult huespedes = bookingGuestsService.bookingGuestsInfoQuery(bookingGuestsId, new ArrayList<String>());
-			
-			//Devuelve el número de huéspedes que ya están asociados a la reserva
-			EntityResult totalGuests = bookingGuestsService.guestCountQuery(bookingGuestsId,new ArrayList<String>());
-			
-			if(totalGuests.isWrong()) {
+
+			// Devuelve todos los huéspedes de la reserva
+			EntityResult huespedes = bookingGuestsService.bookingGuestsInfoQuery(bookingGuestsId,
+					new ArrayList<String>());
+
+			// Devuelve el número de huéspedes que ya están asociados a la reserva
+			EntityResult totalGuests = bookingGuestsService.guestCountQuery(bookingGuestsId, new ArrayList<String>());
+
+			if (totalGuests.isWrong()) {
 				throw new EntityResultRequiredException(totalGuests.getMessage());
 			}
-			
-			//Devuleve la capacidad total de las habitaciones de la reserva
+
+			// Devuleve la capacidad total de las habitaciones de la reserva
 			EntityResult totalSlots = this.bookingSlotsInfoQuery(keyMap, new ArrayList<String>());
-			
-			if(totalSlots.isWrong()) {
+
+			if (totalSlots.isWrong()) {
 				throw new EntityResultRequiredException(totalSlots.getMessage());
 			}
 
@@ -621,42 +639,39 @@ public class BookingService implements IBookingService {
 					add(CustomerDao.ATTR_SURNAME);
 				}
 			};
-			
-			//Devuelve el número de reserva, el hotel y el nombre del cliente que paga la reserva
+
+			// Devuelve el número de reserva, el hotel y el nombre del cliente que paga la
+			// reserva
 			EntityResult resultadoGenerico = this.daoHelper.query(this.bookingDao, keyMap, listaGenericaBooking,
 					"queryInfoBooking");
 
-			Map<String, Object> mapFinal = new HashMap<String,Object>();
+			Map<String, Object> mapFinal = new HashMap<String, Object>();
 
 			List<Object> hab = new ArrayList<Object>();
 			for (int i = 0; i < habitaciones.calculateRecordNumber(); i++) {
 				Object h = habitaciones.getRecordValues(i);
 				hab.add(h);
 			}
-			
+
 			List<Object> huesp = new ArrayList<Object>();
 			for (int i = 0; i < huespedes.calculateRecordNumber(); i++) {
 				Object h = huespedes.getRecordValues(i);
 				huesp.add(h);
 			}
-			
-			
+
 			mapFinal.putAll(resultadoGenerico.getRecordValues(0));
 			mapFinal.putAll(totalGuests.getRecordValues(0));
 			mapFinal.putAll(totalSlots.getRecordValues(0));
 			mapFinal.put("rooms", hab);
 			mapFinal.put("guests", huesp);
-			
 
 			resultadoFinal.addRecord(mapFinal);
-			
-	
 
 		} catch (ValidateException e) {
 			resultadoFinal = new EntityResultWrong(e.getMessage());
-		}catch(EntityResultRequiredException e) {
+		} catch (EntityResultRequiredException e) {
 			e.printStackTrace();
-			resultadoFinal = new EntityResultWrong(ErrorMessage.ERROR);	
+			resultadoFinal = new EntityResultWrong(ErrorMessage.ERROR);
 		} catch (Exception e) {
 			resultadoFinal = new EntityResultWrong(ErrorMessage.ERROR);
 		}
