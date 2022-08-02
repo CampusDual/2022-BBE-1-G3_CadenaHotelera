@@ -504,9 +504,7 @@ public class ValidateFields {
 		String regex = "^[+]?[\\s\\d]{8,20}$";
 		Pattern pat = Pattern.compile(regex);
 		Matcher mat = pat.matcher(phone.toString());
-		if (mat.matches()) {
-			
-		} else {
+		if (!mat.matches()) {
 			throw new InvalidFieldsValuesException(ErrorMessage.INVALID_PHONE);
 		}
 	}
