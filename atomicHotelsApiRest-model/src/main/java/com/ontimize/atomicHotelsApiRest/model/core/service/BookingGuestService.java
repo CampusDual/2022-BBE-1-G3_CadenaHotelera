@@ -283,10 +283,10 @@ public class BookingGuestService implements IBookingGuestService {
 						.equals(BookingDao.Status.CONFIRMED)) {
 
 					resultado = this.daoHelper.delete(this.bookingGuestDao, keyMap);
-					resultado.setMessage("Asociacion de Reserva y huesped borrado");
+					resultado.setMessage("Asociación de Reserva y huésped borrado");
 
 				} else {
-					resultado = new EntityResultWrong("Solo se puede borrar huesped antes de Check_in");
+					resultado = new EntityResultWrong("Sólo se puede borrar huésped antes del Check_in");
 
 				}
 			}
