@@ -54,6 +54,9 @@ public class BookingService implements IBookingService {
 	private DefaultOntimizeDaoHelper daoHelper;
 
 	@Autowired
+	private BookingGuestService bookingGuestsService;
+
+	@Autowired
 	IRoomService roomService;
 
 	@Autowired
@@ -146,13 +149,15 @@ public class BookingService implements IBookingService {
 				resultado = new EntityResultWrong(ErrorMessage.DATA_START_BEFORE_TODAY);
 			}
 		} catch (ValidateException e) {
-			resultado =  new EntityResultWrong(e.getMessage());
-			e.printStackTrace();		
-		}catch (DuplicateKeyException e) {
+			resultado = new EntityResultWrong(e.getMessage());
+			e.printStackTrace();
+		}catch(EntityResultRequiredException e) {
+			resultado = new EntityResultWrong(e.getMessage());
+		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
-		}catch (DataIntegrityViolationException e) {
+		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
@@ -191,8 +196,8 @@ public class BookingService implements IBookingService {
 			cf.setRequired(requiredData);
 			cf.setOptional(false);
 			cf.validate(attrMap);
-			 
-			//TODO pasar a ControlFields
+
+			// TODO pasar a ControlFields
 //			BookingDao.Action action;
 //			try {
 //				action = BookingDao.Action.valueOf((String) attrMap.get(BookingDao.NON_ATTR_ACTION));
@@ -201,7 +206,7 @@ public class BookingService implements IBookingService {
 //				throw new InvalidFieldsValuesException(
 //						ErrorMessage.INVALID_ACTION + " - " + attrMap.get(BookingDao.NON_ATTR_ACTION));
 //			}
-			 BookingDao.Action action = (Action) attrMap.get(BookingDao.NON_ATTR_ACTION);
+			BookingDao.Action action = (Action) attrMap.get(BookingDao.NON_ATTR_ACTION);
 			BookingDao.Status status = getBookingStatus(keyMap.get(BookingDao.ATTR_ID));
 
 			switch (status) {
@@ -241,7 +246,7 @@ public class BookingService implements IBookingService {
 		} catch (ValidateException | EntityResultRequiredException e) {
 			System.err.println(e.getMessage());
 			resultadoER = new EntityResultWrong(e.getMessage());
-		}catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			resultadoER = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
@@ -254,7 +259,6 @@ public class BookingService implements IBookingService {
 		return new EntityResultWrong("No se pueden eliminar reservas, debe cancelarla");
 	}
 
-	
 //TODO ver bien el validador en los tres siguientes métodos
 	@Override
 	public EntityResult bookingsInRangeQuery(Map<String, Object> keyMap, List<String> attrList)
@@ -263,7 +267,7 @@ public class BookingService implements IBookingService {
 			cf.reset();
 			cf.addBasics(BookingDao.fields);
 			cf.addBasics(RoomDao.fields);
- 	
+
 			bookingsInRangeBuilder(keyMap, attrList);
 			return this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryBasicBooking");
 		} catch (ValidateException | LiadaPardaException e) {
@@ -289,7 +293,7 @@ public class BookingService implements IBookingService {
 		} catch (ValidateException | LiadaPardaException e) {
 			System.err.println(e.getMessage());
 			resultado = new EntityResultWrong(e.getMessage());
-		}catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
@@ -306,7 +310,7 @@ public class BookingService implements IBookingService {
 	 */
 	public void bookingsInRangeBuilder(Map<String, Object> keyMap, List<String> attrList)
 			throws ValidateException, LiadaPardaException {
-		
+
 		List<String> required = new ArrayList<String>() {
 			{
 				add(BookingDao.ATTR_START);
@@ -315,14 +319,13 @@ public class BookingService implements IBookingService {
 		};
 		cf.setRequired(required);
 		cf.validate(keyMap);
-		
-		
+
 //		Date rangeStart = ValidateFields.stringToDate((String) keyMap.get(BookingDao.ATTR_START));
 //		Date rangeEnd = ValidateFields.stringToDate((String) keyMap.get(BookingDao.ATTR_END));
-		
-		Date rangeStart = (Date)keyMap.get(BookingDao.ATTR_START);
-		Date rangeEnd = (Date)keyMap.get(BookingDao.ATTR_END);
-		
+
+		Date rangeStart = (Date) keyMap.get(BookingDao.ATTR_START);
+		Date rangeEnd = (Date) keyMap.get(BookingDao.ATTR_END);
+
 		ValidateFields.dataRange(rangeStart, rangeEnd);
 
 		BasicField bkgStart = new BasicField(BookingDao.ATTR_START);
@@ -406,9 +409,10 @@ public class BookingService implements IBookingService {
 	 * Dado un bkg_id devuelve los días de esa reserva y el precio diario de la
 	 * habitación
 	 * 
-	 * @param keyMap (BookingDao.ATTR_ID)
+	 * @param keyMap   (BookingDao.ATTR_ID)
 	 * @param attrList (anyList())
-	 * @return EntityResult (BookingDao.ATTR_ID,RoomTypeDao.ATTR_PRICE,ReceiptDao.ATTR_DIAS)
+	 * @return EntityResult
+	 *         (BookingDao.ATTR_ID,RoomTypeDao.ATTR_PRICE,ReceiptDao.ATTR_DIAS)
 	 * @throws OntimizeJEERuntimeException
 	 */
 	@Override
@@ -423,16 +427,16 @@ public class BookingService implements IBookingService {
 				}
 			};
 			cf.reset();
-			cf.addBasics(BookingDao.fields); 
-			cf.addBasics(RoomTypeDao.fields); 
-			cf.addBasics(RoomDao.fields); 
+			cf.addBasics(BookingDao.fields);
+			cf.addBasics(RoomTypeDao.fields);
+			cf.addBasics(RoomDao.fields);
 			cf.setRequired(required);
-	        cf.validate(keyMap);
-	        
-	        cf.reset();
+			cf.validate(keyMap);
+
+			cf.reset();
 			cf.setNoEmptyList(false);
 			cf.validate(attrList);
-	               
+
 			resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryDiasPrecioUnitarioHabitacion");
 
 		} catch (ValidateException e) {
@@ -454,13 +458,12 @@ public class BookingService implements IBookingService {
 				}
 			};
 			cf.reset();
-			cf.addBasics(BookingDao.fields); 
-			cf.addBasics(RoomDao.fields); 
-			cf.addBasics(HotelDao.fields); 
+			cf.addBasics(BookingDao.fields);
+			cf.addBasics(RoomDao.fields);
+			cf.addBasics(HotelDao.fields);
 			cf.setRequired(required);
-	        cf.validate(keyMap);
+			cf.validate(keyMap);
 
-	        
 			resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryBookingsHotel");
 
 		} catch (ValidateException e) {
@@ -470,37 +473,27 @@ public class BookingService implements IBookingService {
 		}
 		return resultado;
 	}
-	/*	
-	@Override
-	public EntityResult booking_now_by_room_numberQuery (Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException {
-		
-		EntityResult resultado = new EntityResultWrong();
-		try {
-			List<String> required = new ArrayList<String>() {
-				{
-					add(BookingDao.ATTR_ID);
-				}
-			};
-	        
-			resultado = infoRangeBooking( keyMap, attrList);
-			*
-			 * Map<String, Object> subConsultaKeyMap = new HashMap<>() { {
-			 * put(BookingDao.ATTR_ID, keyMap.get(BookingDao.ATTR_ID)); } };
-			 * 
-			 * EntityResult auxEntity = bookingQuery(subConsultaKeyMap,
-			 * EntityResultTools.attributes(BookingDao.ATTR_ID));
-			 
-			if (resultado.calculateRecordNumber() == 0) { // si no hay registros...
-				resultado = new EntityResultWrong(ErrorMessage.INVALID_FILTER_FIELD_ID);
-			} else {
-				resultado.setMessage("Búsqueda correcta");
-			}
-		} catch (Exception e) {
-			resultado = new EntityResultWrong(ErrorMessage.ERROR);
-		}
-		return resultado;
-	}
-*/	
+
+	/*
+	 * @Override public EntityResult booking_now_by_room_numberQuery (Map<String,
+	 * Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException {
+	 * 
+	 * EntityResult resultado = new EntityResultWrong(); try { List<String> required
+	 * = new ArrayList<String>() { { add(BookingDao.ATTR_ID); } };
+	 * 
+	 * resultado = infoRangeBooking( keyMap, attrList);
+	 *
+	 * Map<String, Object> subConsultaKeyMap = new HashMap<>() { {
+	 * put(BookingDao.ATTR_ID, keyMap.get(BookingDao.ATTR_ID)); } };
+	 * 
+	 * EntityResult auxEntity = bookingQuery(subConsultaKeyMap,
+	 * EntityResultTools.attributes(BookingDao.ATTR_ID));
+	 * 
+	 * if (resultado.calculateRecordNumber() == 0) { // si no hay registros...
+	 * resultado = new EntityResultWrong(ErrorMessage.INVALID_FILTER_FIELD_ID); }
+	 * else { resultado.setMessage("Búsqueda correcta"); } } catch (Exception e) {
+	 * resultado = new EntityResultWrong(ErrorMessage.ERROR); } return resultado; }
+	 */
 	@Override
 	public EntityResult booking_now_by_room_numberQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
@@ -513,7 +506,7 @@ public class BookingService implements IBookingService {
 			cf.setRequired(required);
 			cf.setOptional(false);
 			cf.validate(keyMap);
-			
+
 			cf.reset();
 			cf.addBasics(BookingDao.fields);
 			cf.addBasics(RoomDao.fields);
@@ -528,15 +521,15 @@ public class BookingService implements IBookingService {
 		}
 		return resultado;
 	}
-	
-	
+
 	/**
-	 * Dado un número de reserva, la capacidad total de todas las habitaciones de esa reserva
+	 * Dado un número de reserva, la capacidad total de todas las habitaciones de
+	 * esa reserva
 	 * 
-	 * @param keyMap (BookingDao.ATTR_ID)
+	 * @param keyMap   (BookingDao.ATTR_ID)
 	 * @param attrList (anyList())
 	 * @return EntityResult (BookingGuestDao.ATTR_TOTAL_SLOTS)
-	 * @throws OntimizeJEERuntimeException 
+	 * @throws OntimizeJEERuntimeException
 	 */
 	@Override
 	public EntityResult bookingSlotsInfoQuery(Map<String, Object> keyMap, List<String> attrList)
@@ -557,14 +550,138 @@ public class BookingService implements IBookingService {
 			cf.setRequired(required);
 			cf.setOptional(false);
 			cf.validate(keyMap);
-			
+
 			cf.reset();
 			cf.setNoEmptyList(false);
 			cf.validate(attrList);
+
+			resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList, "queryBookingSlotsInfo");
+		} catch (ValidateException e) {
+			resultado = new EntityResultWrong(e.getMessage());
+		} catch (Exception e) {
+			resultado = new EntityResultWrong(ErrorMessage.ERROR);
+		}
+		return resultado;
+	}
+
+	/**
+	 * Dado un número de reserva, devuelve todos los datos de la misma
+	 * 
+	 * @param keyMap   (BookingDao.ATTR_ID)
+	 * @param attrList (anyList())
+	 * @return EntityResult //Muchas cosas
+	 * @throws OntimizeJEERuntimeException
+	 */
+	@Override
+	public EntityResult bookingCompleteInfoQuery(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException {
+
+		EntityResult resultadoFinal = new EntityResultWrong();
+		try {
+			List<String> required = new ArrayList<String>() {
+				{
+					add(BookingDao.ATTR_ID);
+				}
+			};
+			cf.reset();
+			cf.addBasics(BookingDao.fields);
+//			cf.addBasics(RoomDao.fields);
+//			cf.addBasics(RoomTypeDao.fields);
+//			cf.addBasics(BedComboDao.fields);
+			cf.setRequired(required);
+			cf.setOptional(false);
+			cf.validate(keyMap);
+
+			List<String> listaCualquiera = new ArrayList<String>();
+
+			EntityResult habitaciones = bookingHotelRoomRoomTypeQuery(keyMap, listaCualquiera);
+
+			Map<String, Object> bookingGuestsId = new HashMap<String, Object>() {
+				{
+					put(BookingGuestDao.ATTR_BKG_ID, keyMap.get(BookingDao.ATTR_ID));
+				}
+			};
+			EntityResult huespedes = bookingGuestsService.bookingGuestsInfoQuery(bookingGuestsId, listaCualquiera);
+
+			List<String> listaGenericaBooking = new ArrayList<String>() {
+				{
+					add(BookingDao.ATTR_ID);
+					add(HotelDao.ATTR_ID);
+					add(CustomerDao.ATTR_NAME);
+					add(CustomerDao.ATTR_SURNAME);
+				}
+			};
+
+			EntityResult resultadoGenerico = this.daoHelper.query(this.bookingDao, keyMap, listaGenericaBooking,
+					"queryInfoBooking");
+
+			Map<String, Object> mapFinal = resultadoGenerico.getRecordValues(0);
+
+			List<Object> hab = new ArrayList<Object>();
+			for (int i = 0; i < habitaciones.calculateRecordNumber(); i++) {
+				Object h = habitaciones.getRecordValues(i);
+				hab.add(h);
+			}
 			
+			List<Object> huesp = new ArrayList<Object>();
+			for (int i = 0; i < huespedes.calculateRecordNumber(); i++) {
+				Object h = huespedes.getRecordValues(i);
+				huesp.add(h);
+			}
+			
+			mapFinal.put("habitaciones", hab);
+			mapFinal.put("huespedes", huesp);	
 
+			resultadoFinal.addRecord(mapFinal);
+			
+	
 
-			resultado = this.daoHelper.query(this.bookingDao, keyMap, attrList,"queryBookingSlotsInfo");
+		} catch (ValidateException e) {
+			resultadoFinal = new EntityResultWrong(e.getMessage());
+		} catch (Exception e) {
+			resultadoFinal = new EntityResultWrong(ErrorMessage.ERROR);
+		}
+		return resultadoFinal;
+	}
+
+	/**
+	 * Dado un número de reserva, devuelve los números de habitaciones asociadas y
+	 * el tipo de habitaciones
+	 * 
+	 * @param keyMap   (BookingDao.ATTR_ID)
+	 * @param attrList (anyList())
+	 * @return EntityResult (RoomDao.ATTR_NUMBER,RoomTypeDao.ATTR_NAME)
+	 * @throws OntimizeJEERuntimeException
+	 */
+	@Override
+	public EntityResult bookingHotelRoomRoomTypeQuery(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException {
+
+		EntityResult resultado = new EntityResultWrong();
+		try {
+			List<String> required = new ArrayList<String>() {
+				{
+					add(BookingDao.ATTR_ID);
+				}
+			};
+			cf.reset();
+			cf.addBasics(BookingDao.fields);
+//			cf.addBasics(RoomDao.fields);
+//			cf.addBasics(RoomTypeDao.fields);
+//			cf.addBasics(BedComboDao.fields);
+			cf.setRequired(required);
+			cf.setOptional(false);
+			cf.validate(keyMap);
+
+			List<String> lista = new ArrayList<String>() {
+				{
+					add(RoomDao.ATTR_NUMBER);
+					add(RoomTypeDao.ATTR_NAME);
+
+				}
+			};
+
+			resultado = this.daoHelper.query(this.bookingDao, keyMap, lista, "queryInfoBooking");
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (Exception e) {
