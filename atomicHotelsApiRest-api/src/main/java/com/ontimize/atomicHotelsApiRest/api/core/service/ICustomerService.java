@@ -26,5 +26,7 @@ public interface ICustomerService {
 	public boolean isCustomerValidBookingHolder(Object customerId) throws OntimizeJEERuntimeException,  EntityResultRequiredException;
 	EntityResult customerBusinessUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException;
+	EntityResult customerRegularUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
+			throws OntimizeJEERuntimeException;
 
 }

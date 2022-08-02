@@ -390,7 +390,7 @@
 			"response": []
 		},
 		{
-			"name": "- U costumer",
+			"name": "- U costumer customerBusiness",
 			"request": {
 				"auth": {
 					"type": "basic",
@@ -411,7 +411,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\": {\r\n     \"cst_id\": 2\r\n    },\r\n    \"data\": {\r\n        \"cst_name\": \"Laura\",\r\n        \"cst_birth_date\":\"1990-12-12\"\r\n    },\r\n    \"sqltypes\":{\r\n        \"cst_birth_date\":91\r\n    }\r\n}",
+					"raw": "{\r\n    \"filter\": {\r\n     \"cst_id\": 33\r\n    },\r\n    \"data\": {\r\n        \"cst_name\": \"Citroen\",\r\n        \"cst_vat_number\": \"A11234558\"\r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -419,7 +419,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:33333/customers/customer",
+					"raw": "http://localhost:33333/customers/customerBusiness",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -427,7 +427,51 @@
 					"port": "33333",
 					"path": [
 						"customers",
-						"customer"
+						"customerBusiness"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "- U costumer customerRegular",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"cst_id\": 3\r\n    },\r\n    \"data\": {\r\n        \"cst_name\": \"Dieguito\",\r\n        \"cst_identity_document\": \"123456789OL\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/customers/customerRegular",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"customers",
+						"customerRegular"
 					]
 				}
 			},

@@ -230,42 +230,6 @@ public class CustomerService implements ICustomerService {
 		return resultado;
 	}
 
-//	@Override
-//	public EntityResult customerInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
-//
-//		EntityResult resultado = new EntityResultMapImpl();
-//
-//		try {
-//
-//			// ValidateFields.emptyFields(attrMap, CustomerDao.ATTR_NAME,
-//			// CustomerDao.ATTR_SURNAMES, CustomerDao.ATTR_DNI,
-//			// CustomerDao.ATTR_NATIONALITY,CustomerDao.ATTR_PHONE,CustomerDao.ATTR_CREDITCARD,
-//			// CustomerDao.ATTR_VALID_DATE);
-//
-//			ValidateFields.emptyFields(attrMap, CustomerDao.ATTR_NAME, CustomerDao.ATTR_SURNAMES, CustomerDao.ATTR_DNI,
-//					CustomerDao.ATTR_NATIONALITY, CustomerDao.ATTR_PHONE, CustomerDao.ATTR_CREDITCARD,
-//					CustomerDao.ATTR_VALID_DATE);
-//
-//			// ValidateFields.checkMail(CustomerDao.ATTR_EMAIL);
-//
-//			resultado = this.daoHelper.insert(this.customerDao, attrMap);
-//
-//			resultado.setMessage("Customer registrado");
-//
-//		} catch (MissingFieldsException e) {
-//			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());
-//
-//		} catch (DuplicateKeyException e) {
-//			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
-//
-//		} catch (Exception e) {
-//			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
-//		}
-//
-//		return resultado;
-//
-//	}
-
 	@Override
 	public EntityResult customerBusinessUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
@@ -306,23 +270,92 @@ public class CustomerService implements ICustomerService {
 			};
 
 			EntityResult auxEntity = customerQuery(subConsultaKeyMap,
-					EntityResultTools.attributes(CustomerDao.ATTR_ID,CustomerDao.ATTR_VAT_NUMBER));
+					EntityResultTools.attributes(CustomerDao.ATTR_ID, CustomerDao.ATTR_VAT_NUMBER));
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
 				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
 			} else {
-				if(auxEntity.getRecordValues(0).get(CustomerDao.ATTR_VAT_NUMBER) != null) {
-					resultado = this.daoHelper.update(this.customerDao, attrMap, keyMap);				
+				if (auxEntity.getRecordValues(0).get(CustomerDao.ATTR_VAT_NUMBER) != null) {
+					resultado = this.daoHelper.update(this.customerDao, attrMap, keyMap);
 					if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
 						resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
 					} else {
 						resultado = new EntityResultMapImpl();
 						resultado.setMessage("Business Customer actualizado");
 					}
-				}else {
+				} else {
 					resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_WRONG_TYPE);
 				}
 			}
 
+		} catch (ValidateException e) {
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + " - " + e.getMessage());
+		} catch (DuplicateKeyException e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
+		} catch (DataIntegrityViolationException e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
+		}
+		return resultado;
+	}
+
+	@Override
+	public EntityResult customerRegularUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
+			throws OntimizeJEERuntimeException {
+
+		EntityResult resultado = new EntityResultWrong();
+		try {
+
+			// ControlFields del filtro
+			List<String> requiredFilter = new ArrayList<String>() {
+				{
+					add(CustomerDao.ATTR_ID);
+				}
+			};
+			cf.reset();
+			cf.addBasics(CustomerDao.fields);
+			cf.setRequired(requiredFilter);
+			cf.setOptional(false);// No será aceptado ningún campo que no esté en required
+			cf.validate(keyMap);
+
+			// ControlFields de los nuevos datos
+			List<String> restrictedData = new ArrayList<String>() {
+				{
+					add(CustomerDao.ATTR_ID);// El id no se puede actualizar
+					add(CustomerDao.ATTR_VAT_NUMBER);
+				}
+			};
+			cf.reset();
+			cf.addBasics(CustomerDao.fields);
+			cf.setRestricted(restrictedData);
+			cf.validate(attrMap);
+
+			Map<String, Object> subConsultaKeyMap = new HashMap<>() {
+				{
+					put(CustomerDao.ATTR_ID, keyMap.get(CustomerDao.ATTR_ID));
+				}
+			};
+
+			EntityResult auxEntity = customerQuery(subConsultaKeyMap,
+					EntityResultTools.attributes(CustomerDao.ATTR_ID, CustomerDao.ATTR_IDEN_DOC));
+			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
+				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
+			} else {
+				if (auxEntity.getRecordValues(0).get(CustomerDao.ATTR_IDEN_DOC) != null) {
+					resultado = this.daoHelper.update(this.customerDao, attrMap, keyMap);
+					if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
+						resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
+					} else {
+						resultado = new EntityResultMapImpl();
+						resultado.setMessage("Regular Customer actualizado");
+					}
+				} else {
+					resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_WRONG_TYPE);
+				}
+			}
 
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + " - " + e.getMessage());
@@ -343,26 +376,6 @@ public class CustomerService implements ICustomerService {
 	public EntityResult customerDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 
 		EntityResult resultado = new EntityResultWrong("Operación no disponible");
-//		try {
-//			ValidateFields.required(keyMap, CustomerDao.ATTR_ID);
-//
-//			EntityResult auxEntity = this.daoHelper.query(this.customerDao,
-//					EntityResultTools.keysvalues(CustomerDao.ATTR_ID, keyMap.get(CustomerDao.ATTR_ID)),
-//					EntityResultTools.attributes(CustomerDao.ATTR_ID));
-//			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
-//				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
-//			} else {
-//				resultado = this.daoHelper.delete(this.customerDao, keyMap);
-//				resultado.setMessage("Customer eliminado");
-//			}
-//		} catch (MissingFieldsException e) {
-//			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + e.getMessage());
-//		} catch (DataIntegrityViolationException e) {
-//			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR);
-//		}
 		return resultado;
 
 	}
@@ -370,7 +383,6 @@ public class CustomerService implements ICustomerService {
 	@Override
 	public EntityResult customerCancelUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
-//TODO no cancelar usuarios en uso  en booking si no finalizado la fecha.
 		EntityResult resultado = new EntityResultWrong();
 		try {
 			cf.reset();
@@ -420,7 +432,7 @@ public class CustomerService implements ICustomerService {
 						resultado.setMessage("Customer canceled");
 					}
 				} else {
-					resultado = new EntityResultWrong(ErrorMessage.BLOCKED_CUSTOMER);
+					resultado = new EntityResultWrong(ErrorMessage.UPDATE_CUSTOMER_BOOKINGS_PENDING);
 				}
 			}
 		} catch (ValidateException e) {
