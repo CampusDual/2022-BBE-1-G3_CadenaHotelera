@@ -203,7 +203,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"data\":{\r\n        \"bgs_bkg_id\":6,\r\n        \"bgs_cst_id\":22\r\n\r\n    }\r\n}",
+					"raw": "{\r\n    \"data\":{\r\n        \"bgs_bkg_id\":19,\r\n        \"bgs_cst_id\":21\r\n\r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -247,7 +247,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\":{\r\n        \"bgs_bkg_id\":6\r\n    },\r\n    \"columns\":[]\r\n}",
+					"raw": "{\r\n    \"filter\":{\r\n        \"bgs_bkg_id\":19\r\n    },\r\n    \"columns\":[]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -265,6 +265,50 @@
 						"bookingsGuests",
 						"bookingGuestsInfo",
 						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": " D - bookingGuest",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"bgs_id\": 2\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookingsGuests/bookingGuest",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookingsGuests",
+						"bookingGuest"
 					]
 				}
 			},

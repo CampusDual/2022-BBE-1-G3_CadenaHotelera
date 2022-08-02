@@ -545,9 +545,6 @@ public class BookingService implements IBookingService {
 			};
 			cf.reset();
 			cf.addBasics(BookingDao.fields);
-//			cf.addBasics(RoomDao.fields);
-//			cf.addBasics(RoomTypeDao.fields);
-//			cf.addBasics(BedComboDao.fields);
 			cf.setRequired(required);
 			cf.setOptional(false);
 			cf.validate(keyMap);
@@ -586,13 +583,11 @@ public class BookingService implements IBookingService {
 			};
 			cf.reset();
 			cf.addBasics(BookingDao.fields);
-//			cf.addBasics(RoomDao.fields);
-//			cf.addBasics(RoomTypeDao.fields);
-//			cf.addBasics(BedComboDao.fields);
 			cf.setRequired(required);
 			cf.setOptional(false);
 			cf.validate(keyMap);
-
+			
+			//Devuelve todas las habitaciones de la reserva
 			EntityResult habitaciones = bookingHotelRoomRoomTypeQuery(keyMap, new ArrayList<String>());
 
 			Map<String, Object> bookingGuestsId = new HashMap<String, Object>() {
@@ -600,14 +595,18 @@ public class BookingService implements IBookingService {
 					put(BookingGuestDao.ATTR_BKG_ID, keyMap.get(BookingDao.ATTR_ID));
 				}
 			};
+			
+			//Devuelve todos los huéspedes de la reserva
 			EntityResult huespedes = bookingGuestsService.bookingGuestsInfoQuery(bookingGuestsId, new ArrayList<String>());
 			
+			//Devuelve el número de huéspedes que ya están asociados a la reserva
 			EntityResult totalGuests = bookingGuestsService.guestCountQuery(bookingGuestsId,new ArrayList<String>());
 			
 			if(totalGuests.isWrong()) {
 				throw new EntityResultRequiredException(totalGuests.getMessage());
 			}
-
+			
+			//Devuleve la capacidad total de las habitaciones de la reserva
 			EntityResult totalSlots = this.bookingSlotsInfoQuery(keyMap, new ArrayList<String>());
 			
 			if(totalSlots.isWrong()) {
@@ -622,7 +621,8 @@ public class BookingService implements IBookingService {
 					add(CustomerDao.ATTR_SURNAME);
 				}
 			};
-
+			
+			//Devuelve el número de reserva, el hotel y el nombre del cliente que paga la reserva
 			EntityResult resultadoGenerico = this.daoHelper.query(this.bookingDao, keyMap, listaGenericaBooking,
 					"queryInfoBooking");
 
@@ -685,9 +685,6 @@ public class BookingService implements IBookingService {
 			};
 			cf.reset();
 			cf.addBasics(BookingDao.fields);
-//			cf.addBasics(RoomDao.fields);
-//			cf.addBasics(RoomTypeDao.fields);
-//			cf.addBasics(BedComboDao.fields);
 			cf.setRequired(required);
 			cf.setOptional(false);
 			cf.validate(keyMap);
