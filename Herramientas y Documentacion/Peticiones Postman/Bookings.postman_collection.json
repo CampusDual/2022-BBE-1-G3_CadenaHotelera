@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "ea2c7b0c-183a-40b0-b667-468e08fb049b",
+		"_postman_id": "36fd96e4-55b5-4fd6-9691-ab901a2a48a3",
 		"name": "Bookings",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -86,7 +86,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\":{\r\n        \"bkg_id\": 18\r\n    },\r\n    \"columns\": \r\n        [\"bkg_id\",\r\n        \"rm_htl_id\",\r\n        \"rm_number\",\r\n        \"rm_rmt_id\",\r\n        \"bkg_cst_id\",\r\n        \"bkg_rm_id\",\r\n        \"bkg_observations\",\r\n        \"bkg_start\",\r\n        \"bkg_end\",\r\n        \"bkg_checkin\",\r\n        \"bkg_checkout\",\r\n        \"bkg_created\", \r\n        \"rm_status\"]    \r\n}",
+					"raw": "{\r\n    \"filter\":{\r\n        \"bkg_rm_id\": 18\r\n    },\r\n    \"columns\": \r\n        [\"bkg_id\",\r\n        \"rm_htl_id\",\r\n        \"rm_number\",\r\n        \"rm_rmt_id\",\r\n        \"bkg_cst_id\",\r\n        \"bkg_rm_id\",\r\n        \"bkg_observations\",\r\n        \"bkg_start\",\r\n        \"bkg_end\",\r\n        \"bkg_checkin\",\r\n        \"bkg_checkout\",\r\n        \"bkg_created\", \r\n        \"rm_status\"]    \r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -336,7 +336,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"columns\": \r\n        [\"bkg_id\",\r\n        \"bkg_cst_id\",\r\n        \"bkg_rm_id\",\r\n        \"bkg_observations\",\r\n        \"bkg_start\",\r\n        \"bkg_end\",\r\n        \"bkg_checkin\",\r\n        \"bkg_checkout\",\r\n        \"bkg_canceled\",\r\n        \"bkg_created\",\r\n        \"cst_name\",\r\n        \"cst_surnames\",\r\n        \"cst_email\",\r\n        \"cst_phone\",\r\n        \"rm_number\",        \r\n        \"htl_id\",\r\n        \"htl_name\",\r\n        \"rmt_name\"       \r\n        ]    \r\n}",
+					"raw": "{\r\n    \"columns\": \r\n        [\"bkg_id\",\r\n        \"bkg_cst_id\",\r\n        \"bkg_rm_id\",\r\n        \"bkg_observations\",\r\n        \"bkg_start\",\r\n        \"bkg_end\",\r\n        \"bkg_checkin\",\r\n        \"bkg_checkout\",\r\n        \"bkg_canceled\",\r\n        \"bkg_created\",\r\n        \"cst_name\",\r\n        \"cst_surname\",\r\n        \"cst_email\",\r\n        \"cst_phone\",\r\n        \"rm_number\",        \r\n        \"htl_id\",\r\n        \"htl_name\",\r\n        \"rmt_name\"       \r\n        ]    \r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
