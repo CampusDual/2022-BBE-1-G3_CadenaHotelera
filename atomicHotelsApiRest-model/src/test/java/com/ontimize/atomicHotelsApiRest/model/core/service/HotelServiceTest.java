@@ -186,6 +186,12 @@ class HotelServiceTest {
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testhotelInsertOK() {
+			try {
+				doNothing().when(cf).validate(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}									
 			doReturn(new EntityResultMapImpl()).when(daoHelper).insert(any(), anyMap());
 
 			// válido: HashMap campos mínimos
@@ -228,6 +234,11 @@ class HotelServiceTest {
 				eR = service.hotelInsert(TestingTools.getMapEmpty());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+				
+				doThrow(DuplicateKeyException.class).when(cf).validate(anyMap());
+				eR = service.hotelInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
 				reset(cf);
 				// extra para controlar required:
@@ -344,6 +355,19 @@ class HotelServiceTest {
 
 				// extra para controlar restricted:
 				eR = service.hotelUpdate(getMapId(), getMapId());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.CREATION_ERROR, eR.getMessage(), eR.getMessage());
+				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
+
+				// error interno
+				try {
+					doNothing().when(cf).validate(anyMap());
+				} catch (Exception e) {
+					e.printStackTrace();
+					fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+				}
+				doReturn(TestingTools.getEntitySuccesfulWithMsg()).when(daoHelper).update(any(), anyMap(), anyMap());
+				eR = service.hotelUpdate(getMapUpdate(), getMapId());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 				assertNotEquals(ErrorMessage.CREATION_ERROR, eR.getMessage(), eR.getMessage());
 				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());

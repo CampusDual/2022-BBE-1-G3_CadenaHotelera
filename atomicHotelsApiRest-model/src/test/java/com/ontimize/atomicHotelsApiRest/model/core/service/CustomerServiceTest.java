@@ -983,9 +983,9 @@ class CustomerServiceTest {
 		return getMapRequiredBusinessInsert();
 	}
 
-	Map<String, Object> getMapRequiredDeletetExtendedWidthRestricted() {
-		return getMapRequiredBusinessInsertExtendedWidthRestricted();
-	}
+//	Map<String, Object> getMapRequiredDeletetExtendedWidthRestricted() {
+//		return getMapRequiredBusinessInsertExtendedWidthRestricted();
+//	}
 
 	Map<String, Object> getMapId() {
 		HashMap<String, Object> filters = new HashMap<>() {

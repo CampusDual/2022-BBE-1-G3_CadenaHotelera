@@ -153,12 +153,12 @@ class CountryServiceTest {
 		@DisplayName("Obtener map")
 		void testCountryQueryControlFieldsReset() {
 			doReturn(getERCountries()).when(daoHelper).query(any(), anyMap(), anyList());
-			try {
-				doNothing().when(cf).validate(anyMap());
-			} catch (Exception e) {
-				e.printStackTrace();
-				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
-			}
+//			try {
+//				doNothing().when(cf).validate(anyMap());
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+//			}
 			Map<String, String> resultado = service.mapCountries();
 			assertTrue(resultado.containsKey("ES"));
 			assertTrue(resultado.containsKey("GB"));

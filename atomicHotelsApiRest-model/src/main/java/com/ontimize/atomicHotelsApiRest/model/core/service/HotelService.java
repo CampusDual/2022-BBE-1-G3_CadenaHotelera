@@ -81,7 +81,6 @@ public class HotelService implements IHotelService {
 		EntityResult resultado = new EntityResultWrong();
 		try {
 
-			cf.reset();
 			List<String> required = new ArrayList<String>() {
 				{
 					add(HotelDao.ATTR_NAME);
@@ -98,7 +97,8 @@ public class HotelService implements IHotelService {
 											// datos
 				}
 			};
-
+			
+			cf.reset();
 			cf.addBasics(HotelDao.fields);
 			cf.setRequired(required);
 			cf.setRestricted(restricted);
@@ -257,17 +257,16 @@ public class HotelService implements IHotelService {
 		return resultado;
 	}
 
-	@Override
-	public EntityResult hotelInfoQuery(Map<String, Object> keysValues, List<String> attrList)
-			throws OntimizeJEERuntimeException {
-// el InfoQuery lo utilizamos para obtener una query mas detallada con joins de
-// otras tablas.
+//	@Override
+//	public EntityResult hotelInfoQuery(Map<String, Object> keysValues, List<String> attrList)
+//			throws OntimizeJEERuntimeException {
+//// el InfoQuery lo utilizamos para obtener una query mas detallada con joins de
+//// otras tablas.
 //		EntityResult queryRes = new EntityResultWrong();
 //		try {
 //			ControlFields cf = new ControlFields();
 //			cf.addBasics(HotelDao.fields);
 //			cf.validate(keysValues);
-//
 //			cf.validate(attrList);
 //
 //			queryRes = this.daoHelper.query(this.hotelDao, keysValues, attrList, "queryHotel");
@@ -278,7 +277,7 @@ public class HotelService implements IHotelService {
 //		}
 //
 //		return queryRes;
-		return null;
-	}
+////		return null;
+//	}
 
 }

@@ -24,7 +24,6 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsExcepti
 import com.ontimize.atomicHotelsApiRest.api.core.service.ICountryService;
 import com.ontimize.atomicHotelsApiRest.model.core.service.CountryService;
 
-import repositories.Countries;
 
 @Component
 public class ValidateFields {

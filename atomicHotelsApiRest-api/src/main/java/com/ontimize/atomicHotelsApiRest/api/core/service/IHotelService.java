@@ -13,6 +13,6 @@ public interface IHotelService {
 	 public EntityResult hotelInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException;
 	 public EntityResult hotelUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
 	 public EntityResult hotelDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
-	 public EntityResult hotelInfoQuery(Map<String, Object> keysValues, List<String> attrList) throws OntimizeJEERuntimeException;
+//	 public EntityResult hotelInfoQuery(Map<String, Object> keysValues, List<String> attrList) throws OntimizeJEERuntimeException;
 	
 }
