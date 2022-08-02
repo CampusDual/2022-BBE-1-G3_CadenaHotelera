@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "9fd6a8ca-c68d-4b80-b3f5-6f9481d6d9ab",
+		"_postman_id": "2bd27050-8998-4611-99f7-9773642d4ff5",
 		"name": "Bookings",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -117,36 +117,6 @@
 				"body": {
 					"mode": "raw",
 					"raw": "{\r\n \"columns\": \r\n        [\"bkg_id\",\r\n        \"bkg_cst_id\",\r\n        \"bkg_rm_id\",\r\n        \"bkg_observations\",\r\n        \"bkg_start\",\r\n        \"bkg_end\",\r\n        \"bkg_checkin\",\r\n        \"bkg_checkout\",\r\n        \"bkg_canceled\",\r\n        \"bkg_created\"] \r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:33333/bookings/booking/search",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "33333",
-					"path": [
-						"bookings",
-						"booking",
-						"search"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "-R all booking canceled (//TODO)",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"filter\":{\r\n        \"status\": \"CANCELED\"\r\n    },\r\n    \"columns\": \r\n        [\"bkg_id\",\r\n        \"bkg_cst_id\",\r\n        \"bkg_rm_id\",\r\n        \"bkg_observations\",\r\n        \"bkg_start\",\r\n        \"bkg_end\",\r\n        \"bkg_checkin\",\r\n        \"bkg_checkout\",\r\n        \"bkg_canceled\",\r\n        \"bkg_created\"]    \r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
