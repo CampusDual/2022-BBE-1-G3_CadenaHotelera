@@ -23,7 +23,7 @@ public class ReceiptDao extends OntimizeJdbcDaoSupport{
 	public static final String ATTR_DIAS = TAG+"days";
 	public static final String ATTR_TOTAL_ROOM = TAG+"total_room";
 	public static final String ATTR_TOTAL = TAG+"total";
-	public static final String ATTR_SERVICIOS_EXTRA ="serviciosExtra";
+	public static final String ATTR_SERVICIOS_EXTRA ="extra_services";
 	
 	public static final Map<String,type> fields = new HashMap<>() {{
 		put(ATTR_ID,type.INTEGER);

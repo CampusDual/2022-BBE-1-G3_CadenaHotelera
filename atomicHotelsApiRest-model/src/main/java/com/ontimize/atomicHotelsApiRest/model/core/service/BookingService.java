@@ -566,11 +566,11 @@ public class BookingService implements IBookingService {
 	}
 
 	/**
-	 * Dado un número de reserva, devuelve todos los datos de la misma
+	 * Dado un número de reserva, devuelve datos relevantes de la misma
 	 * 
 	 * @param keyMap   (BookingDao.ATTR_ID)
 	 * @param attrList (anyList())
-	 * @return EntityResult //Muchas cosas
+	 * @return EntityResult (BookingDao.ATTR_ID,HotelDao.ATTR_ID,CustomerDao.ATTR_NAME,CustomerDao.ATTR_SURNAME, total_guests, total_slots, rooms, guests
 	 * @throws OntimizeJEERuntimeException
 	 */
 	@Override
@@ -593,16 +593,22 @@ public class BookingService implements IBookingService {
 			cf.setOptional(false);
 			cf.validate(keyMap);
 
-			List<String> listaCualquiera = new ArrayList<String>();
+			List<String> listaVacia = new ArrayList<String>();
 
-			EntityResult habitaciones = bookingHotelRoomRoomTypeQuery(keyMap, listaCualquiera);
+			EntityResult habitaciones = bookingHotelRoomRoomTypeQuery(keyMap, listaVacia);
 
 			Map<String, Object> bookingGuestsId = new HashMap<String, Object>() {
 				{
 					put(BookingGuestDao.ATTR_BKG_ID, keyMap.get(BookingDao.ATTR_ID));
 				}
 			};
-			EntityResult huespedes = bookingGuestsService.bookingGuestsInfoQuery(bookingGuestsId, listaCualquiera);
+			EntityResult huespedes = bookingGuestsService.bookingGuestsInfoQuery(bookingGuestsId, listaVacia);
+			
+			List<String> listaVacia2 = new ArrayList<String>();//No sé porqué no le vale con la otra
+			EntityResult totalGuests = bookingGuestsService.guestCountQuery(bookingGuestsId,listaVacia2);
+			
+			List<String> listaVacia3 = new ArrayList<String>();//No sé porqué no le vale con la otra
+			EntityResult totalSlots = this.bookingSlotsInfoQuery(keyMap, listaVacia3);
 
 			List<String> listaGenericaBooking = new ArrayList<String>() {
 				{
@@ -616,7 +622,7 @@ public class BookingService implements IBookingService {
 			EntityResult resultadoGenerico = this.daoHelper.query(this.bookingDao, keyMap, listaGenericaBooking,
 					"queryInfoBooking");
 
-			Map<String, Object> mapFinal = resultadoGenerico.getRecordValues(0);
+			Map<String, Object> mapFinal = new HashMap<String,Object>();
 
 			List<Object> hab = new ArrayList<Object>();
 			for (int i = 0; i < habitaciones.calculateRecordNumber(); i++) {
@@ -630,8 +636,12 @@ public class BookingService implements IBookingService {
 				huesp.add(h);
 			}
 			
-			mapFinal.put("habitaciones", hab);
-			mapFinal.put("huespedes", huesp);	
+			mapFinal.put("rooms", hab);
+			mapFinal.put("guests", huesp);
+			mapFinal.putAll(resultadoGenerico.getRecordValues(0));
+			mapFinal.putAll(totalGuests.getRecordValues(0));
+			mapFinal.putAll(totalSlots.getRecordValues(0));
+			
 
 			resultadoFinal.addRecord(mapFinal);
 			
