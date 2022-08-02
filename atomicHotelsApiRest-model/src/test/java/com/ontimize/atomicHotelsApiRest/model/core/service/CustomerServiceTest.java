@@ -11,6 +11,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -139,7 +140,79 @@ class CustomerServiceTest {
 			}
 
 		}
+		//mailAgreementQuery
+		@Test
+		@DisplayName("ControlFields usar reset()")
+		void testmailAgreementQueryControlFieldsReset() {
+			service.mailAgreementQuery(TestingTools.getMapEmpty(), getColumsName());
+			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
+		}
 
+		@Test
+		@DisplayName("ControlFields usar validate() map y list")
+		void testmailAgreementQueryControlFieldsValidate() {
+			service.mailAgreementQuery(TestingTools.getMapEmpty(), getColumsName());
+			try {
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyList());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
+		}
+
+		@Test
+		@DisplayName("Valores de entrada válidos")
+		void testmailAgreementQueryOK() {
+			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
+
+			// válido: HashMap vacio (sin filtros)
+			eR = service.mailAgreementQuery(TestingTools.getMapEmpty(), getColumsName());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+
+			// válido: HashMap con filtro que existe
+			eR = service.mailAgreementQuery(getMapId(), getColumsName());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+
+		}
+
+		@Test
+		@DisplayName("Valores de entrada NO válidos")
+		void testmailAgreementQueryKO() {
+			try {
+				// lanzamos todas las excepciones de Validate para comprobar que están bien
+				// recojidas.
+				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
+				eR = service.mailAgreementQuery(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
+				eR = service.mailAgreementQuery(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
+				eR = service.mailAgreementQuery(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
+				eR = service.mailAgreementQuery(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
+				eR = service.mailAgreementQuery(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
+
+		}
 	}
 
 	@Nested
@@ -186,6 +259,7 @@ class CustomerServiceTest {
 			}
 		}
 
+		@Test
 		@DisplayName("BlockedQuery - Valores de salida válidos")
 		void testIsCustomerBlockedQueryOK() {
 			boolean resultado;
@@ -194,11 +268,11 @@ class CustomerServiceTest {
 				doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(), anyList(),
 						anyString());
 				resultado = service.isCustomerBlockeddQuery(999);
-				assertFalse(resultado);
+				assertTrue(resultado);
 
 				doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
 				resultado = service.isCustomerBlockeddQuery(999);
-				assertTrue(resultado);
+				assertFalse(resultado);
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -255,10 +329,10 @@ class CustomerServiceTest {
 		@Test
 		@DisplayName("Bussiness - Valores de entrada válidos")
 		void testBusinesscustomerInsertOK() {
-			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(),anyList(),anyString());
+			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
 			doReturn(new EntityResultMapImpl()).when(daoHelper).insert(any(), anyMap());
 			try {
-				doNothing().when(cf).validate(anyMap());									
+				doNothing().when(cf).validate(anyMap());
 			} catch (Exception e) {
 				e.printStackTrace();
 				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
@@ -298,6 +372,11 @@ class CustomerServiceTest {
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
+				doThrow(DuplicateKeyException.class).when(cf).validate(anyMap());
+				eR = service.businessCustomerInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
 				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
 				eR = service.businessCustomerInsert(TestingTools.getMapEmpty());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
@@ -317,10 +396,11 @@ class CustomerServiceTest {
 				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
 
 				// extra para controlar valor existente:
-				doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(),anyList(),anyString());
+				doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(), anyList(),
+						anyString());
 //				doReturn(new EntityResultMapImpl()).when(daoHelper).insert(any(), anyMap());
 				try {
-					doNothing().when(cf).validate(anyMap());									
+					doNothing().when(cf).validate(anyMap());
 				} catch (Exception e) {
 					e.printStackTrace();
 					fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
@@ -328,132 +408,136 @@ class CustomerServiceTest {
 				eR = service.businessCustomerInsert(getMapRequiredBusinessInsert());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-				
+
 			} catch (Exception e) {
 				e.printStackTrace();
 				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
 			}
 
 		}
-		
+
 		// RegularCustomer
-				@Test
-				@DisplayName("Bussiness - ControlFields usar reset()")
-				void testcustomerInsertControlFieldsReset() {
-					service.regularCustomerInsert(TestingTools.getMapEmpty());
-					verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
-				}
+		@Test
+		@DisplayName("Bussiness - ControlFields usar reset()")
+		void testcustomerInsertControlFieldsReset() {
+			service.regularCustomerInsert(TestingTools.getMapEmpty());
+			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
+		}
 
-				@Test
-				@DisplayName("Bussiness - ControlFields usar validate() map ")
-				void testRegularCustomerInsertControlFieldsValidate() {
-					service.regularCustomerInsert(TestingTools.getMapEmpty());
-					try {
-						verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
-					} catch (Exception e) {
-						e.printStackTrace();
-						fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
-					}
-				}
+		@Test
+		@DisplayName("Bussiness - ControlFields usar validate() map ")
+		void testRegularCustomerInsertControlFieldsValidate() {
+			service.regularCustomerInsert(TestingTools.getMapEmpty());
+			try {
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
+		}
 
-				@Test
-				@DisplayName("Bussiness - Valores de entrada válidos")
-				void testRegularcustomerInsertOK() {
-					doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(),anyList(),anyString());
-					doReturn(new EntityResultMapImpl()).when(daoHelper).insert(any(), anyMap());
-					try {
-						doNothing().when(cf).validate(anyMap());									
-					} catch (Exception e) {
-						e.printStackTrace();
-						fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
-					}
-					// válido: HashMap campos mínimos
-					eR = service.regularCustomerInsert(getMapRequiredRegularInsert());
-					assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+		@Test
+		@DisplayName("Bussiness - Valores de entrada válidos")
+		void testRegularcustomerInsertOK() {
+			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
+			doReturn(new EntityResultMapImpl()).when(daoHelper).insert(any(), anyMap());
+			try {
+				doNothing().when(cf).validate(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
+			// válido: HashMap campos mínimos
+			eR = service.regularCustomerInsert(getMapRequiredRegularInsert());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
 
-					// válido: HashMap campos mínimos y mas
-					eR = service.regularCustomerInsert(getMapRequiredRegularInsertExtended());
-					assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
-				}
+			// válido: HashMap campos mínimos y mas
+			eR = service.regularCustomerInsert(getMapRequiredRegularInsertExtended());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+		}
 
-				@Test
-				@DisplayName("Valores de entrada NO válidos")
-				void testRegularCustomerInsertKO() {
-					try {
-						// lanzamos todas las excepciones de Validate para comprobar que están bien
-						// recojidas.
-						doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
-						eR = service.regularCustomerInsert(TestingTools.getMapEmpty());
-						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-						assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+		@Test
+		@DisplayName("Valores de entrada NO válidos")
+		void testRegularCustomerInsertKO() {
+			try {
+				// lanzamos todas las excepciones de Validate para comprobar que están bien
+				// recojidas.
+				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
+				eR = service.regularCustomerInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
-						doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
-						eR = service.regularCustomerInsert(TestingTools.getMapEmpty());
-						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-						assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
+				eR = service.regularCustomerInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
-						doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
-						eR = service.regularCustomerInsert(TestingTools.getMapEmpty());
-						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-						assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
+				eR = service.regularCustomerInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
-						doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
-						eR = service.regularCustomerInsert(TestingTools.getMapEmpty());
-						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-						assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
+				eR = service.regularCustomerInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
-						doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
-						eR = service.regularCustomerInsert(TestingTools.getMapEmpty());
-						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-						assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+				doThrow(DuplicateKeyException.class).when(cf).validate(anyMap());
+				eR = service.regularCustomerInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
-						reset(cf);
-						// extra para controlar required:
-						eR = service.regularCustomerInsert(TestingTools.getMapEmpty());
-						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-						assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-						assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
+				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
+				eR = service.regularCustomerInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
-						// extra para controlar restricted:
-						eR = service.regularCustomerInsert(getMapRequiredRegularInsertExtendedWidthRestricted());
-						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-						assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-						assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
+				reset(cf);
+				// extra para controlar required:
+				eR = service.regularCustomerInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
 
-						// extra para controlar valor existente:
-						doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(),anyList(),anyString());
+				// extra para controlar restricted:
+				eR = service.regularCustomerInsert(getMapRequiredRegularInsertExtendedWidthRestricted());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
+
+				// extra para controlar valor existente:
+				doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(), anyList(),
+						anyString());
 //						doReturn(new EntityResultMapImpl()).when(daoHelper).insert(any(), anyMap());
-						try {
-							doNothing().when(cf).validate(anyMap());									
-						} catch (Exception e) {
-							e.printStackTrace();
-							fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
-						}
-						eR = service.regularCustomerInsert(getMapRequiredRegularInsert());
-						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-						assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-						
-					} catch (Exception e) {
-						e.printStackTrace();
-						fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
-					}
+				doNothing().when(cf).validate(anyMap());
 
-				}
+				eR = service.regularCustomerInsert(getMapRequiredRegularInsert());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
+
+		}
 	}
+
 	@Nested
 	@DisplayName("Test for Customer updates")
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	public class CustomerUpdate {
 
+		//Business customer
 		@Test
-		@DisplayName("ControlFields usar reset()")
+		@DisplayName("Business - ControlFields usar reset()")
 		void testCustomerBusinessUpdateControlFieldsReset() {
 			service.customerBusinessUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
 			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
 		}
 
 		@Test
-		@DisplayName("ControlFields usar validate() map ")
+		@DisplayName("Business - ControlFields usar validate() map ")
 		void testCustomerBusinessUpdateControlFieldsValidate() {
 			service.customerBusinessUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
 			try {
@@ -465,23 +549,24 @@ class CustomerServiceTest {
 		}
 
 		@Test
-		@DisplayName("Valores de entrada válidos")
+		@DisplayName("Business - Valores de entrada válidos")
 		void testCustomerBusinessUpdateOK() {
+			doReturn(getERWithVatNumber()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
 			doReturn(new EntityResultMapImpl()).when(daoHelper).update(any(), anyMap(), anyMap());
 			try {
-				doNothing().when(cf).validate(anyMap());									
+				doNothing().when(cf).validate(anyMap());
 			} catch (Exception e) {
 				e.printStackTrace();
 				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
 			}
-			// válido: HashMap campos y filtros
+
 			eR = service.customerBusinessUpdate(getMapUpdate(), getMapId());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
 
 		}
 
 		@Test
-		@DisplayName("Valores de entrada NO válidos")
+		@DisplayName("Business - Valores de entrada NO válidos")
 		void testCustomerBusinessUpdateKO() {
 			try {
 				// lanzamos todas las excepciones de Validate para comprobar que están bien
@@ -536,10 +621,269 @@ class CustomerServiceTest {
 				assertNotEquals(ErrorMessage.CREATION_ERROR, eR.getMessage(), eR.getMessage());
 				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
 
+				// extra para controlar errores internos:
+				doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
+				doNothing().when(cf).validate(anyMap());
+				eR = service.customerBusinessUpdate(getMapUpdate(), getMapId());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
+				doNothing().when(cf).validate(anyMap());
+				eR = service.customerBusinessUpdate(getMapUpdate(), getMapId());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+				
+				doReturn(getERWithVatNumber()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
+				doReturn(TestingTools.getEntitySuccesfulWithMsg()).when(daoHelper).update(any(), anyMap(), anyMap());
+				doNothing().when(cf).validate(anyMap());
+				eR = service.customerBusinessUpdate(getMapUpdate(), getMapId());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
 			} catch (Exception e) {
 				e.printStackTrace();
 				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
 			}
+
+		}
+		
+		//Regular customer
+				@Test
+				@DisplayName("Regular - ControlFields usar reset()")
+				void testCustomerRegularUpdateControlFieldsReset() {
+					service.customerRegularUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+					verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
+				}
+
+				@Test
+				@DisplayName("Regular - ControlFields usar validate() map ")
+				void testCustomerRegularUpdateControlFieldsValidate() {
+					service.customerRegularUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+					try {
+						verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
+					} catch (Exception e) {
+						e.printStackTrace();
+						fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+					}
+				}
+
+				@Test
+				@DisplayName("Regular - Valores de entrada válidos")
+				void testCustomerRegularUpdateOK() {
+					doReturn(getERWithIdenDoc()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
+					doReturn(new EntityResultMapImpl()).when(daoHelper).update(any(), anyMap(), anyMap());
+					try {
+						doNothing().when(cf).validate(anyMap());
+					} catch (Exception e) {
+						e.printStackTrace();
+						fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+					}
+
+					eR = service.customerRegularUpdate(getMapUpdate(), getMapId());
+					assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+
+				}
+
+				@Test
+				@DisplayName("Regular - Valores de entrada NO válidos")
+				void testCustomerRegularUpdateKO() {
+					try {
+						// lanzamos todas las excepciones de Validate para comprobar que están bien
+						// recojidas.
+						doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
+						eR = service.customerRegularUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+						assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+						doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
+						eR = service.customerRegularUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+						assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+						doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
+						eR = service.customerRegularUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+						assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+						doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
+						eR = service.customerRegularUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+						assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+						doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
+						eR = service.customerRegularUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+						assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+						// lanzamos todas las excepciones de SQL para comprobar que están bien
+						// recojidas.
+						doThrow(DuplicateKeyException.class).when(cf).validate(anyMap());
+						eR = service.customerRegularUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+						assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+						doThrow(DataIntegrityViolationException.class).when(cf).validate(anyMap());
+						eR = service.customerRegularUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+						assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+						reset(cf);
+						// extra para controlar required:
+						eR = service.customerRegularUpdate(getMapUpdate(), TestingTools.getMapEmpty());
+						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+						assertNotEquals(ErrorMessage.CREATION_ERROR, eR.getMessage(), eR.getMessage());
+						assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
+
+						// extra para controlar restricted:
+						eR = service.customerRegularUpdate(getMapId(), getMapId());
+						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+						assertNotEquals(ErrorMessage.CREATION_ERROR, eR.getMessage(), eR.getMessage());
+						assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
+
+						// extra para controlar errores internos:
+						doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
+						doNothing().when(cf).validate(anyMap());
+						eR = service.customerRegularUpdate(getMapUpdate(), getMapId());
+						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+						assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+						doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
+						doNothing().when(cf).validate(anyMap());
+						eR = service.customerRegularUpdate(getMapUpdate(), getMapId());
+						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+						assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+						
+						doReturn(getERWithIdenDoc()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
+						doReturn(TestingTools.getEntitySuccesfulWithMsg()).when(daoHelper).update(any(), anyMap(), anyMap());
+						doNothing().when(cf).validate(anyMap());
+						eR = service.customerRegularUpdate(getMapUpdate(), getMapId());
+						assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+						assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+					} catch (Exception e) {
+						e.printStackTrace();
+						fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+					}
+
+				}
+	}
+	
+	@Nested
+	@DisplayName("Test for CustomerCancel updates")
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	public class CustomerCancelUpdate {
+
+		@Test
+		@DisplayName("ControlFields usar reset()")
+		void testcustomerCancelUpdateControlFieldsReset() {
+			service.customerCancelUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
+		}
+
+		@Test
+		@DisplayName("ControlFields usar validate() map ")
+		void testCustomerUpdateControlFieldsValidate() {
+			service.customerCancelUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+			try {
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
+		}
+
+		@Test
+		@DisplayName("Valores de entrada válidos")
+		void testcustomerCancelUpdateOK() {
+			doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
+			try {
+				doNothing().when(cf).validate(anyMap());									
+				when(service.isCustomerBlockeddQuery(any())).thenReturn(false);
+			} catch (Exception e) { 
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
+			// válido: HashMap campos y filtros
+			eR = service.customerCancelUpdate(getMapActionCancel(), getMapId());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+
+		}
+
+		@Test
+		@DisplayName("Valores de entrada NO válidos")
+		void testcustomerCancelUpdateKO() {
+			try {
+				// lanzamos todas las excepciones de Validate para comprobar que están bien
+				// recojidas.
+				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
+				eR = service.customerCancelUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
+				eR = service.customerCancelUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
+				eR = service.customerCancelUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
+				eR = service.customerCancelUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
+				eR = service.customerCancelUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				// lanzamos todas las excepciones de SQL para comprobar que están bien
+				// recojidas.
+				doThrow(DuplicateKeyException.class).when(cf).validate(anyMap());
+				eR = service.customerCancelUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(DataIntegrityViolationException.class).when(cf).validate(anyMap());
+				eR = service.customerCancelUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				reset(cf);
+				// extra para controlar required:
+				eR = service.customerCancelUpdate(getMapUpdate(), TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.CREATION_ERROR, eR.getMessage(), eR.getMessage());
+				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
+
+				// extra para controlar restricted:
+				eR = service.customerCancelUpdate(getMapId(), getMapId());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.CREATION_ERROR, eR.getMessage(), eR.getMessage());
+				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
+
+		}
+	}
+	
+	@Nested
+	@DisplayName("Test for Customer deletes")
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	public class CustomerDelete {
+		@Test
+		@DisplayName("Valores de entrada NO válidos")
+		void testhotelDeleteOK() {			
+			eR = service.customerDelete(TestingTools.getMapEmpty());
+			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+			assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
 		}
 	}
@@ -553,6 +897,13 @@ class CustomerServiceTest {
 				put(dao.ATTR_PHONE, "986123456");
 				put(dao.ATTR_COUNTRY, "EU");
 				put(dao.ATTR_VAT_NUMBER, "B-14556699");
+			}
+		};
+	}
+	Map<String, Object> getMapActionCancel() {
+		return new HashMap<>() {
+			{
+				put(dao.NON_ATTR_ACTION, "CANCEL");				
 			}
 		};
 	}
@@ -596,7 +947,7 @@ class CustomerServiceTest {
 		m.put(dao.ATTR_VAT_NUMBER, "B36111333");
 		return m;
 	}
-	
+
 	Map<String, Object> getMapUpdate() {
 		return getMapRequiredBusinessInsert();
 	}
@@ -605,7 +956,7 @@ class CustomerServiceTest {
 		return getMapRequiredBusinessInsertExtendedWidthRestricted();
 	}
 
-	HashMap<String, Object> getMapId() {
+	Map<String, Object> getMapId() {
 		HashMap<String, Object> filters = new HashMap<>() {
 			{
 				put(dao.ATTR_ID, 1);
@@ -621,5 +972,25 @@ class CustomerServiceTest {
 			}
 		};
 		return columns;
+	}
+
+	EntityResult getERWithVatNumber() {
+		EntityResult resultado = new EntityResultMapImpl();
+		resultado.addRecord(new HashMap() {
+			{
+				put(CustomerDao.ATTR_VAT_NUMBER, "AAAAAAAA");
+			}
+		});
+		return resultado;
+	}
+
+	EntityResult getERWithIdenDoc() {
+		EntityResult resultado = new EntityResultMapImpl();
+		resultado.addRecord(new HashMap() {
+			{
+				put(CustomerDao.ATTR_IDEN_DOC, "AAAAAAAA");
+			}
+		});
+		return resultado;
 	}
 }

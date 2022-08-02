@@ -79,10 +79,10 @@ public class CustomerService implements ICustomerService {
 
 		resultado = this.daoHelper.query(this.customerDao, keyMap, EntityResultTools.attributes(CustomerDao.ATTR_ID),
 				"isCustomerValidBookingHolder");
-		if (resultado.getCode() == EntityResult.OPERATION_WRONG) {
+		if (resultado.isWrong()) {
 			throw new EntityResultRequiredException();
 		}
-		if (resultado.getCode() != EntityResult.OPERATION_WRONG && resultado.calculateRecordNumber() == 0) {
+		if (!resultado.isWrong() && resultado.calculateRecordNumber() == 0) {
 			return false;
 		} else {
 			return true;
@@ -460,7 +460,23 @@ public class CustomerService implements ICustomerService {
 	@Override
 	public EntityResult mailAgreementQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
-		EntityResult resultado = this.daoHelper.query(this.customerDao, keyMap, attrList, "queryAgreementEmails");
+		EntityResult resultado = new EntityResultWrong();
+		try {
+			cf.reset();
+			cf.addBasics(CustomerDao.fields);
+			cf.validate(keyMap);
+			cf.validate(attrList);
+
+			resultado = this.daoHelper.query(this.customerDao, keyMap, attrList, "queryAgreementEmails");
+
+		} catch (ValidateException e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(e.getMessage());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
+		}
 		return resultado;
 	}
 

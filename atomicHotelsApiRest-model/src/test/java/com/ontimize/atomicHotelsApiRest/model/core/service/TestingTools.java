@@ -1,5 +1,9 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.Mockito.doReturn;
+
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -130,6 +134,12 @@ public class TestingTools {
 		subQueryER.addRecord(new HashMap() {{
 			put("CLAVE","VALOR");
 		}});
+		return subQueryER;
+	}
+	
+	public static EntityResult getEntitySuccesfulWithMsg() {
+		EntityResult subQueryER = new EntityResultMapImpl();
+		subQueryER.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);		
 		return subQueryER;
 	}
 }
