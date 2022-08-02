@@ -59,7 +59,7 @@ public class ControlFields {
 		noEmptyList = true; // solo para las Listas no los HashMap
 		noWildcard = true;
 		noColumns = false;
-		allowBasicExpression = false;
+		allowBasicExpression = true;
 	}
 
 	public void setAllowBasicExpression(boolean allowBasicExpression) {
@@ -148,7 +148,7 @@ public class ControlFields {
 		for (String key : keyMap.keySet()) {
 			boolean validType = false;
 
-			if (fields.containsKey(key)) {
+			if (fields.containsKey(key)) {// valida que exista en los fields
 				if (keyMap.get(key) == null) {
 					throw new MissingFieldsException(ErrorMessage.NO_NULL_VALUE + key);
 				}
@@ -156,6 +156,11 @@ public class ControlFields {
 				switch (fields.get(key)) {
 				case STRING:
 					if ((keyMap.get(key) instanceof String)) {
+						validType = true;
+					}
+					break;
+				case NO_EMPTY_STRING:
+					if ((keyMap.get(key) instanceof String && !((String) keyMap.get(key)).isEmpty())) {
 						validType = true;
 					}
 					break;
@@ -286,7 +291,11 @@ public class ControlFields {
 				// PHONE, DATE, DATETIME, ACTION, BOOLEAN, COUNTRY
 
 			} else {
-				throw new InvalidFieldsException(ErrorMessage.INVALID_FIELD + key);
+				if (allowBasicExpression && key == SQLStatementBuilder.ExtendedSQLConditionValuesProcessor.EXPRESSION_KEY) {
+					//TODO comprobamos contenido de basic expresion....
+				}else {								
+					throw new InvalidFieldsException(ErrorMessage.INVALID_FIELD + key);
+				}
 			}
 		}
 	}

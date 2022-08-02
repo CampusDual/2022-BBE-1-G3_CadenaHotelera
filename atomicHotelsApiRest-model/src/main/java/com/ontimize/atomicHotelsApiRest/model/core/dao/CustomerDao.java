@@ -64,8 +64,8 @@ public class CustomerDao extends OntimizeJdbcDaoSupport {
 		put(ATTR_ZIP_CODE,type.STRING);	
 		put(ATTR_BIRTH_DATE,type.DATE);
 		put(ATTR_AGREE_SPAM,type.BOOLEAN);
-		put(ATTR_IDEN_DOC,type.STRING);//cambiar tipo
-		put(ATTR_VAT_NUMBER,type.STRING);//cambiar tipo
+		put(ATTR_IDEN_DOC,type.NO_EMPTY_STRING);//cambiar tipo
+		put(ATTR_VAT_NUMBER,type.NO_EMPTY_STRING);//cambiar tipo
 		put(ATTR_PHONE,type.PHONE);
 		put(ATTR_CANCELED,type.DATETIME);
 		put(ATTR_CREATION,type.DATETIME);
