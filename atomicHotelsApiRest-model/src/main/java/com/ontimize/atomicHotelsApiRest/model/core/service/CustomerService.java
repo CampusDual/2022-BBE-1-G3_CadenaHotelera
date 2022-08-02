@@ -89,7 +89,7 @@ public class CustomerService implements ICustomerService {
 
 	}
 
-	public boolean isCustomerBlockeddQuery(Object customerId)
+	public boolean isCustomerBloquedQuery(Object customerId)
 			throws OntimizeJEERuntimeException, EntityResultRequiredException {
 		EntityResult resultado = new EntityResultWrong();
 
@@ -360,7 +360,7 @@ public class CustomerService implements ICustomerService {
 				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
 
 			} else {
-				if (!isCustomerBlockeddQuery(keyMap.get(CustomerDao.ATTR_ID))) {
+				if (!isCustomerBloquedQuery(keyMap.get(CustomerDao.ATTR_ID))) {
 					Map<String, Object> finalAttrMap = new HashMap<>() {
 						{
 							put(CustomerDao.ATTR_CANCELED, new Date());

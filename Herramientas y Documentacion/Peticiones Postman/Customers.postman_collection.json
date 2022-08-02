@@ -451,7 +451,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\": {\r\n        \"cst_id\": 5\r\n    },\r\n    \"data\": {\r\n        \"action\": \"CANCEL\"\r\n    }    \r\n}",
+					"raw": "{\r\n    \"filter\": {\r\n        \"cst_id\": 2\r\n    },\r\n    \"data\": {\r\n        \"action\": \"CANCEL\"\r\n    }    \r\n}",
 					"options": {
 						"raw": {
 							"language": "json"

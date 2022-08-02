@@ -124,7 +124,11 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
+<<<<<<< HEAD
+					"raw": "{\r\n    \"data\": {\r\n        \"bsx_bkg_id\":18,\r\n        \"bsx_sxt_id\":3,\r\n        \"bsx_units\":2\r\n    }\r\n}",
+=======
 					"raw": "{\r\n    \"data\":{\r\n        \"bsx_bkg_id\": 2,\r\n        \"bsx_sxt_id\": 3,\r\n        \"bsx_units\": 2\r\n    }\r\n}",
+>>>>>>> branch 'master' of https://github.com/CampusDual/BBE-2022-G3.git
 					"options": {
 						"raw": {
 							"language": "json"

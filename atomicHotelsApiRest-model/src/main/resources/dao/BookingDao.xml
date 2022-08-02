@@ -64,10 +64,12 @@ catalog="" schema="${mainschema}" table="bookings" datasource="mainDataSource" s
 			<Sentence>
 				<![CDATA[
 				    SELECT
-				     	#COLUMNS#
+				     	bkg_id, rm_htl_id, rm_number, rm_rmt_id, bkg_cst_id, bkg_rm_id, bkg_observations,  
+				     	bkg_start,  bkg_end, bkg_checkin,  bkg_checkout, bkg_created, rm_status, cst_name, cst_surname
 				    FROM
 				     	bookings
 				   	LEFT JOIN rooms ON rm_id = bkg_rm_id
+				   	LEFT JOIN customers ON bkg_cst_id = cst_id
 				    WHERE bkg_canceled is null 
 				    	AND bkg_checkout is null 
 				    	AND bkg_checkin < now()
