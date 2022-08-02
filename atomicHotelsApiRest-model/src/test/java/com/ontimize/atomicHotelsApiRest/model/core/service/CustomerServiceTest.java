@@ -884,17 +884,19 @@ class CustomerServiceTest {
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
+				reset(daoHelper);
 				doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(), anyList(), eq("queryBasic"));
 				doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(), anyList(), eq("queryBloquedCustomer"));				doNothing().when(cf).validate(anyMap());
-				eR = service.customerBusinessUpdate(getMapUpdate(), getMapId());
+				eR = service.customerCancelUpdate(getMapUpdate(), getMapId());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 				
-				doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList(), eq("queryBasic"));
-				doReturn(TestingTools.getEntitySuccesfulWithMsg()).when(daoHelper).update(any(), anyMap(), anyMap());
-				eR = service.customerBusinessUpdate(getMapUpdate(), getMapId());
+				reset(daoHelper);
+				doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList(), eq("queryBasic"));			
+				eR = service.customerCancelUpdate(getMapUpdate(), getMapId());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
