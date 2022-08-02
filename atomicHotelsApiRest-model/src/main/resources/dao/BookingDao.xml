@@ -64,8 +64,9 @@ catalog="" schema="${mainschema}" table="bookings" datasource="mainDataSource" s
 			<Sentence>
 				<![CDATA[
 				    SELECT
-				     	bkg_id, rm_htl_id, rm_number, rm_rmt_id, bkg_cst_id, bkg_rm_id, bkg_observations,  
-				     	bkg_start,  bkg_end, bkg_checkin,  bkg_checkout, bkg_created, rm_status, cst_name, cst_surname
+				     	bkg_id, rm_htl_id, rm_number, rm_rmt_id, bkg_cst_id, bkg_rm_id, 
+				     	bkg_observations, bkg_start,  bkg_end, bkg_checkin,  bkg_checkout, bkg_created, 
+				     	rm_status, cst_name, cst_surname, cst_identity_document, cst_vat_number
 				    FROM
 				     	bookings
 				   	LEFT JOIN rooms ON rm_id = bkg_rm_id
