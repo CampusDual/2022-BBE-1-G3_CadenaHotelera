@@ -169,7 +169,6 @@ public class ControlFields {
 						validType = true;
 					}
 					break;
-
 				case LONG:
 					if (keyMap.get(key) instanceof Integer || keyMap.get(key) instanceof Long) {
 						validType = true;
