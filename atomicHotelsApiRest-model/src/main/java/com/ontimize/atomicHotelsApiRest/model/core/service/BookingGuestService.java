@@ -177,7 +177,6 @@ public class BookingGuestService implements IBookingGuestService {
 				// Si el cliente no tiene documento de identidad, no es un persona física y por
 				// lo tanto no podrá ser un huesped
 				if (regularCustomer.getRecordValues(0).get(CustomerDao.ATTR_IDEN_DOC) != null) {
-					List<String> listaCualquiera = new ArrayList<String>();
 
 					Map<String, Object> reservaGuest = new HashMap<String, Object>() {
 						{
@@ -187,7 +186,7 @@ public class BookingGuestService implements IBookingGuestService {
 
 					// Devuelve el atributo total_guests indepnedientemente de lo que se introduzca,
 					// por se le pasa una lista cualquiera
-					EntityResult guestCount = this.guestCountQuery(reservaGuest, listaCualquiera);
+					EntityResult guestCount = this.guestCountQuery(reservaGuest, new ArrayList<String>());
 
 					long totalG = 0;
 
@@ -205,29 +204,27 @@ public class BookingGuestService implements IBookingGuestService {
 						}
 					};
 
-					List<String> totalSlots = new ArrayList<String>() { // Podría ser cualquier lista
-						{
-							add(BookingGuestDao.ATTR_TOTAL_SLOTS);
-						}
-					};
-					
-					List<String> listaVacia = new ArrayList<String>();
+//					List<String> totalSlots = new ArrayList<String>() { // Podría ser cualquier lista
+//						{
+//							add(BookingGuestDao.ATTR_TOTAL_SLOTS);
+//						}
+//					};
 
 					// Devuelve la capacidad total de todas las habitaciones que forman la reserva
-					EntityResult slotsCount = bookingService.bookingSlotsInfoQuery(reserva, listaVacia);
+					EntityResult slotsCount = bookingService.bookingSlotsInfoQuery(reserva, new ArrayList<String>());
 					
 					Long totalS=0L;
 					
-					// Si ya hay huespedes en esa reserva, se recoge cuantos son
+					// Recoge la capacidad de total de la reserva
 					if (slotsCount.calculateRecordNumber() > 0) {
 						totalS = (Long) slotsCount.getRecordValues(0).get(BookingGuestDao.ATTR_TOTAL_SLOTS);
 					} else {
-						// Si no hay huéspedes todavía en la reserva, el número actual será cero
+						// Si no hay ninguna habitación asociada, será cero
 						totalS = 0L;
 					}
 
 					// Si el número de huéspedes que ya están asignados a las habitaciones de la
-					// reserva es inferior a la capacidad de la reserv, se podrán añadir más
+					// reserva es inferior a la capacidad de la reserva, se podrán añadir más
 					if ((totalG < totalS) || (totalG==0 && totalS==0)) {
 						resultado = this.daoHelper.insert(this.bookingGuestDao, attrMap);
 					} else {
