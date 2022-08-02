@@ -210,9 +210,11 @@ public class BookingGuestService implements IBookingGuestService {
 							add(BookingGuestDao.ATTR_TOTAL_SLOTS);
 						}
 					};
+					
+					List<String> listaVacia = new ArrayList<String>();
 
 					// Devuelve la capacidad total de todas las habitaciones que forman la reserva
-					EntityResult slotsCount = bookingService.bookingSlotsInfoQuery(reserva, totalSlots);
+					EntityResult slotsCount = bookingService.bookingSlotsInfoQuery(reserva, listaVacia);
 					
 					Long totalS=0L;
 					
