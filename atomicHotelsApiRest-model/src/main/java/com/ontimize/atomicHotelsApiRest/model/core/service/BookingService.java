@@ -593,22 +593,26 @@ public class BookingService implements IBookingService {
 			cf.setOptional(false);
 			cf.validate(keyMap);
 
-			List<String> listaVacia = new ArrayList<String>();
-
-			EntityResult habitaciones = bookingHotelRoomRoomTypeQuery(keyMap, listaVacia);
+			EntityResult habitaciones = bookingHotelRoomRoomTypeQuery(keyMap, new ArrayList<String>());
 
 			Map<String, Object> bookingGuestsId = new HashMap<String, Object>() {
 				{
 					put(BookingGuestDao.ATTR_BKG_ID, keyMap.get(BookingDao.ATTR_ID));
 				}
 			};
-			EntityResult huespedes = bookingGuestsService.bookingGuestsInfoQuery(bookingGuestsId, listaVacia);
+			EntityResult huespedes = bookingGuestsService.bookingGuestsInfoQuery(bookingGuestsId, new ArrayList<String>());
 			
-			List<String> listaVacia2 = new ArrayList<String>();//No sé porqué no le vale con la otra
-			EntityResult totalGuests = bookingGuestsService.guestCountQuery(bookingGuestsId,listaVacia2);
+			EntityResult totalGuests = bookingGuestsService.guestCountQuery(bookingGuestsId,new ArrayList<String>());
 			
-			List<String> listaVacia3 = new ArrayList<String>();//No sé porqué no le vale con la otra
-			EntityResult totalSlots = this.bookingSlotsInfoQuery(keyMap, listaVacia3);
+			if(totalGuests.isWrong()) {
+				throw new EntityResultRequiredException(totalGuests.getMessage());
+			}
+
+			EntityResult totalSlots = this.bookingSlotsInfoQuery(keyMap, new ArrayList<String>());
+			
+			if(totalSlots.isWrong()) {
+				throw new EntityResultRequiredException(totalSlots.getMessage());
+			}
 
 			List<String> listaGenericaBooking = new ArrayList<String>() {
 				{
@@ -650,6 +654,9 @@ public class BookingService implements IBookingService {
 
 		} catch (ValidateException e) {
 			resultadoFinal = new EntityResultWrong(e.getMessage());
+		}catch(EntityResultRequiredException e) {
+			e.printStackTrace();
+			resultadoFinal = new EntityResultWrong(ErrorMessage.ERROR);	
 		} catch (Exception e) {
 			resultadoFinal = new EntityResultWrong(ErrorMessage.ERROR);
 		}
