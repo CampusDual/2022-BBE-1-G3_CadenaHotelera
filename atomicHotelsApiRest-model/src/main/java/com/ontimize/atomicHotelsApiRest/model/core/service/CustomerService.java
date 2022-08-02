@@ -82,7 +82,7 @@ public class CustomerService implements ICustomerService {
 		if (resultado.isWrong()) {
 			throw new EntityResultRequiredException(resultado.getMessage());
 		}
-		if (!resultado.isWrong() || resultado.calculateRecordNumber() == 0) {
+		if (resultado.calculateRecordNumber() == 0) {
 			return false;
 		} else {
 			return true;
@@ -110,7 +110,7 @@ public class CustomerService implements ICustomerService {
 		resultado = this.daoHelper.query(this.customerDao, keyMap,
 				EntityResultTools.attributes(BookingDao.ATTR_CUSTOMER_ID, BookingGuestDao.ATTR_CST_ID),
 				"queryBloquedCustomer");
-		if (resultado.getCode() == EntityResult.OPERATION_WRONG) {
+		if (resultado.isWrong()) {
 			throw new EntityResultRequiredException();
 		}
 		if (resultado.calculateRecordNumber() == 0) {

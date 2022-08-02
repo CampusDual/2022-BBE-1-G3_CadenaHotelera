@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.description;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -229,7 +230,7 @@ class CustomerServiceTest {
 						anyString());
 				resultado = service.isCustomerValidBookingHolder(999);
 				assertTrue(resultado);
-
+								
 				doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
 				resultado = service.isCustomerValidBookingHolder(999);
 				assertFalse(resultado);
@@ -796,10 +797,11 @@ class CustomerServiceTest {
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testcustomerCancelUpdateOK() {
-			doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
+			doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(), anyList(), eq("queryBasic"));
+			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList(), eq("queryBloquedCustomer"));
+			doReturn(new EntityResultMapImpl()).when(daoHelper).update(any(), anyMap(), anyMap());
 			try {
 				doNothing().when(cf).validate(anyMap());									
-				when(service.isCustomerBlockeddQuery(any())).thenReturn(false);
 			} catch (Exception e) { 
 				e.printStackTrace();
 				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
@@ -866,6 +868,33 @@ class CustomerServiceTest {
 				assertNotEquals(ErrorMessage.CREATION_ERROR, eR.getMessage(), eR.getMessage());
 				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
 
+				// errores internos
+				/**
+					doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(), anyList(), eq("queryBasic"));
+					doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList(), eq("queryBloquedCustomer"));
+					doReturn(new EntityResultMapImpl()).when(daoHelper).update(any(), anyMap(), anyMap());
+				
+				*/
+				doNothing().when(cf).validate(anyMap());
+				
+				doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(), anyList(), eq("queryBasic"));
+				doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList(), eq("queryBloquedCustomer"));
+				doReturn(TestingTools.getEntitySuccesfulWithMsg()).when(daoHelper).update(any(), anyMap(), anyMap());
+				eR = service.customerCancelUpdate(getMapUpdate(), getMapId());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(), anyList(), eq("queryBasic"));
+				doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(), anyList(), eq("queryBloquedCustomer"));				doNothing().when(cf).validate(anyMap());
+				eR = service.customerBusinessUpdate(getMapUpdate(), getMapId());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+				
+				doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList(), eq("queryBasic"));
+				doReturn(TestingTools.getEntitySuccesfulWithMsg()).when(daoHelper).update(any(), anyMap(), anyMap());
+				eR = service.customerBusinessUpdate(getMapUpdate(), getMapId());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 			} catch (Exception e) {
 				e.printStackTrace();
 				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
