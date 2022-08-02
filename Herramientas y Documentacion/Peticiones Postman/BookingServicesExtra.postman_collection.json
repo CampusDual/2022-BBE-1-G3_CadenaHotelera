@@ -60,59 +60,6 @@
 			"response": []
 		},
 		{
-			"name": "-R all Relaciones .- booking in progress",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "demouser",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "demo",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:33333/bookingserviceextra/bookingInProgress?columns=bsx_id",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "33333",
-					"path": [
-						"bookingserviceextra",
-						"bookingInProgress"
-					],
-					"query": [
-						{
-							"key": "columns",
-							"value": "bsx_id"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "-D Relacion BookingServiceExtra",
 			"request": {
 				"auth": {
@@ -178,7 +125,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"data\":{\r\n        \"bsx_bkg_id\": 2,\r\n        \"bsx_hsx_id\": 3,\r\n        \"bsx_units\": 2,\r\n        \"bsx_precio\": 10\r\n    }\r\n}",
+					"raw": "{\r\n    \"data\": {\r\n        \"bsx_bkg_id\":18,\r\n        \"bsx_sxt_id\":3,\r\n        \"bsx_units\":2\r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -186,14 +133,14 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:33333/bookngserviceextra/bookingServiceExtra",
+					"raw": "http://localhost:33333/bookingserviceextra/bookingServiceExtra",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "33333",
 					"path": [
-						"bookngserviceextra",
+						"bookingserviceextra",
 						"bookingServiceExtra"
 					]
 				}
