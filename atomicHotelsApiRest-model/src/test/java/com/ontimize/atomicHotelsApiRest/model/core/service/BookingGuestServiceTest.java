@@ -465,8 +465,87 @@ class BookingGuestServiceTest {
 		}
 
 	}
+	
+//	bookingGuestsInfoQuery
+//	CustomerDao.ATTR_NAME,CustomerDao.ATTR_SURNAME, CustomerDao.ATTR_IDEN_DOC
+	
+	@Nested
+	@DisplayName("Test for BookingGuestsInfo queries")
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	public class BookingGuestsInfoQuery {
 
-//	}
+		@Test
+		@DisplayName("ControlFields usar reset()")
+		void testBookingGuestsInfoQueryControlFieldsReset() {
+			service.bookingGuestsInfoQuery(TestingTools.getMapEmpty(), getColumsBookingsGuestInfo());
+			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
+		}
+
+		
+		@Test
+		@DisplayName("ControlFields usar validate() map y list") 
+		void testBookingGuestsInfoQueryControlFieldsValidateList() {
+			service.bookingGuestsInfoQuery(getBookingId(), getColumsBookingsGuestInfo());
+			try {
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields map")).validate(anyMap());
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields list")).validate(anyList());	
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("excepción no capturada: " + e.getMessage());
+			}
+		}
+
+		@Test
+		@DisplayName("Valores de entrada válidos")
+		void testBookingGuestsInfoQueryOK() {
+			doReturn(getEntityResultBookingsGuestInfo()).when(daoHelper).query(any(), anyMap(), anyList(),
+					anyString());
+			eR = service.bookingGuestsInfoQuery(getBookingId(),new ArrayList());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+
+		}
+
+		@Test
+		@DisplayName("Valores de entrada NO válidos")
+		void testBookingGuestsInfoQuerKO() {
+			try {
+				// lanzamos todas las excepciones de Validate para comprobar que están bien
+				// recojidas.
+				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
+				eR = service.bookingGuestsInfoQuery(TestingTools.getMapEmpty(), getColumsBookingsGuestInfo());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
+				eR = service.bookingGuestsInfoQuery(TestingTools.getMapEmpty(), getColumsBookingsGuestInfo());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
+				eR = service.bookingGuestsInfoQuery(TestingTools.getMapEmpty(), getColumsBookingsGuestInfo());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
+				eR = service.bookingGuestsInfoQuery(TestingTools.getMapEmpty(), getColumsBookingsGuestInfo());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
+				eR = service.bookingGuestsInfoQuery(TestingTools.getMapEmpty(), getColumsBookingsGuestInfo());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("excepción no capturada: " + e.getMessage());
+			}
+
+		}
+
+	}
+
+
 
 	// datos entrada
 
@@ -554,6 +633,18 @@ class BookingGuestServiceTest {
 		};
 		return columns;
 	}
+	
+	
+	List<String> getColumsBookingsGuestInfo() {
+		List<String> columns = new ArrayList<>() {
+			{
+				add(CustomerDao.ATTR_NAME);
+				add(CustomerDao.ATTR_SURNAME);
+				add(CustomerDao.ATTR_IDEN_DOC);
+			}
+		};
+		return columns;
+	}
 
 	EntityResult getEntityResultPrecioServcioUnidadesTotal() {
 		EntityResult er = new EntityResultMapImpl();
@@ -563,6 +654,19 @@ class BookingGuestServiceTest {
 				put(BookingServiceExtraDao.ATTR_ID_UNITS, 1);
 				put(BookingServiceExtraDao.ATTR_PRECIO, new BigDecimal(22));
 				put("total", new BigDecimal(22));
+			}
+
+		});
+		return er;
+	}
+	
+	EntityResult getEntityResultBookingsGuestInfo() {
+		EntityResult er = new EntityResultMapImpl();
+		er.addRecord(new HashMap<String, Object>() {
+			{
+				put(CustomerDao.ATTR_NAME,"Nombre");
+				put(CustomerDao.ATTR_SURNAME,"Apellido");
+				put(CustomerDao.ATTR_IDEN_DOC,"DNI");
 			}
 
 		});

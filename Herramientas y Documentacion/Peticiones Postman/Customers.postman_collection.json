@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "6f642a6a-2da9-4b4b-b7df-aa629cedae71",
+		"_postman_id": "d8f31ce3-ba80-4e7e-b117-46d1ca8d3b1a",
 		"name": "Customers",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -27,7 +27,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"data\":\r\n    {\"cst_name\":\"Paula\",\r\n    \"cst_address\":\"calle aaaaa\",\r\n    \"cst_phone\":\"986123456\",\r\n    \"cst_cnt_iso\":\"ES\",\r\n    \"cst_vat_number\":\"B36443111\"\r\n    }\r\n}",
+					"raw": "{\"data\":\r\n    {\"cst_name\":\"Paula\",\r\n    \"cst_address\":\"calle aaaaa\",\r\n    \"cst_phone\":\"986123456\",\r\n    \"cst_cnt_iso\":\"GB\",\r\n    \"cst_vat_number\":\"B36443111\",\r\n    \"cst_email\":\"sasa8@asds.sa\"\r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
