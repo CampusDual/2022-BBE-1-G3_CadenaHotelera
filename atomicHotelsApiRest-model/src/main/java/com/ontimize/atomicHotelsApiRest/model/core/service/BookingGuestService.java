@@ -213,8 +213,16 @@ public class BookingGuestService implements IBookingGuestService {
 
 					// Devuelve la capacidad total de todas las habitaciones que forman la reserva
 					EntityResult slotsCount = bookingService.bookingSlotsInfoQuery(reserva, totalSlots);
-
-					Long totalS = (Long) slotsCount.getRecordValues(0).get(BookingGuestDao.ATTR_TOTAL_SLOTS);
+					
+					Long totalS=0L;
+					
+					// Si ya hay huespedes en esa reserva, se recoge cuantos son
+					if (slotsCount.calculateRecordNumber() > 0) {
+						totalS = (Long) slotsCount.getRecordValues(0).get(BookingGuestDao.ATTR_TOTAL_SLOTS);
+					} else {
+						// Si no hay huéspedes todavía en la reserva, el número actual será cero
+						totalS = 0L;
+					}
 
 					// Si el número de huéspedes que ya están asignados a las habitaciones de la
 					// reserva es inferior a la capacidad de la reserv, se podrán añadir más
