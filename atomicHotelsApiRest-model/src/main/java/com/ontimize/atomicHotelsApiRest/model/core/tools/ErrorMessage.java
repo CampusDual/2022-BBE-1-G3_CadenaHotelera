@@ -12,6 +12,7 @@ public class ErrorMessage {
 //ERRORES DE UPDATE
 	public static final String UPDATE_ERROR = "Error de actualización ";	 
 	public static final String UPDATE_ERROR_MISSING_FIELD = "El registro que pretende actualizar no existe.";	
+	public static final String UPDATE_ERROR_WRONG_TYPE= "El registro que pretende actualizar no es del tipo adecuado.";	
 	public static final String UPDATE_ERROR_DUPLICATED_FIELD = "No es posible duplicar un registro";	 
 	public static final String UPDATE_ERROR_REQUIRED_FIELDS = "No es posible eliminar campos obligatorios";	 
 	public static final String UPDATE_ERROR_MISSING_FK = "No existe la referencia necesaria en otra tabla";
