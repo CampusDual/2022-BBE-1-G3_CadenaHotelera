@@ -167,34 +167,34 @@ class CustomerServiceTest {
 		@Test
 		@DisplayName("ValidBookingHolder - Valores de salida NO válidos - error consulta")
 		void testIsCustomerValidBookingHolderKO() {
-			boolean resultado;			
+			boolean resultado;
 			try {
-				doReturn(new EntityResultWrong()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());				
-				assertThrows(EntityResultRequiredException.class, ()-> service.isCustomerValidBookingHolder(999));
-				
+				doReturn(new EntityResultWrong()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
+				assertThrows(EntityResultRequiredException.class, () -> service.isCustomerValidBookingHolder(999));
+
 				eR = TestingTools.getEntityOneRecord();
 				eR.setCode(EntityResult.OPERATION_WRONG);
-				doReturn(eR).when(daoHelper).query(any(), anyMap(), anyList(), anyString());				
-				assertThrows(EntityResultRequiredException.class, ()-> service.isCustomerValidBookingHolder(999));		
-				
+				doReturn(eR).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
+				assertThrows(EntityResultRequiredException.class, () -> service.isCustomerValidBookingHolder(999));
+
 			} catch (Exception e) {
 				e.printStackTrace();
 				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
 			}
 		}
 
-		@DisplayName("BloquedQuery - Valores de salida válidos")
-		void testIsCustomerBloquedQueryOK() {
+		@DisplayName("BlockedQuery - Valores de salida válidos")
+		void testIsCustomerBlockedQueryOK() {
 			boolean resultado;
 
 			try {
 				doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(), anyList(),
 						anyString());
-				resultado = service.isCustomerBloquedQuery(999);
+				resultado = service.isCustomerBlockeddQuery(999);
 				assertFalse(resultado);
 
 				doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
-				resultado = service.isCustomerBloquedQuery(999);
+				resultado = service.isCustomerBlockeddQuery(999);
 				assertTrue(resultado);
 
 			} catch (Exception e) {
@@ -204,17 +204,17 @@ class CustomerServiceTest {
 		}
 
 		@Test
-		@DisplayName("BloquedQuery - Valores de salida NO válidos - error consulta")
-		void testIsCustomerBloquedQueryKO() {
+		@DisplayName("BlockedQuery - Valores de salida NO válidos - error consulta")
+		void testIsCustomerBlockedQueryKO() {
 			boolean resultado;
 			try {
 				doReturn(new EntityResultWrong()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
-				assertThrows(EntityResultRequiredException.class, () -> service.isCustomerBloquedQuery(999));
+				assertThrows(EntityResultRequiredException.class, () -> service.isCustomerBlockeddQuery(999));
 
 				eR = TestingTools.getEntityOneRecord();
 				eR.setCode(EntityResult.OPERATION_WRONG);
 				doReturn(eR).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
-				assertThrows(EntityResultRequiredException.class, () -> service.isCustomerBloquedQuery(999));
+				assertThrows(EntityResultRequiredException.class, () -> service.isCustomerBlockeddQuery(999));
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -229,44 +229,43 @@ class CustomerServiceTest {
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	public class CustomerInsert {
 
+		// BusinessCustomer
 		@Test
-		@DisplayName("ControlFields usar reset()")
+		@DisplayName("Bussiness - ControlFields usar reset()")
 		void testcustomerInsertControlFieldsReset() {
 			service.businessCustomerInsert(TestingTools.getMapEmpty());
 			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
 		}
 
 		@Test
-		@DisplayName("ControlFields usar validate() map ")
-		void testCustomerInsertControlFieldsValidate() {
+		@DisplayName("Bussiness - ControlFields usar validate() map ")
+		void testBusinessCustomerInsertControlFieldsValidate() {
 			service.businessCustomerInsert(TestingTools.getMapEmpty());
 			try {
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
 			} catch (Exception e) {
 				e.printStackTrace();
 				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
-
 			}
 		}
 
 		@Test
-		@DisplayName("Valores de entrada válidos")
-		void testcustomerInsertOK() {
+		@DisplayName("Bussiness - Valores de entrada válidos")
+		void testBusinesscustomerInsertOK() {
 			doReturn(new EntityResultMapImpl()).when(daoHelper).insert(any(), anyMap());
 
 			// válido: HashMap campos mínimos
-			eR = service.businessCustomerInsert(getMapRequiredInsert());
+			eR = service.businessCustomerInsert(getMapRequiredBusinessInsert());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
 
 			// válido: HashMap campos mínimos y mas
-			eR = service.businessCustomerInsert(getMapRequiredInsertExtended());
+			eR = service.businessCustomerInsert(getMapRequiredBusinessInsertExtended());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
-
 		}
 
 		@Test
 		@DisplayName("Valores de entrada NO válidos")
-		void testcustomerInsertKO() {
+		void testBusinessCustomerInsertKO() {
 			try {
 				// lanzamos todas las excepciones de Validate para comprobar que están bien
 				// recojidas.
@@ -304,7 +303,7 @@ class CustomerServiceTest {
 				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
 
 				// extra para controlar restricted:
-				eR = service.businessCustomerInsert(getMapRequiredInsertExtendedWidthRestricted());
+				eR = service.businessCustomerInsert(getMapRequiredBusinessInsertExtendedWidthRestricted());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 				System.out.println(eR.getMessage());
@@ -319,53 +318,38 @@ class CustomerServiceTest {
 	}
 	// datos entrada
 
-	Map<String, Object> getMapRequiredInsert() {
+	Map<String, Object> getMapRequiredBusinessInsert() {
 		return new HashMap<>() {
 			{
-				put(dao.ATTR_NAME, "Hotel 23");
-				put(dao.ATTR_CITY, "Vigo");
-				put(dao.ATTR_STATE, "Galicia");
-				put(dao.ATTR_COUNTRY, "ES");
+				put(dao.ATTR_NAME, "Citroen");
+				put(dao.ATTR_PHONE, "986123456");
+				put(dao.ATTR_COUNTRY, "EU");
+				put(dao.ATTR_VAT_NUMBER, "B-14556699");
 			}
 		};
 	}
 
 	Map<String, Object> getMapUpdate() {
-		return getMapRequiredInsert();
+		return getMapRequiredBusinessInsert();
 	}
 
-	Map<String, Object> getMapRequiredInsertExtended() {
-
-		return new HashMap<>() {
-			{
-				put(dao.ATTR_NAME, "Hotel 23");
-				put(dao.ATTR_CITY, "Vigo");
-				put(dao.ATTR_STATE, "Galicia");
-				put(dao.ATTR_COUNTRY, "ES");
-				put(dao.ATTR_PHONE, "+34 986 111 111");
-				put(dao.ATTR_EMAIL, "hotel1@atomicHotels.com");
-			}
-		};
+	Map<String, Object> getMapRequiredBusinessInsertExtended() {
+		Map<String, Object> m = getMapRequiredBusinessInsert();
+		m.put(dao.ATTR_CITY, "New York");
+		return m;
 	}
 
-	Map<String, Object> getMapRequiredInsertExtendedWidthRestricted() {
-
-		return new HashMap<>() {
-			{
-				put(dao.ATTR_ID, "1");
-				put(dao.ATTR_NAME, "Hotel 23");
-				put(dao.ATTR_CITY, "Vigo");
-				put(dao.ATTR_STATE, "Galicia");
-				put(dao.ATTR_COUNTRY, "ES");
-				put(dao.ATTR_PHONE, "+34 986 111 111");
-				put(dao.ATTR_EMAIL, "hotel1@atomicHotels.com");
-
-			}
-		};
+	Map<String, Object> getMapRequiredBusinessInsertExtendedWidthRestricted() {
+		Map<String, Object> m = getMapRequiredBusinessInsertExtended();
+		m.put(dao.ATTR_ID, 2);
+		m.put(dao.ATTR_SURNAME, "Rodriguez");
+		m.put(dao.ATTR_BIRTH_DATE, "1993-01-01");
+		m.put(dao.ATTR_IDEN_DOC, "55444333-H");
+		return m;
 	}
 
 	Map<String, Object> getMapRequiredDeletetExtendedWidthRestricted() {
-		return getMapRequiredInsertExtendedWidthRestricted();
+		return getMapRequiredBusinessInsertExtendedWidthRestricted();
 	}
 
 	HashMap<String, Object> getMapId() {
