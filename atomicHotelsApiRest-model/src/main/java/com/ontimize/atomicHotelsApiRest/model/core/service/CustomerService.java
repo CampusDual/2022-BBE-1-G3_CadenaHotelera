@@ -80,9 +80,9 @@ public class CustomerService implements ICustomerService {
 		resultado = this.daoHelper.query(this.customerDao, keyMap, EntityResultTools.attributes(CustomerDao.ATTR_ID),
 				"isCustomerValidBookingHolder");
 		if (resultado.isWrong()) {
-			throw new EntityResultRequiredException();
+			throw new EntityResultRequiredException(resultado.getMessage());
 		}
-		if (!resultado.isWrong() && resultado.calculateRecordNumber() == 0) {
+		if (!resultado.isWrong() || resultado.calculateRecordNumber() == 0) {
 			return false;
 		} else {
 			return true;
