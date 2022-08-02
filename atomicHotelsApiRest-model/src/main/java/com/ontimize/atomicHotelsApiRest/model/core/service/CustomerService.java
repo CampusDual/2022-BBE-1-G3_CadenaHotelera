@@ -159,7 +159,6 @@ public class CustomerService implements ICustomerService {
 					EntityResultTools.attributes(CustomerDao.ATTR_VAT_NUMBER));
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros, insertamos
 				resultado = this.daoHelper.insert(this.customerDao, attrMap);
-
 				resultado.setMessage("Business Customer registrado");
 			} else {
 				resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);

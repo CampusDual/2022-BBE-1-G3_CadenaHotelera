@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -35,10 +34,10 @@ public class CountryService implements ICountryService {
 
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
-	
+
 	@Autowired
 	ControlFields cf;
-	
+
 	private Map<String, String> mapCountries = null;
 
 	@Override
@@ -46,39 +45,51 @@ public class CountryService implements ICountryService {
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 		cf.reset();
-		cf.addBasics(CountryDao.fields); 
+		cf.addBasics(CountryDao.fields);
 		try {
 			cf.validate(keyMap);
 			cf.validate(attrList);
-			if(daoHelper == null) {
+			if (daoHelper == null) {
 				System.err.println("daoHelper en country service es nulo");
 			}
 			resultado = this.daoHelper.query(this.countryDao, keyMap, attrList);
 		} catch (ValidateException e) {
-			resultado =  new EntityResultWrong(e.getMessage());
-		}catch(Exception e) {
+			resultado = new EntityResultWrong(e.getMessage());
+		} catch (Exception e) {
 			e.printStackTrace();
-			resultado =  new EntityResultWrong(ErrorMessage.ERROR);
+			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}
-		
+
 		return resultado;
 	}
-	
+
 	@Override
-	public Map<String,String> mapCountries(){
+	public Map<String, String> mapCountries() {
 //		System.err.println(mapCountries);
-		if(mapCountries == null) {
-			List<String> attrList = new ArrayList<>() {{
-				add(CountryDao.ATTR_ISO);
-				add(CountryDao.ATTR_NAME);
-			}};
-			EntityResult er = countryQuery(new HashMap<>(), attrList);
-			
-			this.mapCountries = new HashMap<>();							
-			for(int i = 0 ; i < er.calculateRecordNumber();i++) {
+		if (mapCountries == null) {
+			List<String> attrList = new ArrayList<>() {
+				{
+					add(CountryDao.ATTR_ISO);
+					add(CountryDao.ATTR_NAME);
+				}
+			};
+
+			EntityResult er;
+			try {
+				er = this.daoHelper.query(this.countryDao, new HashMap<>(), attrList);
+			} catch (Exception e) {
+				e.printStackTrace();
+				er = new EntityResultWrong(ErrorMessage.ERROR);
+			}
+			//si llamo a control fields, se carga el que este validando este campo country
+//			EntityResult er = countryQuery(new HashMap<>(), attrList);
+
+			this.mapCountries = new HashMap<>();
+			for (int i = 0; i < er.calculateRecordNumber(); i++) {
 //				System.out.println(er.getRecordValues(i));
-				mapCountries.put((String) er.getRecordValues(i).get(CountryDao.ATTR_ISO),(String) er.getRecordValues(i).get(CountryDao.ATTR_NAME));		
-			}				
+				mapCountries.put((String) er.getRecordValues(i).get(CountryDao.ATTR_ISO),
+						(String) er.getRecordValues(i).get(CountryDao.ATTR_NAME));
+			}
 //			System.out.println();
 //			System.out.println("****************");
 //			System.err.println(mapCountries);
@@ -86,7 +97,4 @@ public class CountryService implements ICountryService {
 		return mapCountries;
 	}
 
-	
-	
 }
-

@@ -147,7 +147,7 @@ public class ControlFields {
 //validar typos y valores
 		for (String key : keyMap.keySet()) {
 			boolean validType = false;
-
+ 
 			if (fields.containsKey(key)) {// valida que exista en los fields
 				if (keyMap.get(key) == null) {
 					throw new MissingFieldsException(ErrorMessage.NO_NULL_VALUE + key);
