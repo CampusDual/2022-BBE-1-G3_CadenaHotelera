@@ -176,7 +176,16 @@ public class BookingGuestService implements IBookingGuestService {
 					// Devuelve la capacidad total de todas las habitaciones que forman la reserva
 					EntityResult slotsCount = bookingService.bookingSlotsInfoQuery(reserva, totalSlots);
 
-					Long totalS = (Long) slotsCount.getRecordValues(0).get(BookingGuestDao.ATTR_TOTAL_SLOTS);
+					Long totalS = 0L;
+
+					// Si hay habiatciones asignadas a la reserva se cuanta la capacidad de la
+					// habitación
+					if (slotsCount.calculateRecordNumber() > 0) {
+						totalS = (Long) slotsCount.getRecordValues(0).get(BookingGuestDao.ATTR_TOTAL_SLOTS);
+					} else {
+						// Si no hay habitaciones todavía, el número actual será cero
+						totalS = 0L;
+					}
 
 					// Si el número de huéspedes que ya están asignados a las habitaciones de la
 					// reserva es inferior a la capacidad de la reserv, se podrán añadir más
@@ -227,13 +236,13 @@ public class BookingGuestService implements IBookingGuestService {
 
 				}
 			};
-			
+
 			EntityResult auxEntity = bookingGuestQuery(consultaKeyMap,
 					EntityResultTools.attributes(BookingGuestDao.ATTR_ID, BookingGuestDao.ATTR_BKG_ID));
 			if (auxEntity.calculateRecordNumber() == 0) {
 				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
 			} else {
-				
+
 				if (bookingService.getBookingStatus(auxEntity.getRecordValues(0).get(BookingGuestDao.ATTR_BKG_ID))
 						.equals(BookingDao.Status.CONFIRMED)) {
 
