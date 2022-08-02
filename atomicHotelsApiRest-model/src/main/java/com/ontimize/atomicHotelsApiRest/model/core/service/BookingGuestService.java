@@ -226,7 +226,7 @@ public class BookingGuestService implements IBookingGuestService {
 
 					// Si el número de huéspedes que ya están asignados a las habitaciones de la
 					// reserva es inferior a la capacidad de la reserv, se podrán añadir más
-					if (totalG < totalS) {
+					if ((totalG < totalS) || (totalG==0 && totalS==0)) {
 						resultado = this.daoHelper.insert(this.bookingGuestDao, attrMap);
 					} else {
 						resultado = new EntityResultWrong(ErrorMessage.BOOKING_COMPLETED_NO_MORE_GUESTS_ALLOWED);
