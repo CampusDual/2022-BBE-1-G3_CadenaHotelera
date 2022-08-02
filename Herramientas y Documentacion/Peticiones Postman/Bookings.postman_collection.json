@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "36fd96e4-55b5-4fd6-9691-ab901a2a48a3",
+		"_postman_id": "9fd6a8ca-c68d-4b80-b3f5-6f9481d6d9ab",
 		"name": "Bookings",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -413,6 +413,51 @@
 					"path": [
 						"bookings",
 						"bookingsInRange",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "R - completeBooking",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"filter\":{\r\n    \"bkg_id\":6\r\n},\r\n\"columns\":[\"\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookings/bookingCompleteInfo/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookings",
+						"bookingCompleteInfo",
 						"search"
 					]
 				}

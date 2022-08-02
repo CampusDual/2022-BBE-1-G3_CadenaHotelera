@@ -636,11 +636,12 @@ public class BookingService implements IBookingService {
 				huesp.add(h);
 			}
 			
-			mapFinal.put("rooms", hab);
-			mapFinal.put("guests", huesp);
+			
 			mapFinal.putAll(resultadoGenerico.getRecordValues(0));
 			mapFinal.putAll(totalGuests.getRecordValues(0));
 			mapFinal.putAll(totalSlots.getRecordValues(0));
+			mapFinal.put("rooms", hab);
+			mapFinal.put("guests", huesp);
 			
 
 			resultadoFinal.addRecord(mapFinal);
