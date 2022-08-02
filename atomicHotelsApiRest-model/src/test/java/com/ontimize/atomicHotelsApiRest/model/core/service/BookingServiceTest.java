@@ -837,7 +837,7 @@ class BookingServiceTest {
 		@Test
 		@DisplayName("ControlFields usar validate() map y list") 
 		void testBooking_now_by_room_numberQueryControlFieldsValidate() {
-			service.booking_now_by_room_numberQuery(getMapId(), getColumsName());
+			service.booking_now_by_room_numberQuery(getMapRoomId(), getColumsName());
 			try {
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields map")).validate(anyMap());
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields list")).validate(anyList());	
@@ -860,7 +860,7 @@ class BookingServiceTest {
 		doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
 
 		// válido: HashMap campos mínimos
-		eR = service.booking_now_by_room_numberQuery(getMapRequiredInsert(), getColumsName());
+		eR = service.booking_now_by_room_numberQuery(getMapRoomId(), getColumsName());
 		assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
 
 		}
@@ -1040,6 +1040,14 @@ class BookingServiceTest {
 				put(dao.ATTR_CHECKIN, "2022-07-26 09:02:02.748"); 
 */
 				
+			}
+		};
+		return filters;
+	};
+	HashMap<String, Object> getMapRoomId() {
+		HashMap<String, Object> filters = new HashMap<>() {
+			{
+				put(dao.ATTR_ROOM_ID, 1);		
 			}
 		};
 		return filters;

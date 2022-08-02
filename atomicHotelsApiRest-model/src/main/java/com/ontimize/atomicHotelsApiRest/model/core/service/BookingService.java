@@ -507,7 +507,7 @@ public class BookingService implements IBookingService {
 
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			List<String> required = Arrays.asList(BookingDao.ATTR_ID);
+			List<String> required = Arrays.asList(BookingDao.ATTR_ROOM_ID);
 			cf.reset();
 			cf.addBasics(BookingDao.fields);
 			cf.setRequired(required);

@@ -113,7 +113,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\":{\r\n        \"bgs_bkg_id\":6\r\n    },\r\n    \"columns\":[\"total_guests\"]\r\n}",
+					"raw": "{\r\n    \"filter\":{\r\n        \"bgs_bkg_id\":6\r\n    },\r\n    \"columns\":[]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -158,7 +158,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\":{\r\n        \"bkg_id\":1\r\n    },\r\n    \"columns\":[\"total_slots\"]\r\n}",
+					"raw": "{\r\n    \"filter\":{\r\n        \"bkg_id\":1\r\n    },\r\n    \"columns\":[]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -203,7 +203,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"data\":{\r\n        \"bgs_bkg_id\":7,\r\n        \"bgs_cst_id\":8\r\n\r\n    }\r\n}",
+					"raw": "{\r\n    \"data\":{\r\n        \"bgs_bkg_id\":6,\r\n        \"bgs_cst_id\":22\r\n\r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -220,6 +220,51 @@
 					"path": [
 						"bookingsGuests",
 						"bookingGuest"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "R - bookingGuestsInfo",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"bgs_bkg_id\":6\r\n    },\r\n    \"columns\":[]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookingsGuests/bookingGuestsInfo/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookingsGuests",
+						"bookingGuestsInfo",
+						"search"
 					]
 				}
 			},

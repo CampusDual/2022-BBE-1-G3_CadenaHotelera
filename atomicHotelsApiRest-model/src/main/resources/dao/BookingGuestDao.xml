@@ -21,5 +21,17 @@ catalog="" schema="${mainschema}" table="bookings_guests" datasource="mainDataSo
 			    ]]>
 			</Sentence>
 		</Query>
+		<Query id="queryBookingGuestsInfo">
+			<Sentence>
+				<![CDATA[
+				    SELECT
+				      cst_name, cst_surname, cst_identity_document
+				    FROM
+				    bookings_guests
+				    LEFT JOIN customers ON cst_id = bgs_cst_id 				    					    		
+				    #WHERE#			   
+			    ]]>
+			</Sentence>
+		</Query>
 	</Queries>		
 </JdbcEntitySetup>
