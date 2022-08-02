@@ -70,7 +70,7 @@ public class BookingGuestService implements IBookingGuestService {
 	}
 
 	/**
-	 * Dado el id de una reserva, el número de huéspedes que ya están asociados a
+	 * Dado el id de una reserva, devuelve el número de huéspedes que ya están asociados a
 	 * esa reserva
 	 * 
 	 * @param keyMap   (BookingGuestDao.ATTR_ATTR_BKG_ID)
@@ -96,6 +96,44 @@ public class BookingGuestService implements IBookingGuestService {
 			cf.validate(attrList);
 
 			resultado = this.daoHelper.query(this.bookingGuestDao, keyMap, attrList, "queryGuestCount");
+
+		} catch (ValidateException e) {
+			resultado = new EntityResultWrong(e.getMessage());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
+		}
+		return resultado;
+	}
+	
+	/**
+	 * Dado el id de una reserva (bgs_bkg_id), devuelve los nombres, apellidos y nifs de los huéspedes que ya están asociados a
+	 * esa reserva
+	 * 
+	 * @param keyMap   (BookingGuestDao.ATTR_ATTR_BKG_ID)
+	 * @param attrList (anyList())
+	 * @throws OntimizeJEERuntimeException (CustomerDao.ATTR_NAME,CustomerDao.ATTR_SURNAME, CustomerDao.ATTR_IDEN_DOC)
+	 */
+	@Override
+	public EntityResult bookingGuestsInfoQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException{
+		EntityResult resultado = new EntityResultWrong();
+		try {
+
+			List<String> required = Arrays.asList(BookingGuestDao.ATTR_BKG_ID);
+
+			cf.reset();
+			cf.addBasics(BookingGuestDao.fields);
+			cf.addBasics(CustomerDao.fields);
+			cf.setRequired(required);
+			cf.setOptional(false);
+			cf.validate(keyMap);
+
+			cf.reset();
+			cf.setNoEmptyList(false);
+			cf.validate(attrList);
+
+			resultado = this.daoHelper.query(this.bookingGuestDao, keyMap, attrList, "queryBookingGuestsInfo");
 
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
