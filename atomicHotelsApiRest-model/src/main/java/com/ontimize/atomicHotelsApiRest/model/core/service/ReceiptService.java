@@ -22,6 +22,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsExcepti
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IReceiptService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingGuestDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingServiceExtraDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.ReceiptDao;
@@ -179,9 +180,12 @@ public class ReceiptService implements IReceiptService {
 				reciboHabitacion.add(BookingDao.ATTR_ID);
 				reciboHabitacion.add(RoomTypeDao.ATTR_PRICE);
 				reciboHabitacion.add(ReceiptDao.ATTR_DIAS);
+				
+				List<String> listaVacia = new ArrayList<String>();
 
-				EntityResult habitacion = bookingService.bookingDaysUnitaryRoomPriceQuery(bkg_id, reciboHabitacion);
-
+				EntityResult habitacion = bookingService.bookingDaysUnitaryRoomPriceQuery(bkg_id, listaVacia);
+				
+						
 				int reservaHabitacion = (int) habitacion.getRecordValues(0).get(BookingDao.ATTR_ID);
 				BigDecimal precioHabitacion = (BigDecimal) habitacion.getRecordValues(0).get(RoomTypeDao.ATTR_PRICE);
 				int dias = (int) habitacion.getRecordValues(0).get(ReceiptDao.ATTR_DIAS);
@@ -191,7 +195,7 @@ public class ReceiptService implements IReceiptService {
 				attrMap.put(ReceiptDao.ATTR_TOTAL_ROOM, totalHabitacion);
 				attrMap.put(ReceiptDao.ATTR_DIAS, dias);
 				
-				List<String> listaCualquiera = new ArrayList<String>();
+				
 
 				// Cálculo del precio total de los servcios extras
 //				List<String> reciboServiciosExtra = new ArrayList<String>();
@@ -202,7 +206,7 @@ public class ReceiptService implements IReceiptService {
 				
 				//Devuelve unos atributos fijos independientemente de la lista que se le pase
 				EntityResult servicios = bookingServiceExtraService.bookingExtraServicePriceUnitsTotalQuery(bsx_bkg_id,
-						listaCualquiera);
+						listaVacia);
 
 				BigDecimal totalTodosServiciosExtra = new BigDecimal(0);
 

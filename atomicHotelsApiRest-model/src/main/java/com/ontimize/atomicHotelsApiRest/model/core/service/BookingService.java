@@ -55,6 +55,7 @@ public class BookingService implements IBookingService {
 
 	@Autowired
 	private BookingGuestService bookingGuestsService;
+	
 
 	@Autowired
 	IRoomService roomService;
