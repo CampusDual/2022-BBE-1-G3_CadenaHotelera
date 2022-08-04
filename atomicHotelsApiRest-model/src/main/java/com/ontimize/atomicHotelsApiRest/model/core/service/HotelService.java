@@ -412,16 +412,40 @@ public class HotelService implements IHotelService {
 
 		try {
 
+			Map<String,type> fields = new HashMap<>() {{
+				put(HotelDao.ATTR_ID,type.INTEGER);
+				put(HotelDao.ATTR_FROM,type.DATE);
+				put(HotelDao.ATTR_TO,type.DATE);				
+			}};
+			
+			List<String> required = Arrays.asList(HotelDao.ATTR_FROM,HotelDao.ATTR_TO);
 			cf.reset();
-			cf.addBasics(HotelDao.fields);
+			cf.addBasics(fields);
+			cf.setRequired(required);
 			cf.validate(keyMap);
 			
 			cf.reset();
 			cf.setNoEmptyList(false);
 			cf.validate(attrList);
 			
-			EntityResult capacidad = hotelMaximumCapacityQuery(keyMap,attrList);
-			EntityResult ocupacion = hotelOccupancyQuery(keyMap,attrList);
+			Map<String,Object> keyMapCapacidad = new HashMap<>();
+			if(keyMap.get(HotelDao.ATTR_ID)!=null) {
+				keyMapCapacidad.put(HotelDao.ATTR_ID, keyMap.get(HotelDao.ATTR_ID));
+			}
+			
+			EntityResult capacidad = hotelMaximumCapacityQuery(keyMapCapacidad,new ArrayList<String>());
+			EntityResult ocupacion = hotelOccupancyQuery(keyMap,new ArrayList<String>());
+			
+			
+			for(int i=0; i<capacidad.calculateRecordNumber();i++) {
+				if(ocupacion.getRecordValues(i).get(HotelDao.ATTR_OCCUPANCY) != null) {
+					long cap = (long) capacidad.getRecordValues(i).get(HotelDao.ATTR_MAXIMUN_CAPACITY);
+					long oc = (long) ocupacion.getRecordValues(i).get(HotelDao.ATTR_OCCUPANCY);
+					
+					long rate = (oc/cap)*100;
+					System.out.println(rate);
+				}						
+		}
 			
 //			Map<String,Object> mapFinal = new HashMap<String,Object>();
 //			
