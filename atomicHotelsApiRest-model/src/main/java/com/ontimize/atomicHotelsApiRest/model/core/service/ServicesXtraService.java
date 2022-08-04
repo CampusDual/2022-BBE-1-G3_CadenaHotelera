@@ -54,11 +54,11 @@ public class ServicesXtraService implements IServicesXtraService{
 
 		EntityResult resultado = new EntityResultWrong();
 		try {
-		cf.reset();
-		cf.addBasics(ServicesXtraDao.fields);
-		cf.validate(keyMap);
-		cf.validate(attrList);
-		return this.daoHelper.query(this.servicesXtraDao, keyMap, attrList);
+			cf.reset();
+			cf.addBasics(ServicesXtraDao.fields);
+			cf.validate(keyMap);
+			cf.validate(attrList);
+			resultado =  this.daoHelper.query(this.servicesXtraDao, keyMap, attrList);
 		}catch(ValidateException e) {
 			resultado=new EntityResultWrong(e.getMessage());
 		}catch(Exception e) {
