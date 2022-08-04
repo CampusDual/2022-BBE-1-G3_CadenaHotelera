@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.service.IBookingService;
@@ -41,6 +43,8 @@ import com.ontimize.jee.common.db.SQLStatementBuilder.BasicOperator;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
+import com.ontimize.jee.common.security.PermissionsProviderSecured;
+import com.ontimize.jee.common.services.user.UserInformation;
 import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 
@@ -67,10 +71,20 @@ public class BookingService implements IBookingService {
 	ControlFields cf;
 
 	@Override
+//	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult bookingQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
-
+		
 		EntityResult resultado = new EntityResultWrong();
+//		String a = SecurityContextHolder.getContext().toString();
+//		String b = SecurityContextHolder.getContext().getAuthentication().toString();
+//		String c = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+		UserInformation ui = ((UserInformation) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+		Map<Object,Object> otrosDatos = ((UserInformation) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getOtherData();
+		
+		String usuario = ((UserInformation) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getLogin(); 
+//		System.err.println(usuario);
+//		System.err.println(((UserInformation) SecurityContextHolder.getContext().getAuthentication().getPrincipal()));
 		try {
 
 			cf.reset();

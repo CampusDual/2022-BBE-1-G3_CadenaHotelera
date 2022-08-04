@@ -48,6 +48,7 @@ ontimize:
             - USERBLOCKED
             - LASTPASSWORDUPDATE
             - FIRSTLOGIN
+            - RESTRICTIONS
       user-role-information-service:
          user-role-repository: UserRoleDao
          query-id: userRole
