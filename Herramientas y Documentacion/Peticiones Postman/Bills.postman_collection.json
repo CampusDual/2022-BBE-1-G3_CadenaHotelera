@@ -1,0 +1,275 @@
+{
+	"info": {
+		"_postman_id": "cab0658b-94ca-4a99-ad24-0447a259d8ac",
+		"name": "Bills",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "_ C bill",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"data\":\r\n    {\"bll_htl_id\":8, \r\n    \"bll_dpt_id\":2,\r\n    \"bll_concept\":\"boda\", \r\n    \"bll_date\":\"2018-12-15\",\r\n    \"bll_amount\":1520.0\r\n    }\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/bill/bill",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bill",
+						"bill"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R all bills",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:33333/bill/bill?columns=bll_id,bll_htl_id,bll_dpt_id,bll_concept,bll_date,bll_amount",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bill",
+						"bill"
+					],
+					"query": [
+						{
+							"key": "columns",
+							"value": "bll_id,bll_htl_id,bll_dpt_id,bll_concept,bll_date,bll_amount"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "_ R all bills",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \"columns\": [\"bll_id\", \"bll_htl_id\", \"bll_dpt_id\",\"bll_concept\", \"bll_date\", \"bll_amount\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/bill/bill/search",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bill",
+						"bill",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "- R individual bill",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"bll_id\": 3\r\n    },\r\n   \"columns\": [\"bll_id\", \"bll_htl_id\", \"bll_dpt_id\",\"bll_concept\", \"bll_date\", \"bll_amount\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/bill/bill/search",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bill",
+						"bill",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "- U bill",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n    \"filter\": {\r\n        \"bll_id\": 22\r\n    },\r\n    \"data\":  {\r\n    \"bll_htl_id\":8, \r\n    \"bll_dpt_id\":2,\r\n    \"bll_concept\":\"comunión\", \r\n    \"bll_date\":\"2018-12-15\",\r\n    \"bll_amount\":1520.0\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/bill/bill",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bill",
+						"bill"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "D - bill",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"bll_id\": 73\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bill/bill",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bill",
+						"bill"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
