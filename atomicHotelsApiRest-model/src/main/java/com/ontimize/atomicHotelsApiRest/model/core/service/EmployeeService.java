@@ -12,10 +12,12 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IEmployeeService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.EmployeeDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.ServiceDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
@@ -137,8 +139,7 @@ ControlFields cf;
 		if(auxEntity.calculateRecordNumber()==0) {
 			resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
 		}else {
-			
-			//TODO falta hacer este apartado....ver al llegar a casa
+			resultado.setMessage("Empleado registrado");
 		}
 	 }catch (ValidateException e) {
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + " - " + e.getMessage());
@@ -155,10 +156,44 @@ ControlFields cf;
 		return resultado;
 	}
 	 
-
-
  @Override
- public EntityResult employeeDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
-  return this.daoHelper.delete(this.employeeDao, keyMap);
- }
+ public EntityResult employeeDelete(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
+  EntityResult resultado=new EntityResultWrong();
+	 
+  try {
+	  cf.reset();
+	  cf.addBasics(ServiceDao.fields);
+	  List<String> requeridos =new ArrayList<>(){
+		  {
+		  add(EmployeeDao.ATTR_ID);
+	  }
+		 };
+	cf.setRequired(requeridos);
+	cf.setOptional(true);//El resto de campos seran aceptados
+	cf.validate(attrMap);
+  
+  Map<String,Object> consultaKeyMap=new HashMap<>() {
+	  {
+	  put(EmployeeDao.ATTR_ID,attrMap.get(ServiceDao.ATTR_ID));
+  }
+	  };
+	 EntityResult auxEntity=employeeQuery(consultaKeyMap,EntityResultTools.attributes(EmployeeDao.ATTR_ID));
+  if(auxEntity.calculateRecordNumber()==0) {
+	  resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
+  }else {
+	  resultado=this.daoHelper.delete(this.employeeDao, attrMap);
+	  resultado.setMessage("Empleado borrado");
+  }
+ 
+ 	} catch (ValidateException | LiadaPardaException e) {
+		resultado =  new EntityResultWrong(e.getMessage());
+		e.printStackTrace();		
+	}catch (DuplicateKeyException e) {
+		resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+	}catch (Exception e) {
+		e.printStackTrace();
+		resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
+	}
+	return resultado;
+}
  }
