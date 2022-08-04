@@ -763,7 +763,6 @@ INSERT INTO countries VALUES('ZW', 'Zimbabue');
 
 
 --DEPARTMENTS
-
 INSERT INTO public.departments (dpt_name, dpt_description) VALUES ('Limpieza', 'Se encarga de la limpieza, orden y estética de las diferentes áreas que conforman un hotel');
 INSERT INTO public.departments (dpt_name, dpt_description) VALUES ('Hostelería', 'Se ocupa de las operaciones de adquisición, producción y preparación de alimentos y bebidas para venderlos en el hotel. Encargado de servicios de habitación, banquetes y celebraciones.');
 INSERT INTO public.departments (dpt_name, dpt_description) VALUES ('Recursos humanos', 'Tiene como finalidad gestionar el personal que constituye la organización, tal como el reclutamiento, la supervisión y formación.');
@@ -771,3 +770,86 @@ INSERT INTO public.departments (dpt_name, dpt_description) VALUES ('Marketing', 
 INSERT INTO public.departments (dpt_name, dpt_description) VALUES ('Seguridad', 'Se encarga de mantener el hotel y sus diferentes áreas bajo un sistema de seguridad. El objetivo es proteger a los huéspedes y los trabajadores.');
 INSERT INTO public.departments (dpt_name, dpt_description) VALUES ('Recepción', 'encargado de administrar la recepción del hotel, de recibir las quejas de los huéspedes, anotar las sugerencias, controlar las llaves de las habitaciones, ofrecer información del hotel, gestionar la salida y entrada de los clientes.');
 INSERT INTO public.departments (dpt_name, dpt_description) VALUES ('Mantenimiento', 'Se dedica al mantenimiento preventivo y correctivo de todos los elementos que conforma un hotel');
+
+
+--BILLS (ordenado según departamentos)
+--Hostelería
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (4, 2, 'Reposición almacén', '2020-01-01', 3000.5);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (4, 2, 'Reposición almacén', '2020-04-01', 1750);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (4, 2, 'Reposición almacén', '2020-05-08', 3000.15);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (4, 2, 'Reposición almacén', '2020-07-08', 4000.5);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (4, 2, 'Reposición almacén', '2020-09-08', 5000.55);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (4, 2, 'Reposición almacén', '2020-11-08', 1960);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (4, 2, 'Reposición almacén', '2020-12-08', 6700);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (4, 2, 'Reposición almacén', '2021-01-08', 1500.5);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (4, 2, 'Reposición almacén', '2021-03-08', 3000.5);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (4, 2, 'Reposición almacén', '2021-06-08', 2500.56);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (4, 2, 'Reposición almacén', '2021-10-08', 4000.5);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (4, 2, 'Reposición almacén', '2021-12-08', 6500.78);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (5, 2, 'Reposición almacén', '2019-11-08', 4000.5);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (5, 2, 'Reposición almacén', '2019-03-08', 6500.78);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (5, 2, 'Reposición almacén', '2021-09-08', 1060);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (5, 2, 'Reposición almacén', '2021-12-08', 2700);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (5, 2, 'Reposición almacén', '2022-05-08', 1500.5);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (5, 2, 'Reposición almacén', '2022-06-08', 3000);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (5, 2, 'Reposición almacén', '2022-07-08', 2500.56);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (6, 2, 'Reposición almacén', '2022-01-08', 1670);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (6, 2, 'Reposición almacén', '2022-05-08', 1400.5);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (6, 2, 'Reposición almacén', '2022-07-08', 1200.95);
+--Limpieza
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (4, 1, 'Limpieza', '2022-06-08', 1000);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (4, 1, 'Limpieza', '2022-07-08', 1500.56);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (4, 1, 'Limpieza', '2022-01-08', 1670);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (5, 1, 'Limpieza', '2022-06-08', 1000);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (5, 1, 'Limpieza', '2022-07-08', 1500.56);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (6, 1, 'Limpieza', '2022-01-08', 1670);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (6, 1, 'Limpieza', '2022-05-08', 1800.5);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (6, 1, 'Limpieza', '2022-07-08', 1800.95);
+--Marketing
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (4, 4, 'Marketing', '2022-06-08', 300);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (4, 4, 'Marketing', '2022-07-08', 250.56);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (4, 4, 'Marketing', '2022-01-08', 160);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (5, 4, 'Marketing', '2022-06-08', 300);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (5, 4, 'Marketing', '2022-07-08', 200.56);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (6, 4, 'Marketing', '2022-01-08', 170);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (6, 4, 'Marketing', '2022-05-08', 140.5);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (6, 4, 'Marketing', '2022-07-08', 120.95);
+--Seguridad
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (4, 5, 'Seguridad', '2022-06-08', 500);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (4, 5, 'Seguridad', '2022-07-08', 600.56);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (4, 5, 'Seguridad', '2022-01-08', 167);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (5, 5, 'Seguridad', '2022-06-08', 300);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (5, 5, 'Seguridad', '2022-07-08', 250.56);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (6, 5, 'Seguridad', '2022-01-08', 1670);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (6, 5, 'Seguridad', '2022-05-08', 140.5);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (6, 5, 'Seguridad', '2022-07-08', 120.95);
+--Recepción
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (4, 6, 'Recepción', '2022-06-08', 100);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (4, 6, 'Recepción', '2022-07-08', 60.56);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (4, 6, 'Recepción', '2022-01-08', 167);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (5, 6, 'Recepción', '2022-06-08', 300);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (5, 6, 'Recepción', '2022-07-08', 280.6);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (6, 6, 'Recepción', '2022-01-08', 170);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (6, 6, 'Recepción', '2022-05-08', 140.5);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (6, 6, 'Recepción', '2022-07-08', 120);
+--Mantenimiento
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (4, 7, 'Mantenimiento', '2022-06-08', 1600);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (4, 7, 'Mantenimiento', '2022-07-08', 60.56);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (4, 7, 'Mantenimiento', '2022-01-08', 167);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (5, 7, 'Mantenimiento', '2022-06-08', 300);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (5, 7, 'Mantenimiento', '2022-07-08', 2080.6);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (6, 7, 'Mantenimiento', '2022-01-08', 1770);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (6, 7, 'Mantenimiento', '2022-05-08', 195.5);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (6, 7, 'Mantenimiento', '2022-07-08', 130);
+----RRHH
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (4, 3, 'RRHH', '2022-06-08', 16000);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (4, 3, 'RRHH', '2022-07-08', 18000.56);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (4, 3, 'RRHH', '2022-01-08', 16700);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (5, 3, 'RRHH', '2022-06-08', 15000);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (5, 3, 'RRHH', '2022-07-08', 20800.6);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (6, 3, 'RRHH', '2022-01-08', 17700);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (6, 3, 'RRHH', '2022-05-08', 19500.5);
+INSERT INTO public.bills (bll_htl_id, bll_dpt_id, bll_concept, bll_date, bll_amount) VALUES (6, 3, 'RRHH', '2022-07-08', 21000);
+
+
+
