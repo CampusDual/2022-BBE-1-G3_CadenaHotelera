@@ -760,3 +760,14 @@ INSERT INTO countries VALUES('YE', 'Yemen');
 INSERT INTO countries VALUES('DJ', 'Yibuti');
 INSERT INTO countries VALUES('ZM', 'Zambia');
 INSERT INTO countries VALUES('ZW', 'Zimbabue');
+
+
+--DEPARTMENTS
+
+INSERT INTO public.departments (dpt_name, dpt_description) VALUES ('Limpieza', 'Se encarga de la limpieza, orden y estética de las diferentes áreas que conforman un hotel');
+INSERT INTO public.departments (dpt_name, dpt_description) VALUES ('Hostelería', 'Se ocupa de las operaciones de adquisición, producción y preparación de alimentos y bebidas para venderlos en el hotel. Encargado de servicios de habitación, banquetes y celebraciones.');
+INSERT INTO public.departments (dpt_name, dpt_description) VALUES ('Recursos humanos', 'Tiene como finalidad gestionar el personal que constituye la organización, tal como el reclutamiento, la supervisión y formación.');
+INSERT INTO public.departments (dpt_name, dpt_description) VALUES ('Marketing', 'Responsable de ejecutar las estrategias de publicidad. Su función es dar visibilidad y posicionamiento en los diferentes medios de exposición para conseguir un mayor número de ventas.');
+INSERT INTO public.departments (dpt_name, dpt_description) VALUES ('Seguridad', 'Se encarga de mantener el hotel y sus diferentes áreas bajo un sistema de seguridad. El objetivo es proteger a los huéspedes y los trabajadores.');
+INSERT INTO public.departments (dpt_name, dpt_description) VALUES ('Recepción', 'encargado de administrar la recepción del hotel, de recibir las quejas de los huéspedes, anotar las sugerencias, controlar las llaves de las habitaciones, ofrecer información del hotel, gestionar la salida y entrada de los clientes.');
+INSERT INTO public.departments (dpt_name, dpt_description) VALUES ('Mantenimiento', 'Se dedica al mantenimiento preventivo y correctivo de todos los elementos que conforma un hotel');
