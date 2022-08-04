@@ -1,6 +1,8 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,13 +14,17 @@ import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IEmployeeService;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.EmployeeDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
+import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
+
+import net.bytebuddy.implementation.auxiliary.AuxiliaryType;
 
 @Service("EmployeeService")
 @Lazy
@@ -95,8 +101,61 @@ ControlFields cf;
  @Override
  public EntityResult employeeUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
    throws OntimizeJEERuntimeException {
-  return this.daoHelper.update(this.employeeDao, attrMap, keyMap);
- }
+	 EntityResult resultado=new EntityResultWrong();
+	 
+	 try {
+		 //ControlFields del filtro
+		 List<String> requiredFilter=new ArrayList<String>(){
+			 { 
+				 add(EmployeeDao.ATTR_ID);
+			 }
+			 };
+		 
+		cf.reset();
+		cf.addBasics(EmployeeDao.fields);
+		cf.setRequired(requiredFilter);
+		cf.setOptional(false);//no será aceptado ningun campo que no esté en required
+		cf.validate(keyMap);
+		//ControlFileds de los nuevos datos
+		List<String> restrictedData=new ArrayList<>() {
+			{
+				add(EmployeeDao.ATTR_ID);
+				
+			}
+		};
+		cf.reset();
+		cf.addBasics(EmployeeDao.fields);
+		cf.setRestricted(restrictedData);
+		cf.validate(attrMap);
+		Map<String, Object> subConsultaKeyMap = new HashMap<>() {
+			{
+				put(EmployeeDao.ATTR_ID, keyMap.get(EmployeeDao.ATTR_ID));
+			}
+		};
+		EntityResult auxEntity =employeeQuery(subConsultaKeyMap,
+				EntityResultTools.attributes(EmployeeDao.ATTR_ID));
+		if(auxEntity.calculateRecordNumber()==0) {
+			resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
+		}else {
+			
+			//TODO falta hacer este apartado....ver al llegar a casa
+		}
+	 }catch (ValidateException e) {
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + " - " + e.getMessage());
+		} catch (DuplicateKeyException e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
+		} catch (DataIntegrityViolationException e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
+		}
+		return resultado;
+	}
+	 
+
 
  @Override
  public EntityResult employeeDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
