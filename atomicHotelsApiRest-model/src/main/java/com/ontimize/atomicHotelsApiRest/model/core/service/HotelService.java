@@ -2,6 +2,8 @@ package com.ontimize.atomicHotelsApiRest.model.core.service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,14 +25,20 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.RestrictedFieldExcep
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IHotelService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingServiceExtraDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.ReceiptDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomTypeDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultExtraTools;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.TypeCodes.type;
+import com.ontimize.jee.common.db.SQLStatementBuilder.BasicExpression;
+import com.ontimize.jee.common.db.SQLStatementBuilder.BasicField;
+import com.ontimize.jee.common.db.SQLStatementBuilder.BasicOperator;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
@@ -97,7 +105,7 @@ public class HotelService implements IHotelService {
 											// datos
 				}
 			};
-			
+
 			cf.reset();
 			cf.addBasics(HotelDao.fields);
 			cf.setRequired(required);
@@ -279,5 +287,166 @@ public class HotelService implements IHotelService {
 //		return queryRes;
 ////		return null;
 //	}
+
+	/**
+	 * 
+	 */
+	@Override
+	public EntityResult hotelOccupancyQuery(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException {
+
+		EntityResult resultado = new EntityResultWrong();
+
+		try {
+			
+			Map<String,type> fields = new HashMap<>() {{
+				put(HotelDao.ATTR_ID,type.INTEGER);
+				put(HotelDao.ATTR_FROM,type.DATE);
+				put(HotelDao.ATTR_TO,type.DATE);				
+			}};
+			
+			List<String> required = Arrays.asList(HotelDao.ATTR_FROM,HotelDao.ATTR_TO);
+			cf.reset();
+			cf.addBasics(fields);
+			cf.setRequired(required);
+			cf.validate(keyMap);
+			
+			cf.reset();
+			cf.setNoEmptyList(false);
+			cf.validate(attrList);
+
+			BasicField checkin = new BasicField(BookingDao.ATTR_CHECKIN);
+			Date checkinData = (Date) keyMap.get(HotelDao.ATTR_FROM);	
+			
+			BasicField checkout = new BasicField(BookingDao.ATTR_CHECKOUT);
+			Date checkoutData = (Date) keyMap.get(HotelDao.ATTR_TO);
+			
+			ValidateFields.dataRange(checkinData, checkoutData);
+			
+			/*(bkg_checkin <= checkinData AND bkg_checkout >checkinData) OR
+			(bkg_checkin < checkoutData AND (bkg_checkout >= checkoutData OR bkg_checkout IS NULL)) OR
+			(bkg_checkin >=checkinData AND bkg_checkout <= checkoutData)*/
+			
+			//(bkg_checkin <= checkinData AND bkg_checkout >checkinData)
+			BasicExpression exp1 = new BasicExpression(checkin,BasicOperator.LESS_EQUAL_OP, checkinData);
+			BasicExpression exp2 = new BasicExpression(checkout,BasicOperator.MORE_OP, checkinData);
+			
+			//(bkg_checkin < checkoutData AND (bkg_checkout >= checkoutData OR bkg_checkout IS NULL)) 
+			BasicExpression exp3 = new BasicExpression(checkin,BasicOperator.LESS_OP, checkoutData);
+			BasicExpression exp4 = new BasicExpression(checkout,BasicOperator.MORE_EQUAL_OP, checkoutData);
+			BasicExpression exp5 = new BasicExpression(checkout, BasicOperator.NULL_OP, null);
+			
+			//(bkg_checkin >=checkinData AND bkg_checkout <= checkoutData)
+			BasicExpression exp6 = new BasicExpression(checkin,BasicOperator.MORE_EQUAL_OP, checkinData);
+			BasicExpression exp7 = new BasicExpression(checkout,BasicOperator.LESS_EQUAL_OP, checkoutData);
+			
+			//OR DENTRO DE LA SEGUNDA FILA
+			BasicExpression exp8 = new BasicExpression(exp4,BasicOperator.OR_OP,exp5);
+			
+			//ANDS DE TODAS LAS FILAS
+			BasicExpression exp9 = new BasicExpression(exp1,BasicOperator.AND_OP,exp2);
+			BasicExpression exp10 = new BasicExpression(exp3,BasicOperator.AND_OP,exp8);
+			BasicExpression exp11 = new BasicExpression(exp6,BasicOperator.AND_OP,exp7);
+			
+			//LAS TRES FILAS UNIDAS POR OR
+			BasicExpression auxFinal = new BasicExpression(exp9, BasicOperator.OR_OP, exp10);
+			BasicExpression finalExpression = new BasicExpression(auxFinal, BasicOperator.OR_OP, exp11);
+		
+			keyMap.remove(HotelDao.ATTR_FROM);
+			keyMap.remove(HotelDao.ATTR_TO);
+			
+			EntityResultExtraTools.putBasicExpression(keyMap, finalExpression);
+
+			resultado = this.daoHelper.query(this.hotelDao, keyMap, attrList, "queryHotelOccupancy");
+
+		} catch (ValidateException e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(e.getMessage());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
+		}
+		return resultado;
+	}
+	
+	/**
+	 * 
+	 */
+	@Override
+	public EntityResult hotelMaximumCapacityQuery(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException{
+		
+		EntityResult resultado = new EntityResultWrong();
+
+		try {
+
+			cf.reset();
+			cf.addBasics(HotelDao.fields);
+			cf.validate(keyMap);
+			
+			cf.reset();
+			cf.setNoEmptyList(false);
+			cf.validate(attrList);
+			
+			resultado = this.daoHelper.query(this.hotelDao, keyMap, attrList, "queryHotelMaximunCapacity");
+			
+		} catch (ValidateException e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(e.getMessage());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
+		}
+		return resultado;
+		
+	}
+	
+	
+	@Override
+	public EntityResult hotelOcupancyRateQuery(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException{
+		
+		EntityResult resultado = new EntityResultWrong();
+
+		try {
+
+			cf.reset();
+			cf.addBasics(HotelDao.fields);
+			cf.validate(keyMap);
+			
+			cf.reset();
+			cf.setNoEmptyList(false);
+			cf.validate(attrList);
+			
+			EntityResult capacidad = hotelMaximumCapacityQuery(keyMap,attrList);
+			EntityResult ocupacion = hotelOccupancyQuery(keyMap,attrList);
+			
+//			Map<String,Object> mapFinal = new HashMap<String,Object>();
+//			
+//			for(int i=0; i<capacidad.calculateRecordNumber();i++) {
+//				for(int j=0; j<ocupacion.calculateRecordNumber();j++) {
+//					if(capacidad.getRecordValues(i).get(HotelDao.ATTR_ID) == ocupacion.getRecordValues(i).get(HotelDao.ATTR_ID)) {
+//						
+//					}
+//				}
+//				
+//			}
+			
+			
+//			resultado = this.daoHelper.query(this.hotelDao, keyMap, attrList, "queryHotelMaximunCapacity");
+			
+		} catch (ValidateException e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(e.getMessage());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
+		}
+		return resultado;
+		
+	}
 
 }
