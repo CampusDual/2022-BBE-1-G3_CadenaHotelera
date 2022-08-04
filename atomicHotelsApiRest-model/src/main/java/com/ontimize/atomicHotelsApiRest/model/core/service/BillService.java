@@ -164,12 +164,12 @@ public class BillService implements IBillService {
 			cf.validate(keyMap);
 
 			
-			Map<String, Object> consultaKeyMap = new HashMap<>() { {
+			Map<String, Object> subconsultaKeyMap = new HashMap<>() { {
 				put(BillDao.ATTR_ID, keyMap.get(BillDao.ATTR_ID));
 				}
 			};
 			
-			EntityResult auxEntity = billQuery(consultaKeyMap, 
+			EntityResult auxEntity = billQuery(subconsultaKeyMap, 
 					EntityResultTools.attributes(BillDao.ATTR_ID));
 			
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
@@ -181,6 +181,8 @@ public class BillService implements IBillService {
 			
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
+		}catch (DataIntegrityViolationException e) {
+			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
 		}catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}

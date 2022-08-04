@@ -87,7 +87,7 @@ class BillServiceTest {
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyList());
 			} catch (Exception e) {
 				e.printStackTrace();
-				fail("excepción no capturada: " + e.getMessage());
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
 			}
 		}
 
@@ -110,8 +110,7 @@ class BillServiceTest {
 		@DisplayName("Valores de entrada NO válidos")
 		void testBillQueryKO() {
 			try {
-				// lanzamos todas las excepciones de Validate para comprobar que están bien
-				// recojidas.
+				// lanzamos todas las excepciones de Validate para comprobar que están bien recogidas.
 				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
 				eR = service.billQuery(TestingTools.getMapEmpty(), getColumsName());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
@@ -139,7 +138,7 @@ class BillServiceTest {
 
 			} catch (Exception e) {
 				e.printStackTrace();
-				fail("excepción no capturada: " + e.getMessage());
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
 			}
 
 		}
@@ -166,7 +165,7 @@ class BillServiceTest {
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
 			} catch (Exception e) {
 				e.printStackTrace();
-				fail("excepción no capturada: " + e.getMessage());
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
 
 			}
 		}
@@ -190,8 +189,7 @@ class BillServiceTest {
 		@DisplayName("Valores de entrada NO válidos")
 		void testBillInsertKO() {
 			try {
-				// lanzamos todas las excepciones de Validate para comprobar que están bien
-				// recojidas.
+				// lanzamos todas las excepciones de Validate para comprobar que están bien recogidas.
 				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
 				eR = service.billInsert(TestingTools.getMapEmpty());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
@@ -234,7 +232,7 @@ class BillServiceTest {
 
 			} catch (Exception e) {
 				e.printStackTrace();
-				fail("excepción no capturada: " + e.getMessage());
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
 			}
 
 		}
@@ -260,7 +258,7 @@ class BillServiceTest {
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
 			} catch (Exception e) {
 				e.printStackTrace();
-				fail("excepción no capturada: " + e.getMessage());
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
 			}
 		}
 
@@ -279,8 +277,7 @@ class BillServiceTest {
 		@DisplayName("Valores de entrada NO válidos")
 		void testBillServiceExtraUpdateKO() {
 			try {
-				// lanzamos todas las excepciones de Validate para comprobar que están bien
-				// recojidas.
+				// lanzamos todas las excepciones de Validate para comprobar que están bien recogidas.
 				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
 				eR = service.billUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
@@ -306,8 +303,7 @@ class BillServiceTest {
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
-				// lanzamos todas las excepciones de SQL para comprobar que están bien
-				// recojidas.
+				// lanzamos todas las excepciones de SQL para comprobar que están bien recogidas.
 				doThrow(DuplicateKeyException.class).when(cf).validate(anyMap());
 				eR = service.billUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
@@ -333,7 +329,7 @@ class BillServiceTest {
 
 			} catch (Exception e) {
 				e.printStackTrace();
-				fail("excepción no capturada: " + e.getMessage());
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
 			}
 
 		}
@@ -343,7 +339,7 @@ class BillServiceTest {
 	@DisplayName("Test for Bill deletes")
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	public class billDelete {
-//TODO PENDIENTE TERMINAR DELETE
+
 		@Test
 		@DisplayName("ControlFields usar reset()")
 		void testBillDeleteControlFieldsReset() {
@@ -359,7 +355,7 @@ class BillServiceTest {
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
 			} catch (Exception e) {
 				e.printStackTrace();
-				fail("excepción no capturada: " + e.getMessage());
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
 
 			}
 		}
@@ -405,8 +401,7 @@ class BillServiceTest {
 		@DisplayName("Valores de entrada NO válidos")
 		void testBillDeleteKO() {
 			try {
-				// lanzamos todas las excepciones de Validate para comprobar que están bien
-				// recojidas.
+				// lanzamos todas las excepciones de Validate para comprobar que están bien recogidas.
 				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
 				eR = service.billDelete(TestingTools.getMapEmpty());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
@@ -432,12 +427,11 @@ class BillServiceTest {
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
-				// lanzamos todas las excepciones de SQL para comprobar que están bien
-				// recojidas.
-				/*doThrow(DataIntegrityViolationException.class).when(cf).validate(anyMap());
-				eR = service.billServiceExtraDelete(TestingTools.getMapEmpty());
+				// lanzamos todas las excepciones de SQL para comprobar que están bien recogidas.
+				doThrow(DataIntegrityViolationException.class).when(cf).validate(anyMap());
+				eR = service.billDelete(TestingTools.getMapEmpty());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());*/
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
 				reset(cf); //para quitar doThrow anterior
 				// extra para controlar required:
@@ -454,7 +448,7 @@ class BillServiceTest {
 
 			} catch (Exception e) {
 				e.printStackTrace();
-				fail("excepción no capturada: " + e.getMessage());
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
 			}
 
 		}
@@ -477,8 +471,6 @@ class BillServiceTest {
 	Map<String, Object> getMapUpdate() {
 		return getMapRequiredInsert();
 	}
-
-	
 
 	Map<String, Object> getMapRequiredInsertExtended() {
 		return new HashMap<>() {
