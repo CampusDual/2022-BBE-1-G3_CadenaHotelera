@@ -307,7 +307,7 @@ CREATE TABLE public.employees (
 	emp_cnt_iso bpchar(2) NOT NULL,
 	emp_hiring timestamp NOT NULL,
 	emp_fired timestamp NULL,
-	CONSTRAINT employees_emp_dpt_id_emp_htl_id_key UNIQUE (emp_dpt_id, emp_htl_id),
+	CONSTRAINT employees_emp_dpt_id_emp_htl_id_key UNIQUE (emp_dpt_id, emp_htl_id) 
 );
 
 
