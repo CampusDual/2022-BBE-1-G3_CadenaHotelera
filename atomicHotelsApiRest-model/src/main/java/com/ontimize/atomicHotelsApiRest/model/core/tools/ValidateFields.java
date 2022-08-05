@@ -521,11 +521,18 @@ public class ValidateFields {
 	 */
 	
 	 public static void  isDNI(String itDNI) throws InvalidFieldsValuesException {
-		 		final String dniChars="TRWAGMYFPDXBNJZSQVHLCKE";   
-	            String intPartDNI = itDNI.trim().replaceAll(" ", "").substring(0, 7);
+		 		final String dniChars="TRWAGMYFPDXBNJZSQVHLCKE";
+		 		if (itDNI.length()!= 9) {
+	            	throw new InvalidFieldsValuesException(ErrorMessage.INVALID_DNI);
+	            }
+		 		
+	            String intPartDNI = itDNI.trim().replaceAll(" ", "").substring(0, 8);
+	            System.out.println(intPartDNI);
 	            char ltrDNI = itDNI.charAt(8);
+	            System.out.println(ltrDNI);
 	            int valNumDni = Integer.parseInt(intPartDNI) % 23;
-	            if (itDNI.length()!= 9 && isNumeric(intPartDNI) == false && dniChars.charAt(valNumDni)!= ltrDNI) {
+	            
+	            if ( isNumeric(intPartDNI) == false || dniChars.charAt(valNumDni)!= ltrDNI) {
 	            	throw new InvalidFieldsValuesException(ErrorMessage.INVALID_DNI);
 	            } 
 	        }
