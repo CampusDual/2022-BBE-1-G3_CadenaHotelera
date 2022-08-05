@@ -52,10 +52,7 @@
 				<artifactId>mockito-inline</artifactId>				
 			</dependency>
 	</dependencies>
-	<dependency>
-				<groupId>com.amadeus</groupId>
-				<artifactId>amadeus-java</artifactId>
-		</dependency>
+
 	<build>
 		<finalName>${project.artifactId}</finalName>
 
