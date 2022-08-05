@@ -298,63 +298,68 @@ public class HotelService implements IHotelService {
 		EntityResult resultado = new EntityResultWrong();
 
 		try {
-			
-			Map<String,type> fields = new HashMap<>() {{
-				put(HotelDao.ATTR_ID,type.INTEGER);
-				put(HotelDao.ATTR_FROM,type.DATE);
-				put(HotelDao.ATTR_TO,type.DATE);				
-			}};
-			
-			List<String> required = Arrays.asList(HotelDao.ATTR_FROM,HotelDao.ATTR_TO);
+
+			Map<String, type> fields = new HashMap<>() {
+				{
+					put(HotelDao.ATTR_ID, type.INTEGER);
+					put(HotelDao.ATTR_FROM, type.DATE);
+					put(HotelDao.ATTR_TO, type.DATE);
+				}
+			};
+
+			List<String> required = Arrays.asList(HotelDao.ATTR_FROM, HotelDao.ATTR_TO);
 			cf.reset();
 			cf.addBasics(fields);
 			cf.setRequired(required);
 			cf.validate(keyMap);
-			
+
 			cf.reset();
 			cf.setNoEmptyList(false);
 			cf.validate(attrList);
 
 			BasicField checkin = new BasicField(BookingDao.ATTR_CHECKIN);
-			Date checkinData = (Date) keyMap.get(HotelDao.ATTR_FROM);	
-			
+			Date checkinData = (Date) keyMap.get(HotelDao.ATTR_FROM);
+
 			BasicField checkout = new BasicField(BookingDao.ATTR_CHECKOUT);
 			Date checkoutData = (Date) keyMap.get(HotelDao.ATTR_TO);
-			
+
 			ValidateFields.dataRange(checkinData, checkoutData);
-			
-			/*(bkg_checkin <= checkinData AND bkg_checkout >checkinData) OR
-			(bkg_checkin < checkoutData AND (bkg_checkout >= checkoutData OR bkg_checkout IS NULL)) OR
-			(bkg_checkin >=checkinData AND bkg_checkout <= checkoutData)*/
-			
-			//(bkg_checkin <= checkinData AND bkg_checkout >checkinData)
-			BasicExpression exp1 = new BasicExpression(checkin,BasicOperator.LESS_EQUAL_OP, checkinData);
-			BasicExpression exp2 = new BasicExpression(checkout,BasicOperator.MORE_OP, checkinData);
-			
-			//(bkg_checkin < checkoutData AND (bkg_checkout >= checkoutData OR bkg_checkout IS NULL)) 
-			BasicExpression exp3 = new BasicExpression(checkin,BasicOperator.LESS_OP, checkoutData);
-			BasicExpression exp4 = new BasicExpression(checkout,BasicOperator.MORE_EQUAL_OP, checkoutData);
+
+			/*
+			 * (bkg_checkin <= checkinData AND bkg_checkout >checkinData) OR (bkg_checkin <
+			 * checkoutData AND (bkg_checkout >= checkoutData OR bkg_checkout IS NULL)) OR
+			 * (bkg_checkin >=checkinData AND bkg_checkout <= checkoutData)
+			 */
+
+			// (bkg_checkin <= checkinData AND bkg_checkout >checkinData)
+			BasicExpression exp1 = new BasicExpression(checkin, BasicOperator.LESS_EQUAL_OP, checkinData);
+			BasicExpression exp2 = new BasicExpression(checkout, BasicOperator.MORE_OP, checkinData);
+
+			// (bkg_checkin < checkoutData AND (bkg_checkout >= checkoutData OR bkg_checkout
+			// IS NULL))
+			BasicExpression exp3 = new BasicExpression(checkin, BasicOperator.LESS_OP, checkoutData);
+			BasicExpression exp4 = new BasicExpression(checkout, BasicOperator.MORE_EQUAL_OP, checkoutData);
 			BasicExpression exp5 = new BasicExpression(checkout, BasicOperator.NULL_OP, null);
-			
-			//(bkg_checkin >=checkinData AND bkg_checkout <= checkoutData)
-			BasicExpression exp6 = new BasicExpression(checkin,BasicOperator.MORE_EQUAL_OP, checkinData);
-			BasicExpression exp7 = new BasicExpression(checkout,BasicOperator.LESS_EQUAL_OP, checkoutData);
-			
-			//OR DENTRO DE LA SEGUNDA FILA
-			BasicExpression exp8 = new BasicExpression(exp4,BasicOperator.OR_OP,exp5);
-			
-			//ANDS DE TODAS LAS FILAS
-			BasicExpression exp9 = new BasicExpression(exp1,BasicOperator.AND_OP,exp2);
-			BasicExpression exp10 = new BasicExpression(exp3,BasicOperator.AND_OP,exp8);
-			BasicExpression exp11 = new BasicExpression(exp6,BasicOperator.AND_OP,exp7);
-			
-			//LAS TRES FILAS UNIDAS POR OR
+
+			// (bkg_checkin >=checkinData AND bkg_checkout <= checkoutData)
+			BasicExpression exp6 = new BasicExpression(checkin, BasicOperator.MORE_EQUAL_OP, checkinData);
+			BasicExpression exp7 = new BasicExpression(checkout, BasicOperator.LESS_EQUAL_OP, checkoutData);
+
+			// OR DENTRO DE LA SEGUNDA FILA
+			BasicExpression exp8 = new BasicExpression(exp4, BasicOperator.OR_OP, exp5);
+
+			// ANDS DE TODAS LAS FILAS
+			BasicExpression exp9 = new BasicExpression(exp1, BasicOperator.AND_OP, exp2);
+			BasicExpression exp10 = new BasicExpression(exp3, BasicOperator.AND_OP, exp8);
+			BasicExpression exp11 = new BasicExpression(exp6, BasicOperator.AND_OP, exp7);
+
+			// LAS TRES FILAS UNIDAS POR OR
 			BasicExpression auxFinal = new BasicExpression(exp9, BasicOperator.OR_OP, exp10);
 			BasicExpression finalExpression = new BasicExpression(auxFinal, BasicOperator.OR_OP, exp11);
-		
+
 			keyMap.remove(HotelDao.ATTR_FROM);
 			keyMap.remove(HotelDao.ATTR_TO);
-			
+
 			EntityResultExtraTools.putBasicExpression(keyMap, finalExpression);
 
 			resultado = this.daoHelper.query(this.hotelDao, keyMap, attrList, "queryHotelOccupancy");
@@ -369,14 +374,14 @@ public class HotelService implements IHotelService {
 		}
 		return resultado;
 	}
-	
+
 	/**
 	 * 
 	 */
 	@Override
 	public EntityResult hotelMaximumCapacityQuery(Map<String, Object> keyMap, List<String> attrList)
-			throws OntimizeJEERuntimeException{
-		
+			throws OntimizeJEERuntimeException {
+
 		EntityResult resultado = new EntityResultWrong();
 
 		try {
@@ -384,13 +389,13 @@ public class HotelService implements IHotelService {
 			cf.reset();
 			cf.addBasics(HotelDao.fields);
 			cf.validate(keyMap);
-			
+
 			cf.reset();
 			cf.setNoEmptyList(false);
 			cf.validate(attrList);
-			
+
 			resultado = this.daoHelper.query(this.hotelDao, keyMap, attrList, "queryHotelMaximunCapacity");
-			
+
 		} catch (ValidateException e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(e.getMessage());
@@ -400,74 +405,120 @@ public class HotelService implements IHotelService {
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
-		
+
 	}
-	
-	
+
+	public Map<String, Object> keyMapBasicExpresionDates(Map<String, Object> keyMap)
+			throws InvalidFieldsValuesException {
+
+		BasicField checkin = new BasicField(BookingDao.ATTR_CHECKIN);
+		Date checkinData = (Date) keyMap.get(HotelDao.ATTR_FROM);
+
+		BasicField checkout = new BasicField(BookingDao.ATTR_CHECKOUT);
+		Date checkoutData = (Date) keyMap.get(HotelDao.ATTR_TO);
+
+		ValidateFields.dataRange(checkinData, checkoutData);
+
+		/*
+		 * (bkg_checkin <= checkinData AND bkg_checkout >checkinData) OR (bkg_checkin <
+		 * checkoutData AND (bkg_checkout >= checkoutData OR bkg_checkout IS NULL)) OR
+		 * (bkg_checkin >=checkinData AND bkg_checkout <= checkoutData)
+		 */
+
+		// (bkg_checkin <= checkinData AND bkg_checkout >checkinData)
+		BasicExpression exp1 = new BasicExpression(checkin, BasicOperator.LESS_EQUAL_OP, checkinData);
+		BasicExpression exp2 = new BasicExpression(checkout, BasicOperator.MORE_OP, checkinData);
+
+		// (bkg_checkin < checkoutData AND (bkg_checkout >= checkoutData OR bkg_checkout
+		// IS NULL))
+		BasicExpression exp3 = new BasicExpression(checkin, BasicOperator.LESS_OP, checkoutData);
+		BasicExpression exp4 = new BasicExpression(checkout, BasicOperator.MORE_EQUAL_OP, checkoutData);
+		BasicExpression exp5 = new BasicExpression(checkout, BasicOperator.NULL_OP, null);
+
+		// (bkg_checkin >=checkinData AND bkg_checkout <= checkoutData)
+		BasicExpression exp6 = new BasicExpression(checkin, BasicOperator.MORE_EQUAL_OP, checkinData);
+		BasicExpression exp7 = new BasicExpression(checkout, BasicOperator.LESS_EQUAL_OP, checkoutData);
+
+		// OR DENTRO DE LA SEGUNDA FILA
+		BasicExpression exp8 = new BasicExpression(exp4, BasicOperator.OR_OP, exp5);
+
+		// ANDS DE TODAS LAS FILAS
+		BasicExpression exp9 = new BasicExpression(exp1, BasicOperator.AND_OP, exp2);
+		BasicExpression exp10 = new BasicExpression(exp3, BasicOperator.AND_OP, exp8);
+		BasicExpression exp11 = new BasicExpression(exp6, BasicOperator.AND_OP, exp7);
+
+		// LAS TRES FILAS UNIDAS POR OR
+		BasicExpression auxFinal = new BasicExpression(exp9, BasicOperator.OR_OP, exp10);
+		BasicExpression finalExpression = new BasicExpression(auxFinal, BasicOperator.OR_OP, exp11);
+
+//		keyMap.remove(HotelDao.ATTR_FROM);
+//		keyMap.remove(HotelDao.ATTR_TO);
+
+		Map<String, Object> keyMapBasicExpression = new HashMap<String, Object>();
+
+		EntityResultExtraTools.putBasicExpression(keyMapBasicExpression, finalExpression);
+
+		return keyMapBasicExpression;
+
+	}
+
 	@Override
-	public EntityResult hotelOcupancyRateQuery(Map<String, Object> keyMap, List<String> attrList)
-			throws OntimizeJEERuntimeException{
-		
+	public EntityResult hotelOccupancyDailyRateQuery(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException {
+
 		EntityResult resultado = new EntityResultWrong();
+		EntityResult resultadofinal = new EntityResultMapImpl();
 
 		try {
 
-			Map<String,type> fields = new HashMap<>() {{
-				put(HotelDao.ATTR_ID,type.INTEGER);
-				put(HotelDao.ATTR_FROM,type.DATE);
-				put(HotelDao.ATTR_TO,type.DATE);				
-			}};
-			
-			List<String> required = Arrays.asList(HotelDao.ATTR_FROM,HotelDao.ATTR_TO);
+			Map<String, type> fields = new HashMap<>() {
+				{
+					put(HotelDao.ATTR_ID, type.INTEGER);
+					put(HotelDao.ATTR_FROM, type.DATE);
+					put(HotelDao.ATTR_TO, type.DATE);
+				}
+			};
+
+			List<String> required = Arrays.asList(HotelDao.ATTR_FROM, HotelDao.ATTR_TO);
 			cf.reset();
 			cf.addBasics(fields);
 			cf.setRequired(required);
 			cf.validate(keyMap);
-			
+
 			cf.reset();
 			cf.setNoEmptyList(false);
 			cf.validate(attrList);
 			
-			Map<String,Object> keyMapCapacidad = new HashMap<>();
-			if(keyMap.get(HotelDao.ATTR_ID)!=null) {
-				keyMapCapacidad.put(HotelDao.ATTR_ID, keyMap.get(HotelDao.ATTR_ID));
+			BasicField checkin = new BasicField(BookingDao.ATTR_CHECKIN);
+			Date checkinData = (Date) keyMap.get(HotelDao.ATTR_FROM);	
+			
+//			BasicField checkout = new BasicField(BookingDao.ATTR_CHECKOUT);
+			Date checkoutData = (Date) keyMap.get(HotelDao.ATTR_TO);
+			
+			ValidateFields.dataRange(checkinData, checkoutData);
+			
+			/*(bkg_checkin <= checkinData AND bkg_checkout >checkinData) OR
+			(bkg_checkin < checkoutData AND (bkg_checkout >= checkoutData OR bkg_checkout IS NULL)) OR
+			(bkg_checkin >=checkinData AND bkg_checkout <= checkoutData)*/
+			
+			//(bkg_checkin <= checkinData AND bkg_checkout >checkinData)
+			BasicExpression exp1 = new BasicExpression(checkin,BasicOperator.MORE_EQUAL_OP, checkinData);
+			BasicExpression exp2 = new BasicExpression(checkin,BasicOperator.LESS_EQUAL_OP, checkoutData);
+			
+			BasicExpression finalExpression = new BasicExpression(exp1,BasicOperator.AND_OP, exp2);
+			
+			Map<String,Object> keyMapBasicExpression = new HashMap<String,Object>();
+			
+			EntityResultExtraTools.putBasicExpression(keyMapBasicExpression, finalExpression);
+
+			resultado = this.daoHelper.query(this.hotelDao, keyMapBasicExpression, attrList,
+					"queryHotelOccupancyDailyRate");
+
+			if (keyMap.get(HotelDao.ATTR_ID) != null) {
+				resultadofinal = EntityResultTools.dofilter(resultado,
+						EntityResultTools.keysvalues(HotelDao.ATTR_ID, keyMap.get(HotelDao.ATTR_ID)));
 			}
-			
-			EntityResult capacidad = hotelMaximumCapacityQuery(keyMapCapacidad,new ArrayList<String>());
-			EntityResult ocupacion = hotelOccupancyQuery(keyMap,new ArrayList<String>());
-			
-			
-//			Map<String,Object> mapFinal = new HashMap<String,Object>();
-			
-			for(int i=0; i<capacidad.calculateRecordNumber();i++) {
-				Map<String,Object> map = new HashMap<String,Object>();
-				
-				if(ocupacion.getRecordValues(i).get(HotelDao.ATTR_OCCUPANCY) != null) {
-					long cap = (long) capacidad.getRecordValues(i).get(HotelDao.ATTR_MAXIMUN_CAPACITY);
-					long oc = (long) ocupacion.getRecordValues(i).get(HotelDao.ATTR_OCCUPANCY);
-					
-					double c = (double)cap;
-					double o = (double)oc;
-									
-    				double rate = (o/c)*100;
-					System.out.println(rate);
-				}						
-		}
-			
-//			Map<String,Object> mapFinal = new HashMap<String,Object>();
-//			
-//			for(int i=0; i<capacidad.calculateRecordNumber();i++) {
-//				for(int j=0; j<ocupacion.calculateRecordNumber();j++) {
-//					if(capacidad.getRecordValues(i).get(HotelDao.ATTR_ID) == ocupacion.getRecordValues(i).get(HotelDao.ATTR_ID)) {
-//						
-//					}
-//				}
-//				
-//			}
-			
-			
-//			resultado = this.daoHelper.query(this.hotelDao, keyMap, attrList, "queryHotelMaximunCapacity");
-			
+
 		} catch (ValidateException e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(e.getMessage());
@@ -476,8 +527,99 @@ public class HotelService implements IHotelService {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
-		return resultado;
-		
+		return resultadofinal;
+
+	}
+
+	@Override
+	public EntityResult hotelOcupancyRateQuery(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException {
+
+		EntityResult resultado = new EntityResultWrong();
+		EntityResult resultadofinal = new EntityResultMapImpl();
+
+		try {
+
+			Map<String, type> fields = new HashMap<>() {
+				{
+					put(HotelDao.ATTR_ID, type.INTEGER);
+					put(HotelDao.ATTR_FROM, type.DATE);
+					put(HotelDao.ATTR_TO, type.DATE);
+				}
+			};
+
+			List<String> required = Arrays.asList(HotelDao.ATTR_FROM, HotelDao.ATTR_TO);
+			cf.reset();
+			cf.addBasics(fields);
+			cf.setRequired(required);
+			cf.validate(keyMap);
+
+			cf.reset();
+			cf.setNoEmptyList(false);
+			cf.validate(attrList);
+
+//			BasicField checkin = new BasicField(BookingDao.ATTR_CHECKIN);
+//			Date checkinData = (Date) keyMap.get(HotelDao.ATTR_FROM);	
+//			
+//			BasicField checkout = new BasicField(BookingDao.ATTR_CHECKOUT);
+//			Date checkoutData = (Date) keyMap.get(HotelDao.ATTR_TO);
+//			
+//			ValidateFields.dataRange(checkinData, checkoutData);
+//			
+//			/*(bkg_checkin <= checkinData AND bkg_checkout >checkinData) OR
+//			(bkg_checkin < checkoutData AND (bkg_checkout >= checkoutData OR bkg_checkout IS NULL)) OR
+//			(bkg_checkin >=checkinData AND bkg_checkout <= checkoutData)*/
+//			
+//			//(bkg_checkin <= checkinData AND bkg_checkout >checkinData)
+//			BasicExpression exp1 = new BasicExpression(checkin,BasicOperator.LESS_EQUAL_OP, checkinData);
+//			BasicExpression exp2 = new BasicExpression(checkout,BasicOperator.MORE_OP, checkinData);
+//			
+//			//(bkg_checkin < checkoutData AND (bkg_checkout >= checkoutData OR bkg_checkout IS NULL)) 
+//			BasicExpression exp3 = new BasicExpression(checkin,BasicOperator.LESS_OP, checkoutData);
+//			BasicExpression exp4 = new BasicExpression(checkout,BasicOperator.MORE_EQUAL_OP, checkoutData);
+//			BasicExpression exp5 = new BasicExpression(checkout, BasicOperator.NULL_OP, null);
+//			
+//			//(bkg_checkin >=checkinData AND bkg_checkout <= checkoutData)
+//			BasicExpression exp6 = new BasicExpression(checkin,BasicOperator.MORE_EQUAL_OP, checkinData);
+//			BasicExpression exp7 = new BasicExpression(checkout,BasicOperator.LESS_EQUAL_OP, checkoutData);
+//			
+//			//OR DENTRO DE LA SEGUNDA FILA
+//			BasicExpression exp8 = new BasicExpression(exp4,BasicOperator.OR_OP,exp5);
+//			
+//			//ANDS DE TODAS LAS FILAS
+//			BasicExpression exp9 = new BasicExpression(exp1,BasicOperator.AND_OP,exp2);
+//			BasicExpression exp10 = new BasicExpression(exp3,BasicOperator.AND_OP,exp8);
+//			BasicExpression exp11 = new BasicExpression(exp6,BasicOperator.AND_OP,exp7);
+//			
+//			//LAS TRES FILAS UNIDAS POR OR
+//			BasicExpression auxFinal = new BasicExpression(exp9, BasicOperator.OR_OP, exp10);
+//			BasicExpression finalExpression = new BasicExpression(auxFinal, BasicOperator.OR_OP, exp11);
+//		
+////			keyMap.remove(HotelDao.ATTR_FROM);
+////			keyMap.remove(HotelDao.ATTR_TO);
+//			
+//			Map<String,Object> keyMapBasicExpression = new HashMap<String,Object>();
+//			
+//			EntityResultExtraTools.putBasicExpression(keyMapBasicExpression, finalExpression);
+
+			resultado = this.daoHelper.query(this.hotelDao, keyMapBasicExpresionDates(keyMap), attrList,
+					"queryHotelOccupancyRate");
+
+			if (keyMap.get(HotelDao.ATTR_ID) != null) {
+				resultadofinal = EntityResultTools.dofilter(resultado,
+						EntityResultTools.keysvalues(HotelDao.ATTR_ID, keyMap.get(HotelDao.ATTR_ID)));
+			}
+
+		} catch (ValidateException e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(e.getMessage());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
+		}
+		return resultadofinal;
+
 	}
 
 }
