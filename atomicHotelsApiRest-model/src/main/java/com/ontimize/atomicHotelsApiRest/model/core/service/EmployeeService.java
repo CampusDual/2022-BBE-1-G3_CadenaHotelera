@@ -75,7 +75,7 @@ ControlFields cf;
 				 EmployeeDao.ATTR_DEPARTMENT,
 				 EmployeeDao.ATTR_HOTEL,
 				 EmployeeDao.ATTR_HIRING,
-				 EmployeeDao.ATTR_FIRED
+				 EmployeeDao.ATTR_COUNTRY
 				 );
 		 cf.setRequired(required);
 		 List<String> restricted=Arrays.asList(
@@ -89,6 +89,7 @@ ControlFields cf;
 	}catch (DuplicateKeyException e) {
 		resultado =new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 	}catch (DataIntegrityViolationException e) {
+		e.printStackTrace();
 		resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);
 	}catch (ValidateException e) {
 		resultado =new EntityResultWrong(ErrorMessage.CREATION_ERROR+e.getMessage());
@@ -170,7 +171,7 @@ ControlFields cf;
 		 };
 	cf.setRequired(requeridos);
 	cf.setOptional(true);//El resto de campos seran aceptados
-	cf.validate(attrMap);
+	cf.validate(attrMap);///Ver que salta aqui!!!!!
   
   Map<String,Object> consultaKeyMap=new HashMap<>() {
 	  {
