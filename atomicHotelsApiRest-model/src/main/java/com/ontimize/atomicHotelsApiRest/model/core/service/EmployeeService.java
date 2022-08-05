@@ -62,6 +62,11 @@ ControlFields cf;
  public EntityResult employeeInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
   
 	 EntityResult resultado= new EntityResultWrong();
+		attrMap.forEach((k,v)->{
+			System.out.println(k+" -> "+v);
+		}
+		);
+	 
 	 try {
 		 cf.reset();
 		 cf.addBasics(EmployeeDao.fields);
@@ -105,6 +110,15 @@ ControlFields cf;
  public EntityResult employeeUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
    throws OntimizeJEERuntimeException {
 	 EntityResult resultado=new EntityResultWrong();
+		attrMap.forEach((k,v)->{
+		System.out.println(k+" -> "+v);
+	}
+	);
+		keyMap.forEach((k,v)->{
+		System.out.println(k+" -> "+v);
+	}
+	); 
+	 
 	 
 	 try {
 		 //ControlFields del filtro
