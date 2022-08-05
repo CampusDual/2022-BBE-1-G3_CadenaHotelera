@@ -437,12 +437,19 @@ public class HotelService implements IHotelService {
 			EntityResult ocupacion = hotelOccupancyQuery(keyMap,new ArrayList<String>());
 			
 			
+//			Map<String,Object> mapFinal = new HashMap<String,Object>();
+			
 			for(int i=0; i<capacidad.calculateRecordNumber();i++) {
+				Map<String,Object> map = new HashMap<String,Object>();
+				
 				if(ocupacion.getRecordValues(i).get(HotelDao.ATTR_OCCUPANCY) != null) {
 					long cap = (long) capacidad.getRecordValues(i).get(HotelDao.ATTR_MAXIMUN_CAPACITY);
 					long oc = (long) ocupacion.getRecordValues(i).get(HotelDao.ATTR_OCCUPANCY);
 					
-					long rate = (oc/cap)*100;
+					double c = (double)cap;
+					double o = (double)oc;
+									
+    				double rate = (o/c)*100;
 					System.out.println(rate);
 				}						
 		}
