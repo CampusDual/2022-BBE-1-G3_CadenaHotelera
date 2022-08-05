@@ -528,7 +528,7 @@ public class ValidateFields {
 		 		
 	            String intPartDNI = itDNI.trim().replaceAll(" ", "").substring(0, 8);
 	            System.out.println(intPartDNI);
-	            char ltrDNI = itDNI.charAt(8);
+	            char ltrDNI = Character.toUpperCase(itDNI.charAt(8));
 	            System.out.println(ltrDNI);
 	            int valNumDni = Integer.parseInt(intPartDNI) % 23;
 	            
