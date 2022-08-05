@@ -235,6 +235,16 @@ public class ControlFields {
 						validType = true;
 					}
 					break;
+				case DNI:
+					if ((keyMap.get(key) instanceof String)) {
+						vF.isDNI((String)keyMap.get(key));
+						validType = true;
+					}
+					break;	
+					
+					
+					
+					
 				case INTEGER_UNSIGNED:
 					if ((keyMap.get(key) instanceof Integer)) {
 						vF.NegativeNotAllowed((Integer) keyMap.get(key));

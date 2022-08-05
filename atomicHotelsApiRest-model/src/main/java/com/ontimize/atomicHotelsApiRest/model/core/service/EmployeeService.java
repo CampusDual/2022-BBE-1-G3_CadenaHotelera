@@ -160,9 +160,15 @@ ControlFields cf;
  @Override
  public EntityResult employeeDelete(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
   EntityResult resultado=new EntityResultWrong();
-	 
+//	attrMap.forEach((k,v)->{
+//		System.out.println(k+" -> "+v);
+//	}
+//	); 
+  
+  
   try {
 	  cf.reset();
+	  
 	  cf.addBasics(ServiceDao.fields);
 	  List<String> requeridos =new ArrayList<>(){
 		  {

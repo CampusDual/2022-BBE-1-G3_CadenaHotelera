@@ -507,5 +507,27 @@ public class ValidateFields {
 			throw new InvalidFieldsValuesException(ErrorMessage.INVALID_PHONE);
 		}
 	}
+	private static boolean isNumeric(String str) { 
+	    try {  
+	      Double.parseDouble(str);  
+	      return true;
+	    } catch(NumberFormatException e){  
+	      return false;  
+	    }  
+	  }
+	/*
+	 * comprueba el dni tenga 8 dígitos y la letra sea la correcta.
+	 * caracter.
+	 */
+	
+	 public static void  isDNI(String itDNI) throws InvalidFieldsValuesException {
+		 		final String dniChars="TRWAGMYFPDXBNJZSQVHLCKE";   
+	            String intPartDNI = itDNI.trim().replaceAll(" ", "").substring(0, 7);
+	            char ltrDNI = itDNI.charAt(8);
+	            int valNumDni = Integer.parseInt(intPartDNI) % 23;
+	            if (itDNI.length()!= 9 && isNumeric(intPartDNI) == false && dniChars.charAt(valNumDni)!= ltrDNI) {
+	            	throw new InvalidFieldsValuesException(ErrorMessage.INVALID_DNI);
+	            } 
+	        }
 
 }

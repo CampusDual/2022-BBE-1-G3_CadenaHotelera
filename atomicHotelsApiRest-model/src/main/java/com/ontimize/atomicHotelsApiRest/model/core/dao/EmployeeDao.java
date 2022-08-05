@@ -42,7 +42,7 @@ public class EmployeeDao extends OntimizeJdbcDaoSupport {
 		put(ATTR_ID,type.INTEGER);
 		put(ATTR_NAME,type.STRING);
 		put(ATTR_SURNAME,type.STRING);
-		put(ATTR_IDEN_DOC,type.NO_EMPTY_STRING);//cambiar tipo
+		put(ATTR_IDEN_DOC,type.DNI);//cambiar tipo
 		put(ATTR_SOCIAL_DOC,type.NO_EMPTY_STRING);
 		put(ATTR_SALARY,type.PRICE);
 		put(ATTR_PHONE,type.PHONE);
