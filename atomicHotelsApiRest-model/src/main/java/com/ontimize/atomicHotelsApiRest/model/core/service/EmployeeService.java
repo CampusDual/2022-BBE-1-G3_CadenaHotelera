@@ -20,6 +20,7 @@ import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.jee.common.dto.EntityResult;
+import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
 import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
@@ -39,7 +40,25 @@ ControlFields cf;
  @Override
  public EntityResult employeeQuery(Map<String, Object> keyMap, List<String> attrList)
    throws OntimizeJEERuntimeException {
-	 EntityResult resultado=new EntityResultWrong();
+	 System.out.println("****************keyMap******************");
+	 keyMap.forEach((k,v)->System.out.println(k+"->"+v));
+	 System.out.println("\n****************attrList******************");
+	 attrList.forEach(s->System.out.println(s));
+	 
+		EntityResult resultado=new EntityResultMapImpl();
+		resultado=this.daoHelper.query(this.employeeDao, keyMap,attrList);
+		System.out.println(resultado);
+	 System.out.println("\n****************Recorremos el EntityResul******************");
+		for(int i=0;i<resultado.calculateRecordNumber();i++) {
+		resultado.getRecordValues(i).forEach((k,v)->System.out.println(k+"->"+v));
+		System.out.println("--------");
+		}
+		System.out.println("\n****************Pruebas EntityResult******************");
+		System.out.println(resultado.calculateRecordNumber());
+		System.out.println(resultado.contains(null));
+		System.out.println(resultado.containsKey("emp_fired"));
+		
+
 	 try {
 		 cf.reset();
 		 cf.addBasics(EmployeeDao.fields);
@@ -55,13 +74,17 @@ ControlFields cf;
 		 resultado =new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 	 }
 	 return resultado ;
+		
  }
 
  @Override
  public EntityResult employeeInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
   
 	 EntityResult resultado= new EntityResultWrong();
-		attrMap.forEach((k,v)->{
+
+	
+	
+	 attrMap.forEach((k,v)->{
 			System.out.println(k+" -> "+v);
 		}
 		);
