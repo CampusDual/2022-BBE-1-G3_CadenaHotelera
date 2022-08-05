@@ -16,7 +16,8 @@ CREATE TABLE hotels (
 	
 	FOREIGN KEY(htl_cnt_iso) REFERENCES countries(cnt_iso)	
 );
-
+--ALTER TABLE public.hotels ADD htl_lat VARCHAR(15) NULL;
+--ALTER TABLE public.hotels ADD htl_lon VARCHAR(15) NULL;
 --ALTER TABLE public.hotels ADD htl_cnt_iso char(2)  NULL;
 --ALTER TABLE public.hotels ADD FOREIGN KEY(htl_cnt_iso) REFERENCES countries(cnt_iso)	;
 --UPDATE public.hotels  set htl_cnt_iso = 'ES'
