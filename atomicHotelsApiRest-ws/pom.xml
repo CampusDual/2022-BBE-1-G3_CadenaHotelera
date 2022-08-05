@@ -21,7 +21,13 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/x
 			<groupId>com.ontimize.boot</groupId>
 			<artifactId>ontimize-boot-starter-rest</artifactId>
 		</dependency>
-
-	
+<dependency>
+  <groupId>com.amadeus</groupId>
+  <artifactId>amadeus-java</artifactId>
+</dependency>
+	<dependency>
+    <groupId>org.json</groupId>
+    <artifactId>json</artifactId>
+</dependency>
 	</dependencies>
 </project>
