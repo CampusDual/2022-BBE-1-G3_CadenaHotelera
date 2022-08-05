@@ -15,9 +15,7 @@ import org.springframework.stereotype.Service;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IEmployeeService;
-import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.EmployeeDao;
-import com.ontimize.atomicHotelsApiRest.model.core.dao.ServiceDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
@@ -43,6 +41,7 @@ ControlFields cf;
    throws OntimizeJEERuntimeException {
 	 EntityResult resultado=new EntityResultWrong();
 	 try {
+		 cf.reset();
 		 cf.addBasics(EmployeeDao.fields);
 		 cf.validate(attrList);
 		 cf.validate(keyMap);
@@ -88,9 +87,23 @@ ControlFields cf;
 				 );
 		 cf.setRestricted(restricted);
 		 cf.validate(attrMap);
-		 resultado=this.daoHelper.insert(this.employeeDao, attrMap);
-		 resultado.setMessage("Empleado Registrado");
-	 
+		 
+		 Map<String,Object> consultaKeyMap=new HashMap<>() {
+			  {
+			  put(EmployeeDao.ATTR_IDEN_DOC,attrMap.get(EmployeeDao.ATTR_IDEN_DOC));
+			  
+		  }
+			  };
+			 EntityResult auxEntity=employeeQuery(consultaKeyMap,EntityResultTools.attributes(EmployeeDao.ATTR_IDEN_DOC,EmployeeDao.ATTR_FIRED));
+			//System.out.println(auxEntity.getRecordValues(0).get(EmployeeDao.ATTR_FIRED));
+			 System.out.println(((List<String>)auxEntity.get(EmployeeDao.ATTR_FIRED)));
+			 System.out.println(auxEntity.calculateRecordNumber());
+		  if(auxEntity.calculateRecordNumber()==0 ||!((List<String>)auxEntity.get(EmployeeDao.ATTR_FIRED)).contains(null)) {
+			  resultado=this.daoHelper.insert(this.employeeDao, attrMap);
+			  resultado.setMessage("Empleado  Registrado");
+		  }else {
+		 resultado.setMessage("Empleado no Registrado");
+		  }
 	}catch (DuplicateKeyException e) {
 		resultado =new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 	}catch (DataIntegrityViolationException e) {
@@ -124,7 +137,7 @@ ControlFields cf;
 		 //ControlFields del filtro
 		 List<String> requiredFilter=new ArrayList<String>(){
 			 { 
-				 add(EmployeeDao.ATTR_ID);
+				 add(EmployeeDao.ATTR_IDEN_DOC);
 			 }
 			 };
 		 
@@ -145,16 +158,18 @@ ControlFields cf;
 		cf.setRestricted(restrictedData);
 		cf.validate(attrMap);
 		Map<String, Object> subConsultaKeyMap = new HashMap<>() {
-			{
-				put(EmployeeDao.ATTR_ID, keyMap.get(EmployeeDao.ATTR_ID));
-			}
+			  {
+				  put(EmployeeDao.ATTR_IDEN_DOC,attrMap.get(EmployeeDao.ATTR_IDEN_DOC));
+				  
+			  }
 		};
 		EntityResult auxEntity =employeeQuery(subConsultaKeyMap,
-				EntityResultTools.attributes(EmployeeDao.ATTR_ID));
-		if(auxEntity.calculateRecordNumber()==0) {
+				EntityResultTools.attributes(EmployeeDao.ATTR_IDEN_DOC,EmployeeDao.ATTR_FIRED));
+		if(auxEntity.calculateRecordNumber()==0||!((List<String>)auxEntity.get(EmployeeDao.ATTR_FIRED)).contains(null)) {
 			resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
 		}else {
-			resultado.setMessage("Empleado registrado");
+			this.daoHelper.update(this.employeeDao, attrMap, keyMap);
+			resultado.setMessage("Empleado Actualizado");
 		}
 	 }catch (ValidateException e) {
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + " - " + e.getMessage());
@@ -182,26 +197,29 @@ ControlFields cf;
   
   try {
 	  cf.reset();
-	  
-	  cf.addBasics(ServiceDao.fields);
+	  cf.addBasics(EmployeeDao.fields);
 	  List<String> requeridos =new ArrayList<>(){
 		  {
-		  add(EmployeeDao.ATTR_ID);
+		  add(EmployeeDao.ATTR_IDEN_DOC);
 	  }
 		 };
 	cf.setRequired(requeridos);
-	cf.setOptional(true);//El resto de campos seran aceptados
-	cf.validate(attrMap);///Ver que salta aqui!!!!!
-  
+	cf.setOptional(true);
+	cf.validate(attrMap);
   Map<String,Object> consultaKeyMap=new HashMap<>() {
 	  {
-	  put(EmployeeDao.ATTR_ID,attrMap.get(ServiceDao.ATTR_ID));
+	  put(EmployeeDao.ATTR_IDEN_DOC,attrMap.get(EmployeeDao.ATTR_IDEN_DOC));
+	  
   }
 	  };
-	 EntityResult auxEntity=employeeQuery(consultaKeyMap,EntityResultTools.attributes(EmployeeDao.ATTR_ID));
-  if(auxEntity.calculateRecordNumber()==0) {
+	 EntityResult auxEntity=employeeQuery(consultaKeyMap,EntityResultTools.attributes(EmployeeDao.ATTR_IDEN_DOC,EmployeeDao.ATTR_FIRED));
+	System.out.println(auxEntity.getRecordValues(0).get(EmployeeDao.ATTR_FIRED));
+  if(auxEntity.calculateRecordNumber()==0 ) {
 	  resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
-  }else {
+  }else if(auxEntity.getRecordValues(0).get(EmployeeDao.ATTR_FIRED)==null) {
+	  resultado.setMessage("Empleado no puede ser borrado,despidalo primero"); 
+  }
+  else {
 	  resultado=this.daoHelper.delete(this.employeeDao, attrMap);
 	  resultado.setMessage("Empleado borrado");
   }

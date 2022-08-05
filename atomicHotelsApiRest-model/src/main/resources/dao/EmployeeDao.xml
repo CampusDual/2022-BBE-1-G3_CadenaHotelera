@@ -5,10 +5,10 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://www.ontimize.com/schema/jdbc http://www.ontimize.com/schema/jdbc/ontimize-jdbc-dao.xsd" 
 catalog="" schema="${mainschema}" table="employees" datasource="mainDataSource" sqlhandler="dbSQLStatementHandler">
 	<DeleteKeys>
-		<Column>emp_id</Column>
+		<Column>emp_identity_document</Column>
 	</DeleteKeys>
 	<UpdateKeys>
-		<Column>emp_id</Column>
+		<Column>emp_identity_document</Column>
 	</UpdateKeys>
 	<GeneratedKey>emp_id</GeneratedKey>
 </JdbcEntitySetup>

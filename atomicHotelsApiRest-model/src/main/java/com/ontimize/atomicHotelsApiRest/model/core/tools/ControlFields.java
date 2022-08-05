@@ -238,6 +238,7 @@ public class ControlFields {
 				case DNI:
 					if ((keyMap.get(key) instanceof String)) {
 						vF.isDNI((String)keyMap.get(key));
+						keyMap.replace(key,((String)keyMap.get(key)).toUpperCase());
 						validType = true;
 					}
 					break;	
