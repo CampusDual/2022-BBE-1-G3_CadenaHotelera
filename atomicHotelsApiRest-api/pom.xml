@@ -18,6 +18,10 @@
             <groupId>com.ontimize.jee</groupId>
             <artifactId>ontimize-jee-common</artifactId>
         </dependency>
+	<dependency>
+				<groupId>com.amadeus</groupId>
+				<artifactId>amadeus-java</artifactId>
+		</dependency>
     </dependencies>
 
 </project>

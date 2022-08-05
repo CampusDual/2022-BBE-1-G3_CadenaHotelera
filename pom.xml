@@ -60,8 +60,12 @@
 
 
 		<dependencies>
-
-
+			<dependency>
+				<groupId>com.amadeus</groupId>
+				<artifactId>amadeus-java</artifactId>
+				<version>6.2.1</version>
+			</dependency>
+	
 			<dependency>
 
 

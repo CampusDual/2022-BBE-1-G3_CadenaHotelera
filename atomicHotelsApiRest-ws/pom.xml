@@ -19,5 +19,10 @@
 			<groupId>com.ontimize.boot</groupId>
 			<artifactId>ontimize-boot-starter-rest</artifactId>
 		</dependency>
+		<dependency>
+				<groupId>com.amadeus</groupId>
+				<artifactId>amadeus-java</artifactId>
+		</dependency>
+	
 	</dependencies>
 </project>
