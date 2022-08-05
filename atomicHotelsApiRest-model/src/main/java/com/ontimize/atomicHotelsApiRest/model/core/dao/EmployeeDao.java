@@ -53,7 +53,8 @@ public class EmployeeDao extends OntimizeJdbcDaoSupport {
 		put(ATTR_ADDRESS,type.STRING);	
 		put(ATTR_ZIP_CODE,type.STRING);	
 		put(ATTR_COUNTRY,type.COUNTRY);
-		put(ATTR_DEPARTMENT,type.STRING);	
+		put(ATTR_DEPARTMENT,type.INTEGER);
+		put(ATTR_HOTEL,type.INTEGER);
 		put(ATTR_HIRING,type.DATETIME);
 		put(ATTR_FIRED,type.DATETIME);	
 	}

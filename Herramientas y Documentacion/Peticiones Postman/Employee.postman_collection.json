@@ -1,0 +1,100 @@
+{
+	"info": {
+		"_postman_id": "da59b4f4-7531-495a-9617-a00e47d5222f",
+		"name": "Employee",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "22294604"
+	},
+	"item": [
+		{
+			"name": "-C employee",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"data\":\r\n    {\"emp_name\":\"Cesar\",\r\n    \"emp_surname\": \"Bouzas\",\r\n    \"emp_identity_document\": \"34896415X\",\r\n    \"emp_social_security_number\": \"25646464646665\",\r\n    \"emp_salary\": 1800.35,\r\n    \"emp_phone_number\": \"667880938\",\r\n    \"emp_acoount_number\": \"3697/5656/8856/4100\",\r\n    \"emp_email\": \"cesarbouzaspaw@gmail.com\",\r\n    \"emp_city\": \"OLEIROS\",\r\n    \"emp_state\": \"A Coruna\",\r\n    \"emp_address\": \"Ernesto che Guevara 153\",\r\n    \"emp_zip_code\": \"15179\",\r\n    \"emp_dpt_id\": 1,\r\n    \"emp_htl_id\": 1,\r\n    \"emp_cnt_iso\":\"ES\",\r\n    \"emp_hiring\":\"2022-08-12\",\r\n    \"emp_fired\":\"2022-08-13\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/employees/employee",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"employees",
+						"employee"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R all employee",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:33333/employees/employee?columns=emp_id,emp_name,emp_surname,emp_identity_document,emp_social_security_number,emp_salary,emp_phone_number,emp_account_number,emp_email,emp_city,emp_state,emp_address,emp_zip_code,emp_dpt_id,emp_htl_id,emp_cnt_iso,emp_hiring,emp_fired",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"employees",
+						"employee"
+					],
+					"query": [
+						{
+							"key": "columns",
+							"value": "emp_id,emp_name,emp_surname,emp_identity_document,emp_social_security_number,emp_salary,emp_phone_number,emp_account_number,emp_email,emp_city,emp_state,emp_address,emp_zip_code,emp_dpt_id,emp_htl_id,emp_cnt_iso,emp_hiring,emp_fired"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "demouser",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "demo",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
