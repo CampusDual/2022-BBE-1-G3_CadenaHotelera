@@ -71,7 +71,7 @@ public class BookingService implements IBookingService {
 	ControlFields cf;
 
 	@Override
-//	@Secured({ PermissionsProviderSecured.SECURED })
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult bookingQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		
@@ -103,6 +103,7 @@ public class BookingService implements IBookingService {
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult bookingInfoQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
@@ -129,6 +130,7 @@ public class BookingService implements IBookingService {
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult bookingInsert(Map<String, Object> attrMap)
 			throws OntimizeJEERuntimeException, EntityResultRequiredException {
 		EntityResult resultado = new EntityResultWrong();
@@ -199,6 +201,7 @@ public class BookingService implements IBookingService {
 	 * action. El resto los ignora. acciones válidas : CHECKIN,CHECKOUT,CANCEL
 	 */
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult bookingActionUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultadoER = new EntityResultWrong(ErrorMessage.INVALID_ACTION);
@@ -284,6 +287,7 @@ public class BookingService implements IBookingService {
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult bookingDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 //		return this.daoHelper.delete(this.bookingDao, keyMap);
 		return new EntityResultWrong("No se pueden eliminar reservas, debe cancelarla");
@@ -307,6 +311,7 @@ public class BookingService implements IBookingService {
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult bookingsInRangeInfoQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
@@ -446,6 +451,7 @@ public class BookingService implements IBookingService {
 	 * @throws OntimizeJEERuntimeException
 	 */
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult bookingDaysUnitaryRoomPriceQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 
@@ -478,6 +484,7 @@ public class BookingService implements IBookingService {
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult bookingsHotelsQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
@@ -525,6 +532,7 @@ public class BookingService implements IBookingService {
 	 * resultado = new EntityResultWrong(ErrorMessage.ERROR); } return resultado; }
 	 */
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult booking_now_by_room_numberQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 
@@ -562,6 +570,7 @@ public class BookingService implements IBookingService {
 	 * @throws OntimizeJEERuntimeException
 	 */
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult bookingSlotsInfoQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 
@@ -602,6 +611,7 @@ public class BookingService implements IBookingService {
 	 * @throws OntimizeJEERuntimeException
 	 */
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult bookingCompleteInfoQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 
@@ -702,6 +712,7 @@ public class BookingService implements IBookingService {
 	 * @throws OntimizeJEERuntimeException
 	 */
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult bookingHotelRoomRoomTypeQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 

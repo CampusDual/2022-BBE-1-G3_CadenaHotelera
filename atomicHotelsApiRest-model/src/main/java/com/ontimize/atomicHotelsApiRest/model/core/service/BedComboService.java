@@ -25,151 +25,147 @@ import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 
-
 @Service("BedComboService")
 @Lazy
-public class BedComboService implements IBedComboService{
-	
+public class BedComboService implements IBedComboService {
+
 	@Autowired
 	private BedComboDao bedComboDao;
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
-	
+
 	@Autowired
 	ControlFields cf;
-	
-	@Override 
+
+	@Override
 	public EntityResult bedComboQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
-		EntityResult resultado=new EntityResultWrong();
+		EntityResult resultado = new EntityResultWrong();
 		try {
-		cf.reset();
-		cf.addBasics(BedComboDao.fields);
-		cf.validate(keyMap);
-		cf.validate(attrList);
-		
-		return this.daoHelper.query(this.bedComboDao, keyMap, attrList);
-		}catch(ValidateException e) {
-			resultado=new EntityResultWrong(e.getMessage());
-		}catch(Exception e) {
-			resultado=new EntityResultWrong(ErrorMessage.ERROR);
+			cf.reset();
+			cf.addBasics(BedComboDao.fields);
+			cf.validate(keyMap);
+			cf.validate(attrList);
+
+			resultado = this.daoHelper.query(this.bedComboDao, keyMap, attrList);
+		} catch (ValidateException e) {
+			resultado = new EntityResultWrong(e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
 	}
-	 
+
 	@Override
 	public EntityResult bedComboInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
-		try {			
+		try {
 			cf.reset();
 			cf.addBasics(BedComboDao.fields);
-			List<String> required=new ArrayList<>() {
+			List<String> required = new ArrayList<>() {
 				{
 					add(BedComboDao.ATTR_NAME);
 					add(BedComboDao.ATTR_SLOTS);
 				}
 			};
 			cf.setRequired(required);
-			List<String> restricted=new ArrayList<>() {
+			List<String> restricted = new ArrayList<>() {
 				{
-				add(BedComboDao.ATTR_ID);
+					add(BedComboDao.ATTR_ID);
 				}
-				};
-				cf.setRestricted(restricted);
+			};
+			cf.setRestricted(restricted);
 			cf.validate(attrMap);
-			
-			resultado=this.daoHelper.insert(this.bedComboDao, attrMap);
+
+			resultado = this.daoHelper.insert(this.bedComboDao, attrMap);
 			resultado.setMessage("Tipo de cama insertado");
 
-		}catch (DuplicateKeyException e) {
-			resultado =new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
-		}catch (DataIntegrityViolationException e) {
+		} catch (DuplicateKeyException e) {
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);
-		}catch (ValidateException e) {
-			resultado =new EntityResultWrong(e.getMessage());
+		} catch (ValidateException e) {
+			resultado = new EntityResultWrong(e.getMessage());
+		} catch (Exception e) {
+			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}
-		catch(Exception e) {
-			resultado=new EntityResultWrong(ErrorMessage.ERROR);
-		}
-		return resultado;		
+		return resultado;
 	}
 
 	@Override
 	public EntityResult bedComboUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
-			EntityResult resultado=new EntityResultWrong();
+		EntityResult resultado = new EntityResultWrong();
 		try {
 			cf.reset();
 			cf.addBasics(BedComboDao.fields);
-			List<String> required=new ArrayList<>() {
-				{
-				add(BedComboDao.ATTR_ID);	
-				}
-				};
-			cf.setRequired(required);
-			cf.setOptional(false);
-			cf.validate(keyMap);
-			
-			
-			cf.reset();
-			cf.addBasics(BedComboDao.fields);
-			List<String> restricted=new ArrayList<>() {
-				{
-				add(BedComboDao.ATTR_ID);	
-				}
-				};
-			cf.setRestricted(restricted);
-			cf.validate(attrMap);			
-			resultado=this.daoHelper.update(bedComboDao, attrMap, keyMap);
-			if(resultado.getCode()==EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
-				resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD); 
-			}else {
-				resultado.setMessage("Tipo de cama actualizado");
-			}
-			}catch(ValidateException e){
-				resultado = new EntityResultWrong(e.getMessage());
-			}catch(DuplicateKeyException e){
-				resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
-			}catch( DataIntegrityViolationException e){
-				resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
-			}catch(Exception e){
-				resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR);
-			}
-			return resultado;	
-		}
-
-
-	@Override
-	public EntityResult bedComboDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
-		EntityResult resultado=new EntityResultWrong();
-		try {
-			cf.reset();
-			cf.addBasics(BedComboDao.fields);
-			List<String> required=new ArrayList<>() {
+			List<String> required = new ArrayList<>() {
 				{
 					add(BedComboDao.ATTR_ID);
 				}
-				};
+			};
 			cf.setRequired(required);
 			cf.setOptional(false);
 			cf.validate(keyMap);
-			
-			Map<String,Object> consultaKeyMap=new HashMap<>()
-			{
+
+			cf.reset();
+			cf.addBasics(BedComboDao.fields);
+			List<String> restricted = new ArrayList<>() {
 				{
-				put( BedComboDao.ATTR_ID,keyMap.get(BedComboDao.ATTR_ID));	
+					add(BedComboDao.ATTR_ID);
 				}
 			};
-			
-			EntityResult auxEntity= bedComboQuery(consultaKeyMap,EntityResultTools.attributes(BedComboDao.ATTR_ID));
-		
-			if(auxEntity.calculateRecordNumber()==0) {
-			resultado=new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
-		}else {
-				resultado=this.daoHelper.delete(this.bedComboDao, keyMap);
-				resultado.setMessage("Tipo de cama borrada");
-				
+			cf.setRestricted(restricted);
+			cf.validate(attrMap);
+			resultado = this.daoHelper.update(bedComboDao, attrMap, keyMap);
+			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
+				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
+			} else {
+				resultado.setMessage("Tipo de cama actualizado");
+			}
+		} catch (ValidateException e) {
+			resultado = new EntityResultWrong(e.getMessage());
+		} catch (DuplicateKeyException e) {
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
+		} catch (DataIntegrityViolationException e) {
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
+		} catch (Exception e) {
+			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR);
 		}
+		return resultado;
+	}
+
+	@Override
+	public EntityResult bedComboDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
+		EntityResult resultado = new EntityResultWrong();
+		try {
+			cf.reset();
+			cf.addBasics(BedComboDao.fields);
+			List<String> required = new ArrayList<>() {
+				{
+					add(BedComboDao.ATTR_ID);
+				}
+			};
+			cf.setRequired(required);
+			cf.setOptional(false);
+			cf.validate(keyMap);
+
+			Map<String, Object> consultaKeyMap = new HashMap<>() {
+				{
+					put(BedComboDao.ATTR_ID, keyMap.get(BedComboDao.ATTR_ID));
+				}
+			};
+
+			EntityResult auxEntity = bedComboQuery(consultaKeyMap, EntityResultTools.attributes(BedComboDao.ATTR_ID));
+
+			if (auxEntity.calculateRecordNumber() == 0) {
+				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
+			} else {
+				resultado = this.daoHelper.delete(this.bedComboDao, keyMap);
+				resultado.setMessage("Tipo de cama borrada");
+
+			}
 
 		} catch (ValidateException e) {
 			e.getStackTrace();

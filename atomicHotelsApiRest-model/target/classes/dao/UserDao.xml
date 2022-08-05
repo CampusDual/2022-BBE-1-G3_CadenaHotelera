@@ -3,17 +3,17 @@
     xmlns="http://www.ontimize.com/schema/jdbc"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.ontimize.com/schema/jdbc http://www.ontimize.com/schema/jdbc/ontimize-jdbc-dao.xsd"
-    catalog="" schema="${mainschema}" table="TUSER"
+    catalog="" schema="${mainschema}" table="tuser"
     datasource="mainDataSource" sqlhandler="dbSQLStatementHandler">
     <DeleteKeys>
-        <Column>USER_</Column>
+        <Column>user_</Column>
     </DeleteKeys>
     <UpdateKeys>
-        <Column>USER_</Column>
+        <Column>user_</Column>
     </UpdateKeys>
-    <GeneratedKey>USER_</GeneratedKey>
     <Queries>
-        <Query id="default">
+        <!-- 
+        	<Query id="default">        
             <ValidColumns>
                 <Column>USER_</Column>
                 <Column>EMAIL</Column>
@@ -51,5 +51,6 @@
                 ]]>
             </Sentence>
         </Query>
+        -->
     </Queries>
 </JdbcEntitySetup>

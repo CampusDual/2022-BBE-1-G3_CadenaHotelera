@@ -19,9 +19,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.function.ServerResponse.Context;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
+import com.ontimize.atomicHotelsApiRest.api.core.service.IUserRoleService;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IUserService;
-
-import com.ontimize.atomicHotelsApiRest.model.core.dao.UserDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.BedComboDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.UserRoleDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
@@ -33,14 +35,11 @@ import com.ontimize.jee.common.security.PermissionsProviderSecured;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 
 @Lazy
-@Service("UserService")
-public class UserService implements IUserService {
+@Service("UserRoleService")
+public class UserRoleService implements IUserRoleService {
 
 	@Autowired
-	private UserDao userDao;
-	
-	@Autowired
-	private UserRoleService userRoleService;
+	private UserRoleDao userRoleDao;
 
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
@@ -53,21 +52,14 @@ public class UserService implements IUserService {
 
 	@Override
 	@Secured({ PermissionsProviderSecured.SECURED })
-	public EntityResult userQuery(Map<String, Object> keyMap, List<String> attrList) {
+	public EntityResult userRoleQuery(Map<String, Object> keyMap, List<String> attrList) {
 		EntityResult resultado = new EntityResultWrong();
 		try {
 			cf.reset();
-			cf.addBasics(UserDao.fields);
-			
-			cf.setRestricted(new ArrayList<String>() {
-				{
-					add(UserDao.ATTR_PASSWORD);
-				}
-			});
-
+			cf.addBasics(UserRoleDao.fields);
 			cf.validate(keyMap);
-			cf.validate(attrList);				
-			resultado = this.daoHelper.query(this.userDao, keyMap, attrList);
+			cf.validate(attrList);
+			resultado = this.daoHelper.query(this.userRoleDao, keyMap, attrList);
 
 		} catch (ValidateException e) {
 			e.printStackTrace();
@@ -81,26 +73,26 @@ public class UserService implements IUserService {
 
 	@Override
 	@Secured({ PermissionsProviderSecured.SECURED })
-	public EntityResult userInsert(Map<String, Object> attrMap) {
+	public EntityResult userRoleInsert(Map<String, Object> attrMap) {
 		EntityResult resultado = new EntityResultWrong();
 		try {
 
 			List<String> required = new ArrayList<String>() {
 				{
-					add(UserDao.ATTR_USER);
-					add(UserDao.ATTR_PASSWORD);
+					add(UserRoleDao.ATTR_USER);
+					add(UserRoleDao.ATTR_ID_ROLENAME);
 				}
 			};
 
 			cf.reset();
-			cf.addBasics(UserDao.fields);
+			cf.addBasics(UserRoleDao.fields);
 			cf.setRequired(required);
 			cf.validate(attrMap);
-			
+
 			System.out.println(attrMap);
 			System.out.println(cf.toString());
-			
-			resultado = this.daoHelper.insert(this.userDao, attrMap);
+
+			resultado = this.daoHelper.insert(this.userRoleDao, attrMap);
 			resultado.setMessage("Usuario registrado");
 
 		} catch (ValidateException e) {
@@ -117,91 +109,35 @@ public class UserService implements IUserService {
 
 	@Override
 	@Secured({ PermissionsProviderSecured.SECURED })
-	public EntityResult userUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap) {
-		EntityResult resultado = new EntityResultWrong();
-
-		try {
-
-			// ControlFields del filtro
-			List<String> requiredFilter = new ArrayList<String>() {
-				{
-					add(UserDao.ATTR_USER);
-				}
-			};
-			cf.reset();
-			cf.addBasics(UserDao.fields);
-			cf.setRequired(requiredFilter);
-			cf.setOptional(false);// No será aceptado ningún campo que no esté en required
-			cf.validate(keyMap);
-
-			// ControlFields de los nuevos datos
-			List<String> restrictedData = new ArrayList<String>() {
-				{
-					add(UserDao.ATTR_USER);// El id no se puede actualizar
-				}
-			};
-			cf.reset();
-			cf.addBasics(UserDao.fields);
-			cf.setRestricted(restrictedData);
-			cf.validate(attrMap);
-
-			resultado = this.daoHelper.update(this.userDao, attrMap, keyMap);
-
-			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
-				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
-			} else {
-				resultado = new EntityResultMapImpl();
-				resultado.setMessage("Usuario actualizado");
-			}
-
-		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + " - " + e.getMessage());
-		} catch (DuplicateKeyException e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
-		} catch (DataIntegrityViolationException e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
-		} catch (Exception e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
-		}
-		return resultado;
-	}
-
-	@Override
-	@Secured({ PermissionsProviderSecured.SECURED })
-	public EntityResult userDelete(Map<String, Object> keyMap) {
+	public EntityResult userRoleDelete(Map<String, Object> keyMap) {
 
 		EntityResult resultado = new EntityResultWrong();
 		try {
 			List<String> required = new ArrayList<String>() {
 				{
-					add(UserDao.ATTR_USER);
+					add(UserRoleDao.ATTR_USER);
 				}
 			};
 			cf.reset();
-			cf.addBasics(UserDao.fields);
+			cf.addBasics(UserRoleDao.fields);
 			cf.setRequired(required);
 			cf.setOptional(false);
 			cf.validate(keyMap);
 
-			Map<String, Object> subConsultaKeyMap = new HashMap<>() {
-				{
-					put(UserDao.ATTR_USER, keyMap.get(UserDao.ATTR_USER));
-				}
-			};
+//			Map<String, Object> subConsultaKeyMap = new HashMap<>() {
+//				{
+//					put(UserRoleDao.ATTR_USER, keyMap.get(UserRoleDao.ATTR_USER));
+//				}
+//			};
 
-			EntityResult auxEntity = userQuery(subConsultaKeyMap, EntityResultTools.attributes(UserDao.ATTR_USER));
+//			EntityResult auxEntity = userQuery(subConsultaKeyMap, EntityResultTools.attributes(UserRoleDao.ATTR_USER));
 
-			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
-				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
-			} else {
-				Map<String, Object> subKeyMapDelete = new HashMap<>(){{put(UserRoleDao.ATTR_USER,keyMap.get(UserDao.ATTR_USER));}};
-				userRoleService.userRoleDelete(subKeyMapDelete);
-				resultado = this.daoHelper.delete(this.userDao, keyMap);
-				resultado.setMessage("Usuario eliminado");
-			}
+//			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
+//				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
+//			} else {
+				resultado = this.daoHelper.delete(this.userRoleDao, keyMap);
+				resultado.setMessage("Rol de Usuario eliminado");
+//			}
 
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + e.getMessage());

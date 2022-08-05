@@ -1,30 +1,53 @@
 package com.ontimize.atomicHotelsApiRest.model.core.dao;
 
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 
+import com.ontimize.atomicHotelsApiRest.model.core.tools.TypeCodes.type;
 import com.ontimize.jee.server.dao.common.ConfigurationFile;
 import com.ontimize.jee.server.dao.jdbc.OntimizeJdbcDaoSupport;
 
-
 @Lazy
 @Repository(value = "UserDao")
-@ConfigurationFile(
-	configurationFile = "dao/UserDao.xml",
-	configurationFilePlaceholder = "dao/placeholders.properties")
+@ConfigurationFile(configurationFile = "dao/UserDao.xml", configurationFilePlaceholder = "dao/placeholders.properties")
 public class UserDao extends OntimizeJdbcDaoSupport {
 
-	public static final String USR_EMAIL    = "user_email";
-	public static final String USR_PASSWORD = "user_password";
+	public static final String ATTR_USER= "user_";
+	public static final String ATTR_PASSWORD = "password";
 
-	public static final String ID            = "user_id";
-	public static final String EMAIL         = "user_email";
-	public static final String PASSWORD      = "user_password";
-	public static final String NAME          = "user_name";
-	public static final String SURNAME       = "user_surname";
-	public static final String SCHEMA        = "db_schema";
-	public static final String CREATION_DATE = "user_creation_date";
-	public static final String DOWN_DATE     = "user_down_date";
+	public static final String ATTR_NAME = "name";
+	public static final String ATTR_SURNAME = "surname";
+	public static final String ATTR_EMAIL = "email";
+	public static final String ATTR_NIF = "nif";
+
+	public static final String ATTR_BLOCKED = "userblocked";
+	public static final String ATTR_LAST_PASSWORD_UPDATE = "lastpasswordupdate";
+
+	public static final String ATTR_RESTRICTIONS = "restrictions";
+	
+	
+//	public static final String PASSWORD = "user_password";
+//	public static final String SCHEMA = "db_schema";
+//	public static final String CREATION_DATE = "user_creation_date";
+//	public static final String DOWN_DATE = "user_down_date";
+
+	
+	
+	public static final Map<String,type> fields = new HashMap<>() {{
+		put(ATTR_USER,type.STRING);
+		put(ATTR_PASSWORD,type.STRING);
+		put(ATTR_NAME,type.STRING);
+		put(ATTR_SURNAME,type.STRING);
+		put(ATTR_EMAIL,type.EMAIL);
+		put(ATTR_NIF,type.STRING);	
+		put(ATTR_BLOCKED,type.DATE);	
+		put(ATTR_LAST_PASSWORD_UPDATE,type.DATE);	
+		put(ATTR_RESTRICTIONS,type.STRING);	
+	}};
+	
+	
 
 }

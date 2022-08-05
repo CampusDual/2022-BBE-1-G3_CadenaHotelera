@@ -148,6 +148,10 @@
 		INSERT INTO tserver_permission VALUES (103,'com.ontimize.atomicHotelsApiRest.api.core.service.IBillService/billUpdate');
 		INSERT INTO tserver_permission VALUES (104,'com.ontimize.atomicHotelsApiRest.api.core.service.IBillService/billDelete');
 
+		-- userRole
+		INSERT INTO tserver_permission VALUES (105,'com.ontimize.atomicHotelsApiRest.api.core.service.IBillService/userRoleQuery');
+		INSERT INTO tserver_permission VALUES (106,'com.ontimize.atomicHotelsApiRest.api.core.service.IBillService/userRoleInsert');
+		INSERT INTO tserver_permission VALUES (107,'com.ontimize.atomicHotelsApiRest.api.core.service.IBillService/userRoleDelete');
 
 
 --ROLES
@@ -163,14 +167,14 @@ ALTER TABLE public.tuser ADD restrictions varchar NULL;
 
 	INSERT INTO tuser (user_ ,"password","name",surname) VALUES ('atom','123456','Mr Atom','Rodriguez');
 	INSERT INTO tuser (user_ ,"password","name",surname) VALUES ('gerenteAtom01','123456','Gerente del Hotel Atom 1','');
-	INSERT INTO tuser (user_ ,"password","name",surname) VALUES ('rececpionAtom01','123456','Personal de recepción de atom 01','');
+	INSERT INTO tuser (user_ ,"password","name",surname) VALUES ('personalAtom01 ','123456','Personal de recepción de atom 01','');
 	INSERT INTO tuser (user_ ,"password","name",surname) VALUES ('turisticas','123456','Reservas turisticas europeas sl.','');
 	INSERT INTO tuser (user_ ,"password","name",surname) VALUES ('usuarioLibre','123456','usuario basico ','');
 	
 
 --ROLES/PERMISOS
 	--ceo 1
-	INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 1,id_server_permission FROM tserver_permission WHERE id_server_permission >= 1 AND id_server_permission <= 104
+	INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 1,id_server_permission FROM tserver_permission WHERE id_server_permission >= 1 AND id_server_permission <= 107
 
 	--hotelManager 2
 	INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 1,id_server_permission FROM tserver_permission WHERE id_server_permission >= 1 AND id_server_permission <= 104
@@ -189,6 +193,7 @@ ALTER TABLE public.tuser ADD restrictions varchar NULL;
 
 	--ceo 1
 	INSERT INTO tuser_role (id_rolename,user_) VALUES (1,'atom');
+	INSERT INTO tuser_role (id_rolename,user_) VALUES (1,'asdasd');
 	/*INSERT INTO tuser_role (id_rolename,user_) VALUES (2,'atom');
 	INSERT INTO tuser_role (id_rolename,user_) VALUES (3,'atom');
 	INSERT INTO tuser_role (id_rolename,user_) VALUES (4,'atom');
@@ -201,7 +206,7 @@ ALTER TABLE public.tuser ADD restrictions varchar NULL;
 	INSERT INTO tuser_role (id_rolename,user_) VALUES (5,'gerenteAtom01');
 	*/
 	--staff 3
-	INSERT INTO tuser_role (id_rolename,user_) VALUES (3,'rececpionAtom01');
+	INSERT INTO tuser_role (id_rolename,user_) VALUES (3,'personalAtom01');
 	/*INSERT INTO tuser_role (id_rolename,user_) VALUES (4,'rececpionAtom01');
 	INSERT INTO tuser_role (id_rolename,user_) VALUES (5,'rececpionAtom01');
 	*/
