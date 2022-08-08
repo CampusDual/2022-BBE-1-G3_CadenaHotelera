@@ -26,7 +26,7 @@ public class UserDao extends OntimizeJdbcDaoSupport {
 	public static final String ATTR_BLOCKED = "userblocked";
 	public static final String ATTR_LAST_PASSWORD_UPDATE = "lastpasswordupdate";
 
-	public static final String ATTR_RESTRICTIONS = "restrictions";
+	public static final String ATTR_HTL = "htl_restriction";
 	
 	
 //	public static final String PASSWORD = "user_password";
@@ -45,7 +45,7 @@ public class UserDao extends OntimizeJdbcDaoSupport {
 		put(ATTR_NIF,type.STRING);	
 		put(ATTR_BLOCKED,type.DATE);	
 		put(ATTR_LAST_PASSWORD_UPDATE,type.DATE);	
-		put(ATTR_RESTRICTIONS,type.STRING);	
+		put(ATTR_HTL,type.INTEGER);	
 	}};
 	
 	

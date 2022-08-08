@@ -85,6 +85,7 @@ public class BookingService implements IBookingService {
 //		String usuario = ((UserInformation) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getLogin(); 
 //		System.err.println(usuario);
 //		System.err.println(((UserInformation) SecurityContextHolder.getContext().getAuthentication().getPrincipal()));		
+		
 		try {
 			cf.reset();
 //			cf.restrictionsRole((keyMap,attrList);

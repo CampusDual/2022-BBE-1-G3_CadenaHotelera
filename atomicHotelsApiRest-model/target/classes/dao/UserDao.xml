@@ -20,7 +20,7 @@
                 <Column>PASSWORD</Column>
                 <Column>NAME</Column>
                 <Column>SURNAME</Column>
-                <Column>RESTRICTIONS</Column>
+                <Column>HTL_RESTRICTION</Column>
             </ValidColumns>
             <Sentence>
                 <![CDATA[
@@ -39,7 +39,7 @@
                 <Column>PASSWORD</Column>
                 <Column>NAME</Column>
                 <Column>SURNAME</Column>
-                <Column>RESTRICTIONS</Column>
+                <Column>HTL_RESTRICTION</Column>
             </ValidColumns>
             <Sentence>
                 <![CDATA[
