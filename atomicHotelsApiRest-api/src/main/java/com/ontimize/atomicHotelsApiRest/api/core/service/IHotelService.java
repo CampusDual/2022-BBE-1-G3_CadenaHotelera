@@ -20,7 +20,8 @@ public interface IHotelService {
 				throws OntimizeJEERuntimeException;
 	 public EntityResult hotelOcupancyRateQuery(Map<String, Object> keyMap, List<String> attrList)
 				throws OntimizeJEERuntimeException;
-		public EntityResult hotelOccupancyDailyRateQuery(Map<String, Object> keyMap, List<String> attrList)
+	public EntityResult hotelOccupancyDailyRateQuery(Map<String, Object> keyMap, List<String> attrList)
 				throws OntimizeJEERuntimeException;
-	
+	public EntityResult poiQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
+
 }

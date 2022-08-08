@@ -1,13 +1,23 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
+import javax.net.ssl.HttpsURLConnection;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.postgresql.xml.EmptyStringEntityResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -16,6 +26,8 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.SQLWarningException;
 import org.springframework.stereotype.Service;
 
+import com.amadeus.Amadeus;
+import com.amadeus.exceptions.ResponseException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
@@ -619,6 +631,100 @@ public class HotelService implements IHotelService {
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultadofinal;
+
+	}
+	
+	public EntityResult poiQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException {
+		EntityResult resultado = new EntityResultWrong();
+		try {
+			cf.reset();
+			cf.addBasics(HotelDao.fields);
+//			cf.setOptional(true);
+			System.err.println(keyMap.entrySet());
+			System.err.println(attrList.toString());
+			cf.validate(keyMap);
+			cf.validate(attrList);
+			Map<String, Object> keyMapDireccion = new HashMap<>();
+			System.err.println(keyMap.get(HotelDao.ATTR_ID));
+			if (keyMap.get(HotelDao.ATTR_ID) != null) {
+				keyMapDireccion.put(HotelDao.ATTR_ID, keyMap.get(HotelDao.ATTR_ID));
+			}
+			resultado = hotelQuery(keyMapDireccion, attrList);
+			System.err.println(resultado.entrySet());
+			
+			
+		} catch (MissingFieldsException | RestrictedFieldException | InvalidFieldsException
+				| InvalidFieldsValuesException | LiadaPardaException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+
+		String street = (String) resultado.getRecordValues(0).get(HotelDao.ATTR_STREET);
+		String city =  (String) resultado.getRecordValues(0).get(HotelDao.ATTR_CITY);
+		String urlEnpoint = "https://nominatim.openstreetmap.org/search?street="+URLEncoder.encode(street, StandardCharsets.UTF_8)+"&city="+URLEncoder.encode(city, StandardCharsets.UTF_8)+"&format=json";
+		System.err.println(urlEnpoint);
+		
+		try {
+			URL url = new URL(urlEnpoint);
+			HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+			con.setRequestMethod("GET");
+			con.connect();
+			int responseCode = con.getResponseCode();
+			if(responseCode!=200)
+			{
+				throw new RuntimeException("Ocurrio un error " + responseCode);
+			}
+			else
+			{
+				StringBuilder infor = new StringBuilder();
+				Scanner sc = new Scanner(url.openStream());
+				while(sc.hasNext()){
+					infor.append(sc.nextLine());
+				}
+				sc.close();
+				System.err.println(infor);
+				JSONArray jsonarray = new JSONArray(infor.toString());
+				JSONObject jsonObject = jsonarray.getJSONObject(0);
+				
+				Map<String,Object> attrMapco = new HashMap<>() {{
+				   put(HotelDao.ATTR_LAT,jsonObject.getString("lat"));
+				   put(HotelDao.ATTR_LON,jsonObject.getString("lon"));
+				}};
+				System.out.println(jsonObject.getString("lat"));
+				System.out.println(jsonObject.getString("lon"));
+				EntityResult coorUpdate = hotelUpdate(attrMapco, keyMap);
+				System.err.println(attrMapco.entrySet());
+				System.err.println(coorUpdate);
+				
+				Amadeus amadeus = Amadeus.builder("h3nxa8Fz2gDyhWAhSY8nhlAGaZ43tGHv", "yTjGtt92Ww2ezfAT").build();
+				String UrlEmpointAmadeus = "https://test.api.amadeus.com/v1/reference-data/locations/pois?latitude=41.397158&longitude=2.160873&page[limit]=30";
+				String consulta = amadeus.post(UrlEmpointAmadeus).getBody();
+				System.err.println(consulta);
+			}
+
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ResponseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		/*
+
+		Response response = null;
+		try {
+			response = amadeus.post("test.api.amadeus.com", city.toString());
+			System.err.println(response.getRequest());
+		} catch (ResponseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+		return  resultado;
 
 	}
 
