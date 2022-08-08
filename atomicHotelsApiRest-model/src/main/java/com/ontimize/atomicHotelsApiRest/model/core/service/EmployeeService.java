@@ -82,13 +82,13 @@ ControlFields cf;
  }
 
  @Override
- public EntityResult employeeInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
+ public EntityResult employeeInsert(Map<String, Object> data) throws OntimizeJEERuntimeException {
   
 	 EntityResult resultado= new EntityResultWrong();
 
 	
-	
-	 attrMap.forEach((k,v)->{
+	 System.out.println("****************Data insert ******************");
+	 data.forEach((k,v)->{
 			System.out.println(k+" -> "+v);
 		}
 		);
@@ -113,23 +113,34 @@ ControlFields cf;
 				 EmployeeDao.ATTR_ID
 				 );
 		 cf.setRestricted(restricted);
-		 cf.validate(attrMap);
+		 cf.validate(data);
 		 
 		 Map<String,Object> consultaKeyMap=new HashMap<>() {
 			  {
-			  put(EmployeeDao.ATTR_IDEN_DOC,attrMap.get(EmployeeDao.ATTR_IDEN_DOC));
+			  put(EmployeeDao.ATTR_IDEN_DOC,data.get(EmployeeDao.ATTR_IDEN_DOC));
 			  
 		  }
 			  };
-			 EntityResult auxEntity=employeeQuery(consultaKeyMap,EntityResultTools.attributes(EmployeeDao.ATTR_IDEN_DOC,EmployeeDao.ATTR_FIRED));
-			//System.out.println(auxEntity.getRecordValues(0).get(EmployeeDao.ATTR_FIRED));
-			 System.out.println(((List<String>)auxEntity.get(EmployeeDao.ATTR_FIRED)));
-			 System.out.println(auxEntity.calculateRecordNumber());
-		  if(auxEntity.calculateRecordNumber()==0 ||!((List<String>)auxEntity.get(EmployeeDao.ATTR_FIRED)).contains(null)) {
-			  resultado=this.daoHelper.insert(this.employeeDao, attrMap);
-			  resultado.setMessage("Empleado  Registrado");
-		  }else {
-		 resultado.setMessage("Empleado no Registrado despídalo primero");
+			 EntityResult auxEntity=employeeQuery(consultaKeyMap,EntityResultTools.attributes(EmployeeDao.ATTR_IDEN_DOC,EmployeeDao.ATTR_HIRING,EmployeeDao.ATTR_FIRED));
+
+		 if(auxEntity.calculateRecordNumber()==0 ) {
+			  resultado=this.daoHelper.insert(this.employeeDao, data);
+			  resultado.setMessage("Empleado contratado por primera vez");}
+		 else if(!((List<String>)auxEntity.get(EmployeeDao.ATTR_FIRED)).contains(null)) {
+			 if(data.get(employeeDao.ATTR_FIRED)!=null) {
+				 if(((Date) data.get(employeeDao.ATTR_HIRING)).compareTo(((Date) data.get(employeeDao.ATTR_FIRED)))<0) {
+					 resultado=this.daoHelper.insert(this.employeeDao, data);
+					  resultado.setMessage("Empleado contratado , este es su "+auxEntity.calculateRecordNumber()+" contrato con la cadena");
+				 }else {
+					 resultado.setMessage("La fecha de despido no puede ser anterior o igual a la de contratacion ");
+				 }
+				 
+			 }else {
+				 resultado=this.daoHelper.insert(this.employeeDao, data);
+				  resultado.setMessage("Empleado contratado , este es su "+(auxEntity.calculateRecordNumber()+1)+" contrato con la cadena");
+			 } 
+		  }else{
+		 resultado.setMessage("Empleado con contrato en vigor , rescindalo primero");
 		 
 		  }
 	}catch (DuplicateKeyException e) {
@@ -152,17 +163,17 @@ ControlFields cf;
  
  
  @Override
- public EntityResult employeeUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
+ public EntityResult employeeUpdate(Map<String, Object> data, Map<String, Object> filter)
    throws OntimizeJEERuntimeException {
 	 System.out.println("********Datos Entrada*********");
-	 System.out.println("*******attrMap******");
+	 System.out.println("*******Filter******");
 	 EntityResult resultado=new EntityResultWrong();
-		attrMap.forEach((k,v)->{
+		filter.forEach((k,v)->{
 		System.out.println(k+" -> "+v);
 	}
 	);
-		System.out.println("*******keyMap******");
-		keyMap.forEach((k,v)->{
+		System.out.println("*******Data******");
+		data.forEach((k,v)->{
 		System.out.println(k+" -> "+v);
 	}
 	); 
@@ -180,7 +191,7 @@ ControlFields cf;
 		cf.addBasics(EmployeeDao.fields);
 		cf.setRequired(requiredFilter);
 		cf.setOptional(false);//no será aceptado ningun campo que no esté en required
-		cf.validate(keyMap);
+		cf.validate(filter);
 		//ControlFileds de los nuevos datos
 		List<String> restrictedData=new ArrayList<>() {
 			{
@@ -191,23 +202,35 @@ ControlFields cf;
 		cf.reset();
 		cf.addBasics(EmployeeDao.fields);
 		cf.setRestricted(restrictedData);
-		cf.validate(attrMap);
-		System.out.println(attrMap.get(EmployeeDao.ATTR_IDEN_DOC));//comentar
+		cf.validate(data);
+		System.out.println(data.get(EmployeeDao.ATTR_IDEN_DOC));//comentar
 		Map<String, Object> subConsultaKeyMap = new HashMap<>() {
 			  {
-				  put(EmployeeDao.ATTR_IDEN_DOC,keyMap.get(EmployeeDao.ATTR_IDEN_DOC));
+				  put(EmployeeDao.ATTR_IDEN_DOC,filter.get(EmployeeDao.ATTR_IDEN_DOC));
 				  
 			  }
 		};
 		EntityResult auxEntity =employeeQuery(subConsultaKeyMap,
-				EntityResultTools.attributes(EmployeeDao.ATTR_IDEN_DOC,EmployeeDao.ATTR_FIRED));
-		if(auxEntity.calculateRecordNumber()==0||!((List<String>)auxEntity.get(EmployeeDao.ATTR_FIRED)).contains(null)) {
-			resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
-		}else {
-			resultado=this.daoHelper.update(this.employeeDao, attrMap, keyMap);
-			resultado.setMessage("Empleado Actualizado");
-			
-		}
+				EntityResultTools.attributes(EmployeeDao.ATTR_IDEN_DOC,EmployeeDao.ATTR_HIRING,EmployeeDao.ATTR_FIRED));
+		 if(auxEntity.calculateRecordNumber()==0 ) {
+			  resultado.setMessage("Empleado no registrado, registrelo primero");}
+		 else if(((List<String>)auxEntity.get(EmployeeDao.ATTR_FIRED)).contains(null)) {
+			 if(data.get(employeeDao.ATTR_FIRED)!=null) {
+				 if(((Date) auxEntity.getRecordValues(0).get(employeeDao.ATTR_HIRING)).compareTo(((Date) data.get(employeeDao.ATTR_FIRED)))<0) {
+					 resultado=this.daoHelper.update(this.employeeDao, data,filter);
+					  resultado.setMessage("Empleado despedido de su "+auxEntity.calculateRecordNumber()+" contrato con la cadena");
+				 }else {
+					 resultado.setMessage("La fecha de despido no puede ser anterior o igual a la de contratacion ");
+				 }
+				 
+			 }else {
+				 resultado=this.daoHelper.update(this.employeeDao, data,filter);
+				  resultado.setMessage("Empleado actualizado en  su "+auxEntity.calculateRecordNumber()+" contrato con la cadena");
+			 } 
+		  }else{
+		 resultado.setMessage("Empleado sin contrato en vigor , contratelo primero");
+		 
+		  }
 	 }catch (ValidateException e) {
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + " - " + e.getMessage());
 		} catch (DuplicateKeyException e) {
@@ -225,122 +248,82 @@ ControlFields cf;
 	 
  @Override
  public EntityResult employeeFiredUpdate(Map<String, Object> data, Map<String, Object> filter) throws OntimizeJEERuntimeException {
-	 EntityResult resultado=new EntityResultWrong();
-	 System.out.println("****************filter FiredUpdate******************");
-	 filter.forEach((k,v)->System.out.println(k+"->"+v));
-	 System.out.println("\n****************data Fired Update******************");
-	 data.forEach((k,v)->System.out.println(k+"->"+v));
 	 
-	 try {
-		 //ControlFields del filtro
-		 List<String> requiredFilter=new ArrayList<String>(){
-			 { 
-				 add(EmployeeDao.ATTR_IDEN_DOC);
-			 }
-		 };
-		 
-		 cf.reset();
-		 cf.addBasics(EmployeeDao.fields);
-		 cf.setRequired(requiredFilter);
-		 cf.setOptional(false);
-		 List<String> restrictedData=new ArrayList<>() {
-			 {
-				 add(EmployeeDao.ATTR_ID);
-				 
-			 }
-		 };
-		 cf.reset();
-		 cf.addBasics(EmployeeDao.fields);
-		 cf.setRestricted(restrictedData);
-		 cf.validate(filter);
-		 Map<String, Object> subConsultaKeyMap = new HashMap<>() {
-			 {
-				 put(EmployeeDao.ATTR_IDEN_DOC,filter.get(EmployeeDao.ATTR_IDEN_DOC));
-				 
-			 }
-		 };
-		data=new HashMap<>();
-		 
-		 data.put(EmployeeDao.ATTR_FIRED, new Date());
-		 
-		 System.out.println("\n****************data Fired Update******************");
-		 data.forEach((k,v)->System.out.println(k+"->"+v));
-		 
-		 EntityResult auxEntity =employeeQuery(subConsultaKeyMap,
-		 EntityResultTools.attributes(EmployeeDao.ATTR_IDEN_DOC,EmployeeDao.ATTR_FIRED));
-		 
-		
-		 
-		 if(auxEntity.calculateRecordNumber()==0||!((List<String>)auxEntity.get(EmployeeDao.ATTR_FIRED)).contains(null)) {
-			 resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
-		 }else {
-			 this.daoHelper.update(this.employeeDao, data, filter);
-			 resultado.setMessage("Empleado despedido con fecha de hoy");
-		 }
-	 }catch (ValidateException e) {
-		 resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + " - " + e.getMessage());
-	 } catch (DuplicateKeyException e) {
-		 e.printStackTrace();
-		 resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
-	 } catch (DataIntegrityViolationException e) {
-		 e.printStackTrace();
-		 resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
-	 } catch (Exception e) {
-		 e.printStackTrace();
-		 resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
-	 }
-	 return resultado;
-	 
+data=new HashMap<>(); 
+data.put(EmployeeDao.ATTR_FIRED, new Date());
+return this.employeeUpdate(data, filter);
  }
-
-// @Override
-// public EntityResult employeeDelete(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
-//  EntityResult resultado=new EntityResultWrong();
-////	attrMap.forEach((k,v)->{
-////		System.out.println(k+" -> "+v);
-////	}
-////	); 
-//  
-//  
-//  try {
-//	  cf.reset();
-//	  cf.addBasics(EmployeeDao.fields);
-//	  List<String> requeridos =new ArrayList<>(){
-//		  {
-//		  add(EmployeeDao.ATTR_IDEN_DOC);
-//	  }
+//	 EntityResult resultado=new EntityResultWrong();
+//	 System.out.println("****************filter FiredUpdate******************");
+//	 filter.forEach((k,v)->System.out.println(k+"->"+v));
+//	 System.out.println("\n****************data Fired Update******************");
+//	 data.forEach((k,v)->System.out.println(k+"->"+v));
+//	 
+//	 try {
+//		 //ControlFields del filtro
+//		 List<String> requiredFilter=new ArrayList<String>(){
+//			 { 
+//				 add(EmployeeDao.ATTR_IDEN_DOC);
+//			 }
 //		 };
-//	cf.setRequired(requeridos);
-//	cf.setOptional(true);
-//	cf.validate(attrMap);
-//  Map<String,Object> consultaKeyMap=new HashMap<>() {
-//	  {
-//	  put(EmployeeDao.ATTR_IDEN_DOC,attrMap.get(EmployeeDao.ATTR_IDEN_DOC));
-//	  
-//  }
-//	  };
-//	 EntityResult auxEntity=employeeQuery(consultaKeyMap,EntityResultTools.attributes(EmployeeDao.ATTR_IDEN_DOC,EmployeeDao.ATTR_FIRED));
-//	System.out.println(auxEntity.getRecordValues(0).get(EmployeeDao.ATTR_FIRED));
-//  if(auxEntity.calculateRecordNumber()==0 ) {
-//	  resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
-//  }else if(auxEntity.getRecordValues(0).get(EmployeeDao.ATTR_FIRED)==null) {
-//	  resultado.setMessage("Empleado no puede ser borrado,despidalo primero"); 
-//  }
-//  else {
-//	  resultado=this.daoHelper.delete(this.employeeDao, attrMap);
-//	  resultado.setMessage("Empleado borrado");
-//  }
-// 
-// 	} catch (ValidateException | LiadaPardaException e) {
-//		resultado =  new EntityResultWrong(e.getMessage());
-//		e.printStackTrace();		
-//	}catch (DuplicateKeyException e) {
-//		resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
-//	}catch (Exception e) {
-//		e.printStackTrace();
-//		resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
-//	}
-//  return resultado;
-//}
+//		 
+//		 cf.reset();
+//		 cf.addBasics(EmployeeDao.fields);
+//		 cf.setRequired(requiredFilter);
+//		 cf.setOptional(false);
+//		 List<String> restrictedData=new ArrayList<>() {
+//			 {
+//				 add(EmployeeDao.ATTR_ID);
+//				 
+//			 }
+//		 };
+//		 cf.reset();
+//		 cf.addBasics(EmployeeDao.fields);
+//		 cf.setRestricted(restrictedData);
+//		 cf.validate(filter);
+//		 Map<String, Object> subConsultaKeyMap = new HashMap<>() {
+//			 {
+//				 put(EmployeeDao.ATTR_IDEN_DOC,filter.get(EmployeeDao.ATTR_IDEN_DOC));
+//				 
+//			 }
+//		 };
+//		data=new HashMap<>();
+//		 
+//		 data.put(EmployeeDao.ATTR_FIRED, new Date());
+//		 
+//		 System.out.println("\n****************data Fired Update******************");
+//		 data.forEach((k,v)->System.out.println(k+"->"+v));
+//		 
+//		 EntityResult auxEntity =employeeQuery(subConsultaKeyMap,
+//		 EntityResultTools.attributes(EmployeeDao.ATTR_IDEN_DOC,EmployeeDao.ATTR_FIRED));
+//		 
+//		
+//		 
+//		 if(auxEntity.calculateRecordNumber()==0) {
+//			 resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
+//		}else if(!((List<String>)auxEntity.get(EmployeeDao.ATTR_FIRED)).contains(null)) {
+//			resultado.setMessage("Empleado existe pero sin contrato en vigor");	 
+//	
+//		 }else {
+//			 this.daoHelper.update(this.employeeDao, data, filter);
+//			 resultado.setMessage("Empleado despedido con fecha de hoy");
+//		 }
+//	 }catch (ValidateException e) {
+//		 resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + " - " + e.getMessage());
+//	 } catch (DuplicateKeyException e) {
+//		 e.printStackTrace();
+//		 resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
+//	 } catch (DataIntegrityViolationException e) {
+//		 e.printStackTrace();
+//		 resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
+//	 } catch (Exception e) {
+//		 e.printStackTrace();
+//		 resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
+//	 }
+//	 return resultado;
+//	 
+// }
+
+
 
  }
