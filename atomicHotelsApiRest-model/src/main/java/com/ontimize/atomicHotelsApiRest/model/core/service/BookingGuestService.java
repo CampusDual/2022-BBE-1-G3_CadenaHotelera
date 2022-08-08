@@ -75,7 +75,8 @@ public class BookingGuestService implements IBookingGuestService {
 	 * 
 	 * @param keyMap   (BookingGuestDao.ATTR_ATTR_BKG_ID)
 	 * @param attrList (anyList())
-	 * @throws OntimizeJEERuntimeException (BookingGuestDao.ATTR_TOTAL_GUESTS)
+	 * @throws OntimizeJEERuntimeException 
+	 * @return EntityResult (BookingGuestDao.ATTR_TOTAL_GUESTS)
 	 */
 	@Override
 	public EntityResult guestCountQuery(Map<String, Object> keyMap, List<String> attrList)
@@ -113,7 +114,8 @@ public class BookingGuestService implements IBookingGuestService {
 	 * 
 	 * @param keyMap   (BookingGuestDao.ATTR_ATTR_BKG_ID)
 	 * @param attrList (anyList())
-	 * @throws OntimizeJEERuntimeException (CustomerDao.ATTR_NAME,CustomerDao.ATTR_SURNAME, CustomerDao.ATTR_IDEN_DOC)
+	 * @throws OntimizeJEERuntimeException 
+	 * @return EntityResult (CustomerDao.ATTR_NAME,CustomerDao.ATTR_SURNAME, CustomerDao.ATTR_IDEN_DOC)
 	 */
 	@Override
 	public EntityResult bookingGuestsInfoQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException{

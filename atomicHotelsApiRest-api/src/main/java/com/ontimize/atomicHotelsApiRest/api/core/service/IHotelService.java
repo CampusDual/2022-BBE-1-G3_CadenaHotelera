@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
+import com.ontimize.jee.common.db.SQLStatementBuilder.SQLStatement;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
 
@@ -18,9 +19,7 @@ public interface IHotelService {
 				throws OntimizeJEERuntimeException;
 	 public EntityResult hotelMaximumCapacityQuery(Map<String, Object> keyMap, List<String> attrList)
 				throws OntimizeJEERuntimeException;
-	 public EntityResult hotelOcupancyRateQuery(Map<String, Object> keyMap, List<String> attrList)
-				throws OntimizeJEERuntimeException;
-	public EntityResult hotelOccupancyDailyRateQuery(Map<String, Object> keyMap, List<String> attrList)
+	 public EntityResult hotelOccupancyPercentageQuery(Map<String, Object> keyMap, List<String> attrList)
 				throws OntimizeJEERuntimeException;
 	public EntityResult poiQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
 

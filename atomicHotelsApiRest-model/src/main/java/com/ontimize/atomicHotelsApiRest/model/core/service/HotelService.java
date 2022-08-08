@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -56,11 +57,14 @@ import com.ontimize.atomicHotelsApiRest.model.core.tools.TypeCodes.type;
 import com.ontimize.jee.common.db.SQLStatementBuilder.BasicExpression;
 import com.ontimize.jee.common.db.SQLStatementBuilder.BasicField;
 import com.ontimize.jee.common.db.SQLStatementBuilder.BasicOperator;
+import com.ontimize.jee.common.db.SQLStatementBuilder.SQLStatement;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
 import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
+import com.ontimize.jee.server.dao.IOntimizeDaoSupport;
+import com.ontimize.jee.server.dao.ISQLQueryAdapter;
 
 @Service("HotelService")
 @Lazy
@@ -305,8 +309,14 @@ public class HotelService implements IHotelService {
 ////		return null;
 //	}
 
+	
 	/**
+	 * Dado un rango de fehas, devuleve la ocupación de cada hotel de la cadena o la ocupación de un hotel en concreto.
 	 * 
+	 * @param keyMap (HotelDao.ATTR_ID,HotelDao.ATTR_FROM,HotelDao.ATTR_TO)
+	 * @param attrList (anyList())
+	 * @throws OntimizeJEERuntimeException 
+	 * @return EntityResult (HotelDao.ATTR_ID,HotelDao.ATTR_NAME, HotelDao.ATTR_CITY, HotelDao.ATTR_OCCUPANCY)
 	 */
 	@Override
 	public EntityResult hotelOccupancyQuery(Map<String, Object> keyMap, List<String> attrList)
@@ -341,13 +351,13 @@ public class HotelService implements IHotelService {
 			Date checkoutData = (Date) keyMap.get(HotelDao.ATTR_TO);
 
 			ValidateFields.dataRange(checkinData, checkoutData);
-
+			
 			/*
-			 * (bkg_checkin <= checkinData AND bkg_checkout >checkinData) OR (bkg_checkin <
-			 * checkoutData AND (bkg_checkout >= checkoutData OR bkg_checkout IS NULL)) OR
+			 * (bkg_checkin <= checkinData AND bkg_checkout >checkinData) OR 
+			 * (bkg_checkin < checkoutData AND (bkg_checkout >= checkoutData OR bkg_checkout IS NULL)) OR
 			 * (bkg_checkin >=checkinData AND bkg_checkout <= checkoutData)
 			 */
-
+			
 			// (bkg_checkin <= checkinData AND bkg_checkout >checkinData)
 			BasicExpression exp1 = new BasicExpression(checkin, BasicOperator.LESS_EQUAL_OP, checkinData);
 			BasicExpression exp2 = new BasicExpression(checkout, BasicOperator.MORE_OP, checkinData);
@@ -374,12 +384,19 @@ public class HotelService implements IHotelService {
 			BasicExpression auxFinal = new BasicExpression(exp9, BasicOperator.OR_OP, exp10);
 			BasicExpression finalExpression = new BasicExpression(auxFinal, BasicOperator.OR_OP, exp11);
 
-			keyMap.remove(HotelDao.ATTR_FROM);
-			keyMap.remove(HotelDao.ATTR_TO);
+//			keyMap.remove(HotelDao.ATTR_FROM);
+//			keyMap.remove(HotelDao.ATTR_TO);
 
-			EntityResultExtraTools.putBasicExpression(keyMap, finalExpression);
+			Map<String, Object> keyMapBasicExpression = new HashMap<String, Object>();
 
-			resultado = this.daoHelper.query(this.hotelDao, keyMap, attrList, "queryHotelOccupancy");
+			EntityResultExtraTools.putBasicExpression(keyMapBasicExpression, finalExpression);
+
+			resultado = this.daoHelper.query(this.hotelDao, keyMapBasicExpression, attrList, "queryHotelOccupancy");
+			
+			if (keyMap.get(HotelDao.ATTR_ID) != null) {
+				resultado = EntityResultTools.dofilter(resultado,
+						EntityResultTools.keysvalues(HotelDao.ATTR_ID, keyMap.get(HotelDao.ATTR_ID)));
+			}
 
 		} catch (ValidateException e) {
 			e.printStackTrace();
@@ -393,7 +410,12 @@ public class HotelService implements IHotelService {
 	}
 
 	/**
+	 * Devuelve la capacidad de un hotel (dado su id o su nombre) o de todos los hotels de la cadena
 	 * 
+	 * @param keyMap (HotelDao.ATTR_ID,HotelDao.ATTR_NAME)
+	 * @param attrList (anyList())
+	 * @throws OntimizeJEERuntimeException 
+	 * @return EntityResult (HotelDao.ATTR_ID,HotelDao.ATTR_NAME, HotelDao.ATTR_CITY, HotelDao.ATTR_MAXIMUN_CAPACITY)
 	 */
 	@Override
 	public EntityResult hotelMaximumCapacityQuery(Map<String, Object> keyMap, List<String> attrList)
@@ -402,9 +424,15 @@ public class HotelService implements IHotelService {
 		EntityResult resultado = new EntityResultWrong();
 
 		try {
-
+			
+			Map<String, type> fields = new HashMap<>() {
+				{
+					put(HotelDao.ATTR_ID, type.INTEGER);
+					put(HotelDao.ATTR_NAME, type.STRING);
+				}
+			};
 			cf.reset();
-			cf.addBasics(HotelDao.fields);
+			cf.addBasics(fields);
 			cf.validate(keyMap);
 
 			cf.reset();
@@ -425,66 +453,20 @@ public class HotelService implements IHotelService {
 
 	}
 
-	public Map<String, Object> keyMapBasicExpresionDates(Map<String, Object> keyMap)
-			throws InvalidFieldsValuesException {
 
-		BasicField checkin = new BasicField(BookingDao.ATTR_CHECKIN);
-		Date checkinData = (Date) keyMap.get(HotelDao.ATTR_FROM);
-
-		BasicField checkout = new BasicField(BookingDao.ATTR_CHECKOUT);
-		Date checkoutData = (Date) keyMap.get(HotelDao.ATTR_TO);
-
-		ValidateFields.dataRange(checkinData, checkoutData);
-
-		/*
-		 * (bkg_checkin <= checkinData AND bkg_checkout >checkinData) OR (bkg_checkin <
-		 * checkoutData AND (bkg_checkout >= checkoutData OR bkg_checkout IS NULL)) OR
-		 * (bkg_checkin >=checkinData AND bkg_checkout <= checkoutData)
-		 */
-
-		// (bkg_checkin <= checkinData AND bkg_checkout >checkinData)
-		BasicExpression exp1 = new BasicExpression(checkin, BasicOperator.LESS_EQUAL_OP, checkinData);
-		BasicExpression exp2 = new BasicExpression(checkout, BasicOperator.MORE_OP, checkinData);
-
-		// (bkg_checkin < checkoutData AND (bkg_checkout >= checkoutData OR bkg_checkout
-		// IS NULL))
-		BasicExpression exp3 = new BasicExpression(checkin, BasicOperator.LESS_OP, checkoutData);
-		BasicExpression exp4 = new BasicExpression(checkout, BasicOperator.MORE_EQUAL_OP, checkoutData);
-		BasicExpression exp5 = new BasicExpression(checkout, BasicOperator.NULL_OP, null);
-
-		// (bkg_checkin >=checkinData AND bkg_checkout <= checkoutData)
-		BasicExpression exp6 = new BasicExpression(checkin, BasicOperator.MORE_EQUAL_OP, checkinData);
-		BasicExpression exp7 = new BasicExpression(checkout, BasicOperator.LESS_EQUAL_OP, checkoutData);
-
-		// OR DENTRO DE LA SEGUNDA FILA
-		BasicExpression exp8 = new BasicExpression(exp4, BasicOperator.OR_OP, exp5);
-
-		// ANDS DE TODAS LAS FILAS
-		BasicExpression exp9 = new BasicExpression(exp1, BasicOperator.AND_OP, exp2);
-		BasicExpression exp10 = new BasicExpression(exp3, BasicOperator.AND_OP, exp8);
-		BasicExpression exp11 = new BasicExpression(exp6, BasicOperator.AND_OP, exp7);
-
-		// LAS TRES FILAS UNIDAS POR OR
-		BasicExpression auxFinal = new BasicExpression(exp9, BasicOperator.OR_OP, exp10);
-		BasicExpression finalExpression = new BasicExpression(auxFinal, BasicOperator.OR_OP, exp11);
-
-//		keyMap.remove(HotelDao.ATTR_FROM);
-//		keyMap.remove(HotelDao.ATTR_TO);
-
-		Map<String, Object> keyMapBasicExpression = new HashMap<String, Object>();
-
-		EntityResultExtraTools.putBasicExpression(keyMapBasicExpression, finalExpression);
-
-		return keyMapBasicExpression;
-
-	}
-
+	/**
+	 * Devuelve la capacidad de un hotel (dado su id o su nombre) o de todos los hotels de la cadena
+	 * 
+	 * @param keyMap (HotelDao.ATTR_ID,HotelDao.ATTR_NAME)
+	 * @param attrList (anyList())
+	 * @throws OntimizeJEERuntimeException 
+	 * @return EntityResult ("occupancy_percentage_in_date_range", "htl_id","capacity_in_date_range","occupancy_in_date_range","htl_city", "htl_name")
+	 */
 	@Override
-	public EntityResult hotelOccupancyDailyRateQuery(Map<String, Object> keyMap, List<String> attrList)
+	public EntityResult hotelOccupancyPercentageQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 
 		EntityResult resultado = new EntityResultWrong();
-		EntityResult resultadofinal = new EntityResultMapImpl();
 
 		try {
 
@@ -505,141 +487,53 @@ public class HotelService implements IHotelService {
 			cf.reset();
 			cf.setNoEmptyList(false);
 			cf.validate(attrList);
-			
-			BasicField checkin = new BasicField(BookingDao.ATTR_CHECKIN);
-			Date checkinData = (Date) keyMap.get(HotelDao.ATTR_FROM);	
-			
-//			BasicField checkout = new BasicField(BookingDao.ATTR_CHECKOUT);
+
+			Date checkinData = (Date) keyMap.get(HotelDao.ATTR_FROM);
 			Date checkoutData = (Date) keyMap.get(HotelDao.ATTR_TO);
-			
+
 			ValidateFields.dataRange(checkinData, checkoutData);
-			
-			/*(bkg_checkin <= checkinData AND bkg_checkout >checkinData) OR
-			(bkg_checkin < checkoutData AND (bkg_checkout >= checkoutData OR bkg_checkout IS NULL)) OR
-			(bkg_checkin >=checkinData AND bkg_checkout <= checkoutData)*/
-			
-			//(bkg_checkin <= checkinData AND bkg_checkout >checkinData)
-			BasicExpression exp1 = new BasicExpression(checkin,BasicOperator.MORE_EQUAL_OP, checkinData);
-			BasicExpression exp2 = new BasicExpression(checkin,BasicOperator.LESS_EQUAL_OP, checkoutData);
-			
-			BasicExpression finalExpression = new BasicExpression(exp1,BasicOperator.AND_OP, exp2);
-			
-			Map<String,Object> keyMapBasicExpression = new HashMap<String,Object>();
-			
-			EntityResultExtraTools.putBasicExpression(keyMapBasicExpression, finalExpression);
 
-			resultado = this.daoHelper.query(this.hotelDao, keyMapBasicExpression, attrList,
-					"queryHotelOccupancyDailyRate");
+			resultado = this.daoHelper.query(this.hotelDao, new HashMap<String, Object>(), attrList,
+					"queryOccupancyPercentage", new ISQLQueryAdapter() {
+
+						@Override
+						public SQLStatement adaptQuery(SQLStatement sqlStatement, IOntimizeDaoSupport dao,
+								Map<?, ?> keysValues, Map<?, ?> validKeysValues, List<?> attributes,
+								List<?> validAttributes, List<?> sort, String queryId) {
+
+							Date init_date = checkinData;
+							Date end_date = checkoutData;
+
+							String init_s = new SimpleDateFormat("yyyy-MM-dd").format(init_date);
+							String end_s = new SimpleDateFormat("yyyy-MM-dd").format(end_date);
+
+							String gen_series = "generate_series('" + init_s + "', '" + end_s + "', '1 day'::interval)";
+
+							SQLStatement result = new SQLStatement(
+									sqlStatement.getSQLStatement().replaceAll("#GEN_SERIES#", gen_series),
+									sqlStatement.getValues());
+							return result;
+						}
+					});
 
 			if (keyMap.get(HotelDao.ATTR_ID) != null) {
-				resultadofinal = EntityResultTools.dofilter(resultado,
+				resultado = EntityResultTools.dofilter(resultado,
 						EntityResultTools.keysvalues(HotelDao.ATTR_ID, keyMap.get(HotelDao.ATTR_ID)));
 			}
 
 		} catch (ValidateException e) {
 			e.printStackTrace();
-			resultado = new EntityResultWrong(e.getMessage());
+			return resultado = new EntityResultWrong(e.getMessage());
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
+			return resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
-		return resultadofinal;
+		return resultado;
 
 	}
 
-	@Override
-	public EntityResult hotelOcupancyRateQuery(Map<String, Object> keyMap, List<String> attrList)
-			throws OntimizeJEERuntimeException {
-
-		EntityResult resultado = new EntityResultWrong();
-		EntityResult resultadofinal = new EntityResultMapImpl();
-
-		try {
-
-			Map<String, type> fields = new HashMap<>() {
-				{
-					put(HotelDao.ATTR_ID, type.INTEGER);
-					put(HotelDao.ATTR_FROM, type.DATE);
-					put(HotelDao.ATTR_TO, type.DATE);
-				}
-			};
-
-			List<String> required = Arrays.asList(HotelDao.ATTR_FROM, HotelDao.ATTR_TO);
-			cf.reset();
-			cf.addBasics(fields);
-			cf.setRequired(required);
-			cf.validate(keyMap);
-
-			cf.reset();
-			cf.setNoEmptyList(false);
-			cf.validate(attrList);
-
-//			BasicField checkin = new BasicField(BookingDao.ATTR_CHECKIN);
-//			Date checkinData = (Date) keyMap.get(HotelDao.ATTR_FROM);	
-//			
-//			BasicField checkout = new BasicField(BookingDao.ATTR_CHECKOUT);
-//			Date checkoutData = (Date) keyMap.get(HotelDao.ATTR_TO);
-//			
-//			ValidateFields.dataRange(checkinData, checkoutData);
-//			
-//			/*(bkg_checkin <= checkinData AND bkg_checkout >checkinData) OR
-//			(bkg_checkin < checkoutData AND (bkg_checkout >= checkoutData OR bkg_checkout IS NULL)) OR
-//			(bkg_checkin >=checkinData AND bkg_checkout <= checkoutData)*/
-//			
-//			//(bkg_checkin <= checkinData AND bkg_checkout >checkinData)
-//			BasicExpression exp1 = new BasicExpression(checkin,BasicOperator.LESS_EQUAL_OP, checkinData);
-//			BasicExpression exp2 = new BasicExpression(checkout,BasicOperator.MORE_OP, checkinData);
-//			
-//			//(bkg_checkin < checkoutData AND (bkg_checkout >= checkoutData OR bkg_checkout IS NULL)) 
-//			BasicExpression exp3 = new BasicExpression(checkin,BasicOperator.LESS_OP, checkoutData);
-//			BasicExpression exp4 = new BasicExpression(checkout,BasicOperator.MORE_EQUAL_OP, checkoutData);
-//			BasicExpression exp5 = new BasicExpression(checkout, BasicOperator.NULL_OP, null);
-//			
-//			//(bkg_checkin >=checkinData AND bkg_checkout <= checkoutData)
-//			BasicExpression exp6 = new BasicExpression(checkin,BasicOperator.MORE_EQUAL_OP, checkinData);
-//			BasicExpression exp7 = new BasicExpression(checkout,BasicOperator.LESS_EQUAL_OP, checkoutData);
-//			
-//			//OR DENTRO DE LA SEGUNDA FILA
-//			BasicExpression exp8 = new BasicExpression(exp4,BasicOperator.OR_OP,exp5);
-//			
-//			//ANDS DE TODAS LAS FILAS
-//			BasicExpression exp9 = new BasicExpression(exp1,BasicOperator.AND_OP,exp2);
-//			BasicExpression exp10 = new BasicExpression(exp3,BasicOperator.AND_OP,exp8);
-//			BasicExpression exp11 = new BasicExpression(exp6,BasicOperator.AND_OP,exp7);
-//			
-//			//LAS TRES FILAS UNIDAS POR OR
-//			BasicExpression auxFinal = new BasicExpression(exp9, BasicOperator.OR_OP, exp10);
-//			BasicExpression finalExpression = new BasicExpression(auxFinal, BasicOperator.OR_OP, exp11);
-//		
-////			keyMap.remove(HotelDao.ATTR_FROM);
-////			keyMap.remove(HotelDao.ATTR_TO);
-//			
-//			Map<String,Object> keyMapBasicExpression = new HashMap<String,Object>();
-//			
-//			EntityResultExtraTools.putBasicExpression(keyMapBasicExpression, finalExpression);
-
-			resultado = this.daoHelper.query(this.hotelDao, keyMapBasicExpresionDates(keyMap), attrList,
-					"queryHotelOccupancyRate");
-
-			if (keyMap.get(HotelDao.ATTR_ID) != null) {
-				resultadofinal = EntityResultTools.dofilter(resultado,
-						EntityResultTools.keysvalues(HotelDao.ATTR_ID, keyMap.get(HotelDao.ATTR_ID)));
-			}
-
-		} catch (ValidateException e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(e.getMessage());
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
-		}
-		return resultadofinal;
-
-	}
-	
-	public EntityResult poiQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException{
+	public EntityResult poiQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 		try {
 			cf.reset();
@@ -656,35 +550,32 @@ public class HotelService implements IHotelService {
 			}
 			resultado = hotelQuery(keyMapDireccion, attrList);
 			System.err.println(resultado.entrySet());
-			
-			
+
 		} catch (MissingFieldsException | RestrictedFieldException | InvalidFieldsException
 				| InvalidFieldsValuesException | LiadaPardaException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
-
 		String street = (String) resultado.getRecordValues(0).get(HotelDao.ATTR_STREET);
-		String city =  (String) resultado.getRecordValues(0).get(HotelDao.ATTR_CITY);
-		String urlEnpoint = "https://nominatim.openstreetmap.org/search?street="+URLEncoder.encode(street, StandardCharsets.UTF_8)+"&city="+URLEncoder.encode(city, StandardCharsets.UTF_8)+"&format=json";
+		String city = (String) resultado.getRecordValues(0).get(HotelDao.ATTR_CITY);
+		String urlEnpoint = "https://nominatim.openstreetmap.org/search?street="
+				+ URLEncoder.encode(street, StandardCharsets.UTF_8) + "&city="
+				+ URLEncoder.encode(city, StandardCharsets.UTF_8) + "&format=json";
 		System.err.println(urlEnpoint);
-		
+
 		try {
 			URL url = new URL(urlEnpoint);
 			HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
 			con.setRequestMethod("GET");
 			con.connect();
 			int responseCode = con.getResponseCode();
-			if(responseCode!=200)
-			{
+			if (responseCode != 200) {
 				throw new RuntimeException("Ocurrio un error " + responseCode);
-			}
-			else
-			{
+			} else {
 				StringBuilder infor = new StringBuilder();
 				Scanner sc = new Scanner(url.openStream());
-				while(sc.hasNext()){
+				while (sc.hasNext()) {
 					infor.append(sc.nextLine());
 				}
 				sc.close();
@@ -693,22 +584,24 @@ public class HotelService implements IHotelService {
 				JSONObject jsonObject = jsonarray.getJSONObject(0);
 				String latitude = jsonObject.getString("lat");
 				String longitude = jsonObject.getString("lon");
-				
-				
-				Map<String,Object> attrMapco = new HashMap<>() {{
-				   put(HotelDao.ATTR_LAT,latitude);
-				   put(HotelDao.ATTR_LON,longitude);
-				}};
+
+				Map<String, Object> attrMapco = new HashMap<>() {
+					{
+						put(HotelDao.ATTR_LAT, latitude);
+						put(HotelDao.ATTR_LON, longitude);
+					}
+				};
 				System.out.println(latitude);
 				System.out.println(longitude);
 				EntityResult coorUpdate = hotelUpdate(attrMapco, keyMap);
 				System.err.println(attrMapco.entrySet());
 				System.err.println(coorUpdate);
 				Amadeus amadeus = Amadeus.builder("h3nxa8Fz2gDyhWAhSY8nhlAGaZ43tGHv", "yTjGtt92Ww2ezfAT").build();
-				ScoredLocation[] locationPois = amadeus.location.analytics.categoryRatedAreas.get(Params.with("latitude", latitude).and("longitude", longitude));
+				ScoredLocation[] locationPois = amadeus.location.analytics.categoryRatedAreas
+						.get(Params.with("latitude", latitude).and("longitude", longitude));
 				System.err.println(locationPois.toString());
-				
-				//System.err.println(consulta);
+
+				// System.err.println(consulta);
 			}
 
 		} catch (MalformedURLException e) {
@@ -723,16 +616,13 @@ public class HotelService implements IHotelService {
 		}
 
 		/*
-
-		Response response = null;
-		try {
-			response = amadeus.post("test.api.amadeus.com", city.toString());
-			System.err.println(response.getRequest());
-		} catch (ResponseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-		return  resultado;
+		 * 
+		 * Response response = null; try { response =
+		 * amadeus.post("test.api.amadeus.com", city.toString());
+		 * System.err.println(response.getRequest()); } catch (ResponseException e) { //
+		 * TODO Auto-generated catch block e.printStackTrace(); }
+		 */
+		return resultado;
 
 	}
 

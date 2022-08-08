@@ -49,54 +49,27 @@ catalog="" schema="${mainschema}" table="hotels" datasource="mainDataSource" sql
 ]]>
   </Sentence>
   </Query>
-   <Query id="queryHotelOccupancyRate">
+  <Query id="queryOccupancyPercentage">
   <Sentence>
   <![CDATA[
-   SELECT aux.htl_id, aux.htl_name, aux.htl_city, htl_maximum_capacity, htl_occupancy, ROUND(((CAST(htl_occupancy AS NUMERIC)/CAST(htl_maximum_capacity AS NUMERIC))*100),2) AS htl_occupancy_rate
-	FROM 
-	(SELECT htl_id, htl_name, htl_city, sum(bdc_slots) AS htl_maximum_capacity
-		FROM hotels 
-		LEFT JOIN rooms ON rm_htl_id = htl_id
-		LEFT JOIN room_types rmt ON rmt_id = rm_rmt_id
-		LEFT JOIN beds_combo ON bdc_id = rmt_bdc_id
-		GROUP BY htl_id
-		ORDER BY htl_id) AS aux	
-	LEFT JOIN 
-	(SELECT htl_id, htl_name, htl_city, count(bgs_cst_id) AS htl_occupancy
-		FROM hotels
-		LEFT JOIN rooms ON rm_htl_id = htl_id
-		LEFT JOIN bookings ON rm_id = bkg_rm_id
-		LEFT JOIN bookings_guests ON bkg_id = bgs_bkg_id
-		#WHERE#
-	GROUP BY htl_id
-	ORDER BY htl_id) AS aux2
-	USING(htl_id)
-	]]>
-  </Sentence>
-  </Query>
-  <Query id="queryHotelOccupancyDailyRate">
-  <Sentence>
-  <![CDATA[
-  SELECT aux.htl_id, aux.htl_name, aux.htl_city, checkin, capacity, occupancy, ROUND(((CAST(occupancy AS NUMERIC)/CAST(capacity AS NUMERIC))*100),2)  AS occupancy_rate
-FROM 
-(SELECT htl_id, htl_name, htl_city, sum(bdc_slots) AS capacity
-	FROM hotels 
-	LEFT JOIN rooms ON rm_htl_id = htl_id
-	LEFT JOIN room_types rmt ON rmt_id = rm_rmt_id
-	LEFT JOIN beds_combo ON bdc_id = rmt_bdc_id
-	GROUP BY htl_id
-	ORDER BY htl_id) AS aux	
-LEFT JOIN 
-(SELECT htl_id,htl_name,htl_city,TO_DATE(TO_CHAR(bkg_checkin::DATE,'yyyy-mm-dd'),'yyyy-mm-dd') AS checkin, count(bgs_cst_id) AS occupancy
-FROM hotels
-	LEFT JOIN rooms ON rm_htl_id = htl_id
-	LEFT JOIN bookings ON rm_id = bkg_rm_id
-	LEFT JOIN bookings_guests ON bkg_id = bgs_bkg_id
-	#WHERE#
-	GROUP BY TO_DATE(TO_CHAR(bkg_checkin::DATE,'yyyy-mm-dd'),'yyyy-mm-dd'),htl_id,htl_name,htl_city) AS aux2
-USING(htl_id);
-]]>
-  </Sentence>
-  </Query>
+  	SELECT htl_id, htl_name, htl_city,capacity_in_date_range, occupancy_in_date_range, ROUND(((CAST(occupancy_in_date_range AS NUMERIC)/CAST(capacity_in_date_range AS NUMERIC))*100),4)  AS occupancy_percentage_in_date_range 
+		FROM 
+			(SELECT htl_id, htl_name, htl_city, sum(aux2.capacity) AS capacity_in_date_range, SUM(CASE WHEN aux2.ocupada= 'S' THEN aux2.capacity ELSE 0 END) AS occupancy_in_date_range
+			FROM (
+				SELECT htl_id, htl_name,htl_city,aux.rm_id, aux.capacity, days.fecha,(case when (select count(*) from bookings where bkg_rm_id = aux.rm_id and bkg_canceled is null and days.fecha between bkg_checkin and bkg_checkout)=0 then 'N' else 'S' end) as ocupada
+				FROM hotels LEFT JOIN 
+							(SELECT rm_htl_id, rm_id, sum(bdc_slots) AS capacity
+    							FROM rooms
+								LEFT JOIN room_types rmt ON rmt_id = rm_rmt_id
+								LEFT JOIN beds_combo ON bdc_id = rmt_bdc_id
+								GROUP BY rm_id
+								ORDER BY rm_id) AS aux ON aux.rm_htl_id = htl_id,
+				(select fecha::date from #GEN_SERIES# fecha) days
+				) AS aux2
+		GROUP BY htl_id, htl_name,htl_city) AS aux3
+    ORDER BY  occupancy_percentage_in_date_range DESC NULLS LAST
+    ]]>
+    </Sentence>
+    </Query>
  </Queries>
 </JdbcEntitySetup>
