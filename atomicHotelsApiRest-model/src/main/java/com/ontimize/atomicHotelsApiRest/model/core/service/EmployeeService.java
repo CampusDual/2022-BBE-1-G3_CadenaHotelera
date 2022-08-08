@@ -41,15 +41,15 @@ private DefaultOntimizeDaoHelper daoHelper;
 @Autowired
 ControlFields cf;
  @Override
- public EntityResult employeeQuery(Map<String, Object> keyMap, List<String> attrList)
+ public EntityResult employeeQuery(Map<String, Object> filter, List<String> columns)
    throws OntimizeJEERuntimeException {
-	 System.out.println("****************keyMap Query******************");
-	 keyMap.forEach((k,v)->System.out.println(k+"->"+v));
-	 System.out.println("\n****************attrList Query******************");
-	 attrList.forEach(s->System.out.println(s));
+	 System.out.println("****************filter Query******************");
+	 filter.forEach((k,v)->System.out.println(k+"->"+v));
+	 System.out.println("\n****************columns Query******************");
+	 columns.forEach(s->System.out.println(s));
 	 
 		EntityResult resultado=new EntityResultMapImpl();
-		resultado=this.daoHelper.query(this.employeeDao, keyMap,attrList);
+		resultado=this.daoHelper.query(this.employeeDao, filter,columns);
 		System.out.println(resultado);
 	 System.out.println("\n****************Recorremos el EntityResul******************");
 		for(int i=0;i<resultado.calculateRecordNumber();i++) {
@@ -65,10 +65,10 @@ ControlFields cf;
 	 try {
 		 cf.reset();
 		 cf.addBasics(EmployeeDao.fields);
-		 cf.validate(attrList);
-		 cf.validate(keyMap);
+		 cf.validate(filter);
+		 cf.validate(columns);
 		 
-		resultado=this.daoHelper.query(this.employeeDao, keyMap, attrList); 
+		resultado=this.daoHelper.query(this.employeeDao, filter, columns); 
 	 }catch(ValidateException e) {
 		 e.printStackTrace();
 		 resultado=new EntityResultWrong(e.getMessage());
