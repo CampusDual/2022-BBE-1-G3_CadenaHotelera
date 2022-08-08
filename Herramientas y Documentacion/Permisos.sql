@@ -175,50 +175,56 @@ ALTER TABLE public.tuser ADD FOREIGN KEY(htl_restriction) REFERENCES hotels(htl_
 	
 
 --ROLES/PERMISOS
+TRUNCATE TABLE trole_server_permission;
 	--ceo 1
-	INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 1,id_server_permission FROM tserver_permission WHERE id_server_permission >= 1 AND id_server_permission <= 107
+	INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 1,id_server_permission FROM tserver_permission WHERE id_server_permission >= 1 AND id_server_permission <= 107;
 
-	--hotelManager 2
-	INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 1,id_server_permission FROM tserver_permission WHERE id_server_permission >= 1 AND id_server_permission <= 104
+	--hotelManager 2		
+		INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 2,id_server_permission FROM tserver_permission WHERE id_server_permission >= 1 AND id_server_permission <= 104;
+		DELETE FROM trole_server_permission 
+			WHERE ( id_server_permission in(1,2,4,6,7,8,49,50,51,82,83,84,94,95,96) 
+					OR id_server_permission >= 86 AND id_server_permission <= 92
+			) AND ID_ROLENAME = 2;
 	--staff 3
+		INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 3,id_server_permission FROM tserver_permission WHERE id_server_permission >= 1 AND id_server_permission <= 93	;		
+		DELETE FROM trole_server_permission
+			WHERE ( id_server_permission in(1,2,3,4,6,7,8,49,50,51,53,55,56,57,58,59,65,66,67,73,74,76,77,78,82,83,84) 
+					OR id_server_permission >= 86 AND id_server_permission <= 92
+			) AND ID_ROLENAME = 3;
+	--customer 4	
+		INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 4,id_server_permission FROM tserver_permission WHERE id_server_permission >= 1 AND id_server_permission <= 85	;	
+		DELETE FROM trole_server_permission 
+			WHERE ( id_server_permission in(1,2,3,4,6,7,8,16,17,28,29,42,45,49,50,51,53,54,55,57,58,59,60,61,62,63,65,66,67,73,74,76,77,78,82,83,84) 
+			) AND ID_ROLENAME = 4;
 	
-	
-	
-	--customer 4
-	INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (4,14);
+	--user 5 - información pública
+	INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 5,id_server_permission FROM tserver_permission WHERE id_server_permission in(1);
 
-	--user 5
 	
-
-
+	
+		--INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 2,id_server_permission FROM tserver_permission WHERE id_server_permission in(3,5)	
+		--	OR id_server_permission >= 9 AND id_server_permission <= 16
+		-- INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 3,id_server_permission FROM tserver_permission WHERE id_server_permission in(5)	
+		--	OR id_server_permission >= 9 AND id_server_permission <= 16
+		--INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 4,id_server_permission FROM tserver_permission WHERE id_server_permission in(5)	
+		--	OR id_server_permission >= 9 AND id_server_permission <= 15
+		--	OR id_server_permission >= 18 AND id_server_permission <= 20
 --ROLES/USUARIOS
 
 	--ceo 1
 	INSERT INTO tuser_role (id_rolename,user_) VALUES (1,'atom');
-	INSERT INTO tuser_role (id_rolename,user_) VALUES (1,'asdasd');
-	/*INSERT INTO tuser_role (id_rolename,user_) VALUES (2,'atom');
-	INSERT INTO tuser_role (id_rolename,user_) VALUES (3,'atom');
-	INSERT INTO tuser_role (id_rolename,user_) VALUES (4,'atom');
-	INSERT INTO tuser_role (id_rolename,user_) VALUES (5,'atom');
-	*/
 	--hotelManager 2
 	INSERT INTO tuser_role (id_rolename,user_) VALUES (2,'gerenteAtom01');
-	/*INSERT INTO tuser_role (id_rolename,user_) VALUES (3,'gerenteAtom01');
-	INSERT INTO tuser_role (id_rolename,user_) VALUES (4,'gerenteAtom01');
-	INSERT INTO tuser_role (id_rolename,user_) VALUES (5,'gerenteAtom01');
-	*/
 	--staff 3
 	INSERT INTO tuser_role (id_rolename,user_) VALUES (3,'personalAtom01');
-	/*INSERT INTO tuser_role (id_rolename,user_) VALUES (4,'rececpionAtom01');
-	INSERT INTO tuser_role (id_rolename,user_) VALUES (5,'rececpionAtom01');
-	*/
 	--customer 4
 	INSERT INTO tuser_role (id_rolename,user_) VALUES (4,'turisticas');
-	--INSERT INTO tuser_role (id_rolename,user_) VALUES (5,'turisticas');
-
 	--user 5
 	INSERT INTO tuser_role (id_rolename,user_) VALUES (5,'usuarioLibre');
 
+--MODIFICACIONES EN TABLAS 
+ALTER TABLE public.bookings ADD user_ varchar(50) NULL;
+ALTER TABLE public.bookings ADD FOREIGN KEY(user_) REFERENCES tuser(user_)	;
 
 
 

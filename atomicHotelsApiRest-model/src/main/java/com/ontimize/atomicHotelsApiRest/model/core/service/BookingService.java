@@ -27,7 +27,9 @@ import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.ReceiptDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomTypeDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.UserRoleDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlPermissions;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultExtraTools;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
@@ -70,6 +72,9 @@ public class BookingService implements IBookingService {
 	@Autowired
 	ControlFields cf;
 
+	@Autowired
+	ControlPermissions cp;
+
 	@Override
 	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult bookingQuery(Map<String, Object> keyMap, List<String> attrList)
@@ -87,9 +92,14 @@ public class BookingService implements IBookingService {
 //		System.err.println(((UserInformation) SecurityContextHolder.getContext().getAuthentication().getPrincipal()));		
 		
 		try {
+			cp.reset();
+			cp.setHtlColum(RoomDao.ATTR_HOTEL_ID);//hacer join en default
+			cp.setRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER,UserRoleDao.ROLE_STAFF);
+			cp.restrict(keyMap);
+			
 			cf.reset();
-//			cf.restrictionsRole((keyMap,attrList);
 			cf.addBasics(BookingDao.fields);
+			cf.addBasics(RoomDao.fields);
 			cf.validate(keyMap);
 
 			cf.validate(attrList);
@@ -98,7 +108,8 @@ public class BookingService implements IBookingService {
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (Exception e) {
-			resultado = new EntityResultWrong(ErrorMessage.ERROR);
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
 	}

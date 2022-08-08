@@ -10,6 +10,18 @@ catalog="" schema="${mainschema}" table="bookings" datasource="mainDataSource" s
 	</UpdateKeys>
 	<GeneratedKey>bkg_id</GeneratedKey>
 	<Queries>
+		<Query id="default">
+			<Sentence>
+				<![CDATA[
+				    SELECT
+				     	#COLUMNS#
+				    FROM
+				     	bookings				   	
+				   	LEFT JOIN rooms ON rm_id = bkg_rm_id				   						  
+				    #WHERE#				    
+			    ]]>
+			</Sentence>
+		</Query>		
 		<Query id="queryInfoBooking">
 			<Sentence>
 				<![CDATA[
