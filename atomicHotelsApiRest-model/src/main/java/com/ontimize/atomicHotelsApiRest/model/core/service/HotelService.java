@@ -462,7 +462,7 @@ public class HotelService implements IHotelService {
 	 * @throws OntimizeJEERuntimeException 
 	 * @return EntityResult ("occupancy_percentage_in_date_range", "htl_id","capacity_in_date_range","occupancy_in_date_range","htl_city", "htl_name")
 	 */
-	@Override
+	@Override// revisar que no esté dando resultados de menos
 	public EntityResult hotelOccupancyPercentageQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 
