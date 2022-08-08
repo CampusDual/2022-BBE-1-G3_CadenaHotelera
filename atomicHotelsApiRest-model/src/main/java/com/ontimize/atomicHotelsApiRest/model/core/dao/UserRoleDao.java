@@ -18,6 +18,12 @@ public class UserRoleDao extends OntimizeJdbcDaoSupport {
 	public static final String ATTR_ID_ROLENAME= "id_rolename";	
 	public static final String ATTR_USER= "user_";
 	
+	//nombre de los roles en la DB
+	public static final String ROLE_CEO = "ceo";
+	public static final String ROLE_MANAGER= "hotelManager";
+	public static final String ROLE_STAFF = "staff";
+	public static final String ROLE_CUSTOMER= "customer";
+	public static final String ROLE_USER= "user";
 	
 	public static final Map<String,type> fields = new HashMap<>() {{
 		put(ATTR_ID,type.INTEGER);
