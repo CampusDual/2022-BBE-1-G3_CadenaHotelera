@@ -1,5 +1,7 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -125,7 +127,8 @@ ControlFields cf;
 			  resultado=this.daoHelper.insert(this.employeeDao, attrMap);
 			  resultado.setMessage("Empleado  Registrado");
 		  }else {
-		 resultado.setMessage("Empleado no Registrado");
+		 resultado.setMessage("Empleado no Registrado despídalo primero");
+		 
 		  }
 	}catch (DuplicateKeyException e) {
 		resultado =new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
@@ -142,14 +145,21 @@ ControlFields cf;
 	return resultado;
 }
 
+ 
+ 
+ 
+ 
  @Override
  public EntityResult employeeUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
    throws OntimizeJEERuntimeException {
+	 System.out.println("********Datos Entrada*********");
+	 System.out.println("*******attrMap******");
 	 EntityResult resultado=new EntityResultWrong();
 		attrMap.forEach((k,v)->{
 		System.out.println(k+" -> "+v);
 	}
 	);
+		System.out.println("*******keyMap******");
 		keyMap.forEach((k,v)->{
 		System.out.println(k+" -> "+v);
 	}
@@ -210,52 +220,117 @@ ControlFields cf;
 	}
 	 
  @Override
- public EntityResult employeeDelete(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
-  EntityResult resultado=new EntityResultWrong();
-//	attrMap.forEach((k,v)->{
-//		System.out.println(k+" -> "+v);
-//	}
-//	); 
-  
-  
-  try {
-	  cf.reset();
-	  cf.addBasics(EmployeeDao.fields);
-	  List<String> requeridos =new ArrayList<>(){
-		  {
-		  add(EmployeeDao.ATTR_IDEN_DOC);
-	  }
+ public EntityResult employeeFired(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
+	 EntityResult resultado=new EntityResultWrong();
+	 attrMap.forEach((k,v)->{
+		 System.out.println(k+" -> "+v);
+	 }
+			 );
+	 try {
+		 //ControlFields del filtro
+		 List<String> requiredFilter=new ArrayList<String>(){
+			 { 
+				 add(EmployeeDao.ATTR_IDEN_DOC);
+			 }
 		 };
-	cf.setRequired(requeridos);
-	cf.setOptional(true);
-	cf.validate(attrMap);
-  Map<String,Object> consultaKeyMap=new HashMap<>() {
-	  {
-	  put(EmployeeDao.ATTR_IDEN_DOC,attrMap.get(EmployeeDao.ATTR_IDEN_DOC));
-	  
-  }
-	  };
-	 EntityResult auxEntity=employeeQuery(consultaKeyMap,EntityResultTools.attributes(EmployeeDao.ATTR_IDEN_DOC,EmployeeDao.ATTR_FIRED));
-	System.out.println(auxEntity.getRecordValues(0).get(EmployeeDao.ATTR_FIRED));
-  if(auxEntity.calculateRecordNumber()==0 ) {
-	  resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
-  }else if(auxEntity.getRecordValues(0).get(EmployeeDao.ATTR_FIRED)==null) {
-	  resultado.setMessage("Empleado no puede ser borrado,despidalo primero"); 
-  }
-  else {
-	  resultado=this.daoHelper.delete(this.employeeDao, attrMap);
-	  resultado.setMessage("Empleado borrado");
-  }
- 
- 	} catch (ValidateException | LiadaPardaException e) {
-		resultado =  new EntityResultWrong(e.getMessage());
-		e.printStackTrace();		
-	}catch (DuplicateKeyException e) {
-		resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
-	}catch (Exception e) {
-		e.printStackTrace();
-		resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
-	}
-	return resultado;
-}
+		 
+		 cf.reset();
+		 cf.addBasics(EmployeeDao.fields);
+		 cf.setRequired(requiredFilter);
+		 cf.setOptional(false);
+		 List<String> restrictedData=new ArrayList<>() {
+			 {
+				 add(EmployeeDao.ATTR_ID);
+				 
+			 }
+		 };
+		 cf.reset();
+		 cf.addBasics(EmployeeDao.fields);
+		 cf.setRestricted(restrictedData);
+		 cf.validate(attrMap);
+		 Map<String, Object> subConsultaKeyMap = new HashMap<>() {
+			 {
+				 put(EmployeeDao.ATTR_IDEN_DOC,attrMap.get(EmployeeDao.ATTR_IDEN_DOC));
+				 
+			 }
+		 };
+		 Map<String,String> keyMap=new HashMap<>();
+		 
+		 keyMap.put(EmployeeDao.ATTR_FIRED, LocalDate.now().toString());
+		 
+		 EntityResult auxEntity =employeeQuery(subConsultaKeyMap,
+		 EntityResultTools.attributes(EmployeeDao.ATTR_IDEN_DOC,EmployeeDao.ATTR_FIRED));
+		 
+		 if(auxEntity.calculateRecordNumber()==0||!((List<String>)auxEntity.get(EmployeeDao.ATTR_FIRED)).contains(null)) {
+			 resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
+		 }else {
+			 this.daoHelper.update(this.employeeDao, attrMap, keyMap);
+			 resultado.setMessage("Empleado despedido con fecha de hoy");
+		 }
+	 }catch (ValidateException e) {
+		 resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + " - " + e.getMessage());
+	 } catch (DuplicateKeyException e) {
+		 e.printStackTrace();
+		 resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
+	 } catch (DataIntegrityViolationException e) {
+		 e.printStackTrace();
+		 resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
+	 } catch (Exception e) {
+		 e.printStackTrace();
+		 resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
+	 }
+	 return resultado;
+	 
+ }
+
+// @Override
+// public EntityResult employeeDelete(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
+//  EntityResult resultado=new EntityResultWrong();
+////	attrMap.forEach((k,v)->{
+////		System.out.println(k+" -> "+v);
+////	}
+////	); 
+//  
+//  
+//  try {
+//	  cf.reset();
+//	  cf.addBasics(EmployeeDao.fields);
+//	  List<String> requeridos =new ArrayList<>(){
+//		  {
+//		  add(EmployeeDao.ATTR_IDEN_DOC);
+//	  }
+//		 };
+//	cf.setRequired(requeridos);
+//	cf.setOptional(true);
+//	cf.validate(attrMap);
+//  Map<String,Object> consultaKeyMap=new HashMap<>() {
+//	  {
+//	  put(EmployeeDao.ATTR_IDEN_DOC,attrMap.get(EmployeeDao.ATTR_IDEN_DOC));
+//	  
+//  }
+//	  };
+//	 EntityResult auxEntity=employeeQuery(consultaKeyMap,EntityResultTools.attributes(EmployeeDao.ATTR_IDEN_DOC,EmployeeDao.ATTR_FIRED));
+//	System.out.println(auxEntity.getRecordValues(0).get(EmployeeDao.ATTR_FIRED));
+//  if(auxEntity.calculateRecordNumber()==0 ) {
+//	  resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
+//  }else if(auxEntity.getRecordValues(0).get(EmployeeDao.ATTR_FIRED)==null) {
+//	  resultado.setMessage("Empleado no puede ser borrado,despidalo primero"); 
+//  }
+//  else {
+//	  resultado=this.daoHelper.delete(this.employeeDao, attrMap);
+//	  resultado.setMessage("Empleado borrado");
+//  }
+// 
+// 	} catch (ValidateException | LiadaPardaException e) {
+//		resultado =  new EntityResultWrong(e.getMessage());
+//		e.printStackTrace();		
+//	}catch (DuplicateKeyException e) {
+//		resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+//	}catch (Exception e) {
+//		e.printStackTrace();
+//		resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR);
+//	}
+//  return resultado;
+//}
+
  }
