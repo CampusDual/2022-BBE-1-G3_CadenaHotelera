@@ -1,5 +1,6 @@
 package com.ontimize.atomicHotelsApiRest.model.core.dao;
 
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,7 +19,6 @@ public class HotelDao extends OntimizeJdbcDaoSupport {
 	
 
 	public static final String TAG = "htl_";
-	
 	public static final String ATTR_ID = TAG+"id";
 	public static final String ATTR_NAME = TAG+"name";
 	public static final String ATTR_STREET = TAG+"street";
@@ -33,6 +33,8 @@ public class HotelDao extends OntimizeJdbcDaoSupport {
 	
 	public static final String ATTR_MAXIMUN_CAPACITY = TAG +"maximum_capacity";
 	public static final String ATTR_OCCUPANCY = TAG +"occupancy";
+	public static final String ATTR_LAT = TAG + "lat";
+	public static final String ATTR_LON = TAG + "lon";
 	public static final String ATTR_FROM = "from";
 	public static final String ATTR_TO = "to";
 	
@@ -47,7 +49,9 @@ public class HotelDao extends OntimizeJdbcDaoSupport {
 		put(ATTR_PHONE,type.PHONE);
 		put(ATTR_EMAIL,type.EMAIL);
 		put(ATTR_DESCRIPTION,type.STRING);
-		put(ATTR_IS_OPEN,type.BOOLEAN);					
+		put(ATTR_IS_OPEN,type.BOOLEAN);	
+		put(ATTR_LON,type.STRING);
+		put(ATTR_LAT, type.STRING);
 	}};
 	
 	

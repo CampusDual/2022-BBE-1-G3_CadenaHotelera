@@ -16,7 +16,14 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 			<groupId>com.ontimize</groupId>
 			<artifactId>atomicHotelsApiRest-model</artifactId>
 		</dependency>
-
+<dependency>
+    <groupId>org.json</groupId>
+    <artifactId>json</artifactId>
+</dependency>
+        <dependency>
+  <groupId>com.amadeus</groupId>
+  <artifactId>amadeus-java</artifactId>
+</dependency>
 		<dependency>
 			<groupId>com.ontimize.boot</groupId>
 			<artifactId>ontimize-boot-starter-rest</artifactId>
