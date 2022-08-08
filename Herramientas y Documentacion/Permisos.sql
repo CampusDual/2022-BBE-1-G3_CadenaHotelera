@@ -163,7 +163,9 @@
 	
 
 --USUARIOS		
-ALTER TABLE public.tuser ADD restrictions varchar NULL;
+ALTER TABLE public.tuser ADD htl_restriction integer NULL;
+ALTER TABLE public.tuser ADD FOREIGN KEY(htl_restriction) REFERENCES hotels(htl_id)	;
+
 
 	INSERT INTO tuser (user_ ,"password","name",surname) VALUES ('atom','123456','Mr Atom','Rodriguez');
 	INSERT INTO tuser (user_ ,"password","name",surname) VALUES ('gerenteAtom01','123456','Gerente del Hotel Atom 1','');

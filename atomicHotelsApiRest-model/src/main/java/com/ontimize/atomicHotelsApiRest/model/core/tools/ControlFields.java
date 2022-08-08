@@ -1,5 +1,6 @@
 package com.ontimize.atomicHotelsApiRest.model.core.tools;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -32,9 +33,10 @@ import com.ontimize.jee.common.db.SQLStatementBuilder;
 @Component
 public class ControlFields {
 
-	private Map<String, type> fields;;
+	private Map<String, type> fields;
 	private List<String> restricted;
 	private List<String> required;
+	private List<String> roleUsersRestrictions;
 	private boolean optional;
 	private boolean noEmptyList;
 	private boolean noWildcard;
@@ -55,6 +57,7 @@ public class ControlFields {
 		fields = new HashMap<String, type>();
 		restricted = null;
 		required = null;
+		roleUsersRestrictions = null;
 		optional = true;
 		noEmptyList = true; // solo para las Listas no los HashMap
 		noWildcard = true;
@@ -76,6 +79,10 @@ public class ControlFields {
 
 	public void setRestricted(List<String> restrictedFields) {
 		this.restricted = restrictedFields;
+	}
+	
+	public void setRoleUsersRestrictions(String ...roleUsersRestrictions ) {
+		this.roleUsersRestrictions = Arrays.asList(roleUsersRestrictions);
 	}
 
 	public void setOptional(boolean optional) {
@@ -119,7 +126,7 @@ public class ControlFields {
 //		if( !allowBasicExpression && keyMap.containsKey(SQLStatementBuilder.ExtendedSQLConditionValuesProcessor.EXPRESSION_KEY)) {		
 //			throw new InvalidFieldsException(ErrorMessage.NO_BASIC_EXPRESSION);
 //		}
-
+		
 		if (required != null) {
 			for (String key : required) {
 				if (!keyMap.containsKey(key)) {

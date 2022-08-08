@@ -79,15 +79,15 @@ public class BookingService implements IBookingService {
 //		String a = SecurityContextHolder.getContext().toString();
 //		String b = SecurityContextHolder.getContext().getAuthentication().toString();
 //		String c = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-		UserInformation ui = ((UserInformation) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-		Map<Object,Object> otrosDatos = ((UserInformation) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getOtherData();
+//		UserInformation ui = ((UserInformation) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+//		Map<Object,Object> otrosDatos = ((UserInformation) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getOtherData();
 		
-		String usuario = ((UserInformation) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getLogin(); 
+//		String usuario = ((UserInformation) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getLogin(); 
 //		System.err.println(usuario);
-//		System.err.println(((UserInformation) SecurityContextHolder.getContext().getAuthentication().getPrincipal()));
+//		System.err.println(((UserInformation) SecurityContextHolder.getContext().getAuthentication().getPrincipal()));		
 		try {
-
 			cf.reset();
+//			cf.restrictionsRole((keyMap,attrList);
 			cf.addBasics(BookingDao.fields);
 			cf.validate(keyMap);
 
