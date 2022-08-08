@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,9 +43,9 @@ ControlFields cf;
  @Override
  public EntityResult employeeQuery(Map<String, Object> keyMap, List<String> attrList)
    throws OntimizeJEERuntimeException {
-	 System.out.println("****************keyMap******************");
+	 System.out.println("****************keyMap Query******************");
 	 keyMap.forEach((k,v)->System.out.println(k+"->"+v));
-	 System.out.println("\n****************attrList******************");
+	 System.out.println("\n****************attrList Query******************");
 	 attrList.forEach(s->System.out.println(s));
 	 
 		EntityResult resultado=new EntityResultMapImpl();
@@ -190,9 +191,10 @@ ControlFields cf;
 		cf.addBasics(EmployeeDao.fields);
 		cf.setRestricted(restrictedData);
 		cf.validate(attrMap);
+		System.out.println(attrMap.get(EmployeeDao.ATTR_IDEN_DOC));//comentar
 		Map<String, Object> subConsultaKeyMap = new HashMap<>() {
 			  {
-				  put(EmployeeDao.ATTR_IDEN_DOC,attrMap.get(EmployeeDao.ATTR_IDEN_DOC));
+				  put(EmployeeDao.ATTR_IDEN_DOC,keyMap.get(EmployeeDao.ATTR_IDEN_DOC));
 				  
 			  }
 		};
@@ -201,8 +203,9 @@ ControlFields cf;
 		if(auxEntity.calculateRecordNumber()==0||!((List<String>)auxEntity.get(EmployeeDao.ATTR_FIRED)).contains(null)) {
 			resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
 		}else {
-			this.daoHelper.update(this.employeeDao, attrMap, keyMap);
+			resultado=this.daoHelper.update(this.employeeDao, attrMap, keyMap);
 			resultado.setMessage("Empleado Actualizado");
+			
 		}
 	 }catch (ValidateException e) {
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + " - " + e.getMessage());
@@ -220,12 +223,13 @@ ControlFields cf;
 	}
 	 
  @Override
- public EntityResult employeeFired(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
+ public EntityResult employeeFiredUpdate(Map<String, Object> data, Map<String, Object> filter) throws OntimizeJEERuntimeException {
 	 EntityResult resultado=new EntityResultWrong();
-	 attrMap.forEach((k,v)->{
-		 System.out.println(k+" -> "+v);
-	 }
-			 );
+	 System.out.println("****************filter FiredUpdate******************");
+	 filter.forEach((k,v)->System.out.println(k+"->"+v));
+	 System.out.println("\n****************data Fired Update******************");
+	 data.forEach((k,v)->System.out.println(k+"->"+v));
+	 
 	 try {
 		 //ControlFields del filtro
 		 List<String> requiredFilter=new ArrayList<String>(){
@@ -247,24 +251,29 @@ ControlFields cf;
 		 cf.reset();
 		 cf.addBasics(EmployeeDao.fields);
 		 cf.setRestricted(restrictedData);
-		 cf.validate(attrMap);
+		 cf.validate(filter);
 		 Map<String, Object> subConsultaKeyMap = new HashMap<>() {
 			 {
-				 put(EmployeeDao.ATTR_IDEN_DOC,attrMap.get(EmployeeDao.ATTR_IDEN_DOC));
+				 put(EmployeeDao.ATTR_IDEN_DOC,filter.get(EmployeeDao.ATTR_IDEN_DOC));
 				 
 			 }
 		 };
-		 Map<String,String> keyMap=new HashMap<>();
+		data=new HashMap<>();
 		 
-		 keyMap.put(EmployeeDao.ATTR_FIRED, LocalDate.now().toString());
+		 data.put(EmployeeDao.ATTR_FIRED, new Date());
+		 
+		 System.out.println("\n****************data Fired Update******************");
+		 data.forEach((k,v)->System.out.println(k+"->"+v));
 		 
 		 EntityResult auxEntity =employeeQuery(subConsultaKeyMap,
 		 EntityResultTools.attributes(EmployeeDao.ATTR_IDEN_DOC,EmployeeDao.ATTR_FIRED));
 		 
+		
+		 
 		 if(auxEntity.calculateRecordNumber()==0||!((List<String>)auxEntity.get(EmployeeDao.ATTR_FIRED)).contains(null)) {
 			 resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
 		 }else {
-			 this.daoHelper.update(this.employeeDao, attrMap, keyMap);
+			 this.daoHelper.update(this.employeeDao, data, filter);
 			 resultado.setMessage("Empleado despedido con fecha de hoy");
 		 }
 	 }catch (ValidateException e) {
