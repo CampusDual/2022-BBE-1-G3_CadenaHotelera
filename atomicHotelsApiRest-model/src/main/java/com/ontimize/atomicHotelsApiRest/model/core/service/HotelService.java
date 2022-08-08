@@ -27,7 +27,12 @@ import org.springframework.jdbc.SQLWarningException;
 import org.springframework.stereotype.Service;
 
 import com.amadeus.Amadeus;
+import com.amadeus.Location;
+import com.amadeus.Params;
+import com.amadeus.Response;
+import com.amadeus.exceptions.NetworkException;
 import com.amadeus.exceptions.ResponseException;
+import com.amadeus.resources.ScoredLocation;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
@@ -634,7 +639,7 @@ public class HotelService implements IHotelService {
 
 	}
 	
-	public EntityResult poiQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException {
+	public EntityResult poiQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException{
 		EntityResult resultado = new EntityResultWrong();
 		try {
 			cf.reset();
@@ -686,28 +691,33 @@ public class HotelService implements IHotelService {
 				System.err.println(infor);
 				JSONArray jsonarray = new JSONArray(infor.toString());
 				JSONObject jsonObject = jsonarray.getJSONObject(0);
+				String latitude = jsonObject.getString("lat");
+				String longitude = jsonObject.getString("lon");
+				
 				
 				Map<String,Object> attrMapco = new HashMap<>() {{
-				   put(HotelDao.ATTR_LAT,jsonObject.getString("lat"));
-				   put(HotelDao.ATTR_LON,jsonObject.getString("lon"));
+				   put(HotelDao.ATTR_LAT,latitude);
+				   put(HotelDao.ATTR_LON,longitude);
 				}};
-				System.out.println(jsonObject.getString("lat"));
-				System.out.println(jsonObject.getString("lon"));
+				System.out.println(latitude);
+				System.out.println(longitude);
 				EntityResult coorUpdate = hotelUpdate(attrMapco, keyMap);
 				System.err.println(attrMapco.entrySet());
 				System.err.println(coorUpdate);
-				//en proceso.
-				/*
 				Amadeus amadeus = Amadeus.builder("h3nxa8Fz2gDyhWAhSY8nhlAGaZ43tGHv", "yTjGtt92Ww2ezfAT").build();
-				String UrlEmpointAmadeus = "https://test.api.amadeus.com/v1/reference-data/locations/pois?latitude=41.397158&longitude=2.160873&page[limit]=30";
-				String consulta = amadeus.post(UrlEmpointAmadeus).getBody();
-				System.err.println(consulta);*/
+				ScoredLocation[] locationPois = amadeus.location.analytics.categoryRatedAreas.get(Params.with("latitude", latitude).and("longitude", longitude));
+				System.err.println(locationPois.toString());
+				
+				//System.err.println(consulta);
 			}
 
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ResponseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
