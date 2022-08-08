@@ -13,10 +13,36 @@
 	</UpdateKeys>
 		<GeneratedKey>bll_id</GeneratedKey>
 	<Queries>
-	<Query id="">
-		<Sentence>
-
-   </Sentence>
+		<Query id="anidado">
+			<Sentence>
+				<![CDATA[
+				   	 SELECT
+				     	#COLUMNS#
+				    FROM
+				     	bills
+				   	JOIN departments ON dpt_id = bll_dpt_id
+				   	JOIN hotels ON htl_id = bll_htl_id        				    					    		
+				    #WHERE#				    
+			    ]]>
+			</Sentence>
 		</Query>
+			
+	
+	<Query id="billsByHotelDep">
+		<Sentence>
+			<![CDATA[
+		  		SELECT
+				     	htl_name, htl_city,bll_id, bll_concept, bll_date, bll_amount, dpt_name
+				    FROM
+				     	hotels
+				     LEFT JOIN bills ON bll_htl_id = htl_id 
+				     JOIN departments ON dpt_id = bll_dpt_id			    					    		
+				    #WHERE#	
+			]]>
+		</Sentence>
+  	</Query>
+  
+  
+
 	</Queries>
 </JdbcEntitySetup>

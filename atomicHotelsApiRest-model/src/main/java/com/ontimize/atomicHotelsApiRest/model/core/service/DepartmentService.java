@@ -189,7 +189,7 @@ public class DepartmentService implements IDepartmentService{
 			resultado =  new EntityResultWrong(e.getMessage());
 			e.printStackTrace();		
 		}catch (DataIntegrityViolationException e) {
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
 		}catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);

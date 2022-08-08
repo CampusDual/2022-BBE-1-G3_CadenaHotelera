@@ -13,4 +13,7 @@ public interface IBillService {
 	 public EntityResult billInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException, MissingFieldsException;
 	 public EntityResult billUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
 	 public EntityResult billDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
+	 public EntityResult billsByHotelDepartmentQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
+	 public EntityResult gastosDepartamentoQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
+	 public EntityResult gastosDepartamentoHotelQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
 }

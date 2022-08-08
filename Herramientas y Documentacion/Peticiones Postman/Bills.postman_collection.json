@@ -97,6 +97,50 @@
 			"response": []
 		},
 		{
+			"name": "- R individual bill",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"bll_id\": 5\r\n    },\r\n   \"columns\": [\"bll_id\", \"bll_htl_id\", \"bll_dpt_id\",\"bll_concept\", \"bll_date\", \"bll_amount\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/bill/billsByHotelDepartment/search",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bill",
+						"billsByHotelDepartment",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "_ R all bills",
 			"request": {
 				"auth": {
@@ -141,7 +185,7 @@
 			"response": []
 		},
 		{
-			"name": "- R individual bill",
+			"name": "_ R all bills completely info",
 			"request": {
 				"auth": {
 					"type": "basic",
@@ -162,7 +206,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\": {\r\n     \"bll_id\": 3\r\n    },\r\n   \"columns\": [\"bll_id\", \"bll_htl_id\", \"bll_dpt_id\",\"bll_concept\", \"bll_date\", \"bll_amount\"]\r\n}",
+					"raw": "{\r\n \"columns\": [ \"htl_name\", \"dpt_name\", \"htl_city\"]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -170,14 +214,190 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:33333/bill/bill/search",
+					"raw": "localhost:33333/bill/billsByHotelDepartment/search",
 					"host": [
 						"localhost"
 					],
 					"port": "33333",
 					"path": [
 						"bill",
+						"billsByHotelDepartment",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "- R bills by hotel Completely Info",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"bll_htl_id\": 6\r\n    },\r\n   \"columns\": [\"bll_id\", \"bll_htl_id\", \"bll_dpt_id\",\"bll_concept\", \"bll_date\", \"bll_amount\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/bill/billsByHotelDepartment/search",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
 						"bill",
+						"billsByHotelDepartment",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "_ R bills by hotel and department",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "atom",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"filter\": {\r\n     \"bll_htl_id\": 6,\r\n      \"bll_dpt_id\": 5\r\n    },\r\n \"columns\": [\"a\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/bill/billsByHotelDepartment/search",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bill",
+						"billsByHotelDepartment",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "- R bill department by hotel anidado",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"dpt_id\": 2,\r\n     \"htl_id\":5\r\n    },\r\n   \"columns\": [   \"dpt_name\", \"dpt_description\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/bill/gastosDepartamento/search",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bill",
+						"gastosDepartamento",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "- R bill department by hotel anidado Copy",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "atom",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \r\n   \"columns\": [ \"bll_concept\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/bill/gastosDepartamentoHotel/search",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bill",
+						"gastosDepartamentoHotel",
 						"search"
 					]
 				}
