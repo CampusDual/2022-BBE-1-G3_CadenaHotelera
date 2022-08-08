@@ -1,7 +1,6 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -15,7 +14,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
-import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
+
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IEmployeeService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.EmployeeDao;
@@ -28,7 +27,7 @@ import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
 import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 
-import net.bytebuddy.implementation.auxiliary.AuxiliaryType;
+
 
 @Service("EmployeeService")
 @Lazy
@@ -50,6 +49,8 @@ ControlFields cf;
 	 
 		EntityResult resultado=new EntityResultMapImpl();
 		resultado=this.daoHelper.query(this.employeeDao, filter,columns);
+		System.out.println("\n****************EntityResul en crudo******************");
+		
 		System.out.println(resultado);
 	 System.out.println("\n****************Recorremos el EntityResul******************");
 		for(int i=0;i<resultado.calculateRecordNumber();i++) {
