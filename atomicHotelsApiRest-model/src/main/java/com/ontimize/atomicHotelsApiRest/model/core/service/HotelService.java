@@ -696,20 +696,18 @@ public class HotelService implements IHotelService {
 				EntityResult coorUpdate = hotelUpdate(attrMapco, keyMap);
 				System.err.println(attrMapco.entrySet());
 				System.err.println(coorUpdate);
-				
+				//en proceso.
+				/*
 				Amadeus amadeus = Amadeus.builder("h3nxa8Fz2gDyhWAhSY8nhlAGaZ43tGHv", "yTjGtt92Ww2ezfAT").build();
 				String UrlEmpointAmadeus = "https://test.api.amadeus.com/v1/reference-data/locations/pois?latitude=41.397158&longitude=2.160873&page[limit]=30";
 				String consulta = amadeus.post(UrlEmpointAmadeus).getBody();
-				System.err.println(consulta);
+				System.err.println(consulta);*/
 			}
 
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ResponseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
