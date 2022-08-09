@@ -300,7 +300,7 @@ public class BillService implements IBillService {
 	 * 
 	 * 
 	 */
-/*	@Override
+	@Override
 	public EntityResult gastosDepartamentoHotelQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 	
@@ -321,7 +321,7 @@ public class BillService implements IBillService {
 			cf.setRequired(required);			
 			cf.setOptional(false);
 			cf.validate(keyMap);
-			
+	
 			//validamos attr
 			cf.reset();
 			cf.addBasics(HotelDao.fields);
@@ -347,7 +347,7 @@ public class BillService implements IBillService {
 		
 	}
 
-*/
+
 	
 	/**		OK
 	 * Dado un identificador de bill(bll_id), devuelve los datos de las facturas pertenecientes a dicho hotel
@@ -378,14 +378,13 @@ public class BillService implements IBillService {
 //			cf.setOptional(false);
 			cf.validate(keyMap);
 
-			List<String> lista = new ArrayList<String>() {
-				{
-					add(HotelDao.ATTR_CITY);
-					add(HotelDao.ATTR_NAME);
-				}
-			};
+/*			//Si no quisiéramos aceptar columnas:
 
-			resultado = this.daoHelper.query(this.billDao, keyMap, lista, "billsByHotelDep");
+			cf.reset();
+			cf.setNoEmptyList(false);
+			cf.validate(attrList);
+*/			
+			resultado = this.daoHelper.query(this.billDao, keyMap, attrList, "billsByHotelDep");
 			
 		} catch (ValidateException e) {
 			e.printStackTrace();
@@ -398,11 +397,10 @@ public class BillService implements IBillService {
 		return resultado;
 	}
 //////
-	@Override
+	/*	@Override
 	public EntityResult gastosDepartamentoHotelQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 	
-		////////////////
 		EntityResult resultadoFinal = new EntityResultMapImpl(); //Para que no salga el 1 en el json de respuesta////////////
 		EntityResult resultado = new EntityResultWrong();
 		try {
@@ -422,11 +420,6 @@ public class BillService implements IBillService {
 
 			resultado = this.daoHelper.query(this.billDao, keyMap, lista, "billsByHotelDep");
 			
-
-		/////////////
-		
-
-
 			List<String> listaGastos = new ArrayList<String>() {{
 				add(BillDao.ATTR_ID);
 				add(BillDao.ATTR_CONCEPT);
@@ -434,28 +427,28 @@ public class BillService implements IBillService {
 				add(BillDao.ATTR_AMOUNT);
 				}
 			};
-/*			
-			//nuevo keyMap
-			Map<String, Object> idHotelDepart = new HashMap<>(){{
-					put(BillDao.ATTR_ID_HTL, keyMap.get(HotelDao.ATTR_ID));	//Queremos q el keyMap del principio nos saque el attrID
-		//			put(BillDao.ATTR_ID_DPT, keyMap.get(DepartmentDao.ATTR_ID));
-				}
-			};
+	
+			//anido los gastos							//id_dpt	listasGastos
+			EntityResult resultGastos = this.billQuery(resultado.getRecordValues(0), listaGastos);
 			
-			//anido los gastos							//id_dpt	listasGatos
-			EntityResult resultGastos = this.billQuery(idHotelDepart, listaGastos);
-	*/		
 			Map<String, Object> mapFinal = new HashMap<String, Object>();
 
 			List<Object> gastosDep = new ArrayList<Object>();
 			for (int i = 0; i < resultado.calculateRecordNumber(); i++) {
 				Object h = resultado.getRecordValues(i);
-				gastosDep.add(h);
+				
+				if(resultado.get(HotelDao.ATTR_CITY) == resultado.get(HotelDao.ATTR_CITY)){
+					gastosDep.add(h);
+				}
+	//			Object h = resultado.get(HotelDao.ATTR_CITY);
+	//			Object g = resultado.get(HotelDao.ATTR_NAME);
+				
+				
+//				gastosDep.add(g);
 			}
 			
 			mapFinal.putAll(resultado.getRecordValues(0));
 			mapFinal.put("gastos departamento", gastosDep);
-
 
 			resultadoFinal.addRecord(mapFinal);
 
@@ -468,6 +461,6 @@ public class BillService implements IBillService {
 			return resultadoFinal = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultadoFinal;
-		
 	}
+*/
 }
