@@ -42,7 +42,7 @@ catalog="" schema="${mainschema}" table="hotels" datasource="mainDataSource" sql
 		FROM 
 			(SELECT htl_id, htl_name, htl_city, sum(aux2.capacity) AS capacity_in_date_range, SUM(CASE WHEN aux2.ocupada= 'S' THEN aux2.capacity ELSE 0 END) AS occupancy_in_date_range
 			FROM (
-				SELECT htl_id, htl_name,htl_city,aux.rm_id, aux.capacity, days.fecha,(case when (select count(*) from bookings where bkg_rm_id = aux.rm_id and bkg_canceled is null and days.fecha>= DATE(bkg_checkin) and days.fecha<=DATE(bkg_checkout))= 0 then 'N' else 'S' end) as ocupada
+				SELECT htl_id, htl_name,htl_city,aux.rm_id, aux.capacity, days.fecha,(case when (select count(*) from bookings where bkg_rm_id = aux.rm_id and bkg_canceled is null and days.fecha>= DATE(bkg_start) and days.fecha<=DATE(bkg_end))= 0 then 'N' else 'S' end) as ocupada
 				FROM hotels LEFT JOIN 
 							(SELECT rm_htl_id, rm_id, sum(bdc_slots) AS capacity
     							FROM rooms
