@@ -142,4 +142,9 @@ public class TestingTools {
 		subQueryER.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);		
 		return subQueryER;
 	}
+	public static EntityResult getEntityEmpty() {
+		EntityResult subQueryER = new EntityResultMapImpl();
+		subQueryER.addRecord(new HashMap());
+		return subQueryER;
+	}
 }

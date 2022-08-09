@@ -42,27 +42,25 @@ ControlFields cf;
  @Override
  public EntityResult employeeQuery(Map<String, Object> filter, List<String> columns)
    throws OntimizeJEERuntimeException {
-	 System.out.println("****************filter Query******************");
-	 filter.forEach((k,v)->System.out.println(k+"->"+v));
-	 System.out.println("\n****************columns Query******************");
-	 columns.forEach(s->System.out.println(s));
-	 
 		EntityResult resultado=new EntityResultMapImpl();
-		resultado=this.daoHelper.query(this.employeeDao, filter,columns);
-		System.out.println("\n****************EntityResul en crudo******************");
-		
-		System.out.println(resultado);
-	 System.out.println("\n****************Recorremos el EntityResul******************");
-		for(int i=0;i<resultado.calculateRecordNumber();i++) {
-		resultado.getRecordValues(i).forEach((k,v)->System.out.println(k+"->"+v));
-		System.out.println("--------");
-		}
-		System.out.println("\n****************Pruebas EntityResult******************");
-		System.out.println(resultado.calculateRecordNumber());
-		System.out.println(resultado.contains(null));
-		System.out.println(resultado.containsKey("emp_fired"));
-		
-
+//	 System.out.println("****************filter Query******************");
+//	 filter.forEach((k,v)->System.out.println(k+"->"+v));
+//	 System.out.println("\n****************columns Query******************");
+//	 columns.forEach(s->System.out.println(s));
+//		resultado=this.daoHelper.query(this.employeeDao, filter,columns);
+//		System.out.println("\n****************EntityResul en crudo******************");
+//		
+//		System.out.println(resultado);
+//	 System.out.println("\n****************Recorremos el EntityResul******************");
+//		for(int i=0;i<resultado.calculateRecordNumber();i++) {
+//		resultado.getRecordValues(i).forEach((k,v)->System.out.println(k+"->"+v));
+//		System.out.println("--------");
+//		}
+//		System.out.println("\n****************Pruebas EntityResult******************");
+//		System.out.println(resultado.calculateRecordNumber());
+//		System.out.println(resultado.contains(null));
+//		System.out.println(resultado.containsKey("emp_fired"));
+//		
 	 try {
 		 cf.reset();
 		 cf.addBasics(EmployeeDao.fields);
@@ -85,13 +83,13 @@ ControlFields cf;
  public EntityResult employeeInsert(Map<String, Object> data) throws OntimizeJEERuntimeException {
   
 	 EntityResult resultado= new EntityResultWrong();
-
-	
-	 System.out.println("****************Data insert ******************");
-	 data.forEach((k,v)->{
-			System.out.println(k+" -> "+v);
-		}
-		);
+//
+//	
+//	 System.out.println("****************Data insert ******************");
+//	 data.forEach((k,v)->{
+//			System.out.println(k+" -> "+v);
+//		}
+//		);
 	 
 	 try {
 		 cf.reset();
@@ -157,26 +155,21 @@ ControlFields cf;
 	}
 	return resultado;
 }
-
- 
- 
- 
- 
  @Override
  public EntityResult employeeUpdate(Map<String, Object> data, Map<String, Object> filter)
    throws OntimizeJEERuntimeException {
-	 System.out.println("********Datos Entrada*********");
-	 System.out.println("*******Filter******");
 	 EntityResult resultado=new EntityResultWrong();
-		filter.forEach((k,v)->{
-		System.out.println(k+" -> "+v);
-	}
-	);
-		System.out.println("*******Data******");
-		data.forEach((k,v)->{
-		System.out.println(k+" -> "+v);
-	}
-	); 
+//	 System.out.println("********Datos Entrada*********");
+//	 System.out.println("*******Filter******");
+//		filter.forEach((k,v)->{
+//		System.out.println(k+" -> "+v);
+//	}
+//	);
+//		System.out.println("*******Data******");
+//		data.forEach((k,v)->{
+//		System.out.println(k+" -> "+v);
+//	}
+//	); 
 	 
 	 
 	 try {
@@ -248,81 +241,10 @@ ControlFields cf;
 	 
  @Override
  public EntityResult employeeFiredUpdate(Map<String, Object> data, Map<String, Object> filter) throws OntimizeJEERuntimeException {
-	 
-data=new HashMap<>(); 
 data.put(EmployeeDao.ATTR_FIRED, new Date());
 return this.employeeUpdate(data, filter);
  }
-//	 EntityResult resultado=new EntityResultWrong();
-//	 System.out.println("****************filter FiredUpdate******************");
-//	 filter.forEach((k,v)->System.out.println(k+"->"+v));
-//	 System.out.println("\n****************data Fired Update******************");
-//	 data.forEach((k,v)->System.out.println(k+"->"+v));
-//	 
-//	 try {
-//		 //ControlFields del filtro
-//		 List<String> requiredFilter=new ArrayList<String>(){
-//			 { 
-//				 add(EmployeeDao.ATTR_IDEN_DOC);
-//			 }
-//		 };
-//		 
-//		 cf.reset();
-//		 cf.addBasics(EmployeeDao.fields);
-//		 cf.setRequired(requiredFilter);
-//		 cf.setOptional(false);
-//		 List<String> restrictedData=new ArrayList<>() {
-//			 {
-//				 add(EmployeeDao.ATTR_ID);
-//				 
-//			 }
-//		 };
-//		 cf.reset();
-//		 cf.addBasics(EmployeeDao.fields);
-//		 cf.setRestricted(restrictedData);
-//		 cf.validate(filter);
-//		 Map<String, Object> subConsultaKeyMap = new HashMap<>() {
-//			 {
-//				 put(EmployeeDao.ATTR_IDEN_DOC,filter.get(EmployeeDao.ATTR_IDEN_DOC));
-//				 
-//			 }
-//		 };
-//		data=new HashMap<>();
-//		 
-//		 data.put(EmployeeDao.ATTR_FIRED, new Date());
-//		 
-//		 System.out.println("\n****************data Fired Update******************");
-//		 data.forEach((k,v)->System.out.println(k+"->"+v));
-//		 
-//		 EntityResult auxEntity =employeeQuery(subConsultaKeyMap,
-//		 EntityResultTools.attributes(EmployeeDao.ATTR_IDEN_DOC,EmployeeDao.ATTR_FIRED));
-//		 
-//		
-//		 
-//		 if(auxEntity.calculateRecordNumber()==0) {
-//			 resultado=new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
-//		}else if(!((List<String>)auxEntity.get(EmployeeDao.ATTR_FIRED)).contains(null)) {
-//			resultado.setMessage("Empleado existe pero sin contrato en vigor");	 
-//	
-//		 }else {
-//			 this.daoHelper.update(this.employeeDao, data, filter);
-//			 resultado.setMessage("Empleado despedido con fecha de hoy");
-//		 }
-//	 }catch (ValidateException e) {
-//		 resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + " - " + e.getMessage());
-//	 } catch (DuplicateKeyException e) {
-//		 e.printStackTrace();
-//		 resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
-//	 } catch (DataIntegrityViolationException e) {
-//		 e.printStackTrace();
-//		 resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
-//	 } catch (Exception e) {
-//		 e.printStackTrace();
-//		 resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
-//	 }
-//	 return resultado;
-//	 
-// }
+
 
 
 

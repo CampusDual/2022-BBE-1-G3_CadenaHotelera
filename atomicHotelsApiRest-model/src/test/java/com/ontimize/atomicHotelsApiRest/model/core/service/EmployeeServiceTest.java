@@ -16,6 +16,7 @@ import static org.mockito.Mockito.verify;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,9 +25,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
@@ -44,6 +47,7 @@ import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 
+@ExtendWith(MockitoExtension.class)
 public class EmployeeServiceTest {
 	
 	@Mock
@@ -63,228 +67,230 @@ public class EmployeeServiceTest {
 	@Nested
 	@DisplayName("Test for Employee queries")
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	public class DepartmentQuery {
+	public class EmployeeQuery {
 
-		//hotelQuery
+	
 		@Test
 		@DisplayName("ControlFields usar reset()")
-		void testDepartmentQueryControlFieldsReset() {
+		void testEmployeeQueryControlFieldsReset() {
 			service.employeeQuery(TestingTools.getMapEmpty(), getColumsName());
 			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
 		}
 
-//		@Test
-//		@DisplayName("ControlFields usar validate() map y list")
-//		void testDepartmentQueryControlFieldsValidate() {
-//			service.employeeQuery(TestingTools.getMapEmpty(), getColumsName());
-//			try {
-//				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
-//				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyList());
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
-//			}
-//		}
+		@Test
+		@DisplayName("ControlFields usar validate() map y list")
+		void testEmployeeQueryControlFieldsValidate() {
+			service.employeeQuery(TestingTools.getMapEmpty(), getColumsName());
+			try {
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyList());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
+		}
 
-//		@Test
-//		@DisplayName("Valores de entrada válidos")
-//		void testDepartmentQueryOK() {
-//			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
-//
-//			// válido: HashMap vacio (sin filtros)
-//			eR = service.employeeQuery(TestingTools.getMapEmpty(), getColumsName());
-//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
-//
-//			// válido: HashMap con filtro que existe
-//			eR = service.employeeQuery(getMapId(), getColumsName());
-//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
-//
-//		}
+		@Test
+		@DisplayName("Valores de entrada válidos")
+		void testEmployeeQueryOK() {
+			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
 
-//		@Test
-//		@DisplayName("Valores de entrada NO válidos")
-//		void testDepartmentQueryKO() {
-//			try {
-//				// lanzamos todas las excepciones de Validate para comprobar que están bien
-//				// recojidas.
-//				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
-//				eR = service.employeeQuery(TestingTools.getMapEmpty(), getColumsName());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
-//				eR = service.employeeQuery(TestingTools.getMapEmpty(), getColumsName());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
-//				eR = service.employeeQuery(TestingTools.getMapEmpty(), getColumsName());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
-//				eR = service.employeeQuery(TestingTools.getMapEmpty(), getColumsName());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
-//				eR = service.employeeQuery(TestingTools.getMapEmpty(), getColumsName());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
-//			}
-//
-//		}
+			// válido: HashMap vacio (sin filtros)
+			eR = service.employeeQuery(TestingTools.getMapEmpty(), getColumsName());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+
+			// válido: HashMap con filtro que existe
+			eR = service.employeeQuery(getMapId(), getColumsName());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+
+		}
+
+		@Test
+		@DisplayName("Valores de entrada NO válidos")
+		void testEmployeeQueryKO() {
+			try {
+				// lanzamos todas las excepciones de Validate para comprobar que están bien
+				// recojidas.
+				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
+				eR = service.employeeQuery(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
+				eR = service.employeeQuery(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
+				eR = service.employeeQuery(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
+				eR = service.employeeQuery(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
+				eR = service.employeeQuery(TestingTools.getMapEmpty(), getColumsName());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
+
+		}
 		
 	}
 
-//	@Nested
-//	@DisplayName("Test for Department inserts")
-//	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-//	public class DepartmentInsert {
-//
-//		@Test
-//		@DisplayName("ControlFields usar reset()")
-//		void testDepartmentInsertControlFieldsReset() {
-//			service.employeeInsert(TestingTools.getMapEmpty());
-//			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
-//		}
-//
-//		@Test
-//		@DisplayName("ControlFields usar validate() map ")
-//		void testDepartmentInsertControlFieldsValidate() {
-//			service.employeeInsert(TestingTools.getMapEmpty());
-//			try {
-//				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
-//
-//			}
-//		}
-//
-//		@Test
-//		@DisplayName("Valores de entrada válidos")
-//		void testDepartmentInsertOK() {
-//			try {
-//				doNothing().when(cf).validate(anyMap());
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
-//			}									
-//			doReturn(new EntityResultMapImpl()).when(daoHelper).insert(any(), anyMap());
-//
-//			// válido: HashMap campos mínimos
-//			eR = service.employeeInsert(getMapRequiredInsert());
-//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
-//
-//			// válido: HashMap campos mínimos y mas
-//			eR = service.employeeInsert(getMapRequiredInsertExtended());
-//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
-//
-//		}
-//
-//		@Test
-//		@DisplayName("Valores de entrada NO válidos")
-//		void testDepartmentInsertKO() {
-//			try {
-//				// lanzamos todas las excepciones de Validate para comprobar que están bien
-//				// recojidas.
-//				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
-//				eR = service.employeeInsert(TestingTools.getMapEmpty());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
-//				eR = service.employeeInsert(TestingTools.getMapEmpty());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
-//				eR = service.employeeInsert(TestingTools.getMapEmpty());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
-//				eR = service.employeeInsert(TestingTools.getMapEmpty());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
-//				eR = service.employeeInsert(TestingTools.getMapEmpty());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//				
-//				doThrow(DuplicateKeyException.class).when(cf).validate(anyMap());
-//				eR = service.employeeInsert(TestingTools.getMapEmpty());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				reset(cf);
-//				// extra para controlar required:
-//				eR = service.employeeInsert(TestingTools.getMapEmpty());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//				System.out.println(eR.getMessage());
-//				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
-//
-//				// extra para controlar restricted:
-//				eR = service.employeeInsert(getMapRequiredInsertExtendedWidthRestricted());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//				System.out.println(eR.getMessage());
-//				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
-//
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
-//			}
-//
-//		}
-//	}
-//
-//	@Nested
-//	@DisplayName("Test for Department updates")
-//	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-//	public class DepartmentUpdate {
-//
-//		@Test
-//		@DisplayName("ControlFields usar reset()")
-//		void testDepartmentUpdateControlFieldsReset() {
-//			service.employeeUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
-//			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
-//		}
-//
-//		@Test
-//		@DisplayName("ControlFields usar validate() map ")
-//		void testDepartmentUpdateControlFieldsValidate() {
-//			service.employeeUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
-//			try {
-//				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
-//			}
-//		}
-//
-//		@Test
-//		@DisplayName("Valores de entrada válidos")
-//		void testDepartmentUpdateOK() {
-//			doReturn(new EntityResultMapImpl()).when(daoHelper).update(any(), anyMap(), anyMap());
-//			try {
-//				doNothing().when(cf).validate(anyMap());									
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
-//			}
-//			// válido: HashMap campos y filtros
-//			eR = service.employeeUpdate(getMapUpdate(), getMapId());
-//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
-//
-//		}
+	@Nested
+	@DisplayName("Test for Employee inserts")
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	public class EmployeeInsert {
+
+		@Test
+		@DisplayName("ControlFields usar reset()")
+		void testEmployeeInsertControlFieldsReset() {
+			service.employeeInsert(TestingTools.getMapEmpty());
+			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
+		}
+
+		@Test
+		@DisplayName("ControlFields usar validate() map ")
+		void testDepartmentInsertControlFieldsValidate() {
+			service.employeeInsert(TestingTools.getMapEmpty());
+			try {
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+
+			}
+		}
+
+		@Test
+		@DisplayName("Valores de entrada válidos")
+		void testEmployeeInsertOK() {
+			try {
+				doNothing().when(cf).validate(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}	
+			doReturn(TestingTools.getEntityEmpty()).when(daoHelper).query(any(), anyMap(),anyList());
+			doReturn(new EntityResultMapImpl()).when(daoHelper).insert(any(), anyMap());
+
+			// válido: HashMap campos mínimos
+			eR = service.employeeInsert(getMapRequiredInsert());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+
+			// válido: HashMap campos mínimos y mas
+			eR = service.employeeInsert(getMapRequiredInsertExtended());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+
+		}
+
+		@Test
+		@DisplayName("Valores de entrada NO válidos")
+		void testDepartmentInsertKO() {
+			try {
+				// lanzamos todas las excepciones de Validate para comprobar que están bien
+				// recojidas.
+				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
+				eR = service.employeeInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
+				eR = service.employeeInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
+				eR = service.employeeInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
+				eR = service.employeeInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
+				eR = service.employeeInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+				
+				doThrow(DuplicateKeyException.class).when(cf).validate(anyMap());
+				eR = service.employeeInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				reset(cf);
+				// extra para controlar required:
+				eR = service.employeeInsert(TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+				System.out.println(eR.getMessage());
+				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
+
+				// extra para controlar restricted:
+				eR = service.employeeInsert(getMapRequiredInsertExtendedWidthRestricted());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+				System.out.println(eR.getMessage());
+				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
+
+		}
+	}
+
+	@Nested
+	@DisplayName("Test for Employee updates")
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	public class DepartmentUpdate {
+
+		@Test
+		@DisplayName("ControlFields usar reset()")
+		void testDepartmentUpdateControlFieldsReset() {
+			service.employeeUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
+		}
+
+		@Test
+		@DisplayName("ControlFields usar validate() map ")
+		void testEmployeeUpdateControlFieldsValidate() {
+			service.employeeUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+			try {
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
+		}
+
+		@Test
+		@DisplayName("Valores de entrada válidos")
+		void testEmployeeUpdateOK() {
+			doReturn(new EntityResultMapImpl()).when(daoHelper).update(any(), anyMap(), anyMap());
+			try {
+				doReturn(TestingTools.getEntityEmpty()).when(daoHelper).query(any(), anyMap(),anyList());
+				doNothing().when(cf).validate(anyMap());									
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
+			// válido: HashMap campos y filtros
+			eR = service.employeeUpdate(getMapUpdate(), getMapId());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+
+		}
 //
 //		@Test
 //		@DisplayName("Valores de entrada NO válidos")
@@ -361,10 +367,10 @@ public class EmployeeServiceTest {
 //			}
 //
 //		}
-//	}
-//
-//	
-//
+	}
+
+	
+
 	// datos entrada
 
 	Map<String, Object> getMapRequiredInsert() {
@@ -375,18 +381,27 @@ public class EmployeeServiceTest {
 				 put(dao.ATTR_SOCIAL_DOC,"2256489");
 				 put(dao.ATTR_SALARY,1800);
 				 put(dao.ATTR_PHONE,667880938);
-				 put(dao.ATTR_ACCOUNT,"21002025145");
+				 put(dao.ATTR_ACCOUNT,"210020255");
 				 put(dao.ATTR_DEPARTMENT,1);
 				 put(dao.ATTR_HOTEL,1);
-				 put(dao.ATTR_HIRING,LocalDate.now().toString());
+				 put(dao.ATTR_HIRING,new Date());
 				 put(dao.ATTR_COUNTRY,"ES");
 			}
 		};
 	}
 
 	Map<String, Object> getMapUpdate() {
-		return getMapRequiredInsert();
+		return new HashMap<>() {
+			{
+			
+				 put(dao.ATTR_IDEN_DOC,"34896415x");
+			
+			}
+		};
 	}
+
+		
+	
 
 	
 
@@ -436,7 +451,7 @@ public class EmployeeServiceTest {
 	List<String> getColumsName() {
 		List<String> columns = new ArrayList<>() {
 			{
-				add(dao.ATTR_IDEN_DOC);
+				add(dao.ATTR_NAME);
 			}
 		};
 		return columns;
