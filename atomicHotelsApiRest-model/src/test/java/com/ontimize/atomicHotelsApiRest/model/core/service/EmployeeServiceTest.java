@@ -278,9 +278,10 @@ public class EmployeeServiceTest {
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testEmployeeUpdateOK() {
+			doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(),anyList());
 			doReturn(new EntityResultMapImpl()).when(daoHelper).update(any(), anyMap(), anyMap());
 			try {
-				doReturn(TestingTools.getEntityEmpty()).when(daoHelper).query(any(), anyMap(),anyList());
+				
 				doNothing().when(cf).validate(anyMap());									
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -368,8 +369,8 @@ public class EmployeeServiceTest {
 //
 //		}
 	}
-
-	
+//
+//	
 
 	// datos entrada
 
@@ -394,13 +395,34 @@ public class EmployeeServiceTest {
 		return new HashMap<>() {
 			{
 			
-				 put(dao.ATTR_IDEN_DOC,"34896415x");
+				 put(dao.ATTR_NAME,"Pedro");
 			
 			}
 		};
 	}
+	Map<String, Object> getMapRequiredUpdate() {
+		return new HashMap<>() {
+			{
+				put( dao.ATTR_NAME,"cesar");
+				 put(dao.ATTR_IDEN_DOC,"34896415x");
+				 put(dao.ATTR_SOCIAL_DOC,"2256489");
+				 put(dao.ATTR_SALARY,1800);
+				 put(dao.ATTR_PHONE,667880938);
+				 put(dao.ATTR_ACCOUNT,"210020255");
+				 put(dao.ATTR_DEPARTMENT,1);
+				 put(dao.ATTR_HOTEL,1);
+				 put(dao.ATTR_HIRING,new Date());
+				 put(dao.ATTR_COUNTRY,"ES");
+			}
+		};
+	}
+	
+	
+	
 
-		
+	
+
+	
 	
 
 	
@@ -433,7 +455,7 @@ public class EmployeeServiceTest {
 	HashMap<String, Object> getMapId() {
 		HashMap<String, Object> filters = new HashMap<>() {
 			{
-				put(dao.ATTR_ID, 1);
+				 put(dao.ATTR_IDEN_DOC,"34896415x");
 			}
 		};
 		return filters;
