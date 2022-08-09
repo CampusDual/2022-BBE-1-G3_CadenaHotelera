@@ -308,51 +308,6 @@
 			"response": []
 		},
 		{
-			"name": "R - hotelOccupancy",
-			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "demouser",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "demo",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"filter\":{\r\n        \"from\":\"2019-12-12\",\r\n        \"to\":\"2022-12-13\"\r\n    }\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:33333/hotels/hotelOccupancy/search",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "33333",
-					"path": [
-						"hotels",
-						"hotelOccupancy",
-						"search"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "R - hotelMaximumCapacity",
 			"request": {
 				"auth": {
