@@ -39,6 +39,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesE
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.RestrictedFieldException;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.EmployeeDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
@@ -49,7 +50,7 @@ import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 
 @ExtendWith(MockitoExtension.class)
 public class EmployeeServiceTest {
-	
+
 	@Mock
 	DefaultOntimizeDaoHelper daoHelper;
 
@@ -69,7 +70,6 @@ public class EmployeeServiceTest {
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	public class EmployeeQuery {
 
-	
 		@Test
 		@DisplayName("ControlFields usar reset()")
 		void testEmployeeQueryControlFieldsReset() {
@@ -142,7 +142,7 @@ public class EmployeeServiceTest {
 			}
 
 		}
-		
+
 	}
 
 	@Nested
@@ -178,8 +178,28 @@ public class EmployeeServiceTest {
 			} catch (Exception e) {
 				e.printStackTrace();
 				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
-			}	
-			doReturn(TestingTools.getEntityEmpty()).when(daoHelper).query(any(), anyMap(),anyList());
+			}
+			doReturn(TestingTools.getEntityEmpty()).when(daoHelper).query(any(), anyMap(), anyList());
+			doReturn(new EntityResultMapImpl()).when(daoHelper).insert(any(), anyMap());
+
+			// válido: HashMap campos mínimos
+			eR = service.employeeInsert(getMapRequiredInsert());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+
+			// válido: HashMap campos mínimos y mas
+			eR = service.employeeInsert(getMapRequiredInsertExtended());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+
+		}
+
+		void testEmployeeInsertFired() {
+			try {
+				doNothing().when(cf).validate(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
+			doReturn(getMapRequiredInsertExtended()).when(daoHelper).query(any(), anyMap(), anyList());
 			doReturn(new EntityResultMapImpl()).when(daoHelper).insert(any(), anyMap());
 
 			// válido: HashMap campos mínimos
@@ -222,7 +242,7 @@ public class EmployeeServiceTest {
 				eR = service.employeeInsert(TestingTools.getMapEmpty());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-				
+
 				doThrow(DuplicateKeyException.class).when(cf).validate(anyMap());
 				eR = service.employeeInsert(TestingTools.getMapEmpty());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
@@ -278,11 +298,11 @@ public class EmployeeServiceTest {
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testEmployeeUpdateOK() {
-			doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(),anyList());
+			doReturn(isNotFired()).when(daoHelper).query(any(), anyMap(), anyList());
 			doReturn(new EntityResultMapImpl()).when(daoHelper).update(any(), anyMap(), anyMap());
 			try {
-				
-				doNothing().when(cf).validate(anyMap());									
+ 
+				doNothing().when(cf).validate(anyMap());
 			} catch (Exception e) {
 				e.printStackTrace();
 				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
@@ -292,101 +312,86 @@ public class EmployeeServiceTest {
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
 
 		}
-//
-//		@Test
-//		@DisplayName("Valores de entrada NO válidos")
-//		void testDepartmentUpdateKO() {
-//			try {
-//				// lanzamos todas las excepciones de Validate para comprobar que están bien
-//				// recojidas.
-//				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
-//				eR = service.employeeUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
-//				eR = service.employeeUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
-//				eR = service.employeeUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
-//				eR = service.employeeUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
-//				eR = service.employeeUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				// lanzamos todas las excepciones de SQL para comprobar que están bien
-//				// recojidas.
-//				doThrow(DuplicateKeyException.class).when(cf).validate(anyMap());
-//				eR = service.employeeUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(DataIntegrityViolationException.class).when(cf).validate(anyMap());
-//				eR = service.employeeUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				reset(cf);
-//				// extra para controlar required:
-//				eR = service.employeeUpdate(getMapUpdate(), TestingTools.getMapEmpty());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.CREATION_ERROR, eR.getMessage(), eR.getMessage());
-//				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
-//
-//				// extra para controlar restricted:
-//				eR = service.employeeUpdate(getMapId(), getMapId());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.CREATION_ERROR, eR.getMessage(), eR.getMessage());
-//				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
-//
-//				// error interno
-//				try {
-//					doNothing().when(cf).validate(anyMap());
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//					fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
-//				}
-//				doReturn(TestingTools.getEntitySuccesfulWithMsg()).when(daoHelper).update(any(), anyMap(), anyMap());
-//				eR = service.employeeUpdate(getMapUpdate(), getMapId());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.CREATION_ERROR, eR.getMessage(), eR.getMessage());
-//				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
-//
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
-//			}
-//
-//		}
+
+		@Test
+		@DisplayName("Valores de entrada NO válidos")
+		void testEmployeeUpdateKO() {
+			try {
+				// lanzamos todas las excepciones de Validate para comprobar que están bien
+				// recojidas.
+				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
+				eR = service.employeeUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
+				eR = service.employeeUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
+				eR = service.employeeUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
+				eR = service.employeeUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
+				eR = service.employeeUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				// lanzamos todas las excepciones de SQL para comprobar que están bien
+				// recojidas.
+				doThrow(DuplicateKeyException.class).when(cf).validate(anyMap());
+				eR = service.employeeUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(DataIntegrityViolationException.class).when(cf).validate(anyMap());
+				eR = service.employeeUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				reset(cf);
+				// extra para controlar required:
+				eR = service.employeeUpdate(getMapUpdate(), TestingTools.getMapEmpty());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.CREATION_ERROR, eR.getMessage(), eR.getMessage());
+				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
+
+				// extra para controlar restricted:
+				eR = service.employeeUpdate(getMapId(), getMapId());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.CREATION_ERROR, eR.getMessage(), eR.getMessage());
+				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
+
+		}
 	}
-//
-//	
 
 	// datos entrada
 
 	Map<String, Object> getMapRequiredInsert() {
 		return new HashMap<>() {
 			{
-				put( dao.ATTR_NAME,"cesar");
-				 put(dao.ATTR_IDEN_DOC,"34896415x");
-				 put(dao.ATTR_SOCIAL_DOC,"2256489");
-				 put(dao.ATTR_SALARY,1800);
-				 put(dao.ATTR_PHONE,667880938);
-				 put(dao.ATTR_ACCOUNT,"210020255");
-				 put(dao.ATTR_DEPARTMENT,1);
-				 put(dao.ATTR_HOTEL,1);
-				 put(dao.ATTR_HIRING,new Date());
-				 put(dao.ATTR_COUNTRY,"ES");
+				put(dao.ATTR_NAME, "cesar");
+				put(dao.ATTR_IDEN_DOC, "34896415x");
+				put(dao.ATTR_SOCIAL_DOC, "2256489");
+				put(dao.ATTR_SALARY, 1800);
+				put(dao.ATTR_PHONE, 667880938);
+				put(dao.ATTR_ACCOUNT, "210020255");
+				put(dao.ATTR_DEPARTMENT, 1);
+				put(dao.ATTR_HOTEL, 1);
+				put(dao.ATTR_HIRING, new Date());
+				put(dao.ATTR_COUNTRY, "ES");
 			}
 		};
 	}
@@ -394,38 +399,24 @@ public class EmployeeServiceTest {
 	Map<String, Object> getMapUpdate() {
 		return new HashMap<>() {
 			{
-			
-				 put(dao.ATTR_NAME,"Pedro");
-			
+
+				put(dao.ATTR_NAME, "Pedro");
+
 			}
 		};
 	}
-	Map<String, Object> getMapRequiredUpdate() {
-		return new HashMap<>() {
+
+	EntityResult isNotFired() {
+		EntityResult er = new EntityResultMapImpl();
+		er.addRecord(new HashMap<String, Object>() {
 			{
-				put( dao.ATTR_NAME,"cesar");
-				 put(dao.ATTR_IDEN_DOC,"34896415x");
-				 put(dao.ATTR_SOCIAL_DOC,"2256489");
-				 put(dao.ATTR_SALARY,1800);
-				 put(dao.ATTR_PHONE,667880938);
-				 put(dao.ATTR_ACCOUNT,"210020255");
-				 put(dao.ATTR_DEPARTMENT,1);
-				 put(dao.ATTR_HOTEL,1);
-				 put(dao.ATTR_HIRING,new Date());
-				 put(dao.ATTR_COUNTRY,"ES");
+//				
+				put(dao.ATTR_FIRED, null);
+
 			}
-		};
+		});
+		return er;
 	}
-	
-	
-	
-
-	
-
-	
-	
-
-	
 
 	Map<String, Object> getMapRequiredInsertExtended() {
 
@@ -433,6 +424,7 @@ public class EmployeeServiceTest {
 			{
 				put(dao.ATTR_PHONE, "667880938");
 				put(dao.ATTR_EMAIL, "cesarbouzaspaw@gmail.com");
+				put(dao.ATTR_FIRED, "2023-06-15");
 			}
 		};
 	}
@@ -455,7 +447,7 @@ public class EmployeeServiceTest {
 	HashMap<String, Object> getMapId() {
 		HashMap<String, Object> filters = new HashMap<>() {
 			{
-				 put(dao.ATTR_IDEN_DOC,"34896415x");
+				put(dao.ATTR_IDEN_DOC, "34896415x");
 			}
 		};
 		return filters;
@@ -479,9 +471,4 @@ public class EmployeeServiceTest {
 		return columns;
 	}
 
-	
-
-
 }
-
-
