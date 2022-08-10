@@ -1,7 +1,15 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+
+import java.io.IOException;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -17,23 +25,66 @@ import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 
-
-
 @Service("PictureService")
 @Lazy
 
 public class PictureService implements IPictureService {
-	
-	
+
 	@Autowired
 	private PictureDao pictureDao;
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
-	
+
 	@Autowired
 	ControlFields cf;
 	
-
+	
+	
+//	private Image imageCoverter(byte[] bytes) throws IOException {
+//		
+//		
+//		  ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+//		    Iterator readers = ImageIO.getImageReadersByFormatName("jpeg");    
+//		    ImageReader reader = (ImageReader) readers.next();
+//		    Object source = bis;
+//		    ImageInputStream iis = ImageIO.createImageInputStream(source);
+//		    reader.setInput(iis, true);
+//		    ImageReadParam param = reader.getDefaultReadParam();
+//		    return reader.read(0, param);
+//		
+//		return null;
+//		
+//	}
+//    public  byte[]  savePicture(String ruta) {
+//        FileInputStream fis = null;
+//        try {
+//             File file = new File(ruta);
+//             fis = new FileInputStream(file);
+//             fis.read();
+//             Str
+//            
+//             pstm.setBinaryStream(3, fis,(int) file.length());
+//             pstm.execute();
+//             pstm.close();
+//             return true;
+//        } catch (FileNotFoundException e) {
+//             System.out.println(e.getMessage());
+//        } catch (SQLException e) {
+//            System.out.println(e.getMessage());
+//        } finally {
+//            try {
+//               fis.close();
+//             } catch (IOException e) {
+//               System.out.println(e.getMessage());
+//             }
+//        }
+//        return false;
+//   }
+	
+	
+	
+	
+	
 	@Override
 	public EntityResult pictureQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
@@ -43,24 +94,26 @@ public class PictureService implements IPictureService {
 
 	@Override
 	public EntityResult pictureInsert(Map<String, Object> data) throws OntimizeJEERuntimeException {
-		EntityResult resultado=new EntityResultWrong();
-		
-		FileInputStream fis;
-		int longitudBytes;
-		String fileName=(String)data.get(pictureDao.ATTR_FILE);
+		EntityResult resultado = new EntityResultWrong();
+
+		BufferedInputStream bin=null;
+		BufferedOutputStream bout=null;
+		Path p = Paths.get((String) data.get(pictureDao.ATTR_FILE));
+		System.out.println(p.toAbsolutePath().toString());
 		try {
-			fis=new FileInputStream(fileName);
-		} catch (FileNotFoundException e) {
 			
+			bin=new BufferedInputStream(new FileInputStream(p.toString()));
+			bin.read();
+			bin.transferTo(bout);
+			bin.close();
+		} catch (IOException e) {
+
 			e.printStackTrace();
 		}
-		
-		
-		
-		System.out.println(pictureDao);
-		resultado=daoHelper.insert(pictureDao, data);
-		
-		
+		data.put(pictureDao.ATTR_FILE, bout);
+		System.out.println(bout);
+		resultado = daoHelper.insert(pictureDao, data);
+
 		return resultado;
 	}
 
