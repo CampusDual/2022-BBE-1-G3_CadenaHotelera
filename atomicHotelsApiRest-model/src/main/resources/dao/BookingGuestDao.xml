@@ -10,14 +10,26 @@ catalog="" schema="${mainschema}" table="bookings_guests" datasource="mainDataSo
 	</UpdateKeys>
 	<GeneratedKey>bgs_id</GeneratedKey>	
 	<Queries>
+	<Query id="default">
+			<Sentence>
+				<![CDATA[
+				    SELECT
+				     	#COLUMNS#
+				    FROM
+				     	bookings_guests				   	
+				   	LEFT JOIN bookings ON bgs_bkg_id = bkg_id
+				   	LEFT JOIN rooms ON rm_id = bkg_rm_id				   						  
+				    #WHERE#				    
+			    ]]>
+			</Sentence>
+		</Query>		
 		<Query id="queryGuestCount">
 			<Sentence>
 				<![CDATA[
 				  SELECT 
 				  COUNT(bgs_cst_id) AS total_guests
-				  FROM bookings_guests 
+				  FROM bookings_guests
 				  #WHERE#
-				  GROUP BY bgs_bkg_id		    
 			    ]]>
 			</Sentence>
 		</Query>
@@ -25,10 +37,12 @@ catalog="" schema="${mainschema}" table="bookings_guests" datasource="mainDataSo
 			<Sentence>
 				<![CDATA[
 				    SELECT
-				      cst_name, cst_surname, cst_identity_document
+				      cst_name, cst_surname, cst_identity_document, rm_htl_id
 				    FROM
 				    bookings_guests
-				    LEFT JOIN customers ON cst_id = bgs_cst_id 				    					    		
+				    LEFT JOIN customers ON cst_id = bgs_cst_id
+				    LEFT JOIN bookings ON bgs_bkg_id = bkg_id
+				   	LEFT JOIN rooms ON rm_id = bkg_rm_id			    					    		
 				    #WHERE#			   
 			    ]]>
 			</Sentence>

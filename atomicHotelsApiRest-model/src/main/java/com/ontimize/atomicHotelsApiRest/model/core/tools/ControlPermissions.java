@@ -63,16 +63,16 @@ public class ControlPermissions {
 					case UserRoleDao.ROLE_MANAGER:
 					case UserRoleDao.ROLE_STAFF:
 						if (ui.getOtherData().get(UserDao.ATTR_HTL) == null) {
-							throw new InvalidFieldsValuesException("Configuración del usuario Incompleta");
+							throw new InvalidFieldsValuesException(ErrorMessage.INCOMPLETE_USER_DATA);
 						}
 						if (htl_colum == null) {
-							throw new LiadaPardaException("Columna Hotel Id requerida y no especificada.");
+							throw new LiadaPardaException(ErrorMessage.REQUIRED_HTL_ID);
 						}
 						if (!keyMap.containsKey(htl_colum)) { //si no contiene la id del htl la añadimos como filtro
 							keyMap.put(htl_colum, ui.getOtherData().get(UserDao.ATTR_HTL));
 						} else {//si ya tiene la id comprobamos que sea la adecuada
 							if(!keyMap.get(htl_colum).equals(ui.getOtherData().get(UserDao.ATTR_HTL)) ) {
-								
+								throw new InvalidFieldsValuesException(ErrorMessage.WRONG_HTL_ID);
 							}
 						}
 						break;
@@ -85,7 +85,7 @@ public class ControlPermissions {
 						// restricciones a nivel de permisos en metodo
 						break;
 					default:
-						throw new LiadaPardaException("Rol desconocido");
+						throw new LiadaPardaException(ErrorMessage.UNKNOW_ROL);
 					}
 				}
 			}

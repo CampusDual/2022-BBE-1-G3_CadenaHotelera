@@ -32,7 +32,14 @@ public class ErrorMessage {
 	public static final String BOOKED_ROOM = "La habitación está reservada dentro de ese rango de fechas";
 	
 	 
-//ERRORES VARIOS	 
+//ERRORES PERMISOS
+	public static final String REQUIRED_HTL_ID = "Columna Hotel Id requerida y no especificada.";	 
+	public static final String WRONG_HTL_ID = "No tiene permisos para esa referencia de hotel";	 
+	public static final String INCOMPLETE_USER_DATA= "Configuración del usuario Incompleta";	 
+	public static final String UNKNOW_ROL = "Rol desconocido";	 
+	
+//ERRORES VARIOS
+	
 	public static final String DATA_RANGE_REVERSE = "La fecha de inicio no puede ser posterior a la fecha de fin";	 
 	public static final String DATA_START_BEFORE_TODAY = "La fecha de inicio no puede ser anterior a hoy";
 	public static final String DATA_EXPIRY_BEFORE_TODAY = "Error de fecha o la fecha de validez no puede ser anterior a hoy ";

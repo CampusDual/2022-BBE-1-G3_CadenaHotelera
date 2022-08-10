@@ -168,7 +168,8 @@ public class BookingService implements IBookingService {
 			cf.setOptional(false);
 			cf.addCPUser(true);
 			cf.validate(attrMap);
-			System.err.println(attrMap);
+//			System.err.println(attrMap);
+			
 			// comprobar que habitación existe y es del hotel adecuado
 			Map<String, Object> subConsultaKeyMap = new HashMap<>() {
 				{

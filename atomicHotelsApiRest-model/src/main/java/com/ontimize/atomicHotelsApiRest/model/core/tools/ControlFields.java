@@ -52,7 +52,7 @@ public class ControlFields {
 
 	@Autowired
 	ControlPermissions permissions;
-	
+
 	public ControlFields() {
 //		reset();
 	}
@@ -66,17 +66,17 @@ public class ControlFields {
 		noWildcard = true;
 		noColumns = false;
 		allowBasicExpression = true;
-		
-		//permisos
+
+		// permisos
 		permissions.reset();
-		controlPermissionsActive= true;
+		controlPermissionsActive = true;
 
 	}
 
 	public void setAllowBasicExpression(boolean allowBasicExpression) {
 		this.allowBasicExpression = allowBasicExpression;
 	}
-	
+
 	public void setControlPermissionsActive(boolean controlPermissionsActive) {
 		this.controlPermissionsActive = controlPermissionsActive;
 	}
@@ -84,18 +84,18 @@ public class ControlFields {
 	public void setCPHtlColum(String columna) {
 		permissions.setHtlColum(columna);
 	}
-	
+
 	public void setCPRoleUsersRestrictions(String... roleUsersRestrictions) {
 		permissions.setRoleUsersRestrictions(roleUsersRestrictions);
 	}
-	
+
 	public void addBasics(Map<String, type> fields) {
 		this.fields.putAll(fields);
 	}
-	
-	public void addBasics(Map<String, type> ...arrayfields) {
-		for(Map<String, type> fields: arrayfields) {
-			this.fields.putAll(fields);		
+
+	public void addBasics(Map<String, type>... arrayfields) {
+		for (Map<String, type> fields : arrayfields) {
+			this.fields.putAll(fields);
 		}
 	}
 
@@ -144,7 +144,6 @@ public class ControlFields {
 			throw new MissingFieldsException(ErrorMessage.NO_NULL_DATA);
 		}
 
-
 		// no podemos hacer este metodo, porque
 //		if( !allowBasicExpression && keyMap.containsKey(SQLStatementBuilder.ExtendedSQLConditionValuesProcessor.EXPRESSION_KEY)) {		
 //			throw new InvalidFieldsException(ErrorMessage.NO_BASIC_EXPRESSION);
@@ -174,14 +173,10 @@ public class ControlFields {
 			}
 		}
 
-		//permisos
-		if(controlPermissionsActive) {			
-			permissions.restrict(keyMap);		
-		}
 //validar typos y valores
 		for (String key : keyMap.keySet()) {
 			boolean validType = false;
- 
+
 			if (fields.containsKey(key)) {// valida que exista en los fields
 				if (keyMap.get(key) == null) {
 					throw new MissingFieldsException(ErrorMessage.NO_NULL_VALUE + key);
@@ -271,15 +266,12 @@ public class ControlFields {
 					break;
 				case DNI:
 					if ((keyMap.get(key) instanceof String)) {
-						vF.isDNI((String)keyMap.get(key));
-						keyMap.replace(key,((String)keyMap.get(key)).toUpperCase());
+						vF.isDNI((String) keyMap.get(key));
+						keyMap.replace(key, ((String) keyMap.get(key)).toUpperCase());
 						validType = true;
 					}
-					break;	
-					
-					
-					
-					
+					break;
+
 				case INTEGER_UNSIGNED:
 					if ((keyMap.get(key) instanceof Integer)) {
 						vF.NegativeNotAllowed((Integer) keyMap.get(key));
@@ -335,12 +327,17 @@ public class ControlFields {
 				// PHONE, DATE, DATETIME, ACTION, BOOLEAN, COUNTRY
 
 			} else {
-				if (allowBasicExpression && key == SQLStatementBuilder.ExtendedSQLConditionValuesProcessor.EXPRESSION_KEY) {
-					//TODO comprobamos contenido de basic expresion....
-				}else {								
+				if (allowBasicExpression
+						&& key.equals(SQLStatementBuilder.ExtendedSQLConditionValuesProcessor.EXPRESSION_KEY)) {
+					// TODO comprobamos contenido de basic expresion....
+				} else {
 					throw new InvalidFieldsException(ErrorMessage.INVALID_FIELD + key);
 				}
 			}
+		}
+		// permisos
+		if (controlPermissionsActive) {
+			permissions.restrict(keyMap);
 		}
 	}
 
@@ -413,7 +410,7 @@ public class ControlFields {
 	}
 
 	public void addCPUser(boolean b) {
-		permissions.addUser(b);		
+		permissions.addUser(b);
 	}
 
 //	public static void set(Map<String, Object> keyMap, String... fields) throws MissingFieldsException {

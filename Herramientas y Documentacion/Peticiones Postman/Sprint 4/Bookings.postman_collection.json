@@ -1,0 +1,623 @@
+{
+	"info": {
+		"_postman_id": "c73477ac-82d8-4f6b-b984-c106515daa07",
+		"name": "Bookings",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "-C booking",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "turisticas",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"data\": {        \r\n        \"bkg_cst_id\": 2,\r\n        \"bkg_rm_id\":9,        \r\n        \"bkg_start\": \"2022-08-12\",\r\n        \"bkg_end\": \"2023-01-19\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookings/booking",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookings",
+						"booking"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R booking",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "turisticas",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"bkg_id\": 3\r\n    },\r\n    \"columns\": \r\n        [\"bkg_id\",\r\n        \"bkg_cst_id\",\r\n        \"bkg_rm_id\",\r\n        \"bkg_observations\",\r\n        \"bkg_start\",\r\n        \"bkg_end\",\r\n        \"bkg_checkin\",\r\n        \"bkg_checkout\",\r\n        \"bkg_canceled\",\r\n        \"bkg_created\"]    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookings/booking/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookings",
+						"booking",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R booking_now_by_room_number",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"bkg_rm_id\": 18\r\n    },\r\n    \"columns\": \r\n        [\"bkg_id\",\r\n        \"rm_htl_id\",\r\n        \"rm_number\",\r\n        \"rm_rmt_id\",\r\n        \"bkg_cst_id\",\r\n        \"bkg_rm_id\",\r\n        \"bkg_observations\",\r\n        \"bkg_start\",\r\n        \"bkg_end\",\r\n        \"bkg_checkin\",\r\n        \"bkg_checkout\",\r\n        \"bkg_created\", \r\n        \"rm_status\"]    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookings/booking_now_by_room_number/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookings",
+						"booking_now_by_room_number",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R all  booking",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "personalAtom01",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \"columns\": \r\n        [\"bkg_id\",\r\n        \"bkg_cst_id\",\r\n        \"bkg_rm_id\",\r\n        \"bkg_observations\",\r\n        \"bkg_start\",\r\n        \"bkg_end\",\r\n        \"bkg_checkin\",\r\n        \"bkg_checkout\",\r\n        \"bkg_canceled\",\r\n        \"bkg_created\",        \r\n        \"user_\"] \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookings/booking/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookings",
+						"booking",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-U bookingAction CHECKIN",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"bkg_id\": 1\r\n    },\r\n    \"data\": {\r\n        \"action\": \"CHECKIN\"\r\n    }    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookings/bookingAction",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookings",
+						"bookingAction"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-U bookingAction CHECKOUT",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"bkg_id\": 4\r\n    },\r\n    \"data\": {\r\n        \"action\": \"CHECKOUT\"\r\n    }    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookings/bookingAction",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookings",
+						"bookingAction"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-U bookingAction CANCEL",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"bkg_id\": 1\r\n    },\r\n    \"data\": {\r\n        \"action\": \"CANCEL\"\r\n    }    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookings/bookingAction",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookings",
+						"bookingAction"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-D booking",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"bkg_id\": 3\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookings/booking",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookings",
+						"booking"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R info all  booking",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "turisticas",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"columns\": \r\n        [\"bkg_id\",\r\n        \"bkg_cst_id\",\r\n        \"bkg_rm_id\",\r\n        \"bkg_observations\",\r\n        \"bkg_start\",\r\n        \"bkg_end\",\r\n        \"bkg_checkin\",\r\n        \"bkg_checkout\",\r\n        \"bkg_canceled\",\r\n        \"bkg_created\",\r\n        \"cst_name\",\r\n        \"cst_surname\",\r\n        \"cst_email\",\r\n        \"cst_phone\",\r\n        \"rm_number\",        \r\n        \"htl_id\",\r\n        \"htl_name\",\r\n        \"rmt_name\",\r\n        \"user_\"\r\n        ]    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookings/bookingInfo/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookings",
+						"bookingInfo",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R info all  booking Copy",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "turisticas",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"columns\": \r\n        [\"bkg_id\",\r\n        \"bkg_cst_id\",\r\n        \"bkg_rm_id\",\r\n        \"bkg_observations\",\r\n        \"bkg_start\",\r\n        \"bkg_end\",\r\n        \"bkg_checkin\",\r\n        \"bkg_checkout\",\r\n        \"bkg_canceled\",\r\n        \"bkg_created\",\r\n        \"cst_name\",\r\n        \"cst_surname\",\r\n        \"cst_email\",\r\n        \"cst_phone\",\r\n        \"rm_number\",        \r\n        \"htl_id\",\r\n        \"htl_name\",\r\n        \"rmt_name\",\r\n        \"user_\"\r\n        ]    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookings/bookingInfo/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookings",
+						"bookingInfo",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R bookingsInRange",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"bkg_start\": \"2022-01-05\",\r\n        \"bkg_rm_id\":3,        \r\n        \"bkg_end\": \"2025-01-20\"\r\n        \r\n    },\r\n    \"columns\": \r\n        [\"bkg_id\",\r\n        \"bkg_rm_id\",\r\n        \"bkg_cst_id\",        \r\n        \"bkg_observations\",\r\n        \"bkg_start\",\r\n        \"bkg_end\",\r\n        \"bkg_checkin\",\r\n        \"bkg_checkout\",\r\n        \"bkg_canceled\",\r\n        \"rm_id\",\r\n        \"rm_htl_id\",\r\n        \"rm_rmt_id\"]\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookings/bookingsInRange/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookings",
+						"bookingsInRange",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R  2bookingsInRange",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"bkg_start\": \"2022-01-05\",\r\n        \"bkg_end\": \"2023-01-20\"\r\n    },\r\n    \"columns\": \r\n        [\"bkg_id\",\"bkg_rm_id\",\"bkg_canceled\"]\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookings/bookingsInRange/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookings",
+						"bookingsInRange",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "R - completeBooking",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"filter\":{\r\n    \"bkg_id\":6\r\n},\r\n\"columns\":[\"\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookings/bookingCompleteInfo/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookings",
+						"bookingCompleteInfo",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R bookingsInRangeINFO",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "turisticas",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"bkg_start\": \"2022-01-05\",\r\n        \"bkg_end\": \"2025-01-20\"\r\n        \r\n    },\r\n    \"columns\": \r\n        [\"bkg_id\", \r\n        \"user_\",       \r\n        \"cst_name\",        \r\n        \"htl_name\",\r\n        \"bkg_start\",\r\n        \"bkg_end\",\r\n        \"bkg_canceled\",\r\n        \"rm_id\",\r\n        \"rm_htl_id\",\r\n        \"rm_rmt_id\"]\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookings/bookingsInRangeInfo/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookings",
+						"bookingsInRangeInfo",
+						"search"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "demouser",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "demo",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

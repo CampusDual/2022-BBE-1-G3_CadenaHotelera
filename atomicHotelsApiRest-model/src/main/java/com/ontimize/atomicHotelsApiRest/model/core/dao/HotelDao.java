@@ -37,6 +37,9 @@ public class HotelDao extends OntimizeJdbcDaoSupport {
 	public static final String ATTR_LON = TAG + "lon";
 	public static final String ATTR_FROM = "from";
 	public static final String ATTR_TO = "to";
+	public static final String ATTR_CAPACITY_IN_DATE_RANGE="capacity_in_date_range";
+	public static final String ATTR_OCCUPANCY_IN_DATE_RANGE = "occupancy_in_date_range";
+	public static final String ATTR_OCCUPANCY_PERCENTAGE_IN_DATE_RANGE="occupancy_percentage_in_date_range";
 	
 	public static final Map<String,type> fields = new HashMap<>() {{
 		put(ATTR_ID,type.INTEGER);
