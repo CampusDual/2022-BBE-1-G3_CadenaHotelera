@@ -57,5 +57,48 @@ catalog="" schema="${mainschema}" table="hotels" datasource="mainDataSource" sql
     ]]>
     </Sentence>
     </Query>
+          <Query id="queryCapacityInRange">
+  <Sentence>
+  <![CDATA[
+  	SELECT htl_id, htl_name, htl_city, sum(aux2.capacity) AS capacity_in_date_range
+			FROM (
+				SELECT htl_id, htl_name, htl_city, aux.capacity, days.fecha,(case when (select count(*) from bookings where bkg_rm_id = aux.rm_id and bkg_canceled is null and days.fecha>= DATE(bkg_start) and days.fecha<=DATE(bkg_end)  )= 0 then 'N' else 'S' end) as ocupada
+				FROM hotels LEFT JOIN 
+							(SELECT rm_htl_id, rm_id, sum(bdc_slots) AS capacity
+    							FROM rooms
+								LEFT JOIN room_types rmt ON rmt_id = rm_rmt_id
+								LEFT JOIN beds_combo ON bdc_id = rmt_bdc_id
+								GROUP BY rm_id
+								ORDER BY rm_id) AS aux ON aux.rm_htl_id = htl_id,
+				(select fecha from #GEN_SERIES# fecha) days
+				) AS aux2
+		GROUP BY htl_id, htl_name,htl_city
+		ORDER BY htl_id 
+    ]]>
+    </Sentence>
+    </Query>
+       <Query id="queryOccupancyByNationality">
+  <Sentence>
+  <![CDATA[
+  	SELECT cst_cnt_iso, SUM(aux2.capacity) AS occupancy_in_date_range
+	FROM 
+		(SELECT cst_cnt_iso, bkg_id, days.fecha, aux.capacity, (case when (bkg_canceled is null and days.fecha>= DATE(bkg_start) and days.fecha<=DATE(bkg_end))=false then 'N' else 'S' end) as ocupada
+		FROM bookings 
+		JOIN customers ON bkg_cst_id = cst_id 
+		LEFT JOIN 
+			(SELECT rm_htl_id, rm_id, sum(bdc_slots) AS capacity
+    		FROM rooms
+			LEFT JOIN room_types rmt ON rmt_id = rm_rmt_id
+			LEFT JOIN beds_combo ON bdc_id = rmt_bdc_id
+			#WHERE#
+			GROUP BY rm_id
+			ORDER BY rm_id) AS aux ON aux.rm_id = bkg_rm_id,
+		(select fecha::date from #GEN_SERIES# fecha) days
+		ORDER BY bkg_id,cst_cnt_iso) AS aux2
+	WHERE aux2.ocupada = 'S'
+	GROUP BY cst_cnt_iso
+    ]]>
+    </Sentence>
+    </Query>
  </Queries>
 </JdbcEntitySetup>
