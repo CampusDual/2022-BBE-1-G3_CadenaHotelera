@@ -32,7 +32,7 @@ catalog="" schema="${mainschema}" table="bookings" datasource="mainDataSource" s
 				   	LEFT JOIN customers ON cst_id = bkg_cst_id
 				   	LEFT JOIN rooms ON rm_id = bkg_rm_id
 				   	LEFT JOIN room_types ON rmt_id = rm_rmt_id		
-				   	LEFT JOIN hotels ON htl_id = rm_id    				    					    		
+				   	LEFT JOIN hotels ON htl_id = rm_htl_id    				    					    		
 				    #WHERE#				    
 			    ]]>
 			</Sentence>

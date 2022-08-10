@@ -28,6 +28,8 @@ public class ErrorMessage {
 	public static final String SUBQUERY_ERROR = "Error de subconsulta  ";	 
 	public static final String RESULT_REQUIRED = "Datos requeridos no encontrados";
 	public static final String INVALID_FILTER_FIELD_ID = "Identificador utilizado en el filtro no existe";
+	public static final String INVALID_ROOM_ID = "La habitación no existe.";
+	public static final String BOOKED_ROOM = "La habitación está reservada dentro de ese rango de fechas";
 	
 	 
 //ERRORES VARIOS	 

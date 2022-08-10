@@ -25,6 +25,7 @@ public class BookingDao extends OntimizeJdbcDaoSupport {
 	public static final String ATTR_CREATED= TAG +"created";
 	public static final String ATTR_CUSTOMER_ID = TAG +"cst_id";
 	public static final String ATTR_ROOM_ID = TAG +"rm_id";
+	public static final String ATTR_USER = "user_";
 	public static final String NON_ATTR_ACTION = "action";
 	public enum Status{CONFIRMED,IN_PROGRESS,COMPLETED,CANCELED}
 	public enum Action{CHECKIN,CHECKOUT,CANCEL}
@@ -41,6 +42,7 @@ public class BookingDao extends OntimizeJdbcDaoSupport {
 		put(ATTR_CREATED,type.DATETIME);	
 		put(ATTR_CUSTOMER_ID,type.INTEGER);	
 		put(ATTR_ROOM_ID,type.INTEGER);
+		put(ATTR_USER,type.STRING);
 		put(NON_ATTR_ACTION,type.BOOKING_ACTION);
 	}};
 

@@ -1,5 +1,6 @@
 package com.ontimize.atomicHotelsApiRest.model.core.tools;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +42,7 @@ public class ControlFields {
 	private boolean noWildcard;
 	private boolean noColumns;
 	private boolean allowBasicExpression;
+	private boolean controlPermissionsActive;
 
 	@Autowired
 	ICountryService countryService;
@@ -48,8 +50,11 @@ public class ControlFields {
 	@Autowired
 	ValidateFields vF;
 
+	@Autowired
+	ControlPermissions permissions;
+	
 	public ControlFields() {
-		reset();
+//		reset();
 	}
 
 	public void reset() {
@@ -61,14 +66,37 @@ public class ControlFields {
 		noWildcard = true;
 		noColumns = false;
 		allowBasicExpression = true;
+		
+		//permisos
+		permissions.reset();
+		controlPermissionsActive= true;
+
 	}
 
 	public void setAllowBasicExpression(boolean allowBasicExpression) {
 		this.allowBasicExpression = allowBasicExpression;
 	}
+	
+	public void setControlPermissionsActive(boolean controlPermissionsActive) {
+		this.controlPermissionsActive = controlPermissionsActive;
+	}
 
+	public void setCPHtlColum(String columna) {
+		permissions.setHtlColum(columna);
+	}
+	
+	public void setCPRoleUsersRestrictions(String... roleUsersRestrictions) {
+		permissions.setRoleUsersRestrictions(roleUsersRestrictions);
+	}
+	
 	public void addBasics(Map<String, type> fields) {
 		this.fields.putAll(fields);
+	}
+	
+	public void addBasics(Map<String, type> ...arrayfields) {
+		for(Map<String, type> fields: arrayfields) {
+			this.fields.putAll(fields);		
+		}
 	}
 
 	public void setRequired(List<String> requiredFields) {
@@ -116,6 +144,7 @@ public class ControlFields {
 			throw new MissingFieldsException(ErrorMessage.NO_NULL_DATA);
 		}
 
+
 		// no podemos hacer este metodo, porque
 //		if( !allowBasicExpression && keyMap.containsKey(SQLStatementBuilder.ExtendedSQLConditionValuesProcessor.EXPRESSION_KEY)) {		
 //			throw new InvalidFieldsException(ErrorMessage.NO_BASIC_EXPRESSION);
@@ -145,6 +174,10 @@ public class ControlFields {
 			}
 		}
 
+		//permisos
+		if(controlPermissionsActive) {			
+			permissions.restrict(keyMap);		
+		}
 //validar typos y valores
 		for (String key : keyMap.keySet()) {
 			boolean validType = false;
@@ -377,6 +410,10 @@ public class ControlFields {
 				columns.add("null"); // para saltarse los filtros de ontimize
 			}
 		}
+	}
+
+	public void addCPUser(boolean b) {
+		permissions.addUser(b);		
 	}
 
 //	public static void set(Map<String, Object> keyMap, String... fields) throws MissingFieldsException {
