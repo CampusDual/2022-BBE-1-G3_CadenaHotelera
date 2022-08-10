@@ -1,0 +1,550 @@
+{
+	"info": {
+		"_postman_id": "de9b55d0-8789-4826-ac1f-a3cf7ef6fab3",
+		"name": "Rooms",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "-C room",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "gerenteAtom01",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n    \"data\": {\r\n        \"rm_htl_id\": 2,\r\n        \"rm_number\": 907,\r\n        \"rm_square_meters\":10,\r\n        \"rm_rmt_id\":5,\r\n        \"rm_status\":0\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/rooms/room",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"rooms",
+						"room"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R all rooms",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/rooms/room?columns=rm_htl_id,rm_number,rm_square_meters,rm_rmt_id,rm_status",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"rooms",
+						"room"
+					],
+					"query": [
+						{
+							"key": "columns",
+							"value": "rm_htl_id,rm_number,rm_square_meters,rm_rmt_id,rm_status"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R all rooms",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "personalAtom01",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"columns\": [\"rm_htl_id\",\"rm_number\",\"rm_square_meters\",\"rm_rmt_id\",\"rm_status\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/rooms/room/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"rooms",
+						"room",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R rooms by hotel",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "personalAtom01",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"rm_htl_id\": 1\r\n    },\r\n    \"columns\": [\"rm_htl_id\",\"rm_number\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/rooms/room/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"rooms",
+						"room",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R info rooms by hotel",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"rm_htl_id\":1\r\n    },\r\n    \"columns\": [\"rm_id\",\"rm_htl_id\",\"rm_number\",\"rm_square_meters\",\"rm_rmt_id\",\"rm_status\", \"rm_htl_id\",\"rm_number\",\"rm_square_meters\",\"rm_rmt_id\",\"rm_status\",\"rmt_id\",\"rmt_name\",\"rmt_description\",\"rmt_price\",\"rmt_bdc_id\",\"htl_name\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/rooms/roomInfo/search",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"rooms",
+						"roomInfo",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "- R all info room",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"columns\": [\"rm_id\",\"rm_htl_id\",\"rm_number\",\"rm_square_meters\",\"rm_rmt_id\",\"rm_status\", \"rm_htl_id\",\"rm_number\",\"rm_square_meters\",\"rm_rmt_id\",\"rm_status\",\"rmt_id\",\"rmt_name\",\"rmt_description\",\"rmt_price\",\"rmt_bdc_id\",\"htl_name\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/rooms/roomInfo/search",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"rooms",
+						"roomInfo",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "- R rooms features by hotel",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"htl_id\": 1\r\n    },\r\n    \"columns\": [\"htl_id\",\"htl_name\",\"htl_city\",\"htl_postal_code\",\"htl_state\",\"htl_country\",\"htl_phone\",\"htl_email\", \"htl_description\",\"htl_is_open\", \"rm_id\", \"rm_number\", \"rm_square_meters\", \"rm_status\", \"rmt_name\", \"rmt_description\", \"rmt_price\", \"ftr_id\", \"ftr_description\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/rooms/queryHotelFeaturesTypes/info",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"rooms",
+						"queryHotelFeaturesTypes",
+						"info"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R roomsUnbookedgInRange",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"bkg_start\": \"2022-08-05\",\r\n        \"bkg_end\": \"2023-01-20\"\r\n    },\r\n   \"columns\": [\"rm_id\",\"rm_htl_id\",\"rm_number\",\"rm_square_meters\",\"rm_rmt_id\",\"rm_status\", \"rm_htl_id\",\"rm_number\",\"rm_square_meters\",\"rm_rmt_id\",\"rm_status\",\"rmt_id\",\"rmt_name\",\"rmt_description\",\"rmt_price\",\"rmt_bdc_id\",\"htl_name\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/rooms/roomsUnbookedInRange/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"rooms",
+						"roomsUnbookedInRange",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R 2roomsUnbookedgInRange Copy",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"bkg_start\": \"2022-08-05\",\r\n        \"bkg_end\": \"2023-01-20\"\r\n    },\r\n  \"columns\": [\"rm_id\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/rooms/roomsUnbookedInRange/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"rooms",
+						"roomsUnbookedInRange",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R 3roomsUnbookedgInRange Copy",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"bkg_start\": \"2022-08-05\",\r\n        \"bkg_end\": \"2023-01-20\",\r\n        \"htl_id\": 3\r\n    },\r\n   \"columns\": [\"rm_id\",\"rm_htl_id\",\"rm_number\",\"rm_square_meters\",\"rm_rmt_id\",\"rm_status\", \"rm_htl_id\",\"rm_number\",\"rm_square_meters\",\"rm_rmt_id\",\"rm_status\",\"rmt_id\",\"rmt_name\",\"rmt_description\",\"rmt_price\",\"rmt_bdc_id\",\"htl_name\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/rooms/roomsUnbookedInRange/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"rooms",
+						"roomsUnbookedInRange",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "- U room",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"rm_htl_id\": 1,\r\n     \"rm_number\":102\r\n    },\r\n    \"data\": {\r\n         \"rm_number\": 103,\r\n         \"rm_rmt_id\":6,\r\n        \"rm_status\": 0\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/rooms/room",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"rooms",
+						"room"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-D room",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "gerenteAtom01",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {     \r\n     \"rm_id\": 24\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/rooms/room",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"rooms",
+						"room"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

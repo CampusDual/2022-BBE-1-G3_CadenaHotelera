@@ -168,10 +168,12 @@ ALTER TABLE public.tuser ADD FOREIGN KEY(htl_restriction) REFERENCES hotels(htl_
 
 
 	INSERT INTO tuser (user_ ,"password","name",surname) VALUES ('atom','123456','Mr Atom','Rodriguez');
-	INSERT INTO tuser (user_ ,"password","name",surname) VALUES ('gerenteAtom01','123456','Gerente del Hotel Atom 1','');
-	INSERT INTO tuser (user_ ,"password","name",surname) VALUES ('personalAtom01 ','123456','Personal de recepción de atom 01','');
-	INSERT INTO tuser (user_ ,"password","name",surname) VALUES ('turisticas','123456','Reservas turisticas europeas sl.','');
-	INSERT INTO tuser (user_ ,"password","name",surname) VALUES ('usuarioLibre','123456','usuario basico ','');
+	INSERT INTO tuser (user_ ,"password","name",htl_restriction) VALUES ('gerenteAtom01','123456','Gerente del Hotel Atom 1',1);
+	INSERT INTO tuser (user_ ,"password","name",htl_restriction) VALUES ('gerenteAtom02','123456','Gerente del Hotel Atom 1',2);
+	INSERT INTO tuser (user_ ,"password","name",htl_restriction) VALUES ('personalAtom01','123456','Personal de recepción de atom 01',1);
+	INSERT INTO tuser (user_ ,"password","name",htl_restriction) VALUES ('personalAtom02','123456','Personal de recepción de atom 02',2);
+	INSERT INTO tuser (user_ ,"password","name") VALUES ('turisticas','123456','Reservas turisticas europeas sl.');
+	INSERT INTO tuser (user_ ,"password","name") VALUES ('usuarioLibre','123456','usuario basico ');
 	
 
 --ROLES/PERMISOS
@@ -194,7 +196,7 @@ TRUNCATE TABLE trole_server_permission;
 	--customer 4	
 		INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 4,id_server_permission FROM tserver_permission WHERE id_server_permission >= 1 AND id_server_permission <= 85	;	
 		DELETE FROM trole_server_permission 
-			WHERE ( id_server_permission in(1,2,3,4,6,7,8,16,17,28,29,42,45,49,50,51,53,54,55,57,58,59,60,61,62,63,65,66,67,73,74,76,77,78,82,83,84) 
+			WHERE ( id_server_permission in(1,2,3,4,6,7,8,9,10,11,12,13,16,17,28,29,42,45,49,50,51,53,54,55,57,58,59,60,61,62,63,65,66,67,73,74,76,77,78,82,83,84) 
 			) AND ID_ROLENAME = 4;
 	
 	--user 5 - información pública
@@ -215,8 +217,10 @@ TRUNCATE TABLE trole_server_permission;
 	INSERT INTO tuser_role (id_rolename,user_) VALUES (1,'atom');
 	--hotelManager 2
 	INSERT INTO tuser_role (id_rolename,user_) VALUES (2,'gerenteAtom01');
+	INSERT INTO tuser_role (id_rolename,user_) VALUES (2,'gerenteAtom02');
 	--staff 3
 	INSERT INTO tuser_role (id_rolename,user_) VALUES (3,'personalAtom01');
+	INSERT INTO tuser_role (id_rolename,user_) VALUES (3,'personalAtom02');
 	--customer 4
 	INSERT INTO tuser_role (id_rolename,user_) VALUES (4,'turisticas');
 	--user 5

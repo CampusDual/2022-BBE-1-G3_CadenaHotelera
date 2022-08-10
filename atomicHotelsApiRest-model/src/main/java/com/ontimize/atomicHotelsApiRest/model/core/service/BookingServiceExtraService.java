@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.EntityResultRequiredException;
@@ -29,6 +30,7 @@ import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
+import com.ontimize.jee.common.security.PermissionsProviderSecured;
 import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 
@@ -51,6 +53,8 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 	@Autowired
 	ControlFields cf;
 
+	@Override
+//	@Secured({ PermissionsProviderSecured.SECURED }) TODO
 	public EntityResult bookingServiceExtraQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
@@ -175,7 +179,6 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 	 * eliminarlo, si no esta o esta eliminado se muestra mensaje de servicio
 	 */
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public EntityResult bookingServiceExtraDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 

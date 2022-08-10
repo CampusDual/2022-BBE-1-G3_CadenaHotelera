@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.EntityResultRequiredException;
@@ -20,11 +21,14 @@ import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingGuestDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.ReceiptDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.UserRoleDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
+import com.ontimize.jee.common.security.PermissionsProviderSecured;
 import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 
@@ -47,11 +51,16 @@ public class BookingGuestService implements IBookingGuestService {
 	ControlFields cf;
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult bookingGuestQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 		try {
 			cf.reset();
+			
+			cf.setCPHtlColum(RoomDao.ATTR_HOTEL_ID);
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
+
 			cf.addBasics(BookingGuestDao.fields);
 			cf.validate(keyMap);
 			cf.validate(attrList);
@@ -78,7 +87,6 @@ public class BookingGuestService implements IBookingGuestService {
 	 * @throws OntimizeJEERuntimeException 
 	 * @return EntityResult (BookingGuestDao.ATTR_TOTAL_GUESTS)
 	 */
-	@Override
 	public EntityResult guestCountQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
@@ -118,6 +126,7 @@ public class BookingGuestService implements IBookingGuestService {
 	 * @return EntityResult (CustomerDao.ATTR_NAME,CustomerDao.ATTR_SURNAME, CustomerDao.ATTR_IDEN_DOC)
 	 */
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult bookingGuestsInfoQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException{
 		EntityResult resultado = new EntityResultWrong();
 		try {
@@ -125,6 +134,10 @@ public class BookingGuestService implements IBookingGuestService {
 			List<String> required = Arrays.asList(BookingGuestDao.ATTR_BKG_ID);
 
 			cf.reset();
+
+			cf.setCPHtlColum(RoomDao.ATTR_HOTEL_ID);
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
+
 			cf.addBasics(BookingGuestDao.fields);
 			cf.addBasics(CustomerDao.fields);
 			cf.setRequired(required);
@@ -148,6 +161,7 @@ public class BookingGuestService implements IBookingGuestService {
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult bookingGuestInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 		try {
@@ -163,7 +177,18 @@ public class BookingGuestService implements IBookingGuestService {
 
 			// Para que una reserva admita un nuevo huesped, esta tiene que estar en estado
 			// 'CONFIRMED'
-			if (bookingService.getBookingStatus(attrMap.get(BookingGuestDao.ATTR_BKG_ID))
+			Map<String, Object> consultaBooking = new HashMap<String, Object>() {
+				{
+					put(BookingDao.ATTR_ID, attrMap.get(BookingGuestDao.ATTR_BKG_ID));
+				}
+			};
+			cf.reset();
+			cf.setCPHtlColum(RoomDao.ATTR_HOTEL_ID);// hacer join en default
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
+			cf.addBasics(BookingDao.fields);
+			cf.validate(consultaBooking);
+			
+			if (bookingService.getBookingStatus(consultaBooking)
 					.equals(BookingDao.Status.CONFIRMED)) {
 
 				Map<String, Object> customerId = new HashMap<String, Object>() {
@@ -258,6 +283,7 @@ public class BookingGuestService implements IBookingGuestService {
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult bookingGuestDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 		try {

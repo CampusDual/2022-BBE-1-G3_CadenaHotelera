@@ -143,7 +143,7 @@ public class RoomService implements IRoomService {
 
 			cf.setCPHtlColum(RoomDao.ATTR_HOTEL_ID);
 			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER);
-
+			
 			cf.addBasics(RoomDao.fields);
 			cf.setRequired(required);
 			cf.setRestricted(restricted);
@@ -164,7 +164,8 @@ public class RoomService implements IRoomService {
 		return resultado;
 	}
 
-	@Override // data //filter
+	@Override 
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult roomUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
 
@@ -232,6 +233,7 @@ public class RoomService implements IRoomService {
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult roomDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 
 		EntityResult resultado = new EntityResultWrong();
@@ -253,7 +255,7 @@ public class RoomService implements IRoomService {
 				}
 			};
 
-			EntityResult auxEntity = roomQuery(consultaKeyMap, EntityResultTools.attributes(RoomDao.ATTR_ID));
+			EntityResult auxEntity = roomQuery(consultaKeyMap, EntityResultTools.attributes(RoomDao.ATTR_ID)); //aquí se controlan las restricciones
 
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
 				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
@@ -273,7 +275,7 @@ public class RoomService implements IRoomService {
 		return resultado;
 	}
 
-	@Override
+	@Override //TODO PERMISOS
 	public EntityResult roomsUnbookedInRangeQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		try {
@@ -395,6 +397,7 @@ public class RoomService implements IRoomService {
 	 * @throws MissingFieldsException
 	 */
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public boolean isRoomUnbookedgInRange(Object startDate, Object endDate, Object roomId)
 			throws OntimizeJEERuntimeException, EntityResultRequiredException, InvalidFieldsValuesException,
 			MissingFieldsException {
@@ -408,6 +411,7 @@ public class RoomService implements IRoomService {
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult infoHotelFeaturesQuery(Map<String, Object> keyMap, List<String> attrList) {
 		EntityResult resultado = new EntityResultWrong();
 
