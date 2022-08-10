@@ -7,7 +7,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.service.IPictureService;
 import com.ontimize.jee.server.rest.ORestController;
 
 @RestController 
-@RequestMapping("/picture") 
+@RequestMapping("/pictures") 
 public class PictureRestController extends ORestController<IPictureService>{
 
 	 @Autowired 

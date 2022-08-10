@@ -1,5 +1,7 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +44,18 @@ public class PictureService implements IPictureService {
 	@Override
 	public EntityResult pictureInsert(Map<String, Object> data) throws OntimizeJEERuntimeException {
 		EntityResult resultado=new EntityResultWrong();
+		
+		FileInputStream fis;
+		int longitudBytes;
+		String fileName=(String)data.get(pictureDao.ATTR_FILE);
+		try {
+			fis=new FileInputStream(fileName);
+		} catch (FileNotFoundException e) {
+			
+			e.printStackTrace();
+		}
+		
+		
 		
 		System.out.println(pictureDao);
 		resultado=daoHelper.insert(pictureDao, data);
