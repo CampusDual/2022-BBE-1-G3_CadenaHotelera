@@ -2,16 +2,20 @@ package com.ontimize.atomicHotelsApiRest.model.core.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.comparator.Comparators;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IEmployeeService;
@@ -124,6 +128,13 @@ public class EmployeeService implements IEmployeeService {
 					}
 
 				} else {
+					List<Date> firedDates=(List<Date>) auxEntity.get(EmployeeDao.ATTR_FIRED);
+					Date max=firedDates.stream().collect(Collectors.maxBy(Comparator.naturalOrder())).get();
+					
+					if(max.compareTo((Date) data.get(employeeDao.ATTR_HIRING))<0){
+						System.out.println("ojo con las fechas ");
+						
+					}
 					resultado = this.daoHelper.insert(this.employeeDao, data);
 					resultado.setMessage("Empleado contratado , este es su " + (auxEntity.calculateRecordNumber() + 1)
 							+ " contrato con la cadena");
