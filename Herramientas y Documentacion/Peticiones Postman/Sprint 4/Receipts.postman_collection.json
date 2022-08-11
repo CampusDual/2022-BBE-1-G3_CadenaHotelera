@@ -1,0 +1,278 @@
+{
+	"info": {
+		"_postman_id": "8d5d8705-f311-4c66-95be-2da4f89c59cc",
+		"name": "Receipts",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "C -receipt",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "personalAtom01",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n    \"data\": {\r\n        \"rcp_bkg_id\": 16\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/receipts/receipt",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"receipts",
+						"receipt"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "R -recibo",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "personalAtom01",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"filter\":{\r\n    \"rcp_id\":12\r\n},\r\n\"columns\":[\"rcp_id\",\"rcp_date\",\"rcp_bkg_id\",\"rcp_total_services\",\"rcp_days\",\"rcp_total_room\",\"rcp_total\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/receipts/receipt/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"receipts",
+						"receipt",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "R- recibo completo",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "personalAtom02",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"filter\":{\r\n    \"rcp_id\":11\r\n},\r\n\"columns\":[\"rcp_id\",\"rcp_total\",\"serviciosExtra\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/receipts/completeReceipt/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"receipts",
+						"completeReceipt",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "R - reserva - precio -dias",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "personalAtom02",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"filter\":{\r\n    \"bkg_id\":4\r\n}\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookings/bookingDaysUnitaryRoomPrice/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookings",
+						"bookingDaysUnitaryRoomPrice",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "R - reserva - precioServicio - unidades",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"filter\":{\r\n    \"bsx_bkg_id\":3\r\n},\r\n    \"columns\": [\"algo\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/receipts/bookingExtraServicePriceUnitsTotal/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"receipts",
+						"bookingExtraServicePriceUnitsTotal",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "R - servicioExtra - nombre - descripción - precio - unidades -fecha",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"filter\":{\r\n    \"bsx_bkg_id\":4\r\n},\r\n    \"columns\": [\"algo\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/bookingserviceextra/ExtraServicesNameDescriptionUnitsPriceDate/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"bookingserviceextra",
+						"ExtraServicesNameDescriptionUnitsPriceDate",
+						"search"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

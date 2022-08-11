@@ -42,7 +42,7 @@ import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 public class BookingServiceExtraService implements IBookingServiceExtraService {
 
 	@Autowired
-	private BookingServiceExtraDao bookingServiceExtraDao;
+	private BookingServiceExtraDao dao;
 
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
@@ -68,12 +68,12 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 			
 			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
 
-			cf.addBasics(BookingServiceExtraDao.fields);
+			cf.addBasics(dao.fields);
 			cf.validate(keyMap);
 
 			cf.validate(attrList);
 
-			resultado = this.daoHelper.query(this.bookingServiceExtraDao, keyMap, attrList);
+			resultado = this.daoHelper.query(this.dao, keyMap, attrList);
 
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
@@ -93,20 +93,19 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 		EntityResult resultado = new EntityResultWrong();
 		try {
 			cf.reset();
-			List<String> required = Arrays.asList(BookingServiceExtraDao.ATTR_ID_SXT,
-					BookingServiceExtraDao.ATTR_ID_BKG, BookingServiceExtraDao.ATTR_ID_UNITS);
-			List<String> restricted = Arrays.asList(BookingServiceExtraDao.ATTR_ID, BookingServiceExtraDao.ATTR_PRECIO);
-			cf.addBasics(BookingServiceExtraDao.fields);
+			List<String> required = Arrays.asList(dao.ATTR_ID_SXT,
+					dao.ATTR_ID_BKG, dao.ATTR_ID_UNITS);
+			List<String> restricted = Arrays.asList(dao.ATTR_ID, dao.ATTR_PRECIO);
+			cf.addBasics(dao.fields);
 			cf.setRequired(required);
 			cf.setRestricted(restricted);
 			cf.setOptional(false);
 			cf.validate(attrMap);
 
-			// Para que una reserva admita un nuevo huesped, esta tiene que estar en estado
-			// 'CONFIRMED'
+			
 			Map<String, Object> consultaBookingStatus = new HashMap<String, Object>() {
 				{
-					put(BookingDao.ATTR_ID, attrMap.get(bookingServiceExtraDao.ATTR_ID_BKG));
+					put(BookingDao.ATTR_ID, attrMap.get(dao.ATTR_ID_BKG));
 				}
 			};
 			cf.reset();
@@ -137,7 +136,7 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 				// Hotel de la reserva
 				Map<String, Object> keyMapReserva = new HashMap<String, Object>() {
 					{
-						put(BookingDao.ATTR_ID, attrMap.get(BookingServiceExtraDao.ATTR_ID_BKG));
+						put(BookingDao.ATTR_ID, attrMap.get(dao.ATTR_ID_BKG));
 					}
 				};
 
@@ -152,7 +151,7 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 				// Precio del servicio
 				Map<String, Object> keyMapServicioDelHotel = new HashMap<String, Object>() {
 					{
-						put(HotelServiceExtraDao.ATTR_ID_SXT, attrMap.get(BookingServiceExtraDao.ATTR_ID_SXT));
+						put(HotelServiceExtraDao.ATTR_ID_SXT, attrMap.get(dao.ATTR_ID_SXT));
 						put(HotelServiceExtraDao.ATTR_ID_HTL, hotel.getRecordValues(0).get(HotelDao.ATTR_ID));
 					}
 				};
@@ -171,10 +170,10 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 				// reserva
 				if (precio.getRecordValues(0).get(HotelServiceExtraDao.ATTR_ID_SXT) != null) {
 
-					attrMap.put(BookingServiceExtraDao.ATTR_PRECIO,
+					attrMap.put(dao.ATTR_PRECIO,
 							precio.getRecordValues(0).get(HotelServiceExtraDao.ATTR_PRECIO));
 					System.err.println(attrMap.entrySet());
-					resultado = this.daoHelper.insert(this.bookingServiceExtraDao, attrMap); // en progreso añadimos
+					resultado = this.daoHelper.insert(this.dao, attrMap); // en progreso añadimos
 																								// servicio extra
 					System.err.println(resultado);
 					resultado.setMessage("Servicio extra registrado");
@@ -211,20 +210,20 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 		try {
 
 			cf.reset();
-			List<String> required = Arrays.asList(BookingServiceExtraDao.ATTR_ID);
-			cf.addBasics(BookingServiceExtraDao.fields);
+			List<String> required = Arrays.asList(dao.ATTR_ID);
+			cf.addBasics(dao.fields);
 			cf.setRequired(required);
 			cf.setOptional(false);
 			cf.validate(keyMap);
 
 			Map<String, Object> subConsultaKeyMap = new HashMap<>() {
 				{
-					put(BookingServiceExtraDao.ATTR_ID, keyMap.get(BookingServiceExtraDao.ATTR_ID));
+					put(dao.ATTR_ID, keyMap.get(dao.ATTR_ID));
 				}
 			};
 			
 			EntityResult auxEntity = bookingServiceExtraQuery(subConsultaKeyMap,
-					EntityResultTools.attributes(BookingServiceExtraDao.ATTR_ID, BookingServiceExtraDao.ATTR_ID_BKG));
+					EntityResultTools.attributes(dao.ATTR_ID, dao.ATTR_ID_BKG));
 
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
 				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
@@ -232,28 +231,28 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 			} else {
 
 				if (bookingService
-						.getBookingStatus(auxEntity.getRecordValues(0).get(bookingServiceExtraDao.ATTR_ID_BKG))
+						.getBookingStatus(auxEntity.getRecordValues(0).get(dao.ATTR_ID_BKG))
 						.equals(BookingDao.Status.CANCELED)) {
 					resultado = new EntityResultWrong(
 							"La reserva de este servicio esta cancelada, no se pueden eliminar su servcio extra asociado.");
 
 				} else if (bookingService
-						.getBookingStatus(auxEntity.getRecordValues(0).get(bookingServiceExtraDao.ATTR_ID_BKG))
+						.getBookingStatus(auxEntity.getRecordValues(0).get(dao.ATTR_ID_BKG))
 						.equals(BookingDao.Status.COMPLETED)) {
 					resultado = new EntityResultWrong(
 							"La reserva de este servicio esta completada, no se pueden eliminar su servcio extra asociado.");
 
 				} else if (bookingService
-						.getBookingStatus(auxEntity.getRecordValues(0).get(bookingServiceExtraDao.ATTR_ID_BKG))
+						.getBookingStatus(auxEntity.getRecordValues(0).get(dao.ATTR_ID_BKG))
 						.equals(BookingDao.Status.CONFIRMED)) {
 					resultado = new EntityResultWrong(
 							"La reserva de este servicio esta confirmada, no se pueden eliminar su servcio extra asociado.");
 
 				} else if (bookingService
-						.getBookingStatus(auxEntity.getRecordValues(0).get(bookingServiceExtraDao.ATTR_ID_BKG))
+						.getBookingStatus(auxEntity.getRecordValues(0).get(dao.ATTR_ID_BKG))
 						.equals(BookingDao.Status.IN_PROGRESS)) {
 					System.err.println("eliminando");
-					resultado = this.daoHelper.delete(this.bookingServiceExtraDao, keyMap); // eliminamos servicio
+					resultado = this.daoHelper.delete(this.dao, keyMap); // eliminamos servicio
 																							// extra.
 					resultado.setMessage("Booking Service Extra eliminado");
 
@@ -277,11 +276,11 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 	 * Dado un bsx_bkg_id devuelve los servcios extra de esa reserva, con sus
 	 * precios, las unidades y el total de cada registro
 	 * 
-	 * @param keyMap   (BookingServiceExtraDao.ATTR_ID_BKG)
+	 * @param keyMap   (dao.ATTR_ID_BKG)
 	 * @param attrList (anyList())
-	 * @return EntityResult (BookingServiceExtraDao.ATTR_ID_BKG,
-	 *         BookingServiceExtraDao.ATTR_ID_UNITS,
-	 *         BookingServiceExtraDao.ATTR_PRECIO,total)
+	 * @return EntityResult (dao.ATTR_ID_BKG,
+	 *         dao.ATTR_ID_UNITS,
+	 *         dao.ATTR_PRECIO,total)
 	 * @throws OntimizeJEERuntimeException
 	 */
 	public EntityResult bookingExtraServicePriceUnitsTotalQuery(Map<String, Object> keyMap, List<String> attrList)
@@ -289,9 +288,9 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-			List<String> required = Arrays.asList(BookingServiceExtraDao.ATTR_ID_BKG);
+			List<String> required = Arrays.asList(dao.ATTR_ID_BKG);
 			cf.reset();
-			cf.addBasics(BookingServiceExtraDao.fields);
+			cf.addBasics(dao.fields);
 			cf.setRequired(required);
 			cf.validate(keyMap);
 
@@ -299,7 +298,7 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 			cf.setNoEmptyList(false);
 			cf.validate(attrList);
 
-			resultado = this.daoHelper.query(this.bookingServiceExtraDao, keyMap, attrList,
+			resultado = this.daoHelper.query(this.dao, keyMap, attrList,
 					"queryServciosExtraPrecioUnidadesTotal");
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
@@ -313,12 +312,12 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 	 * Dado un bsx_bkg_id devuelve los servcios extra de la reserva (nombre,
 	 * descripcion, unidades, precio y fecha)
 	 * 
-	 * @param keyMap   (BookingServiceExtraDao.ATTR_ID_BKG)
+	 * @param keyMap   (dao.ATTR_ID_BKG)
 	 * @param attrList (anyList())
 	 * @return EntityResult (ServicesXtraDao.ATTR_NAME,
 	 *         ServicesXtraDao.ATTR_DESCRIPTION,
-	 *         BookingServiceExtraDao.ATTR_ID_UNITS,
-	 *         BookingServiceExtraDao.ATTR_PRECIO, BookingServiceExtraDao.ATTR_DATE)
+	 *         dao.ATTR_ID_UNITS,
+	 *         dao.ATTR_PRECIO, dao.ATTR_DATE)
 	 * @throws OntimizeJEERuntimeException
 	 */
 	public EntityResult extraServicesNameDescriptionUnitsPriceDateQuery(Map<String, Object> keyMap,
@@ -327,9 +326,9 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 		EntityResult resultado = new EntityResultMapImpl();
 
 		try {
-			List<String> required = Arrays.asList(BookingServiceExtraDao.ATTR_ID_BKG);
+			List<String> required = Arrays.asList(dao.ATTR_ID_BKG);
 			cf.reset();
-			cf.addBasics(BookingServiceExtraDao.fields);
+			cf.addBasics(dao.fields);
 			cf.addBasics(ServicesXtraDao.fields);
 			cf.setRequired(required);
 			cf.validate(keyMap);
@@ -338,7 +337,7 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 			cf.setNoEmptyList(false);
 			cf.validate(attrList);
 
-			resultado = this.daoHelper.query(this.bookingServiceExtraDao, keyMap, attrList,
+			resultado = this.daoHelper.query(this.dao, keyMap, attrList,
 					"queryServiciosExtraNombreDescripcionUnidadesPrecioFecha");
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());

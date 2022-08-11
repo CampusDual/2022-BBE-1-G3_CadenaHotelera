@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.EntityResultRequiredException;
@@ -28,6 +29,7 @@ import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.ReceiptDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomTypeDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.ServicesXtraDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.UserRoleDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
@@ -35,6 +37,7 @@ import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
+import com.ontimize.jee.common.security.PermissionsProviderSecured;
 import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 
@@ -43,7 +46,7 @@ import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 public class ReceiptService implements IReceiptService {
 
 	@Autowired
-	private ReceiptDao receiptDao;
+	private ReceiptDao dao;
 
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
@@ -58,28 +61,34 @@ public class ReceiptService implements IReceiptService {
 	ControlFields cf;
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult receiptQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 
 		try {
 
-			cf.reset();
-			cf.addBasics(ReceiptDao.fields);
+			cf.reset();			
+			
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
+
+			cf.addBasics(dao.fields);
 			cf.validate(keyMap);
 
 			cf.validate(attrList);
 
-			resultado = this.daoHelper.query(this.receiptDao, keyMap, attrList);
+			resultado = this.daoHelper.query(this.dao, keyMap, attrList);
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (Exception e) {
+			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}
 		return resultado;
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult completeReceiptQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 
@@ -90,32 +99,35 @@ public class ReceiptService implements IReceiptService {
 			// Filtro
 			List<String> required = new ArrayList<String>() {
 				{
-					add(ReceiptDao.ATTR_ID);
+					add(dao.ATTR_ID);
 				}
 			};
 			cf.reset();
-			cf.addBasics(ReceiptDao.fields);
+			
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
+
+			cf.addBasics(dao.fields);
 			cf.setRequired(required);
 			cf.setOptional(false);
 			cf.validate(keyMap);
 
 			// Dá igual qué se escriba en el attrList ya que siempre se devuelve todo
 			List<String> lista = new ArrayList<String>();
-			lista.add(ReceiptDao.ATTR_BOOKING_ID);
-			lista.add(ReceiptDao.ATTR_DATE);
-			lista.add(ReceiptDao.ATTR_DIAS);
-			lista.add(ReceiptDao.ATTR_TOTAL_ROOM);
-			lista.add(ReceiptDao.ATTR_TOTAL_SERVICES);
-			lista.add(ReceiptDao.ATTR_TOTAL);
+			lista.add(dao.ATTR_BOOKING_ID);
+			lista.add(dao.ATTR_DATE);
+			lista.add(dao.ATTR_DIAS);
+			lista.add(dao.ATTR_TOTAL_ROOM);
+			lista.add(dao.ATTR_TOTAL_SERVICES);
+			lista.add(dao.ATTR_TOTAL);
 
-			EntityResult reciboSimple = this.daoHelper.query(this.receiptDao, keyMap, lista);
+			EntityResult reciboSimple = this.daoHelper.query(this.dao, keyMap, lista); 
 
 			Map<String, Object> calculoReceipt = reciboSimple.getRecordValues(0);
 
 			// Datos Servicios extras
 			Map<String, Object> keyMapServciosExtra = new HashMap<String, Object>();
 			keyMapServciosExtra.put(BookingServiceExtraDao.ATTR_ID_BKG,
-					reciboSimple.getRecordValues(0).get(ReceiptDao.ATTR_BOOKING_ID));
+					reciboSimple.getRecordValues(0).get(dao.ATTR_BOOKING_ID));
 			
 			List<String> listaCualquiera = new ArrayList<String>();
 
@@ -136,19 +148,21 @@ public class ReceiptService implements IReceiptService {
 				servicios.add(servicio);
 			}
 
-			calculoReceipt.put(ReceiptDao.ATTR_SERVICIOS_EXTRA, servicios);
-
+			calculoReceipt.put(dao.ATTR_SERVICIOS_EXTRA, servicios);
+			reciboCompleto = new EntityResultMapImpl();
 			reciboCompleto.addRecord(calculoReceipt);
 
 		} catch (ValidateException e) {
 			reciboCompleto = new EntityResultWrong(ErrorMessage.RESULT_REQUIRED + e.getMessage());
 		} catch (Exception e) {
+			e.printStackTrace();
 			reciboCompleto = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return reciboCompleto;
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult receiptInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 		try {
@@ -156,19 +170,30 @@ public class ReceiptService implements IReceiptService {
 			cf.reset();
 			List<String> required = new ArrayList<String>() {
 				{
-					add(ReceiptDao.ATTR_BOOKING_ID);
+					add(dao.ATTR_BOOKING_ID);
 
 				}
 			};
-			cf.addBasics(ReceiptDao.fields);
+			cf.addBasics(dao.fields);
 			cf.setRequired(required);
 			cf.setOptional(false);
 			cf.validate(attrMap);
 
-			if (bookingService.getBookingStatus(attrMap.get(ReceiptDao.ATTR_BOOKING_ID))
+			Map<String, Object> consultaBookingStatus = new HashMap<String, Object>() {
+				{
+					put(BookingDao.ATTR_ID, attrMap.get(dao.ATTR_BOOKING_ID));
+				}
+			};
+			cf.reset();
+			
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
+			cf.addBasics(BookingDao.fields);
+			cf.validate(consultaBookingStatus);
+			
+			if (bookingService.getBookingStatus(consultaBookingStatus)
 					.equals(BookingDao.Status.COMPLETED)) {
 
-				Object reservaEnRecibo = attrMap.get(ReceiptDao.ATTR_BOOKING_ID);
+				Object reservaEnRecibo = attrMap.get(dao.ATTR_BOOKING_ID);
 				Map<String, Object> bkg_id = new HashMap<String, Object>();
 				bkg_id.put(BookingDao.ATTR_ID, reservaEnRecibo);
 
@@ -179,7 +204,7 @@ public class ReceiptService implements IReceiptService {
 				List<String> reciboHabitacion = new ArrayList<String>();
 				reciboHabitacion.add(BookingDao.ATTR_ID);
 				reciboHabitacion.add(RoomTypeDao.ATTR_PRICE);
-				reciboHabitacion.add(ReceiptDao.ATTR_DIAS);
+				reciboHabitacion.add(dao.ATTR_DIAS);
 				
 				List<String> listaVacia = new ArrayList<String>();
 
@@ -188,12 +213,12 @@ public class ReceiptService implements IReceiptService {
 						
 				int reservaHabitacion = (int) habitacion.getRecordValues(0).get(BookingDao.ATTR_ID);
 				BigDecimal precioHabitacion = (BigDecimal) habitacion.getRecordValues(0).get(RoomTypeDao.ATTR_PRICE);
-				int dias = (int) habitacion.getRecordValues(0).get(ReceiptDao.ATTR_DIAS);
+				int dias = (int) habitacion.getRecordValues(0).get(dao.ATTR_DIAS);
 
 				BigDecimal totalHabitacion = precioHabitacion.multiply(new BigDecimal(dias));
 
-				attrMap.put(ReceiptDao.ATTR_TOTAL_ROOM, totalHabitacion);
-				attrMap.put(ReceiptDao.ATTR_DIAS, dias);
+				attrMap.put(dao.ATTR_TOTAL_ROOM, totalHabitacion);
+				attrMap.put(dao.ATTR_DIAS, dias);
 				
 				
 
@@ -224,13 +249,13 @@ public class ReceiptService implements IReceiptService {
 
 				}
 
-				attrMap.put(ReceiptDao.ATTR_TOTAL_SERVICES, totalTodosServiciosExtra);
+				attrMap.put(dao.ATTR_TOTAL_SERVICES, totalTodosServiciosExtra);
 
 				// Total del recibo
 				BigDecimal superTotal = totalHabitacion.add(totalTodosServiciosExtra);
-				attrMap.put(ReceiptDao.ATTR_TOTAL, superTotal);
+				attrMap.put(dao.ATTR_TOTAL, superTotal);
 
-				resultado = this.daoHelper.insert(this.receiptDao, attrMap);
+				resultado = this.daoHelper.insert(this.dao, attrMap);
 				resultado.setMessage("Receipt registrada");
 
 			} else {
@@ -261,7 +286,7 @@ public class ReceiptService implements IReceiptService {
 //			throws OntimizeJEERuntimeException {
 //		EntityResult resultado = new EntityResultWrong();
 //		try {
-//			ValidateFields.required(keyMap, ReceiptDao.ATTR_ID);
+//			ValidateFields.required(keyMap, dao.ATTR_ID);
 //			resultado = this.daoHelper.update(this.receiptDao, attrMap, keyMap);
 //			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
 //				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
@@ -285,33 +310,34 @@ public class ReceiptService implements IReceiptService {
 //	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult receiptDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 		try {
 
 			List<String> required = new ArrayList<String>() {
 				{
-					add(ReceiptDao.ATTR_ID);
+					add(dao.ATTR_ID);
 				}
 			};
 			cf.reset();
-			cf.addBasics(ReceiptDao.fields);
+			cf.addBasics(dao.fields);
 			cf.setRequired(required);
 			cf.setOptional(false);
 			cf.validate(keyMap);
 
 			Map<String, Object> consultaKeyMap = new HashMap<>() {
 				{
-					put(ReceiptDao.ATTR_ID, keyMap.get(ReceiptDao.ATTR_ID));
+					put(dao.ATTR_ID, keyMap.get(dao.ATTR_ID));
 				}
 			};
 
-			EntityResult auxEntity = receiptQuery(consultaKeyMap, EntityResultTools.attributes(ReceiptDao.ATTR_ID));
+			EntityResult auxEntity = receiptQuery(consultaKeyMap, EntityResultTools.attributes(dao.ATTR_ID));
 
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
 				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
 			} else {
-				resultado = this.daoHelper.delete(this.receiptDao, keyMap);
+				resultado = this.daoHelper.delete(this.dao, keyMap);
 				resultado.setMessage("Receipt eliminada");
 			}
 

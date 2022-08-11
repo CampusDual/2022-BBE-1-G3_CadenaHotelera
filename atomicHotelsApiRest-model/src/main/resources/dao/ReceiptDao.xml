@@ -8,5 +8,20 @@ catalog="" schema="${mainschema}" table="receipts" datasource="mainDataSource" s
 	<UpdateKeys>
 		<Column>rcp_id</Column>
 	</UpdateKeys>
-	<GeneratedKey>rcp_id</GeneratedKey>	
+	<GeneratedKey>rcp_id</GeneratedKey>		
+		<Queries>	
+			<Query id="default">
+			<Sentence>
+				<![CDATA[
+				    SELECT
+				     	#COLUMNS#
+				    FROM
+				     	receipts				   	
+				   	LEFT JOIN bookings ON rcp_bkg_id = bkg_id
+				   	LEFT JOIN rooms ON rm_id = bkg_rm_id				   						  
+				    #WHERE#				    
+			    ]]>
+			</Sentence>
+		</Query>	
+		</Queries>
 </JdbcEntitySetup>

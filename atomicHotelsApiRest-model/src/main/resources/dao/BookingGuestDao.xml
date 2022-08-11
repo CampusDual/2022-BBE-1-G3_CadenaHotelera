@@ -10,7 +10,7 @@ catalog="" schema="${mainschema}" table="bookings_guests" datasource="mainDataSo
 	</UpdateKeys>
 	<GeneratedKey>bgs_id</GeneratedKey>	
 	<Queries>
-	<Query id="default">
+		<Query id="default">
 			<Sentence>
 				<![CDATA[
 				    SELECT
