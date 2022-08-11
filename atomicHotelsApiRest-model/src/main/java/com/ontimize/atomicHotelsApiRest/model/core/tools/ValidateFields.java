@@ -38,7 +38,7 @@ public class ValidateFields {
 	}
 
 	@Autowired
-	ICountryService countryService;
+	CountryService countryService;
 
 	/**
 	 * Comprueba si existe las claves facilitadas en el HashMap, y lanza excepción

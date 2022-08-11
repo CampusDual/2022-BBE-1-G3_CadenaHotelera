@@ -92,7 +92,7 @@ public class BookingService implements IBookingService {
 
 			cf.reset();
 
-			cf.setCPHtlColum(RoomDao.ATTR_HOTEL_ID);// hacer join en default
+			// hacer join en default
 			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF, UserRoleDao.ROLE_CUSTOMER);
 
 			cf.addBasics(BookingDao.fields, RoomDao.fields);
@@ -118,7 +118,7 @@ public class BookingService implements IBookingService {
 
 			cf.reset();
 
-			cf.setCPHtlColum(RoomDao.ATTR_HOTEL_ID);// hacer join en default
+			// hacer join en default
 			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF, UserRoleDao.ROLE_CUSTOMER);
 
 			cf.addBasics(BookingDao.fields, RoomDao.fields, RoomTypeDao.fields, HotelDao.fields, CustomerDao.fields);
@@ -231,7 +231,7 @@ public class BookingService implements IBookingService {
 
 			cf.reset();
 			
-			cf.setCPHtlColum(RoomDao.ATTR_HOTEL_ID);// hacer join en default
+			// hacer join en default
 			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
 
 			
@@ -350,7 +350,7 @@ public class BookingService implements IBookingService {
 			cf.reset();
 			cf.addBasics(CustomerDao.fields, BookingDao.fields, RoomDao.fields,RoomTypeDao.fields, HotelDao.fields);
 
-			cf.setCPHtlColum(RoomDao.ATTR_HOTEL_ID);
+			
 			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF, UserRoleDao.ROLE_CUSTOMER);
 
 			bookingsInRangeBuilder(keyMap, attrList);

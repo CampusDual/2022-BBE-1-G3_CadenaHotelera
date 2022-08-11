@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.UserDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.UserRoleDao;
 import com.ontimize.jee.common.services.user.UserInformation;
@@ -30,7 +31,7 @@ public class ControlPermissions {
 	public void reset() {
 		this.roleUsersRestrictions = null;
 		this.keyMap = null;
-		this.htl_colum = null;
+		this.htl_colum =  RoomDao.ATTR_HOTEL_ID;
 		this.addUser = false;
 	}
 
@@ -65,9 +66,7 @@ public class ControlPermissions {
 						if (ui.getOtherData().get(UserDao.ATTR_HTL) == null) {
 							throw new InvalidFieldsValuesException(ErrorMessage.INCOMPLETE_USER_DATA);
 						}
-						if (htl_colum == null) {
-							throw new LiadaPardaException(ErrorMessage.REQUIRED_HTL_ID);
-						}
+						
 						if (!keyMap.containsKey(htl_colum)) { //si no contiene la id del htl la añadimos como filtro
 							keyMap.put(htl_colum, ui.getOtherData().get(UserDao.ATTR_HTL));
 						} else {//si ya tiene la id comprobamos que sea la adecuada
