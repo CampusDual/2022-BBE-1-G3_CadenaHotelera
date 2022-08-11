@@ -2,7 +2,10 @@ package com.ontimize.atomicHotelsApiRest.model.core.service;
 
 import static org.mockito.ArgumentMatchers.anyDouble;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
@@ -318,38 +321,31 @@ public class HotelService implements IHotelService {
 ////		return null;
 //	}
 
-
-
+	@SuppressWarnings("static-access")
 	public EntityResult poiQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
+		EntityResult pois = new EntityResultMapImpl();
 		try {
 			cf.reset();
 			cf.addBasics(HotelDao.fields);
-//			cf.setOptional(true);
-			System.err.println(keyMap.entrySet());
-			System.err.println(attrList.toString());
 			cf.validate(keyMap);
 			cf.validate(attrList);
 			Map<String, Object> keyMapDireccion = new HashMap<>();
-			System.err.println(keyMap.get(HotelDao.ATTR_ID));
 			if (keyMap.get(HotelDao.ATTR_ID) != null) {
 				keyMapDireccion.put(HotelDao.ATTR_ID, keyMap.get(HotelDao.ATTR_ID));
 			}
 			resultado = hotelQuery(keyMapDireccion, attrList);
-			System.err.println(resultado.entrySet());
 
 		} catch (MissingFieldsException | RestrictedFieldException | InvalidFieldsException
 				| InvalidFieldsValuesException | LiadaPardaException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-
 		String street = (String) resultado.getRecordValues(0).get(HotelDao.ATTR_STREET);
 		String city = (String) resultado.getRecordValues(0).get(HotelDao.ATTR_CITY);
 		String urlEnpoint = "https://nominatim.openstreetmap.org/search?street="
 				+ URLEncoder.encode(street, StandardCharsets.UTF_8) + "&city="
 				+ URLEncoder.encode(city, StandardCharsets.UTF_8) + "&format=json";
-		System.err.println(urlEnpoint);
 
 		try {
 			URL url = new URL(urlEnpoint);
@@ -366,7 +362,6 @@ public class HotelService implements IHotelService {
 					infor.append(sc.nextLine());
 				}
 				sc.close();
-				System.err.println(infor);
 				JSONArray jsonarray = new JSONArray(infor.toString());
 				JSONObject jsonObject = jsonarray.getJSONObject(0);
 				String latitude = jsonObject.getString("lat");
@@ -378,17 +373,72 @@ public class HotelService implements IHotelService {
 						put(HotelDao.ATTR_LON, longitude);
 					}
 				};
-				System.out.println(latitude);
-				System.out.println(longitude);
 				EntityResult coorUpdate = hotelUpdate(attrMapco, keyMap);
-				System.err.println(attrMapco.entrySet());
-				System.err.println(coorUpdate);
-				Amadeus amadeus = Amadeus.builder("h3nxa8Fz2gDyhWAhSY8nhlAGaZ43tGHv", "yTjGtt92Ww2ezfAT").build();
-				ScoredLocation[] locationPois = amadeus.location.analytics.categoryRatedAreas
-						.get(Params.with("latitude", latitude).and("longitude", longitude));
-				System.err.println(locationPois.toString());
 
-				// System.err.println(consulta);
+				String urlEndpoint2 = "https://test.api.amadeus.com/v1/security/oauth2/token";
+				String urlParams = "grant_type=client_credentials&client_id=h3nxa8Fz2gDyhWAhSY8nhlAGaZ43tGHv&client_secret=yTjGtt92Ww2ezfAT";
+				String urlPoi="https://test.api.amadeus.com/v1/shopping/activities?latitude="+latitude+"&longitude="+longitude+"&radius=1&categories=";
+				
+				URL url2 = new URL(urlEndpoint2);
+				HttpsURLConnection con2 = (HttpsURLConnection) url2.openConnection();
+				con2.setDoOutput(true);
+				con2.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+				
+				byte[] dataUrlEndPoint2 = urlParams.getBytes(StandardCharsets.UTF_8);
+				System.err.println(dataUrlEndPoint2.toString());
+				int dataLenght = dataUrlEndPoint2.length;
+				con2.setRequestProperty("Content-Lenght", Integer.toString(dataLenght)); //content lenght va en bytes
+				con2.setRequestMethod("POST");
+				con2.setUseCaches(false);
+				try 
+				{
+					DataOutputStream wr = new DataOutputStream(con2.getOutputStream());
+				    wr.write( dataUrlEndPoint2 ); //escirbe en servidor
+				    BufferedReader br = new BufferedReader(new InputStreamReader((con2.getInputStream()))); //leemos respuesta
+				    StringBuilder sb = new StringBuilder();
+				    String output;
+				    while ((output = br.readLine()) != null) {
+				      sb.append(output);
+				    }
+				    System.err.println(sb.toString());
+				    JSONArray jsonarray2 = new JSONArray("["+sb.toString()+"]");
+					JSONObject jsonObject2 = jsonarray2.getJSONObject(0);
+					URL url3 = new URL(urlPoi);
+					HttpsURLConnection con3 = (HttpsURLConnection) url3.openConnection();
+					con3.setRequestProperty("Authorization","Bearer "+jsonObject2.get("access_token"));
+					con3.setRequestProperty("Content-Type","application/json");
+					con3.setRequestMethod("GET");
+					con3.connect();
+					BufferedReader in2 = new BufferedReader(new InputStreamReader(con3.getInputStream()));
+				        String output2;
+
+				        StringBuffer response2 = new StringBuffer();
+				        while ((output = in2.readLine()) != null) {
+				            response2.append(output);
+				        }
+
+				        in2.close();
+				        // printing result from response
+					    JSONObject jsonarray3 = new JSONObject(response2.toString());
+					    JSONArray jsarray = (JSONArray) jsonarray3.get("data");
+					    
+					    @SuppressWarnings("unchecked")
+						Map<String,Object> aux = resultado.getRecordValues(0); //obtenemos el HashMap 0 de resultado.
+					    List<Object> auxList = new ArrayList<>(); //creamos una lista auxiliar
+					    for (int i = 0; i < jsarray.length(); i++){
+					    	Map<String, Object> poisMp = new HashMap<>(); //creamos un HashMap dentro del for
+					    	JSONObject nuevo = (JSONObject)jsarray.get(i);
+					    	//System.out.println(nuevo.get("name"));
+					    	poisMp.put("Poins",nuevo.get("name")); //creamos POINS en el hashmap POISMP
+					    	auxList.add(poisMp); //
+					    }
+					    aux.put("POINS", auxList);
+					    pois.addRecord(aux);
+					    
+				}catch(IOException e) {
+					e.getMessage();
+				}
+							
 			}
 
 		} catch (MalformedURLException e) {
@@ -396,20 +446,9 @@ public class HotelService implements IHotelService {
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ResponseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			e.printStackTrace();}
 
-		/*
-		 * 
-		 * Response response = null; try { response =
-		 * amadeus.post("test.api.amadeus.com", city.toString());
-		 * System.err.println(response.getRequest()); } catch (ResponseException e) { //
-		 * TODO Auto-generated catch block e.printStackTrace(); }
-		 */
-		return resultado;
+		return pois;
 
 	}
 
