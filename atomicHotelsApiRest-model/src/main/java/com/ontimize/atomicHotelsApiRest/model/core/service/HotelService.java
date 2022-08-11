@@ -38,6 +38,7 @@ import com.amadeus.Response;
 import com.amadeus.exceptions.NetworkException;
 import com.amadeus.exceptions.ResponseException;
 import com.amadeus.resources.ScoredLocation;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.EntityResultRequiredException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
@@ -46,9 +47,12 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsExcepti
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.RestrictedFieldException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IHotelService;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.BillDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingServiceExtraDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.DepartmentDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.EmployeeDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.ReceiptDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomDao;
@@ -803,4 +807,218 @@ public class HotelService implements IHotelService {
 
 	}
 
+	/**
+	 * Devuelve una lista de gastos de departamento, asociados a empleados y bills, tras pasarle un htl_id
+	 * 
+	 */
+	@Override
+	public EntityResult gastosDepartamentoPersonalHotelQuery(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException {
+		
+		EntityResult resultado = new EntityResultWrong();
+		try {
+			List<String> required = new ArrayList<String>() {
+				{
+					add(hotelDao.ATTR_ID);					
+				}
+			};			
+			cf.reset();
+			cf.addBasics(HotelDao.fields);
+			cf.addBasics(BillDao.fields);
+			cf.addBasics(DepartmentDao.fields);
+			cf.addBasics(EmployeeDao.fields);
+			cf.addBasics(ReceiptDao.fields);
+//			cf.setRequired(required);
+//			cf.setOptional(false);
+			cf.validate(keyMap);
+
+/*			//Si no quisiéramos aceptar columnas:
+
+			cf.reset();
+			cf.setNoEmptyList(false);
+			cf.validate(attrList);
+*/			
+			resultado = this.daoHelper.query(this.hotelDao, keyMap, attrList, "queryGastosDepartamentoPersonalHotel");
+			
+		} catch (ValidateException e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
+		}
+		return resultado;
+	}
+	
+	
+	
+	/**
+	 * Devuelve una lista de gastos de departamento, asociados a empleados y bills,
+	 * dentro de un rango de fechas tras filtrarlo por un htl_id y dicho rango
+	 * 
+	 */
+//	bll_htl_id = 4 
+//			and DATE (bll_date) <= '2022-01-01' 
+//			and  DATE (bll_date) >= '2019-01-01'
+	
+	/**
+	 * Metodo para obtener una lista de las habitaciones ocupadas total o
+	 * parcialmente, en un rango de fechas y filtros (attributos BookingDao). Puede
+	 * contener duplicados.
+	 * 
+	 * @param startDate fecha de inicio (tiene en cuenta las salidas el mismo día
+	 *                  que ya son antes de las entradas)
+	 * @param endDate   fecha de fin de rango
+	 * @return List<Object> relación de ID de habitación que tiene reservas en esas
+	 *         fechas. Puede contener duplicados.
+	 * @throws OntimizeJEERuntimeException
+	 * @throws EntityResultRequiredException
+	 * @throws InvalidFieldsValuesException
+	 */
+
+	
+		public EntityResult expensesDepartmentsInRangeQuery(Map<String, Object> keyMap, List<String> attrList)
+				throws OntimizeJEERuntimeException {
+		
+			
+			EntityResult resultado = new EntityResultWrong();
+			try {
+				List<String> required = new ArrayList<String>() {
+					{
+						add(HotelDao.ATTR_FROM);
+						add(HotelDao.ATTR_TO);
+					}
+				};			
+			
+				Map<String, type> fields = new HashMap<String, type>() {
+					{
+						put(HotelDao.ATTR_ID, type.INTEGER);
+						put(HotelDao.ATTR_FROM, type.DATE);	//fechas a comparar
+						put(HotelDao.ATTR_TO, type.DATE);
+					}
+				};		
+		
+				cf.reset();
+				cf.addBasics(fields);
+				cf.setRequired(required);
+				cf.validate(keyMap);
+
+				cf.reset();
+				cf.setNoEmptyList(false);
+				cf.validate(attrList);
+
+				Date from = (Date) keyMap.get(HotelDao.ATTR_FROM);
+				Date to = (Date) keyMap.get(HotelDao.ATTR_TO);
+
+				ValidateFields.dataRange(from, to);			
+/*
+				bll_htl_id = 4 
+						and DATE (bll_date) >= '2019-01-01' 
+						and  DATE (bll_date) <= '2022-01-01'
+*/						
+			
+				BasicField hotelId = new BasicField(BillDao.ATTR_ID_HTL);			
+				BasicExpression expresion1 = new BasicExpression(hotelId, BasicOperator.EQUAL_OP, keyMap.get(HotelDao.ATTR_ID));
+
+				BasicField date = new BasicField(BillDao.ATTR_DATE);			
+				BasicExpression expresion2 = new BasicExpression(date, BasicOperator.MORE_EQUAL_OP, from);
+				
+	//			BasicField date2 = new BasicField(BillDao.ATTR_DATE);			
+				BasicExpression expresion3 = new BasicExpression(date, BasicOperator.LESS_EQUAL_OP, to);
+				
+				//Ahora juntamos las 3 expresiones q forman el filtro de postman
+					
+				BasicExpression exp12 = new BasicExpression(expresion1, BasicOperator.AND_OP, expresion2);
+				BasicExpression exp123 = new BasicExpression(exp12, BasicOperator.AND_OP, expresion3);
+				
+				Map<String, Object> bkeyMap = new HashMap<>();
+				
+				EntityResultExtraTools.putBasicExpression(bkeyMap, exp123);
+				
+				resultado = this.daoHelper.query(this.hotelDao, bkeyMap, attrList, "queryPrueba");
+				
+			} catch (ValidateException e) {
+				e.printStackTrace();
+				resultado = new EntityResultWrong(e.getMessage());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
+			}
+			return resultado;
+		}
+
+
+		public EntityResult expensesEmployeesInRangeQuery(Map<String, Object> keyMap, List<String> attrList)
+				throws OntimizeJEERuntimeException {
+		
+			
+			EntityResult resultado = new EntityResultWrong();
+			try {
+				List<String> required = new ArrayList<String>() {
+					{
+						add(HotelDao.ATTR_FROM);
+						add(HotelDao.ATTR_TO);
+					}
+				};			
+			
+				Map<String, type> fields = new HashMap<String, type>() {
+					{
+						put(HotelDao.ATTR_ID, type.INTEGER);
+						put(HotelDao.ATTR_FROM, type.DATE);	//fechas a comparar
+						put(HotelDao.ATTR_TO, type.DATE);
+					}
+				};		
+		
+				cf.reset();
+				cf.addBasics(fields);
+				cf.setRequired(required);
+				cf.validate(keyMap);
+
+				cf.reset();
+				cf.setNoEmptyList(false);
+				cf.validate(attrList);
+
+				Date from = (Date) keyMap.get(HotelDao.ATTR_FROM);
+				Date to = (Date) keyMap.get(HotelDao.ATTR_TO);
+
+				ValidateFields.dataRange(from, to);			
+/*
+				bll_htl_id = 4 
+						and DATE (bll_date) >= '2019-01-01' 
+						and  DATE (bll_date) <= '2022-01-01'
+*/						
+			
+				BasicField hotelId = new BasicField(BillDao.ATTR_ID_HTL);			
+				BasicExpression expresion1 = new BasicExpression(hotelId, BasicOperator.EQUAL_OP, keyMap.get(HotelDao.ATTR_ID));
+
+				BasicField date = new BasicField(BillDao.ATTR_DATE);			
+				BasicExpression expresion2 = new BasicExpression(date, BasicOperator.MORE_EQUAL_OP, from);
+				
+	//			BasicField date2 = new BasicField(BillDao.ATTR_DATE);			
+				BasicExpression expresion3 = new BasicExpression(date, BasicOperator.LESS_EQUAL_OP, to);
+				
+				//Ahora juntamos las 3 expresiones q forman el filtro de postman
+					
+				BasicExpression exp12 = new BasicExpression(expresion1, BasicOperator.AND_OP, expresion2);
+				BasicExpression exp123 = new BasicExpression(exp12, BasicOperator.AND_OP, expresion3);
+				
+				Map<String, Object> bkeyMap = new HashMap<>();
+				
+				EntityResultExtraTools.putBasicExpression(bkeyMap, exp123);
+				
+				resultado = this.daoHelper.query(this.hotelDao, bkeyMap, attrList, "queryPrueba");
+				
+			} catch (ValidateException e) {
+				e.printStackTrace();
+				resultado = new EntityResultWrong(e.getMessage());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
+			}
+			return resultado;
+		}
+	
+	
 }

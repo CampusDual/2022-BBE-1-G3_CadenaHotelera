@@ -27,5 +27,9 @@ public interface IHotelService {
 			throws OntimizeJEERuntimeException;
 	public EntityResult hotelOccupancyByNationalityPercentageQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException;
+	public EntityResult gastosDepartamentoPersonalHotelQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
+	public EntityResult expensesDepartmentsInRangeQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
+	public EntityResult expensesEmployeesInRangeQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
+
 
 }
