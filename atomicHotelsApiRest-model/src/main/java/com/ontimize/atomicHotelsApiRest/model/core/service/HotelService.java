@@ -314,14 +314,15 @@ public class HotelService implements IHotelService {
 ////		return null;
 //	}
 
-
 	/**
-	 * Devuelve la capacidad de un hotel (dado su id o su nombre) o de todos los hotels de la cadena
+	 * Devuelve la capacidad de un hotel (dado su id o su nombre) o de todos los
+	 * hotels de la cadena
 	 * 
-	 * @param keyMap (HotelDao.ATTR_ID,HotelDao.ATTR_NAME)
+	 * @param keyMap   (HotelDao.ATTR_ID,HotelDao.ATTR_NAME)
 	 * @param attrList (anyList())
-	 * @throws OntimizeJEERuntimeException 
-	 * @return EntityResult (HotelDao.ATTR_ID,HotelDao.ATTR_NAME, HotelDao.ATTR_CITY, HotelDao.ATTR_MAXIMUN_CAPACITY)
+	 * @throws OntimizeJEERuntimeException
+	 * @return EntityResult (HotelDao.ATTR_ID,HotelDao.ATTR_NAME,
+	 *         HotelDao.ATTR_CITY, HotelDao.ATTR_MAXIMUN_CAPACITY)
 	 */
 	@Override
 	public EntityResult hotelMaximumCapacityQuery(Map<String, Object> keyMap, List<String> attrList)
@@ -330,7 +331,7 @@ public class HotelService implements IHotelService {
 		EntityResult resultado = new EntityResultWrong();
 
 		try {
-			
+
 			Map<String, type> fields = new HashMap<>() {
 				{
 					put(HotelDao.ATTR_ID, type.INTEGER);
@@ -359,14 +360,16 @@ public class HotelService implements IHotelService {
 
 	}
 
-
 	/**
-	 * Devuelve la capacidad de un hotel (dado su id o su nombre) o de todos los hotels de la cadena
+	 * Devuelve la capacidad de un hotel (dado su id o su nombre) o de todos los
+	 * hotels de la cadena
 	 * 
-	 * @param keyMap (HotelDao.ATTR_ID,HotelDao.ATTR_NAME)
+	 * @param keyMap   (HotelDao.ATTR_ID,HotelDao.ATTR_NAME)
 	 * @param attrList (anyList())
-	 * @throws OntimizeJEERuntimeException 
-	 * @return EntityResult ("occupancy_percentage_in_date_range", "htl_id","capacity_in_date_range","occupancy_in_date_range","htl_city", "htl_name")
+	 * @throws OntimizeJEERuntimeException
+	 * @return EntityResult ("occupancy_percentage_in_date_range",
+	 *         "htl_id","capacity_in_date_range","occupancy_in_date_range","htl_city",
+	 *         "htl_name")
 	 */
 	@Override
 	public EntityResult hotelOccupancyPercentageQuery(Map<String, Object> keyMap, List<String> attrList)
@@ -438,14 +441,16 @@ public class HotelService implements IHotelService {
 		return resultado;
 
 	}
-	
+
 	/**
-	 * Devuelve la capacidad de un hotel (dado su id) o de todos los hotels de la cadena en un rango de fechas
+	 * Devuelve la capacidad de un hotel (dado su id) o de todos los hotels de la
+	 * cadena en un rango de fechas
 	 * 
-	 * @param keyMap (HotelDao.ATTR_ID,HotelDao.ATTR_FROM,HotelDao.ATTR_TO)
+	 * @param keyMap   (HotelDao.ATTR_ID,HotelDao.ATTR_FROM,HotelDao.ATTR_TO)
 	 * @param attrList (anyList())
-	 * @throws OntimizeJEERuntimeException 
-	 * @return EntityResult (HotelDao.ATTR_ID,HotelDao.ATTR_NAME, HotelDao.ATTR_CITY, HotelDao.ATTR_CAPACITY_IN_DATE_RANGE)
+	 * @throws OntimizeJEERuntimeException
+	 * @return EntityResult (HotelDao.ATTR_ID,HotelDao.ATTR_NAME,
+	 *         HotelDao.ATTR_CITY, HotelDao.ATTR_CAPACITY_IN_DATE_RANGE)
 	 */
 	@Override
 	public EntityResult hotelCapacityInDateRangeQuery(Map<String, Object> keyMap, List<String> attrList)
@@ -454,7 +459,7 @@ public class HotelService implements IHotelService {
 		EntityResult resultado = new EntityResultWrong();
 
 		try {
-			
+
 			Map<String, type> fields = new HashMap<>() {
 				{
 					put(HotelDao.ATTR_ID, type.INTEGER);
@@ -477,28 +482,29 @@ public class HotelService implements IHotelService {
 
 			ValidateFields.dataRange(checkinData, checkoutData);
 
-			resultado = this.daoHelper.query(this.hotelDao, new HashMap<String, Object>(), attrList, "queryCapacityInRange",new ISQLQueryAdapter() {
+			resultado = this.daoHelper.query(this.hotelDao, new HashMap<String, Object>(), attrList,
+					"queryCapacityInRange", new ISQLQueryAdapter() {
 
-				@Override
-				public SQLStatement adaptQuery(SQLStatement sqlStatement, IOntimizeDaoSupport dao,
-						Map<?, ?> keysValues, Map<?, ?> validKeysValues, List<?> attributes,
-						List<?> validAttributes, List<?> sort, String queryId) {
+						@Override
+						public SQLStatement adaptQuery(SQLStatement sqlStatement, IOntimizeDaoSupport dao,
+								Map<?, ?> keysValues, Map<?, ?> validKeysValues, List<?> attributes,
+								List<?> validAttributes, List<?> sort, String queryId) {
 
-					Date init_date = checkinData;
-					Date end_date = checkoutData;
+							Date init_date = checkinData;
+							Date end_date = checkoutData;
 
-					String init_s = new SimpleDateFormat("yyyy-MM-dd").format(init_date);
-					String end_s = new SimpleDateFormat("yyyy-MM-dd").format(end_date);
+							String init_s = new SimpleDateFormat("yyyy-MM-dd").format(init_date);
+							String end_s = new SimpleDateFormat("yyyy-MM-dd").format(end_date);
 
-					String gen_series = "generate_series('" + init_s + "', '" + end_s + "', '1 day'::interval)";
+							String gen_series = "generate_series('" + init_s + "', '" + end_s + "', '1 day'::interval)";
 
-					SQLStatement result = new SQLStatement(
-							sqlStatement.getSQLStatement().replaceAll("#GEN_SERIES#", gen_series),
-							sqlStatement.getValues());
-					return result;
-				}
-			});
-			
+							SQLStatement result = new SQLStatement(
+									sqlStatement.getSQLStatement().replaceAll("#GEN_SERIES#", gen_series),
+									sqlStatement.getValues());
+							return result;
+						}
+					});
+
 			if (keyMap.get(HotelDao.ATTR_ID) != null) {
 				resultado = EntityResultTools.dofilter(resultado,
 						EntityResultTools.keysvalues(HotelDao.ATTR_ID, keyMap.get(HotelDao.ATTR_ID)));
@@ -515,14 +521,16 @@ public class HotelService implements IHotelService {
 		return resultado;
 
 	}
-	
+
 	/**
-	 * Devuelve ocupación de un hotel (dado su id) o de todos los hotels de la cadena por nacionalidad de los clientes en un rango de fechas
+	 * Devuelve ocupación de un hotel (dado su id) o de todos los hotels de la
+	 * cadena por nacionalidad de los clientes en un rango de fechas
 	 * 
-	 * @param keyMap (HotelDao.ATTR_ID,HotelDao.ATTR_FROM,HotelDao.ATTR_TO)
+	 * @param keyMap   (HotelDao.ATTR_ID,HotelDao.ATTR_FROM,HotelDao.ATTR_TO)
 	 * @param attrList (anyList())
-	 * @throws OntimizeJEERuntimeException 
-	 * @return EntityResult (CustomerDao.ATTR_COUNTRY, HotelDao.ATTR_OCCUPANCY_IN_DATE_RANGE)
+	 * @throws OntimizeJEERuntimeException
+	 * @return EntityResult (CustomerDao.ATTR_COUNTRY,
+	 *         HotelDao.ATTR_OCCUPANCY_IN_DATE_RANGE)
 	 */
 	@Override
 	public EntityResult hotelOccupancyByNationalityQuery(Map<String, Object> keyMap, List<String> attrList)
@@ -531,7 +539,7 @@ public class HotelService implements IHotelService {
 		EntityResult resultado = new EntityResultWrong();
 
 		try {
-			
+
 			Map<String, type> fields = new HashMap<>() {
 				{
 					put(HotelDao.ATTR_ID, type.INTEGER);
@@ -539,7 +547,7 @@ public class HotelService implements IHotelService {
 					put(HotelDao.ATTR_TO, type.DATE);
 				}
 			};
-			List<String> required = Arrays.asList(HotelDao.ATTR_ID,HotelDao.ATTR_FROM, HotelDao.ATTR_TO);
+			List<String> required = Arrays.asList(HotelDao.ATTR_ID, HotelDao.ATTR_FROM, HotelDao.ATTR_TO);
 			cf.reset();
 			cf.addBasics(fields);
 			cf.setRequired(required);
@@ -553,33 +561,35 @@ public class HotelService implements IHotelService {
 			Date checkoutData = (Date) keyMap.get(HotelDao.ATTR_TO);
 
 			ValidateFields.dataRange(checkinData, checkoutData);
-			
-			Map<String,Object> idHotel = new HashMap<String,Object>(){{
-				put(RoomDao.ATTR_HOTEL_ID,keyMap.get(HotelDao.ATTR_ID));
-			}};
 
-			resultado = this.daoHelper.query(this.hotelDao, idHotel, attrList, "queryOccupancyByNationality",new ISQLQueryAdapter() {
-
-				@Override
-				public SQLStatement adaptQuery(SQLStatement sqlStatement, IOntimizeDaoSupport dao,
-						Map<?, ?> keysValues, Map<?, ?> validKeysValues, List<?> attributes,
-						List<?> validAttributes, List<?> sort, String queryId) {
-
-					Date init_date = checkinData;
-					Date end_date = checkoutData;
-
-					String init_s = new SimpleDateFormat("yyyy-MM-dd").format(init_date);
-					String end_s = new SimpleDateFormat("yyyy-MM-dd").format(end_date);
-
-					String gen_series = "generate_series('" + init_s + "', '" + end_s + "', '1 day'::interval)";
-
-					SQLStatement result = new SQLStatement(
-							sqlStatement.getSQLStatement().replaceAll("#GEN_SERIES#", gen_series),
-							sqlStatement.getValues());
-					return result;
+			Map<String, Object> idHotel = new HashMap<String, Object>() {
+				{
+					put(RoomDao.ATTR_HOTEL_ID, keyMap.get(HotelDao.ATTR_ID));
 				}
-			});
-			
+			};
+
+			resultado = this.daoHelper.query(this.hotelDao, idHotel, attrList, "queryOccupancyByNationality",
+					new ISQLQueryAdapter() {
+
+						@Override
+						public SQLStatement adaptQuery(SQLStatement sqlStatement, IOntimizeDaoSupport dao,
+								Map<?, ?> keysValues, Map<?, ?> validKeysValues, List<?> attributes,
+								List<?> validAttributes, List<?> sort, String queryId) {
+
+							Date init_date = checkinData;
+							Date end_date = checkoutData;
+
+							String init_s = new SimpleDateFormat("yyyy-MM-dd").format(init_date);
+							String end_s = new SimpleDateFormat("yyyy-MM-dd").format(end_date);
+
+							String gen_series = "generate_series('" + init_s + "', '" + end_s + "', '1 day'::interval)";
+
+							SQLStatement result = new SQLStatement(
+									sqlStatement.getSQLStatement().replaceAll("#GEN_SERIES#", gen_series),
+									sqlStatement.getValues());
+							return result;
+						}
+					});
 
 		} catch (ValidateException e) {
 			e.printStackTrace();
@@ -592,14 +602,15 @@ public class HotelService implements IHotelService {
 		return resultado;
 
 	}
-	
+
 	/**
-	 * Devuelve el porcentaje de ocupación de un hotel en función de la nacionalidad de los clientes en un rango de fechas
+	 * Devuelve el porcentaje de ocupación de un hotel en función de la nacionalidad
+	 * de los clientes en un rango de fechas
 	 * 
-	 * @param keyMap (HotelDao.ATTR_ID,HotelDao.ATTR_FROM,HotelDao.ATTR_TO)
+	 * @param keyMap   (HotelDao.ATTR_ID,HotelDao.ATTR_FROM,HotelDao.ATTR_TO)
 	 * @param attrList (anyList())
-	 * @throws OntimizeJEERuntimeException 
-	 * @return EntityResult (CustomerDao.ATTR_COUNTRY, HotelDao.ATTR_OCCUPANCY_IN_DATE_RANGE)
+	 * @throws OntimizeJEERuntimeException
+	 * @return EntityResult (CustomerDao.ATTR_COUNTRY,HotelDao.ATTR_CAPACITY_IN_DATE_RANGE,HotelDao.ATTR_OCCUPANCY_IN_DATE_RANGE,HotelDao.ATTR_OCCUPANCY_PERCENTAGE_IN_DATE_RANGE)
 	 */
 	@Override
 	public EntityResult hotelOccupancyByNationalityPercentageQuery(Map<String, Object> keyMap, List<String> attrList)
@@ -608,7 +619,7 @@ public class HotelService implements IHotelService {
 		EntityResult resultado = new EntityResultWrong();
 
 		try {
-			
+
 			Map<String, type> fields = new HashMap<>() {
 				{
 					put(HotelDao.ATTR_ID, type.INTEGER);
@@ -616,7 +627,7 @@ public class HotelService implements IHotelService {
 					put(HotelDao.ATTR_TO, type.DATE);
 				}
 			};
-			List<String> required = Arrays.asList(HotelDao.ATTR_ID,HotelDao.ATTR_FROM, HotelDao.ATTR_TO);
+			List<String> required = Arrays.asList(HotelDao.ATTR_ID, HotelDao.ATTR_FROM, HotelDao.ATTR_TO);
 			cf.reset();
 			cf.addBasics(fields);
 			cf.setRequired(required);
@@ -630,46 +641,62 @@ public class HotelService implements IHotelService {
 			Date checkoutData = (Date) keyMap.get(HotelDao.ATTR_TO);
 
 			ValidateFields.dataRange(checkinData, checkoutData);
-			
-			Map<String,Object> idHotel = new HashMap<String,Object>(){{
-				put(RoomDao.ATTR_HOTEL_ID,keyMap.get(HotelDao.ATTR_ID));
-			}};
+
+			Map<String, Object> idHotel = new HashMap<String, Object>() {
+				{
+					put(RoomDao.ATTR_HOTEL_ID, keyMap.get(HotelDao.ATTR_ID));
+				}
+			};
 
 			
 			EntityResult capacidad = this.hotelCapacityInDateRangeQuery(keyMap, new ArrayList<String>());
 			EntityResult ocupacion = this.hotelOccupancyByNationalityQuery(keyMap, new ArrayList<String>());
 
-			
 			BigDecimal cap = new BigDecimal(0);
 			cap = (BigDecimal) capacidad.getRecordValues(0).get(HotelDao.ATTR_CAPACITY_IN_DATE_RANGE);
 			
-			long capacity =cap.longValue();
-			
-			resultado = new EntityResultMapImpl();
-			
-			for(int i=0; i<ocupacion.calculateRecordNumber();i++) {
+			if (cap != null) {
 				
-				BigDecimal oc = new BigDecimal(0);
-				oc = (BigDecimal) ocupacion.getRecordValues(i).get(HotelDao.ATTR_OCCUPANCY_IN_DATE_RANGE);
-				
-				long occupancy = oc.longValue();
-				
-				double perc = Math.round((((double)occupancy/(double)capacity)*100d)*10000)/10000d;
-				int j =i;//?? pero necesario
-				
-				Map<String,Object> total = new HashMap<String,Object>(){{
-					put(CustomerDao.ATTR_COUNTRY,ocupacion.getRecordValues(j).get(CustomerDao.ATTR_COUNTRY));
-					put(HotelDao.ATTR_OCCUPANCY_IN_DATE_RANGE,ocupacion.getRecordValues(j).get(HotelDao.ATTR_OCCUPANCY_IN_DATE_RANGE));
-					put(HotelDao.ATTR_CAPACITY_IN_DATE_RANGE,capacidad.getRecordValues(0).get(HotelDao.ATTR_CAPACITY_IN_DATE_RANGE));
-					put(HotelDao.ATTR_OCCUPANCY_PERCENTAGE_IN_DATE_RANGE,perc);
-				}};
-				
-				resultado.addRecord(total);
-			}
-			
-			
+				long capacity = cap.longValue();
 
-			
+				resultado = new EntityResultMapImpl();
+				
+				Map<String, Object> map = new HashMap<String, Object>();
+				List<Object> porcentajesOcupacion = new ArrayList<Object>();
+
+				for (int i = 0; i < ocupacion.calculateRecordNumber(); i++) {
+
+					BigDecimal oc = new BigDecimal(0);
+					oc = (BigDecimal) ocupacion.getRecordValues(i).get(HotelDao.ATTR_OCCUPANCY_IN_DATE_RANGE);
+
+					long occupancy = oc.longValue();
+
+					double perc = Math.round((((double) occupancy / (double) capacity) * 100d) * 10000) / 10000d;
+					int j = i;// !?!? pero necesario
+					
+
+					Map<String, Object> total = new HashMap<String, Object>() {
+						{
+							put(CustomerDao.ATTR_COUNTRY, ocupacion.getRecordValues(j).get(CustomerDao.ATTR_COUNTRY));
+							put(HotelDao.ATTR_OCCUPANCY_IN_DATE_RANGE,
+									ocupacion.getRecordValues(j).get(HotelDao.ATTR_OCCUPANCY_IN_DATE_RANGE));
+							put(HotelDao.ATTR_OCCUPANCY_PERCENTAGE_IN_DATE_RANGE, perc);
+						}
+					};
+					
+					porcentajesOcupacion.add(total);
+
+				}
+				
+				map.putAll(capacidad.getRecordValues(0));
+				map.put("occupancy",porcentajesOcupacion);
+				
+				resultado.addRecord(map);
+
+			} else {
+				
+				resultado = new EntityResultWrong("El hotel no es apto para alojar clientes");
+			}
 
 		} catch (ValidateException e) {
 			e.printStackTrace();
