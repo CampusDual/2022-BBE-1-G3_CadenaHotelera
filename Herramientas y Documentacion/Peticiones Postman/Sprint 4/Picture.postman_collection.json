@@ -1,0 +1,99 @@
+{
+	"info": {
+		"_postman_id": "2e397194-3480-415f-a9bd-5c725f2457bb",
+		"name": "Picture",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "22294604"
+	},
+	"item": [
+		{
+			"name": "-C picture",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "atom",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"data\":\r\n    {\"pct_name\":\"Equipo A\",\r\n    \"pct_description\": \"2022 BootCamp\",\r\n    \"pct_file\": \"c:\\\\all.jpg\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/pictures/picture",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"pictures",
+						"picture"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R picture id",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "atom",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"pct_id\": 1\r\n    },\r\n    \"columns\": [\"pct_file\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/pictures/picture/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"pictures",
+						"picture",
+						"search"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
