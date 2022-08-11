@@ -328,6 +328,8 @@ public class StatisticsService implements IStatisticsService{
 							SQLStatement result = new SQLStatement(
 									sqlStatement.getSQLStatement().replaceAll("#GEN_SERIES#", gen_series),
 									sqlStatement.getValues());
+							
+
 							return result;
 						}
 					});
