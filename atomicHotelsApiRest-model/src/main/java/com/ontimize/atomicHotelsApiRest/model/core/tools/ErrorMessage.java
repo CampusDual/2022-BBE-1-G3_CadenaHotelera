@@ -43,7 +43,7 @@ public class ErrorMessage {
 	public static final String DATA_RANGE_REVERSE = "La fecha de inicio no puede ser posterior a la fecha de fin";	 
 	public static final String DATA_START_BEFORE_TODAY = "La fecha de inicio no puede ser anterior a hoy";
 	public static final String DATA_EXPIRY_BEFORE_TODAY = "Error de fecha o la fecha de validez no puede ser anterior a hoy ";
-	public static final String ALLOWED_FIELDS = "Campos permitidos: \n\t";
+	public static final String ALLOWED_FIELDS = "Campos permitidos: ";
 	public static final String REQUIRED_FIELD = "Falta campo requerido - ";
 	public static final String REQUIRED_MINIMUM_COLUMS = "Se requiere mínimo una columna";
 	public static final String INVALID_FIELD = "Campo no válido - ";

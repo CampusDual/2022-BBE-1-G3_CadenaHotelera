@@ -18,11 +18,14 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsExcepti
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IBookingServiceExtraService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingGuestDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingServiceExtraDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelServiceExtraDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.ReceiptDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.ServicesXtraDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.UserRoleDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
@@ -54,13 +57,17 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 	ControlFields cf;
 
 	@Override
-//	@Secured({ PermissionsProviderSecured.SECURED }) TODO
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult bookingServiceExtraQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 		try {
 
 			cf.reset();
+
+			
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
+
 			cf.addBasics(BookingServiceExtraDao.fields);
 			cf.validate(keyMap);
 
@@ -71,6 +78,7 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (Exception e) {
+			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
@@ -78,6 +86,7 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	// Registra el servicio si la reserva esta activa en progreso.
 	public EntityResult bookingServiceExtraInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 
@@ -93,22 +102,36 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 			cf.setOptional(false);
 			cf.validate(attrMap);
 
-			if (bookingService.getBookingStatus(attrMap.get(bookingServiceExtraDao.ATTR_ID_BKG))
+			// Para que una reserva admita un nuevo huesped, esta tiene que estar en estado
+			// 'CONFIRMED'
+			Map<String, Object> consultaBookingStatus = new HashMap<String, Object>() {
+				{
+					put(BookingDao.ATTR_ID, attrMap.get(bookingServiceExtraDao.ATTR_ID_BKG));
+				}
+			};
+			cf.reset();
+			
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
+			cf.addBasics(BookingDao.fields);
+			cf.validate(consultaBookingStatus);
+			
+//Todo refactorizar esto a un switch... hay un ejemplo en booking
+			if (bookingService.getBookingStatus(consultaBookingStatus)
 					.equals(BookingDao.Status.CANCELED)) {
 
 				resultado = new EntityResultWrong("La reserva esta cancelada, no se pueden añadir servicios extra.");
 
-			} else if (bookingService.getBookingStatus(attrMap.get(bookingServiceExtraDao.ATTR_ID_BKG))
+			} else if (bookingService.getBookingStatus(consultaBookingStatus)
 					.equals(BookingDao.Status.COMPLETED)) {
 
 				resultado = new EntityResultWrong("La reserva esta completada, no se pueden añadir servicios extra");
 
-			} else if (bookingService.getBookingStatus(attrMap.get(bookingServiceExtraDao.ATTR_ID_BKG))
+			} else if (bookingService.getBookingStatus(consultaBookingStatus)
 					.equals(BookingDao.Status.CONFIRMED)) {
 
 				resultado = new EntityResultWrong("La reserva esta confirmada, no se pueden añadir servicios extra.");
 
-			} else if (bookingService.getBookingStatus(attrMap.get(bookingServiceExtraDao.ATTR_ID_BKG))
+			} else if (bookingService.getBookingStatus(consultaBookingStatus)
 					.equals(BookingDao.Status.IN_PROGRESS)) {
 
 				// Hotel de la reserva
@@ -123,7 +146,7 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 						add(HotelDao.ATTR_ID);
 					}
 				};
-				
+
 				EntityResult hotel = bookingService.bookingsHotelsQuery(keyMapReserva, listaRefrenciaHotel);
 
 				// Precio del servicio
@@ -180,6 +203,7 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 	 */
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult bookingServiceExtraDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 
 		EntityResult resultado = new EntityResultMapImpl();
@@ -197,7 +221,8 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 				{
 					put(BookingServiceExtraDao.ATTR_ID, keyMap.get(BookingServiceExtraDao.ATTR_ID));
 				}
-			}; 
+			};
+			
 			EntityResult auxEntity = bookingServiceExtraQuery(subConsultaKeyMap,
 					EntityResultTools.attributes(BookingServiceExtraDao.ATTR_ID, BookingServiceExtraDao.ATTR_ID_BKG));
 
@@ -248,14 +273,15 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 		return resultado;
 	}
 
-	@Override
 	/**
 	 * Dado un bsx_bkg_id devuelve los servcios extra de esa reserva, con sus
 	 * precios, las unidades y el total de cada registro
 	 * 
-	 * @param keyMap (BookingServiceExtraDao.ATTR_ID_BKG)
+	 * @param keyMap   (BookingServiceExtraDao.ATTR_ID_BKG)
 	 * @param attrList (anyList())
-	 * @return EntityResult (BookingServiceExtraDao.ATTR_ID_BKG, BookingServiceExtraDao.ATTR_ID_UNITS, BookingServiceExtraDao.ATTR_PRECIO,total)
+	 * @return EntityResult (BookingServiceExtraDao.ATTR_ID_BKG,
+	 *         BookingServiceExtraDao.ATTR_ID_UNITS,
+	 *         BookingServiceExtraDao.ATTR_PRECIO,total)
 	 * @throws OntimizeJEERuntimeException
 	 */
 	public EntityResult bookingExtraServicePriceUnitsTotalQuery(Map<String, Object> keyMap, List<String> attrList)
@@ -268,7 +294,7 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 			cf.addBasics(BookingServiceExtraDao.fields);
 			cf.setRequired(required);
 			cf.validate(keyMap);
-			
+
 			cf.reset();
 			cf.setNoEmptyList(false);
 			cf.validate(attrList);
@@ -283,14 +309,16 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 		return resultado;
 	}
 
-	@Override
 	/**
 	 * Dado un bsx_bkg_id devuelve los servcios extra de la reserva (nombre,
 	 * descripcion, unidades, precio y fecha)
 	 * 
-	 * @param keyMap (BookingServiceExtraDao.ATTR_ID_BKG)
+	 * @param keyMap   (BookingServiceExtraDao.ATTR_ID_BKG)
 	 * @param attrList (anyList())
-	 * @return EntityResult (ServicesXtraDao.ATTR_NAME, ServicesXtraDao.ATTR_DESCRIPTION, BookingServiceExtraDao.ATTR_ID_UNITS, BookingServiceExtraDao.ATTR_PRECIO, BookingServiceExtraDao.ATTR_DATE)
+	 * @return EntityResult (ServicesXtraDao.ATTR_NAME,
+	 *         ServicesXtraDao.ATTR_DESCRIPTION,
+	 *         BookingServiceExtraDao.ATTR_ID_UNITS,
+	 *         BookingServiceExtraDao.ATTR_PRECIO, BookingServiceExtraDao.ATTR_DATE)
 	 * @throws OntimizeJEERuntimeException
 	 */
 	public EntityResult extraServicesNameDescriptionUnitsPriceDateQuery(Map<String, Object> keyMap,
@@ -305,7 +333,7 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 			cf.addBasics(ServicesXtraDao.fields);
 			cf.setRequired(required);
 			cf.validate(keyMap);
-			
+
 			cf.reset();
 			cf.setNoEmptyList(false);
 			cf.validate(attrList);

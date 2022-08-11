@@ -15,17 +15,9 @@ public interface IHotelService {
 	 public EntityResult hotelUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
 	 public EntityResult hotelDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
 //	 public EntityResult hotelInfoQuery(Map<String, Object> keysValues, List<String> attrList) throws OntimizeJEERuntimeException;
-	 public EntityResult hotelMaximumCapacityQuery(Map<String, Object> keyMap, List<String> attrList)
-				throws OntimizeJEERuntimeException;
-	 public EntityResult hotelOccupancyPercentageQuery(Map<String, Object> keyMap, List<String> attrList)
-				throws OntimizeJEERuntimeException;
+
 	public EntityResult poiQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
 
-	public EntityResult hotelCapacityInDateRangeQuery(Map<String, Object> keyMap, List<String> attrList)
-			throws OntimizeJEERuntimeException;
-	public EntityResult hotelOccupancyByNationalityQuery(Map<String, Object> keyMap, List<String> attrList)
-			throws OntimizeJEERuntimeException;
-	public EntityResult hotelOccupancyByNationalityPercentageQuery(Map<String, Object> keyMap, List<String> attrList)
-			throws OntimizeJEERuntimeException;
+	
 
 }

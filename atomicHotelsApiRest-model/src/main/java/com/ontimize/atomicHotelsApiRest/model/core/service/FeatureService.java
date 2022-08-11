@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.SQLWarningException;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
@@ -18,6 +19,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.service.IFeatureService;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
+import com.ontimize.jee.common.security.PermissionsProviderSecured;
 import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.FeatureDao;
@@ -32,7 +34,7 @@ import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
 public class FeatureService implements IFeatureService {
 
 	@Autowired
-	private FeatureDao featureDao;
+	private FeatureDao dao;
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
 	
@@ -40,6 +42,7 @@ public class FeatureService implements IFeatureService {
 	ControlFields cf;
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult featureQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		
@@ -47,12 +50,12 @@ public class FeatureService implements IFeatureService {
 		try {
 
 			cf.reset();
-			cf.addBasics(FeatureDao.fields);
+			cf.addBasics(dao.fields);
 			cf.validate(keyMap);
 
 			cf.validate(attrList);
 
-			resultado = this.daoHelper.query(this.featureDao, keyMap, attrList);
+			resultado = this.daoHelper.query(this.dao, keyMap, attrList);
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (Exception e) {
@@ -62,21 +65,22 @@ public class FeatureService implements IFeatureService {
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult featureInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 
 		EntityResult resultado = new EntityResultWrong();
 
 		try {
 			List<String> required = new ArrayList<String>() {{
-				add(FeatureDao.ATTR_NAME);
+				add(dao.ATTR_NAME);
 			}};
 			cf.reset();
-			cf.addBasics(FeatureDao.fields);
+			cf.addBasics(dao.fields);
 			cf.setRequired(required);
 			cf.validate(attrMap);
 
 
-			resultado = this.daoHelper.insert(this.featureDao, attrMap);
+			resultado = this.daoHelper.insert(this.dao, attrMap);
 
 			resultado.setMessage("Feature registrada");
 
@@ -96,6 +100,7 @@ public class FeatureService implements IFeatureService {
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult featureUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
 
@@ -104,10 +109,10 @@ public class FeatureService implements IFeatureService {
 			
 			//ControlFields del filtro
 			List<String> requiredFilter = new ArrayList<String>() {{
-				add(FeatureDao.ATTR_ID);
+				add(dao.ATTR_ID);
 			}};	
 			cf.reset();		
-			cf.addBasics(FeatureDao.fields);
+			cf.addBasics(dao.fields);
 			cf.setRequired(requiredFilter);
 			cf.setOptional(false);//No será aceptado ningún campo que no esté en required
 			cf.validate(keyMap);	
@@ -116,14 +121,14 @@ public class FeatureService implements IFeatureService {
 			
 			//ControlFields de los nuevos datos
 			List<String> restrictedData = new ArrayList<String>() {{
-				add(FeatureDao.ATTR_ID);//El id no se puede actualizar
+				add(dao.ATTR_ID);//El id no se puede actualizar
 			}};
 			cf.reset();
-			cf.addBasics(FeatureDao.fields);
+			cf.addBasics(dao.fields);
 			cf.setRestricted(restrictedData);
 			cf.validate(attrMap);
 			
-			resultado = this.daoHelper.update(this.featureDao, attrMap, keyMap);
+			resultado = this.daoHelper.update(this.dao, attrMap, keyMap);
 			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
 				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
 			} else {
@@ -142,33 +147,34 @@ public class FeatureService implements IFeatureService {
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult featureDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
 			
 			List<String> required = new ArrayList<String>() {{
-				add(FeatureDao.ATTR_ID);
+				add(dao.ATTR_ID);
 			}};
 			cf.reset();
-			cf.addBasics(FeatureDao.fields);
+			cf.addBasics(dao.fields);
 			cf.setRequired(required);
 			cf.setOptional(false);
 			cf.validate(keyMap);
 
 			
 			Map<String, Object> consultaKeyMap = new HashMap<>() { {
-				put(FeatureDao.ATTR_ID, keyMap.get(FeatureDao.ATTR_ID));
+				put(dao.ATTR_ID, keyMap.get(dao.ATTR_ID));
 				}
 			};
 			
 			EntityResult auxEntity = featureQuery(consultaKeyMap, 
-					EntityResultTools.attributes(FeatureDao.ATTR_ID));
+					EntityResultTools.attributes(dao.ATTR_ID));
 			
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
 				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
 			} else {
-				resultado = this.daoHelper.delete(this.featureDao, keyMap);
+				resultado = this.daoHelper.delete(this.dao, keyMap);
 				resultado.setMessage("Feature eliminada");
 			}
 			

@@ -100,5 +100,58 @@ catalog="" schema="${mainschema}" table="hotels" datasource="mainDataSource" sql
     ]]>
     </Sentence>
     </Query>
+    <Query id="queryGastosDepartamentoPersonalHotel">
+  <Sentence>
+  <![CDATA[
+  	SELECT 
+  	htl_id, htl_name, htl_city,bll_id, bll_concept, bll_date, bll_amount, dpt_name, dpt_description,emp_name, emp_surname, emp_identity_document, emp_phone_number
+		FROM 
+			hotels
+		LEFT JOIN bills ON bll_htl_id = htl_id 
+		LEFT JOIN employees ON emp_htl_id = htl_id	
+		LEFT JOIN departments ON dpt_id = emp_dpt_id
+		#WHERE#	
+		ORDER BY dpt_name	
+    ]]>
+    </Sentence>
+    </Query>
+    <Query id="queryBasicEmployee">
+	  <Sentence>
+		  <![CDATA[
+		  	SELECT
+				#COLUMNS#
+			FROM
+				hotels
+			LEFT JOIN employees ON emp_htl_id = htl_id	
+			#WHERE#	
+		    ]]>
+	    </Sentence>
+    </Query>
+    <Query id="queryInfogastosDepEmp">
+		<Sentence>
+			<![CDATA[
+				SELECT
+					#COLUMNS#
+				FROM
+					hotels
+				LEFT JOIN bills ON bll_htl_id = htl_id 
+				LEFT JOIN employees ON emp_htl_id = htl_id	
+				LEFT JOIN departments ON dpt_id = emp_dpt_id    				    					    		
+				#WHERE#				    
+			    ]]>
+			</Sentence>
+		</Query>
+		<Query id="queryPrueba">
+	  <Sentence>
+		  <![CDATA[
+		  	SELECT  
+		  	bll_dpt_id, sum(bll_amount) as gastos 
+		  	FROM 
+		  	bills 
+			#WHERE# 
+			GROUP BY bll_dpt_id 
+		    ]]>
+	    </Sentence>
+    </Query>		
  </Queries>
 </JdbcEntitySetup>

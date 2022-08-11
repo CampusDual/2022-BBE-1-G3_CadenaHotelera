@@ -13,6 +13,18 @@
 	</UpdateKeys>
 		<GeneratedKey>bsx_id</GeneratedKey>
 		 <Queries>
+		  <Query id="default">
+   <Sentence>
+   <![CDATA[
+		SELECT 
+		#COLUMNS#
+		FROM bookings_services_extra bse 
+		LEFT JOIN bookings ON bsx_bkg_id = bkg_id 		
+		LEFT JOIN rooms ON rm_id = bkg_rm_id			
+		#WHERE#
+   ]]>
+   </Sentence>
+  </Query>
   <Query id="booking_inprocess">
    <Sentence>
    <![CDATA[
@@ -21,7 +33,7 @@
 		FROM bookings_services_extra bse 
 		INNER JOIN bookings b ON bse.bsx_bkg_id = b.bkg_id 
 		WHERE b.bkg_canceled != null OR bse.bsx_date >= b.bkg_checkin 
-		AND b.bkg_checkout is not NULL
+		AND b.bkg_checkout is not NULLs
    ]]>
    </Sentence>
   </Query>

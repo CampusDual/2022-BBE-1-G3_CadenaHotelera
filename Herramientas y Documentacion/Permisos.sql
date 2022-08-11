@@ -177,7 +177,11 @@ ALTER TABLE public.tuser ADD FOREIGN KEY(htl_restriction) REFERENCES hotels(htl_
 	
 
 --ROLES/PERMISOS
+ALTER TABLE trole_server_permission ADD UNIQUE(id_rolename,id_server_permission);
+
 TRUNCATE TABLE trole_server_permission;
+ALTER SEQUENCE trole_server_permission_id_role_server_permission_seq RESTART WITH 1
+
 	--ceo 1
 	INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 1,id_server_permission FROM tserver_permission WHERE id_server_permission >= 1 AND id_server_permission <= 107;
 
@@ -190,13 +194,13 @@ TRUNCATE TABLE trole_server_permission;
 	--staff 3
 		INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 3,id_server_permission FROM tserver_permission WHERE id_server_permission >= 1 AND id_server_permission <= 93	;		
 		DELETE FROM trole_server_permission
-			WHERE ( id_server_permission in(1,2,3,4,6,7,8,49,50,51,53,55,56,57,58,59,65,66,67,73,74,76,77,78,82,83,84) 
+			WHERE ( id_server_permission in(1,2,3,4,6,7,8,49,50,51,53,55,57,58,59,65,66,67,73,74,76,77,78,82,83,84) 
 					OR id_server_permission >= 86 AND id_server_permission <= 92
 			) AND ID_ROLENAME = 3;
 	--customer 4	
 		INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 4,id_server_permission FROM tserver_permission WHERE id_server_permission >= 1 AND id_server_permission <= 85	;	
 		DELETE FROM trole_server_permission 
-			WHERE ( id_server_permission in(1,2,3,4,6,7,8,9,10,11,12,13,16,17,28,29,42,45,49,50,51,53,54,55,57,58,59,60,61,62,63,65,66,67,73,74,76,77,78,82,83,84) 
+			WHERE ( id_server_permission in(1,2,3,4,6,7,8,9,10,11,12,13,16,17,27,28,29,30,31,42,45,49,50,51,53,54,55,57,58,59,60,61,62,63,65,66,67,73,74,76,77,78,82,83,84) 
 			) AND ID_ROLENAME = 4;
 	
 	--user 5 - información pública
