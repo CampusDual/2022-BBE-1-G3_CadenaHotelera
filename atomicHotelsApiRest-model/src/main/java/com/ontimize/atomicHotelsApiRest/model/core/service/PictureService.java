@@ -8,7 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +24,7 @@ import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.jee.common.dto.EntityResult;
+import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
 import com.ontimize.jee.common.util.remote.BytesBlock;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
@@ -47,13 +48,18 @@ public class PictureService implements IPictureService {
 		
 		EntityResult resultado = new EntityResultWrong();
 		resultado=this.daoHelper.query(pictureDao, filter, columns);
-		Path p2=Paths.get("c:\\"+resultado.getRecordValues(0).get(pictureDao.ATTR_NAME)+"2.jpg" );
+		Path p2=Paths.get("C:\\Users\\Usuario\\Pictures\\foto2.jpg" );
 		
 		System.out.println(resultado.getRecordValues(0));
 		resultado.getRecordValues(0).get(pictureDao.ATTR_FILE);
 		BytesBlock bytes=(BytesBlock) resultado.getRecordValues(0).get(pictureDao.ATTR_FILE);
 		
+		EntityResult auxEntity=new EntityResultMapImpl();
+		Map<String,byte[]> auxMap=new HashMap<>();
+		auxMap.put("foto", bytes.getBytes());
+		auxEntity.addRecord(auxMap);
 		
+		resultado=auxEntity;
 		
 		
 		try {
@@ -62,7 +68,7 @@ public class PictureService implements IPictureService {
 			// TODO Bloque catch generado automáticamente
 			e.printStackTrace();
 		}
-		resultado.getRecordValues(0).replace(pictureDao.ATTR_FILE, bytes.getBytes());
+	
 		return resultado;
 	}
 
