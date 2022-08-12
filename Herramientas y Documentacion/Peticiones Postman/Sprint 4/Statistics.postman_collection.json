@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "de3588e3-817d-4fbd-810a-3783bc0e6f31",
+		"_postman_id": "b01ba1d3-e91f-48b1-8ba2-86fb5f5fc94a",
 		"name": "Statistics",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -314,6 +314,141 @@
 					"path": [
 						"statistics",
 						"bookingsIncomeByHotel",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "R- servicesExtraIncomeByHotel",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "atom",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"from\":\"2022-07-09\",\r\n        \"to\":\"2022-08-15\",\r\n        \"htl_id\": 1\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/statistics/servicesExtraIncomeByHotel/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"statistics",
+						"servicesExtraIncomeByHotel",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "R- incomeVsExpensesByHotel",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "atom",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \"filter\":{\r\n     \"from\":\"2020-07-12\",\r\n     \"to\":\"2022-12-12\",\r\n     \"htl_id\":1\r\n }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/statistics/incomeVsExpensesByHotel2/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"statistics",
+						"incomeVsExpensesByHotel2",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "R- 2 -incomeVsExpensesByHotel2/",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "atom",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"from\":\"2022-08-09\",\r\n        \"to\":\"2022-08-15\",\r\n        \"htl_id\":1\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/statistics/incomeVsExpensesByHotel2/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"statistics",
+						"incomeVsExpensesByHotel2",
 						"search"
 					]
 				}
