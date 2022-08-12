@@ -193,5 +193,19 @@ catalog="" schema="${mainschema}" table="hotels" datasource="mainDataSource" sql
 		    ]]>
 	    </Sentence>
     </Query>	
+     <Query id="queryServicesExtrasIncomeByHotel">	
+    <Sentence>
+		  <![CDATA[
+		  	SELECT htl_id, htl_name, htl_city as HOTEL, sum(bsx_precio*bsx_units) as services_extra_income	
+				FROM  rooms r
+				LEFT JOIN bookings b ON bkg_rm_id = rm_id 
+				LEFT JOIN bookings_guests bg ON bkg_id = bgs_bkg_id 
+				LEFT JOIN bookings_services_extra bse ON bsx_bkg_id = bkg_id
+				LEFT JOIN hotels h ON htl_id = rm_htl_id
+				WHERE DATE(bsx_date) >='2022-07-01' AND DATE(bsx_date) <= '2022-07-16'
+				GROUP BY  htl_id
+		    ]]>
+	    </Sentence>
+    </Query>	
  </Queries>
 </JdbcEntitySetup>

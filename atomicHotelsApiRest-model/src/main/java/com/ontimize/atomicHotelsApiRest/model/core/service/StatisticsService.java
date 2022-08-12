@@ -739,4 +739,66 @@ public class StatisticsService implements IStatisticsService {
 		return null;
 	}
 
+	/**
+	 * Dado el hotel y un rango de fechas, devuelve el total de ingresos recibidos por los servicios extra abonados
+	 * 
+	 * @param keyMap   (HotelDao.ATTR_FROM, HotelDao.ATTR_TO, HotelDao.ATTR_ID)
+	 * @param attrList (anyList())
+	 * @return EntityResult (DepartmentDao.ATTR_ID,"total_income")
+	 * @throws OntimizeJEERuntimeException
+	 * */
+	@Override
+	public EntityResult servicesExtraIncomeByHotelQuery(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException {
+
+		EntityResult resultado = new EntityResultWrong();
+		try {
+			List<String> required = new ArrayList<String>() {
+				{
+					add(HotelDao.ATTR_FROM); // fechas a comparar, filtro postman
+					add(HotelDao.ATTR_TO);
+				}
+			};
+
+			Map<String, type> fields = new HashMap<String, type>() {
+				{
+					put(HotelDao.ATTR_ID, type.INTEGER);
+					put(HotelDao.ATTR_FROM, type.DATE); 
+					put(HotelDao.ATTR_TO, type.DATE);
+				}
+			};
+
+			cf.reset();
+			cf.addBasics(fields);
+			cf.setRequired(required);
+			cf.validate(keyMap);
+
+			cf.reset();
+			cf.setNoEmptyList(false);
+			cf.validate(attrList);
+
+			Date from = (Date) keyMap.get(HotelDao.ATTR_FROM);
+			Date to = (Date) keyMap.get(HotelDao.ATTR_TO);
+
+			ValidateFields.dataRange(from, to);
+
+			resultado = this.daoHelper.query(this.hotelDao, new HashMap<String, Object>(), attrList,
+					"queryServicesExtrasIncomeByHotel");
+			
+			if (keyMap.get(HotelDao.ATTR_ID) != null) {
+				resultado = EntityResultTools.dofilter(resultado,
+						EntityResultTools.keysvalues(HotelDao.ATTR_ID, keyMap.get(HotelDao.ATTR_ID)));
+			}
+
+		} catch (ValidateException e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(e.getMessage());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
+		}
+		return resultado;
+
+	}
 }
