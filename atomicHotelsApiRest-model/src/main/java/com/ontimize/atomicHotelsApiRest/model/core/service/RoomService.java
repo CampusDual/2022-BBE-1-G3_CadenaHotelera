@@ -75,7 +75,7 @@ public class RoomService implements IRoomService {
 		try {
 
 			cf.reset();
-			
+
 			cf.setCPHtlColum(dao.ATTR_HOTEL_ID);
 			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
 
@@ -100,25 +100,30 @@ public class RoomService implements IRoomService {
 	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult roomInfoQuery(Map<String, Object> keysValues, List<String> attrList) {
 
-		EntityResult queryRes = new EntityResultWrong();
+		EntityResult resultado = new EntityResultWrong();
 		try {
 
 			cf.reset();
 
 			cf.setCPHtlColum(dao.ATTR_HOTEL_ID);
 			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
-			
+
 			cf.addBasics(dao.fields, RoomTypeDao.fields, HotelDao.fields);
 			cf.validate(keysValues);
 
 			cf.validate(attrList);
 
-			queryRes = this.daoHelper.query(this.dao, keysValues, attrList, "queryInfoRooms");
+			resultado = this.daoHelper.query(this.dao, keysValues, attrList, "queryInfoRooms");
+		} catch (ValidateException e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(e.getMessage());
+
 		} catch (Exception e) {
-			queryRes = new EntityResultWrong(ErrorMessage.ERROR);
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}
 
-		return queryRes;
+		return resultado;
 	}
 
 	@Override
@@ -140,13 +145,12 @@ public class RoomService implements IRoomService {
 					add(dao.ATTR_ID);
 				}
 			};
-			
 
 			cf.addBasics(dao.fields);
-			
+
 			cf.setCPHtlColum(dao.ATTR_HOTEL_ID);
 			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER);
-			
+
 			cf.setRequired(required);
 			cf.setRestricted(restricted);
 			cf.validate(attrMap);
@@ -207,11 +211,11 @@ public class RoomService implements IRoomService {
 			};
 
 			EntityResult auxEntity = roomQuery(subConsultaKeyMap, EntityResultTools.attributes(dao.ATTR_ID)); // aquí
-																													// validamos
-																													// la
-																													// resctricción
-																													// por
-																													// permisos
+																												// validamos
+																												// la
+																												// resctricción
+																												// por
+																												// permisos
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
 				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
 			} else {
@@ -263,10 +267,10 @@ public class RoomService implements IRoomService {
 			};
 
 			EntityResult auxEntity = roomQuery(consultaKeyMap, EntityResultTools.attributes(dao.ATTR_ID)); // aquí
-																												// se
-																												// controlan
-																												// las
-																												// restricciones
+																											// se
+																											// controlan
+																											// las
+																											// restricciones
 
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
 				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
@@ -281,12 +285,13 @@ public class RoomService implements IRoomService {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
 		} catch (Exception e) {
 			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR);
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
 	}
 
-	@Override // TODO PERMISOS
+	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult roomsUnbookedInRangeQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		try {
@@ -294,6 +299,9 @@ public class RoomService implements IRoomService {
 		} catch (ValidateException | EntityResultRequiredException e) {
 			System.err.println(e.getMessage());
 			return new EntityResultWrong(e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 	}
 
@@ -312,47 +320,52 @@ public class RoomService implements IRoomService {
 	public EntityResult roomsUnbookedgInRange(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException, EntityResultRequiredException, ValidateException {
 		EntityResult resultado = new EntityResultWrong();
-
-		List<String> required = new ArrayList<String>() {
-			{
-				add(BookingDao.ATTR_START);
-				add(BookingDao.ATTR_END);
-			}
-		};
-		cf.reset();
-		cf.addBasics(BookingDao.fields);
-		cf.setRequired(required);
-		cf.setOptional(false);
-
 		try {
+
+			List<String> required = new ArrayList<String>() {
+				{
+					add(BookingDao.ATTR_START);
+					add(BookingDao.ATTR_END);
+				}
+			};
+			cf.reset();
+
+			cf.setCPHtlColum(dao.ATTR_HOTEL_ID);
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
+
+			cf.addBasics(BookingDao.fields, RoomDao.fields);
+			cf.setRequired(required);
+//		cf.setOptional(false);
+
 			cf.validate(keyMap);
 
 			ValidateFields.dataRange(keyMap.get(BookingDao.ATTR_START), keyMap.get(BookingDao.ATTR_END));
-//		if (ValidateFields.dataRange(keyMap.get(BookingDao.ATTR_START), keyMap.get(BookingDao.ATTR_END)) == 1) {
-//			throw new InvalidFieldsValuesException(ErrorMessage.DATA_START_BEFORE_TODAY);
-//		}
 
 			Map<String, Object> auxKeyMap = new HashMap<String, Object>();
 			if (keyMap.containsKey(dao.ATTR_ID)) {
 				auxKeyMap.put(BookingDao.ATTR_ROOM_ID, keyMap.get(dao.ATTR_ID));
 			}
+
 			if (keyMap.containsKey(dao.ATTR_HOTEL_ID)) {
 				auxKeyMap.put(dao.ATTR_HOTEL_ID, keyMap.get(dao.ATTR_HOTEL_ID));
 			}
 
-			List<Object> bookedRoomsIdList = roomsBookedInRange((String) keyMap.get(BookingDao.ATTR_START),
-					(String) keyMap.get(BookingDao.ATTR_END), auxKeyMap);
+			List<Object> bookedRoomsIdList = roomsBookedInRange(keyMap.get(BookingDao.ATTR_START),
+					keyMap.get(BookingDao.ATTR_END), auxKeyMap);
 
 			keyMap.remove(BookingDao.ATTR_START);
 			keyMap.remove(BookingDao.ATTR_END);
-			BasicExpression finalExp = new BasicExpression(new BasicField(dao.ATTR_ID), BasicOperator.NOT_IN_OP,
-					bookedRoomsIdList);
-			EntityResultExtraTools.putBasicExpression(keyMap, finalExp);
+			if (!bookedRoomsIdList.isEmpty()) {
+				BasicExpression finalExp = new BasicExpression(new BasicField(dao.ATTR_ID), BasicOperator.NOT_IN_OP,
+						bookedRoomsIdList);
+				EntityResultExtraTools.putBasicExpression(keyMap, finalExp);
+			}
 
 			resultado = this.daoHelper.query(this.dao, keyMap, attrList, "queryInfoRooms");
 
-		} catch (LiadaPardaException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 
 		return resultado;
@@ -407,8 +420,6 @@ public class RoomService implements IRoomService {
 	 * @throws InvalidFieldsValuesException
 	 * @throws MissingFieldsException
 	 */
-	@Override
-	@Secured({ PermissionsProviderSecured.SECURED })
 	public boolean isRoomUnbookedgInRange(Object startDate, Object endDate, Object roomId)
 			throws OntimizeJEERuntimeException, EntityResultRequiredException, InvalidFieldsValuesException,
 			MissingFieldsException {
@@ -429,10 +440,15 @@ public class RoomService implements IRoomService {
 		try {
 
 			cf.reset();
+
+			cf.setCPHtlColum(dao.ATTR_HOTEL_ID);
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
+
 			cf.addBasics(dao.fields);
 			cf.addBasics(RoomTypeDao.fields);
 			cf.addBasics(RoomTypeFeatureDao.fields);
 			cf.addBasics(FeatureDao.fields);
+			cf.addBasics(HotelDao.fields);
 			cf.validate(keyMap);
 
 			cf.validate(attrList);
@@ -445,8 +461,9 @@ public class RoomService implements IRoomService {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.ERROR);
+			return new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
+
 		return resultado;
 	}
 

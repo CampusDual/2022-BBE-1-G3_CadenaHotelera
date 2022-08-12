@@ -67,12 +67,15 @@ public class ControlFields {
 		noColumns = false;
 		allowBasicExpression = true;
 
-		// permisos
-		permissions.reset();
-		controlPermissionsActive = true;
+		resetPermissions();
 
 	}
 
+	public void resetPermissions() {
+		// permisos		
+		permissions.reset();		
+		controlPermissionsActive = true;
+	}
 	public void setAllowBasicExpression(boolean allowBasicExpression) {
 		this.allowBasicExpression = allowBasicExpression;
 	}

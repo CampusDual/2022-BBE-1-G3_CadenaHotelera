@@ -48,7 +48,7 @@ public class PictureService implements IPictureService {
 		
 		EntityResult resultado = new EntityResultWrong();
 		resultado=this.daoHelper.query(pictureDao, filter, columns);
-		Path p2=Paths.get("C:\\Users\\Usuario\\Pictures\\foto2.jpg" );
+		Path p2=Paths.get("C:\\Users\\Arsito\\Pictures\\foto2.jpg" );
 		
 		System.out.println(resultado.getRecordValues(0));
 		resultado.getRecordValues(0).get(pictureDao.ATTR_FILE);

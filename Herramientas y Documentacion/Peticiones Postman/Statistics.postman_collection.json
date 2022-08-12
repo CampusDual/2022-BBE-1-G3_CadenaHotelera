@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "de3588e3-817d-4fbd-810a-3783bc0e6f31",
+		"_postman_id": "c69956d8-0529-46a1-924e-69119071ba30",
 		"name": "Statistics",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -314,6 +314,51 @@
 					"path": [
 						"statistics",
 						"bookingsIncomeByHotel",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "R- servicesExtraIncomeByHotel",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "atom",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"from\":\"2022-07-09\",\r\n        \"to\":\"2022-08-15\",\r\n        \"htl_id\": 1\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/statistics/servicesExtraIncomeByHotel/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"statistics",
+						"servicesExtraIncomeByHotel",
 						"search"
 					]
 				}

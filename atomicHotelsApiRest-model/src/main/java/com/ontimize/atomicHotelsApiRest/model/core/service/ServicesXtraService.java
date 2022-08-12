@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.SQLWarningException;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsException;
@@ -24,6 +25,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.service.IServicesXtraService;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
+import com.ontimize.jee.common.security.PermissionsProviderSecured;
 import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
@@ -49,6 +51,7 @@ public class ServicesXtraService implements IServicesXtraService{
 	ControlFields cf;
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult servicesXtraQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 
@@ -68,6 +71,7 @@ public class ServicesXtraService implements IServicesXtraService{
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult servicesXtraInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 
 		EntityResult resultado = new EntityResultWrong();
@@ -104,7 +108,8 @@ public class ServicesXtraService implements IServicesXtraService{
 		return resultado;
 	}
 
-	@Override													//data						//filter
+	@Override	
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult servicesXtraUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)	throws OntimizeJEERuntimeException {	//attrMap filtro, keymap nuevo valor a actualizar
 
 		EntityResult resultado = new EntityResultWrong();
@@ -156,6 +161,7 @@ public class ServicesXtraService implements IServicesXtraService{
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })	
 	public EntityResult servicesXtraDelete(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {			//El filtro del where del postman		
 		
 		EntityResult resultado = new EntityResultWrong();
