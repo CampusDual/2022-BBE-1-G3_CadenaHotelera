@@ -8,7 +8,7 @@ catalog="" schema="${mainschema}" table="employees" datasource="mainDataSource" 
 		<Column>emp_identity_document</Column>
 	</DeleteKeys>
 	<UpdateKeys>
-		<Column>emp_identity_document</Column>
+		<Column>emp_id</Column>
 	</UpdateKeys>
 	<GeneratedKey>emp_id</GeneratedKey>
 </JdbcEntitySetup>

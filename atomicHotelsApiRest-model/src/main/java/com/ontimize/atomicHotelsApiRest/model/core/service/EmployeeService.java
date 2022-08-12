@@ -129,11 +129,11 @@ public class EmployeeService implements IEmployeeService {
 
 				} else {
 					List<Date> firedDates=(List<Date>) auxEntity.get(EmployeeDao.ATTR_FIRED);
-					Date max=firedDates.stream().collect(Collectors.maxBy(Comparator.naturalOrder())).get();
 					
+					// aqui esta el tomate
+					Date max=firedDates.stream().max(Date::compareTo).get();
 					if(max.compareTo((Date) data.get(employeeDao.ATTR_HIRING))>0){
 						resultado.setMessage("La fecha de contratacion es anterior al ultimo despido "+max.toString());
-						
 					}else {
 					resultado = this.daoHelper.insert(this.employeeDao, data);
 					resultado.setMessage("Empleado contratado , este es su " + (auxEntity.calculateRecordNumber() + 1)
@@ -206,13 +206,15 @@ public class EmployeeService implements IEmployeeService {
 				}
 			};
 			EntityResult auxEntity = employeeQuery(subConsultaKeyMap, EntityResultTools
-					.attributes(EmployeeDao.ATTR_IDEN_DOC, EmployeeDao.ATTR_HIRING, EmployeeDao.ATTR_FIRED));
+					.attributes(EmployeeDao.ATTR_ID,EmployeeDao.ATTR_IDEN_DOC, EmployeeDao.ATTR_HIRING, EmployeeDao.ATTR_FIRED));
+			
 			if (auxEntity.calculateRecordNumber() == 0) {
 				resultado.setMessage("Empleado no registrado, registrelo primero");
 			} else if (((List<String>) auxEntity.get(EmployeeDao.ATTR_FIRED)).contains(null)) {
 				if (data.get(employeeDao.ATTR_FIRED) != null) {
 					if (((Date) auxEntity.getRecordValues(auxEntity.calculateRecordNumber()-1).get(employeeDao.ATTR_HIRING))
 							.compareTo(((Date) data.get(employeeDao.ATTR_FIRED)))< 0) {
+						filter.put(employeeDao.ATTR_ID,auxEntity.getRecordValues(auxEntity.calculateRecordNumber()-1).get(employeeDao.ATTR_ID));
 						resultado = this.daoHelper.update(this.employeeDao, data, filter);
 						resultado.setMessage("Empleado despedido de su " + auxEntity.calculateRecordNumber()
 								+ " contrato con la cadena");

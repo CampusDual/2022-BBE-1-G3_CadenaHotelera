@@ -25,6 +25,7 @@ import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
+import com.ontimize.jee.common.util.remote.BytesBlock;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 
@@ -50,15 +51,18 @@ public class PictureService implements IPictureService {
 		
 		System.out.println(resultado.getRecordValues(0));
 		resultado.getRecordValues(0).get(pictureDao.ATTR_FILE);
-//		byte[] bytes=(byte[]) resultado.getRecordValues(0).get(pictureDao.ATTR_FILE);
-//		
-//		try {
-//			Files.write(p2, bytes,StandardOpenOption.CREATE_NEW);
-//		} catch (IOException e) {
-//			// TODO Bloque catch generado automáticamente
-//			e.printStackTrace();
-//		}
-	
+		BytesBlock bytes=(BytesBlock) resultado.getRecordValues(0).get(pictureDao.ATTR_FILE);
+		
+		
+		
+		
+		try {
+			Files.write(p2, bytes.getBytes(),StandardOpenOption.CREATE_NEW);
+		} catch (IOException e) {
+			// TODO Bloque catch generado automáticamente
+			e.printStackTrace();
+		}
+		resultado.getRecordValues(0).replace(pictureDao.ATTR_FILE, bytes.getBytes());
 		return resultado;
 	}
 
