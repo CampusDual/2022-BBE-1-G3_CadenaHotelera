@@ -67,7 +67,7 @@ public class BookingService implements IBookingService {
 	private ICustomerService customerService;
 
 	@Autowired
-	IRoomService roomService;
+	RoomService roomService;
 
 	@Autowired
 	ControlFields cf;

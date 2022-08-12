@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
-
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
@@ -25,6 +25,7 @@ import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
+import com.ontimize.jee.common.security.PermissionsProviderSecured;
 import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 
@@ -41,6 +42,7 @@ public class RoomTypeService implements IRoomTypeService {
 	ControlFields cf;
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult roomTypeQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
@@ -53,12 +55,14 @@ public class RoomTypeService implements IRoomTypeService {
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (Exception e) {
-			resultado = new EntityResultWrong(ErrorMessage.ERROR);
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult roomTypeInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 
 		EntityResult resultado = new EntityResultWrong();
@@ -100,6 +104,7 @@ public class RoomTypeService implements IRoomTypeService {
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult roomTypeUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
 
@@ -139,12 +144,14 @@ public class RoomTypeService implements IRoomTypeService {
 		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
 		} catch (Exception e) {
-			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR);
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult roomTypeDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 
 		EntityResult resultado = new EntityResultWrong();
@@ -187,11 +194,12 @@ public class RoomTypeService implements IRoomTypeService {
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult infoQuery(Map<String, Object> keysValues, List<String> attrList) {
 
 		EntityResult resultado = new EntityResultWrong();
 		try {
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			cf.addBasics(RoomTypeDao.fields);
 			cf.addBasics(BedComboDao.fields);
 			cf.validate(keysValues);
@@ -202,21 +210,25 @@ public class RoomTypeService implements IRoomTypeService {
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (Exception e) {
-			resultado = new EntityResultWrong(ErrorMessage.ERROR);
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 
 		return resultado;
 	}
 
-	@Override
+//	@Override
+//	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult infoRoomFeaturesQuery(Map<String, Object> keysValues, List<String> attrList) {
 
 		EntityResult resultado = new EntityResultWrong();
 		try {
-			ControlFields cf = new ControlFields();
+			cf.reset();
 			cf.addBasics(RoomTypeDao.fields);
 			cf.addBasics(FeatureDao.fields);
 			cf.addBasics(RoomTypeFeatureDao.fields);
+			cf.addBasics(BedComboDao.fields);
+
 			cf.validate(keysValues);
 			cf.validate(attrList);
 
@@ -225,11 +237,10 @@ public class RoomTypeService implements IRoomTypeService {
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (Exception e) {
-			resultado = new EntityResultWrong(ErrorMessage.ERROR);
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 
 		return resultado;
 	}
 }
-	
-

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "de9b55d0-8789-4826-ac1f-a3cf7ef6fab3",
+		"_postman_id": "8b19fc1f-3697-49d9-b4fb-0e5d23ded80f",
 		"name": "Rooms",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -153,13 +153,13 @@
 					"type": "basic",
 					"basic": [
 						{
-							"key": "password",
-							"value": "123456",
+							"key": "username",
+							"value": "turisticas",
 							"type": "string"
 						},
 						{
-							"key": "username",
-							"value": "personalAtom01",
+							"key": "password",
+							"value": "123456",
 							"type": "string"
 						}
 					]
@@ -168,7 +168,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\": {\r\n     \"rm_htl_id\": 1\r\n    },\r\n    \"columns\": [\"rm_htl_id\",\"rm_number\"]\r\n}",
+					"raw": "{\r\n    \"filter\": {\r\n     \"rm_htl_id\": 2\r\n    },\r\n    \"columns\": [\"rm_htl_id\",\"rm_number\"]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -198,13 +198,13 @@
 					"type": "basic",
 					"basic": [
 						{
-							"key": "password",
-							"value": "demouser",
+							"key": "username",
+							"value": "personalAtom02",
 							"type": "string"
 						},
 						{
-							"key": "username",
-							"value": "demo",
+							"key": "password",
+							"value": "123456",
 							"type": "string"
 						}
 					]
@@ -213,7 +213,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\":{\r\n        \"rm_htl_id\":1\r\n    },\r\n    \"columns\": [\"rm_id\",\"rm_htl_id\",\"rm_number\",\"rm_square_meters\",\"rm_rmt_id\",\"rm_status\", \"rm_htl_id\",\"rm_number\",\"rm_square_meters\",\"rm_rmt_id\",\"rm_status\",\"rmt_id\",\"rmt_name\",\"rmt_description\",\"rmt_price\",\"rmt_bdc_id\",\"htl_name\"]\r\n}",
+					"raw": "{\r\n    \"filter\":{\r\n        \"rm_htl_id\":2\r\n    },\r\n    \"columns\": [\"rm_id\",\"rm_htl_id\",\"rm_number\",\"rm_square_meters\",\"rm_rmt_id\",\"rm_status\", \"rm_htl_id\",\"rm_number\",\"rm_square_meters\",\"rm_rmt_id\",\"rm_status\",\"rmt_id\",\"rmt_name\",\"rmt_description\",\"rmt_price\",\"rmt_bdc_id\",\"htl_name\"]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -243,12 +243,12 @@
 					"basic": [
 						{
 							"key": "password",
-							"value": "demouser",
+							"value": "123456",
 							"type": "string"
 						},
 						{
 							"key": "username",
-							"value": "demo",
+							"value": "personalAtom02",
 							"type": "string"
 						}
 					]
@@ -287,12 +287,12 @@
 					"basic": [
 						{
 							"key": "password",
-							"value": "demouser",
+							"value": "123456",
 							"type": "string"
 						},
 						{
 							"key": "username",
-							"value": "demo",
+							"value": "personalAtom01",
 							"type": "string"
 						}
 					]
@@ -301,7 +301,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\": {\r\n     \"htl_id\": 1\r\n    },\r\n    \"columns\": [\"htl_id\",\"htl_name\",\"htl_city\",\"htl_postal_code\",\"htl_state\",\"htl_country\",\"htl_phone\",\"htl_email\", \"htl_description\",\"htl_is_open\", \"rm_id\", \"rm_number\", \"rm_square_meters\", \"rm_status\", \"rmt_name\", \"rmt_description\", \"rmt_price\", \"ftr_id\", \"ftr_description\"]\r\n}",
+					"raw": "{\r\n    \"filter\": {\r\n     \"htl_id\": 1\r\n    },\r\n    \"columns\": [\"htl_id\",\"htl_name\",\"htl_city\",\"htl_postal_code\",\"htl_state\",\"htl_cnt_iso\",\"htl_phone\",\"htl_email\", \"htl_description\",\"htl_is_open\", \"rm_id\", \"rm_number\", \"rm_square_meters\", \"rm_status\", \"rmt_name\", \"rmt_description\", \"rmt_price\", \"ftr_id\", \"ftr_description\"]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -309,15 +309,15 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:33333/rooms/queryHotelFeaturesTypes/info",
+					"raw": "localhost:33333/rooms/infoHotelFeatures/search",
 					"host": [
 						"localhost"
 					],
 					"port": "33333",
 					"path": [
 						"rooms",
-						"queryHotelFeaturesTypes",
-						"info"
+						"infoHotelFeatures",
+						"search"
 					]
 				}
 			},
@@ -330,13 +330,13 @@
 					"type": "basic",
 					"basic": [
 						{
-							"key": "password",
-							"value": "demouser",
+							"key": "username",
+							"value": "personalAtom02",
 							"type": "string"
 						},
 						{
-							"key": "username",
-							"value": "demo",
+							"key": "password",
+							"value": "123456",
 							"type": "string"
 						}
 					]
@@ -375,13 +375,13 @@
 					"type": "basic",
 					"basic": [
 						{
-							"key": "password",
-							"value": "demouser",
+							"key": "username",
+							"value": "gerenteAtom02",
 							"type": "string"
 						},
 						{
-							"key": "username",
-							"value": "demo",
+							"key": "password",
+							"value": "123456",
 							"type": "string"
 						}
 					]
@@ -420,13 +420,13 @@
 					"type": "basic",
 					"basic": [
 						{
-							"key": "password",
-							"value": "demouser",
+							"key": "username",
+							"value": "turisticas",
 							"type": "string"
 						},
 						{
-							"key": "username",
-							"value": "demo",
+							"key": "password",
+							"value": "123456",
 							"type": "string"
 						}
 					]
@@ -435,7 +435,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\":{\r\n        \"bkg_start\": \"2022-08-05\",\r\n        \"bkg_end\": \"2023-01-20\",\r\n        \"htl_id\": 3\r\n    },\r\n   \"columns\": [\"rm_id\",\"rm_htl_id\",\"rm_number\",\"rm_square_meters\",\"rm_rmt_id\",\"rm_status\", \"rm_htl_id\",\"rm_number\",\"rm_square_meters\",\"rm_rmt_id\",\"rm_status\",\"rmt_id\",\"rmt_name\",\"rmt_description\",\"rmt_price\",\"rmt_bdc_id\",\"htl_name\"]\r\n}",
+					"raw": "{\r\n    \"filter\":{\r\n        \"bkg_start\": \"2022-08-05\",\r\n        \"bkg_end\": \"2023-01-20\",\r\n        \"rm_htl_id\": 3\r\n    },\r\n   \"columns\": [\"rm_id\",\"rm_htl_id\",\"rm_number\",\"rm_square_meters\",\"rm_rmt_id\",\"rm_status\", \"rm_htl_id\",\"rm_number\",\"rm_square_meters\",\"rm_rmt_id\",\"rm_status\",\"rmt_id\",\"rmt_name\",\"rmt_description\",\"rmt_price\",\"rmt_bdc_id\",\"htl_name\"]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"

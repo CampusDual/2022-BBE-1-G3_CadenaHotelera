@@ -1,0 +1,232 @@
+{
+	"info": {
+		"_postman_id": "089d156a-1602-46f5-8f09-665de9f8894c",
+		"name": "Room Types Features",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "-C",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n    \"data\": {\r\n        \"rmt_id\": 1, \r\n        \"ftr_id\": 1\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/roomTypesFeatures/roomTypeFeature",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"roomTypesFeatures",
+						"roomTypeFeature"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R all",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n    \"columns\":[\r\n        \"rmt_id\",\r\n        \"ftr_id\"\r\n        ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/roomTypesFeatures/roomTypeFeature/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"roomTypesFeatures",
+						"roomTypeFeature",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R list all features by roomID",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n     \"filter\":{\r\n        \"rmt_id\": 1\r\n     },\r\n    \"columns\":[\r\n        \"rmt_id\",\r\n        \"ftr_id\"\r\n        ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/roomTypesFeatures/roomTypeFeature/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"roomTypesFeatures",
+						"roomTypeFeature",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R list all features by featureID",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n     \"filter\":{\r\n        \"ftr_id\": 1\r\n     },\r\n    \"columns\":[\r\n        \"rmt_id\",\r\n        \"ftr_id\"\r\n        ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/roomTypesFeatures/roomTypeFeature/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"roomTypesFeatures",
+						"roomTypeFeature",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-D delete room type feature",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "atom",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n     \"filter\":{\r\n        \"rmt_id\": 1,\r\n        \"ftr_id\": 1\r\n     }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/roomTypesFeatures/roomTypeFeature",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"roomTypesFeatures",
+						"roomTypeFeature"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

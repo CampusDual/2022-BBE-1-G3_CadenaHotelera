@@ -188,7 +188,7 @@ ALTER SEQUENCE trole_server_permission_id_role_server_permission_seq RESTART WIT
 	--hotelManager 2		
 		INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 2,id_server_permission FROM tserver_permission WHERE id_server_permission >= 1 AND id_server_permission <= 104;
 		DELETE FROM trole_server_permission 
-			WHERE ( id_server_permission in(1,2,4,6,7,8,49,50,51,82,83,84,94,95,96) 
+			WHERE ( id_server_permission in(1,2,4,6,7,8,49,50,51,73,74,76,77,78,82,83,84,94,95,96) 
 					OR id_server_permission >= 86 AND id_server_permission <= 92
 			) AND ID_ROLENAME = 2;
 	--staff 3
