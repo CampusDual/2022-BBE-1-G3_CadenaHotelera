@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "ff7ce01e-b002-4542-8125-f5b741424a07",
+		"_postman_id": "136fbfb2-fa8d-41a3-8c8a-fb2cd8bc0944",
 		"name": "Employee",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "22294604"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -13,13 +12,13 @@
 					"type": "basic",
 					"basic": [
 						{
-							"key": "password",
-							"value": "123456",
+							"key": "username",
+							"value": "gerenteAtom01",
 							"type": "string"
 						},
 						{
-							"key": "username",
-							"value": "atom",
+							"key": "password",
+							"value": "123456",
 							"type": "string"
 						}
 					]
@@ -28,7 +27,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"data\":\r\n    {\"emp_name\":\"Armando\",\r\n    \"emp_surname\": \"Controla Mucho\",\r\n    \"emp_identity_document\": \"12345678Z\",\r\n    \"emp_social_security_number\": \"25646464646665\",\r\n    \"emp_salary\": 1800.35,\r\n    \"emp_phone_number\": \"667880938\",\r\n    \"emp_account_number\": \"3697/5656/8856/4100\",\r\n    \"emp_email\": \"cesarbouzaspaw@gmail.com\",\r\n    \"emp_city\": \"OLEIROS\",\r\n    \"emp_state\": \"A Coruna\",\r\n    \"emp_address\": \"Ernesto che Guevara 153\",\r\n    \"emp_zip_code\": \"15179\",\r\n    \"emp_dpt_id\": 2,\r\n    \"emp_htl_id\": 1,\r\n    \"emp_cnt_iso\":\"ES\",\r\n    \"emp_hiring\":\"2022-08-12\"\r\n   \r\n    }\r\n}",
+					"raw": "{\"data\":\r\n    {\"emp_name\":\"Armando\",\r\n    \"emp_surname\": \"Controla Mucho\",\r\n    \"emp_identity_document\": \"53170624Y\",\r\n    \"emp_social_security_number\": \"25646464646665\",\r\n    \"emp_salary\": 1800.35,\r\n    \"emp_phone_number\": \"667880938\",\r\n    \"emp_account_number\": \"3697/5656/8856/4100\",\r\n    \"emp_email\": \"cesarbouzaspaw@gmail.com\",\r\n    \"emp_city\": \"OLEIROS\",\r\n    \"emp_state\": \"A Coruna\",\r\n    \"emp_address\": \"Ernesto che Guevara 153\",\r\n    \"emp_zip_code\": \"15179\",\r\n    \"emp_dpt_id\": 2,\r\n    \"emp_htl_id\": 1,\r\n    \"emp_cnt_iso\":\"ES\",\r\n    \"emp_hiring\":\"2022-10-20\"\r\n   \r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -57,13 +56,13 @@
 					"type": "basic",
 					"basic": [
 						{
-							"key": "password",
-							"value": "123456",
+							"key": "username",
+							"value": "gerenteAtom01",
 							"type": "string"
 						},
 						{
-							"key": "username",
-							"value": "atom",
+							"key": "password",
+							"value": "123456",
 							"type": "string"
 						}
 					]
@@ -72,7 +71,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\": {  \r\n     \"emp_identity_document\": \"34896415X\"\r\n    },\r\n    \"columns\": [\"emp_id\",\"emp_name\",\"emp_hiring\",\"emp_fired\"]\r\n}",
+					"raw": "{\r\n    \"filter\": {  \r\n     \"emp_identity_document\": \"53170624Y\",\r\n    },\r\n    \"columns\": [\"emp_id\",\"emp_name\",\"emp_hiring\",\"emp_fired\",\"emp_htl_id\"]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -143,13 +142,13 @@
 					"type": "basic",
 					"basic": [
 						{
-							"key": "password",
-							"value": "123456",
+							"key": "username",
+							"value": "gerenteAtom01",
 							"type": "string"
 						},
 						{
-							"key": "username",
-							"value": "atom",
+							"key": "password",
+							"value": "123456",
 							"type": "string"
 						}
 					]
@@ -158,7 +157,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\":{\r\n        \"emp_identity_document\":\"12345678Z\"\r\n        \r\n},\r\n\"data\":{\r\n   \"emp_fired\" :\"2022-08-12\"\r\n}\r\n}",
+					"raw": "{\r\n    \"filter\":{\r\n        \"emp_identity_document\":\"53170624Y\"\r\n        \r\n},\r\n\"data\":{\r\n   \"emp_fired\" :\"2022-10-19\"\r\n}\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"

@@ -14,18 +14,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.util.comparator.Comparators;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IEmployeeService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.EmployeeDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.UserRoleDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
+import com.ontimize.jee.common.security.PermissionsProviderSecured;
 import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 
@@ -34,13 +37,14 @@ import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 public class EmployeeService implements IEmployeeService {
 
 	@Autowired
-	private EmployeeDao employeeDao;
+	private EmployeeDao dao;
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
 	@Autowired
 	ControlFields cf;
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult employeeQuery(Map<String, Object> filter, List<String> columns)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
@@ -64,11 +68,18 @@ public class EmployeeService implements IEmployeeService {
 //		
 		try {
 			cf.reset();
-			cf.addBasics(EmployeeDao.fields);
+			
+			cf.setCPHtlColum(dao.ATTR_HOTEL);
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER);
+			
+			cf.addBasics(dao.fields);
 			cf.validate(filter);
 			cf.validate(columns);
 
-			resultado = this.daoHelper.query(this.employeeDao, filter, columns);
+			resultado = this.daoHelper.query(this.dao, filter, columns);
+			if(resultado.calculateRecordNumber() == 0) {
+				resultado.setMessage("No hay resultados para el hotel que gerenta");
+			}
 		} catch (ValidateException e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(e.getMessage());
@@ -81,6 +92,7 @@ public class EmployeeService implements IEmployeeService {
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult employeeInsert(Map<String, Object> data) throws OntimizeJEERuntimeException {
 
 		EntityResult resultado = new EntityResultWrong();
@@ -94,33 +106,40 @@ public class EmployeeService implements IEmployeeService {
 
 		try {
 			cf.reset();
-			cf.addBasics(EmployeeDao.fields);
-			List<String> required = Arrays.asList(EmployeeDao.ATTR_NAME, EmployeeDao.ATTR_IDEN_DOC,
-					EmployeeDao.ATTR_SOCIAL_DOC, EmployeeDao.ATTR_SALARY, EmployeeDao.ATTR_PHONE,
-					EmployeeDao.ATTR_ACCOUNT, EmployeeDao.ATTR_DEPARTMENT, EmployeeDao.ATTR_HOTEL,
-					EmployeeDao.ATTR_HIRING, EmployeeDao.ATTR_COUNTRY);
+			
+			cf.setCPHtlColum(dao.ATTR_HOTEL);
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER);
+			
+			
+			cf.addBasics(dao.fields);
+			List<String> required = Arrays.asList(dao.ATTR_NAME, dao.ATTR_IDEN_DOC,
+					dao.ATTR_SOCIAL_DOC, dao.ATTR_SALARY, dao.ATTR_PHONE,
+					dao.ATTR_ACCOUNT, dao.ATTR_DEPARTMENT, dao.ATTR_HOTEL,
+					dao.ATTR_HIRING, dao.ATTR_COUNTRY);
 			cf.setRequired(required);
-			List<String> restricted = Arrays.asList(EmployeeDao.ATTR_ID);
+			List<String> restricted = Arrays.asList(dao.ATTR_ID);
 			cf.setRestricted(restricted);
 			cf.validate(data);
 
 			Map<String, Object> consultaKeyMap = new HashMap<>() {
 				{
-					put(EmployeeDao.ATTR_IDEN_DOC, data.get(EmployeeDao.ATTR_IDEN_DOC));
+					put(dao.ATTR_IDEN_DOC, data.get(dao.ATTR_IDEN_DOC));
 
 				}
 			};
-			EntityResult auxEntity = employeeQuery(consultaKeyMap, EntityResultTools
-					.attributes(EmployeeDao.ATTR_IDEN_DOC, EmployeeDao.ATTR_HIRING, EmployeeDao.ATTR_FIRED));
+			EntityResult auxEntity = this.daoHelper.query(this.dao,consultaKeyMap, EntityResultTools
+					.attributes(dao.ATTR_IDEN_DOC, dao.ATTR_HIRING, dao.ATTR_FIRED));//consulta sin filtros, por si empleado está contratado en otro hotel.
+//			EntityResult auxEntity = employeeQuery(consultaKeyMap, EntityResultTools
+//					.attributes(dao.ATTR_IDEN_DOC, dao.ATTR_HIRING, dao.ATTR_FIRED));
 
 			if (auxEntity.calculateRecordNumber() == 0) {
-				resultado = this.daoHelper.insert(this.employeeDao, data);
+				resultado = this.daoHelper.insert(this.dao, data);
 				resultado.setMessage("Empleado contratado por primera vez");
-			} else if (!((List<String>) auxEntity.get(EmployeeDao.ATTR_FIRED)).contains(null)) {
-				if (data.get(employeeDao.ATTR_FIRED) != null) {
-					if (((Date) data.get(employeeDao.ATTR_HIRING))
-							.compareTo(((Date) data.get(employeeDao.ATTR_FIRED))) < 0) {
-						resultado = this.daoHelper.insert(this.employeeDao, data);
+			} else if (!((List<String>) auxEntity.get(dao.ATTR_FIRED)).contains(null)) {
+				if (data.get(dao.ATTR_FIRED) != null) {
+					if (((Date) data.get(dao.ATTR_HIRING))
+							.compareTo(((Date) data.get(dao.ATTR_FIRED))) < 0) {
+						resultado = this.daoHelper.insert(this.dao, data);
 						resultado.setMessage("Empleado contratado , este es su " + auxEntity.calculateRecordNumber()
 								+ " contrato con la cadena");
 					} else {
@@ -128,20 +147,20 @@ public class EmployeeService implements IEmployeeService {
 					}
 
 				} else {
-					List<Date> firedDates=(List<Date>) auxEntity.get(EmployeeDao.ATTR_FIRED);
+					List<Date> firedDates=(List<Date>) auxEntity.get(dao.ATTR_FIRED);
 					
 					// aqui esta el tomate
 					Date max=firedDates.stream().max(Date::compareTo).get();
-					if(max.compareTo((Date) data.get(employeeDao.ATTR_HIRING))>0){
+					if(max.compareTo((Date) data.get(dao.ATTR_HIRING))>0){
 						resultado.setMessage("La fecha de contratacion es anterior al ultimo despido "+max.toString());
 					}else {
-					resultado = this.daoHelper.insert(this.employeeDao, data);
+					resultado = this.daoHelper.insert(this.dao, data);
 					resultado.setMessage("Empleado contratado , este es su " + (auxEntity.calculateRecordNumber() + 1)
 							+ " contrato con la cadena");
 					}
 				}
 			} else {
-				resultado.setMessage("Empleado con contrato en vigor , rescindalo primero");
+				resultado.setMessage("Empleado con contrato en vigor, rescindalo primero");
 
 			}
 		} catch (DuplicateKeyException e) {
@@ -159,6 +178,7 @@ public class EmployeeService implements IEmployeeService {
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult employeeUpdate(Map<String, Object> data, Map<String, Object> filter)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
@@ -178,44 +198,44 @@ public class EmployeeService implements IEmployeeService {
 			// ControlFields del filtro
 			List<String> requiredFilter = new ArrayList<String>() {
 				{
-					add(EmployeeDao.ATTR_IDEN_DOC);
+					add(dao.ATTR_IDEN_DOC);
 				}
 			};
 
 			cf.reset();
-			cf.addBasics(EmployeeDao.fields);
+			cf.addBasics(dao.fields);
 			cf.setRequired(requiredFilter);
 			cf.setOptional(false);// no será aceptado ningun campo que no esté en required
 			cf.validate(filter);
 			// ControlFileds de los nuevos datos
 			List<String> restrictedData = new ArrayList<>() {
 				{
-					add(EmployeeDao.ATTR_ID);
+					add(dao.ATTR_ID);
 
 				}
 			};
 			cf.reset();
-			cf.addBasics(EmployeeDao.fields);
+			cf.addBasics(dao.fields);
 			cf.setRestricted(restrictedData);
 			cf.validate(data);
-			System.out.println(data.get(EmployeeDao.ATTR_IDEN_DOC));// comentar
+			System.out.println(data.get(dao.ATTR_IDEN_DOC));// comentar
 			Map<String, Object> subConsultaKeyMap = new HashMap<>() {
 				{
-					put(EmployeeDao.ATTR_IDEN_DOC, filter.get(EmployeeDao.ATTR_IDEN_DOC));
+					put(dao.ATTR_IDEN_DOC, filter.get(dao.ATTR_IDEN_DOC));
 
 				}
 			};
 			EntityResult auxEntity = employeeQuery(subConsultaKeyMap, EntityResultTools
-					.attributes(EmployeeDao.ATTR_ID,EmployeeDao.ATTR_IDEN_DOC, EmployeeDao.ATTR_HIRING, EmployeeDao.ATTR_FIRED));
+					.attributes(dao.ATTR_ID,dao.ATTR_IDEN_DOC, dao.ATTR_HIRING, dao.ATTR_FIRED));
 			
 			if (auxEntity.calculateRecordNumber() == 0) {
 				resultado.setMessage("Empleado no registrado, registrelo primero");
-			} else if (((List<String>) auxEntity.get(EmployeeDao.ATTR_FIRED)).contains(null)) {
-				if (data.get(employeeDao.ATTR_FIRED) != null) {
-					if (((Date) auxEntity.getRecordValues(auxEntity.calculateRecordNumber()-1).get(employeeDao.ATTR_HIRING))
-							.compareTo(((Date) data.get(employeeDao.ATTR_FIRED)))< 0) {
-						filter.put(employeeDao.ATTR_ID,auxEntity.getRecordValues(auxEntity.calculateRecordNumber()-1).get(employeeDao.ATTR_ID));
-						resultado = this.daoHelper.update(this.employeeDao, data, filter);
+			} else if (((List<String>) auxEntity.get(dao.ATTR_FIRED)).contains(null)) {
+				if (data.get(dao.ATTR_FIRED) != null) {
+					if (((Date) auxEntity.getRecordValues(auxEntity.calculateRecordNumber()-1).get(dao.ATTR_HIRING))
+							.compareTo(((Date) data.get(dao.ATTR_FIRED)))< 0) {
+						filter.put(dao.ATTR_ID,auxEntity.getRecordValues(auxEntity.calculateRecordNumber()-1).get(dao.ATTR_ID));
+						resultado = this.daoHelper.update(this.dao, data, filter);
 						resultado.setMessage("Empleado despedido de su " + auxEntity.calculateRecordNumber()
 								+ " contrato con la cadena");
 					} else {
@@ -223,7 +243,7 @@ public class EmployeeService implements IEmployeeService {
 					}
 
 				} else {
-					resultado = this.daoHelper.update(this.employeeDao, data, filter);
+					resultado = this.daoHelper.update(this.dao, data, filter);
 					resultado.setMessage("Empleado actualizado en  su " + auxEntity.calculateRecordNumber()
 							+ " contrato con la cadena");
 				}
@@ -247,9 +267,10 @@ public class EmployeeService implements IEmployeeService {
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult employeeFiredUpdate(Map<String, Object> data, Map<String, Object> filter)
 			throws OntimizeJEERuntimeException {
-		data.put(EmployeeDao.ATTR_FIRED, new Date());
+		data.put(dao.ATTR_FIRED, new Date());
 		return this.employeeUpdate(data, filter);
 	}
 

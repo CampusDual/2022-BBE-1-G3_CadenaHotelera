@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.SQLWarningException;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsException;
@@ -23,9 +24,11 @@ import com.ontimize.atomicHotelsApiRest.api.core.service.IDepartmentService;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
+import com.ontimize.jee.common.security.PermissionsProviderSecured;
 import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.DepartmentDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.UserRoleDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
@@ -36,7 +39,7 @@ import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
 public class DepartmentService implements IDepartmentService{
 	
 	@Autowired
-	private DepartmentDao departmentDao;
+	private DepartmentDao dao;
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
 	
@@ -44,17 +47,19 @@ public class DepartmentService implements IDepartmentService{
 	ControlFields cf;
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult departmentQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 
 		EntityResult resultado = new EntityResultWrong();
 		try {
 			cf.reset();
-			cf.addBasics(DepartmentDao.fields);
+			
+			cf.addBasics(dao.fields);
 			cf.validate(keyMap);
 			cf.validate(attrList);
 			
-			resultado = this.daoHelper.query(this.departmentDao, keyMap, attrList);
+			resultado = this.daoHelper.query(this.dao, keyMap, attrList);
 			
 		}catch(ValidateException e) {
 			e.printStackTrace();
@@ -68,6 +73,7 @@ public class DepartmentService implements IDepartmentService{
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult departmentInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 
 		EntityResult resultado = new EntityResultWrong();
@@ -75,19 +81,19 @@ public class DepartmentService implements IDepartmentService{
 			
 			cf.reset();
 			List<String> requeridos = new ArrayList<String>() {{
-				add(DepartmentDao.ATTR_NAME);
+				add(dao.ATTR_NAME);
 			}};
 			List<String> restricted = new ArrayList<String>() {{
-				add(DepartmentDao.ATTR_ID);//No quiero que meta el id porque quiero el id autogenerado de la base de datos
+				add(dao.ATTR_ID);//No quiero que meta el id porque quiero el id autogenerado de la base de datos
 			}};
 			
-			cf.addBasics(DepartmentDao.fields);
+			cf.addBasics(dao.fields);
 			cf.setRequired(requeridos);
 			cf.setRestricted(restricted);
 			cf.setOptional(true);//El resto de los campos de fields serán aceptados
 			cf.validate(attrMap);
 
-			resultado = this.daoHelper.insert(this.departmentDao, attrMap);
+			resultado = this.daoHelper.insert(this.dao, attrMap);
 			resultado.setMessage("Department registered");
 
 		} catch (ValidateException e) {
@@ -102,7 +108,8 @@ public class DepartmentService implements IDepartmentService{
 		return resultado;
 	}
 
-	@Override													//data						//filter
+	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult departmentUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)	throws OntimizeJEERuntimeException {	//attrMap filtro, keymap nuevo valor a actualizar
 
 		EntityResult resultado = new EntityResultWrong();
@@ -111,10 +118,10 @@ public class DepartmentService implements IDepartmentService{
 		
 			//ControlFields del filtro
 			cf.reset();
-			cf.addBasics(DepartmentDao.fields);
+			cf.addBasics(dao.fields);
 			List<String> requiredFilter = new ArrayList<String>() {{
-//				add(DepartmentDao.ATTR_NAME);
-				add(DepartmentDao.ATTR_ID);
+//				add(dao.ATTR_NAME);
+				add(dao.ATTR_ID);
 			}};				
 			cf.setRequired(requiredFilter);
 			cf.setOptional(false);//No será aceptado ningún campo que no esté en required
@@ -123,15 +130,15 @@ public class DepartmentService implements IDepartmentService{
 			
 			//ControlFields de los nuevos datos
 			cf.reset();
-			cf.addBasics(DepartmentDao.fields);
+			cf.addBasics(dao.fields);
 			List<String> restrictedData = new ArrayList<String>() {{
-				add(DepartmentDao.ATTR_ID);//El id no se puede actualizar
+				add(dao.ATTR_ID);//El id no se puede actualizar
 			}};
 			cf.setRestricted(restrictedData);
 	//		cd.setOptional(true); //No es necesario ponerlo
 			cf.validate(attrMap);
 			
-			resultado = this.daoHelper.update(this.departmentDao, attrMap, keyMap);
+			resultado = this.daoHelper.update(this.dao, attrMap, keyMap);
 	
 			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
 				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
@@ -154,6 +161,7 @@ public class DepartmentService implements IDepartmentService{
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult departmentDelete(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {			//El filtro del where del postman		
 		
 		EntityResult resultado = new EntityResultWrong();
@@ -161,9 +169,9 @@ public class DepartmentService implements IDepartmentService{
 		try {
 			
 			cf.reset();
-			cf.addBasics(DepartmentDao.fields);
+			cf.addBasics(dao.fields);
 			List<String> requeridos = new ArrayList<String>() {{
-				add(DepartmentDao.ATTR_ID);
+				add(dao.ATTR_ID);
 			}};
 
 			cf.setRequired(requeridos);
@@ -171,17 +179,17 @@ public class DepartmentService implements IDepartmentService{
 			cf.validate(attrMap);
 			
 			Map<String, Object> consultaKeyMap = new HashMap<>() { {
-				put(DepartmentDao.ATTR_ID, attrMap.get(DepartmentDao.ATTR_ID));
+				put(dao.ATTR_ID, attrMap.get(dao.ATTR_ID));
 				}
 			};
 			
 			EntityResult auxEntity = departmentQuery(consultaKeyMap, 
-					EntityResultTools.attributes(DepartmentDao.ATTR_ID));
+					EntityResultTools.attributes(dao.ATTR_ID));
 			
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
 				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
 			} else {
-				resultado = this.daoHelper.delete(this.departmentDao, attrMap);
+				resultado = this.daoHelper.delete(this.dao, attrMap);
 				resultado.setMessage("Department deleted");
 			}
 			

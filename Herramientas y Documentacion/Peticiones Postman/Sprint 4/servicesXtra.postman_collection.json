@@ -1,0 +1,267 @@
+{
+	"info": {
+		"_postman_id": "616b2176-757d-4afe-bde0-01942e148e4f",
+		"name": "servicesXtra",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "-C extra paseador",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "atom",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n    \"data\": {\r\n        \"sxt_name\": \"Paseador de perro\",\r\n        \"sxt_description\": \"Cariñoso y atento.\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/servicesXtra/servicesXtra",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"servicesXtra",
+						"servicesXtra"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R all extras",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "atom",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \"columns\": [\"sxt_id\", \"sxt_name\", \"sxt_description\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/servicesXtra/servicesXtra/search",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"servicesXtra",
+						"servicesXtra",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R all extras",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "demouser",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "demo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:33333/servicesXtra/servicesXtra?columns=sxt_id,sxt_name,sxt_description",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"servicesXtra",
+						"servicesXtra"
+					],
+					"query": [
+						{
+							"key": "columns",
+							"value": "sxt_id,sxt_name,sxt_description"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R extra unitaria",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "personalAtom01",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"sxt_id\": 1\r\n    },\r\n    \"columns\": [\"sxt_id\",\"sxt_name\",\"sxt_description\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/servicesXtra/servicesXtra/search",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"servicesXtra",
+						"servicesXtra",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-U extra paseador",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "gerenteAtom01",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n    \"filter\": {\r\n        \"sxt_id\": 18\r\n    },\r\n    \"data\": {\r\n        \"sxt_name\": \"Paseador de perros\",\r\n        \"sxt_description\": \"Cariñoso y atento.\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/servicesXtra/servicesXtra",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"servicesXtra",
+						"servicesXtra"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-D extra paseador",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "personalAtom01",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"sxt_id\": 16\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:33333/servicesXtra/servicesXtra",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"servicesXtra",
+						"servicesXtra"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
