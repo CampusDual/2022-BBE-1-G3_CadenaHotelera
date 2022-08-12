@@ -152,6 +152,29 @@ catalog="" schema="${mainschema}" table="hotels" datasource="mainDataSource" sql
 			GROUP BY bll_dpt_id 
 		    ]]>
 	    </Sentence>
+    </Query>
+    <Query id="queryTotalDepartmentExpensesByHotel">	
+    <Sentence>
+		  <![CDATA[
+		  	SELECT dpt_id, round(sum(expenses),2) AS total_expenses
+				FROM(
+						(SELECT bll_dpt_id AS dpt_id, sum(bll_amount) AS expenses
+							FROM bills  
+							WHERE  #DEP_HOTEL_DATE# 
+							GROUP BY bll_dpt_id )
+				UNION
+						(SELECT aux.emp_dpt_id AS dpt_id, SUM(aux.daily_salary) AS expenses 
+							FROM 
+								(SELECT emp_htl_id, emp_dpt_id,emp_id, emp_hiring, emp_fired,(emp_salary/30) AS daily_salary, days.fecha,(CASE WHEN (DATE(emp_hiring) <= days.fecha AND ((DATE(emp_fired)>= days.fecha) OR emp_fired IS NULL))= TRUE THEN 'S' ELSE null END) AS working_employee
+									FROM employees,
+									(select fecha::date from #GEN_SERIES# fecha) days
+								) AS aux
+							WHERE aux.working_employee='S' #HOTEL_EMPL#
+							GROUP BY aux.emp_dpt_id)
+					)AS TOTAL
+				GROUP BY dpt_id
+		    ]]>
+	    </Sentence>
     </Query>		
  </Queries>
 </JdbcEntitySetup>
