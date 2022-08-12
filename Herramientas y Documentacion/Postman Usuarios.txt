@@ -1,10 +1,12 @@
 atom
-// 123456
 gerenteAtom01
-// 123456
+gerenteAtom02
+
 personalAtom01
-// 123456
+personalAtom02
+
 turisticas
-// 123456
+
 usuarioLibre
-// 123456
+
+Pass: 123456

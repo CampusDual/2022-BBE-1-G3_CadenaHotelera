@@ -60,7 +60,7 @@ public class RoomService implements IRoomService {
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
 	@Autowired
-	IBookingService bookingService;
+	BookingService bookingService;
 
 	@Autowired
 	ControlFields cf;
@@ -395,7 +395,7 @@ public class RoomService implements IRoomService {
 				BasicOperator.NULL_OP, null);
 		EntityResultExtraTools.putBasicExpression(bookingKeyMap, notCancelled);
 
-		EntityResult bookedRoomsER = bookingService.bookingsInRangeQuery(bookingKeyMap,
+		EntityResult bookedRoomsER = bookingService.totalBookingsInRangeQuery(bookingKeyMap,
 				EntityResultTools.attributes(BookingDao.ATTR_ROOM_ID));
 
 		if (bookedRoomsER.isWrong()) {

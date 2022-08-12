@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "c73477ac-82d8-4f6b-b984-c106515daa07",
+		"_postman_id": "cbe4f681-8ec8-4a25-80db-bf1a69d5ae57",
 		"name": "Bookings",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -198,11 +198,26 @@
 				}
 			],
 			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "personalAtom01",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						}
+					]
+				},
 				"method": "PUT",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\": {\r\n     \"bkg_id\": 1\r\n    },\r\n    \"data\": {\r\n        \"action\": \"CHECKIN\"\r\n    }    \r\n}",
+					"raw": "{\r\n    \"filter\": {\r\n     \"bkg_id\": 7\r\n    },\r\n    \"data\": {\r\n        \"action\": \"CHECKIN\"\r\n    }    \r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -318,6 +333,21 @@
 				}
 			],
 			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "personalAtom01",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						}
+					]
+				},
 				"method": "DELETE",
 				"header": [],
 				"body": {
@@ -397,7 +427,7 @@
 					"basic": [
 						{
 							"key": "username",
-							"value": "turisticas",
+							"value": "personalAtom01",
 							"type": "string"
 						},
 						{
@@ -437,6 +467,21 @@
 		{
 			"name": "-R bookingsInRange",
 			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "turisticas",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -467,11 +512,26 @@
 		{
 			"name": "-R  2bookingsInRange",
 			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "turisticas",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\":{\r\n        \"bkg_start\": \"2022-01-05\",\r\n        \"bkg_end\": \"2023-01-20\"\r\n    },\r\n    \"columns\": \r\n        [\"bkg_id\",\"bkg_rm_id\",\"bkg_canceled\"]\r\n\r\n}",
+					"raw": "{\r\n    \"filter\":{\r\n        \"bkg_start\": \"2022-01-05\",\r\n        \"bkg_end\": \"2023-01-20\"\r\n    },\r\n    \"columns\": \r\n        [\"bkg_id\",\"bkg_rm_id\",\"bkg_canceled\",\"user_\"]\r\n\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
