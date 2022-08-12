@@ -72,7 +72,8 @@ public class ControlFields {
 	}
 
 	public void resetPermissions() {
-		// permisos		permissions.reset();		
+		// permisos		
+		permissions.reset();		
 		controlPermissionsActive = true;
 	}
 	public void setAllowBasicExpression(boolean allowBasicExpression) {
