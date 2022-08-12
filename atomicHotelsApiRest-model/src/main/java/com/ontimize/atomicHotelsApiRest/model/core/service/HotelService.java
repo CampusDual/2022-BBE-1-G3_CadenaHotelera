@@ -25,6 +25,7 @@ import java.util.Scanner;
 import javax.net.ssl.HttpsURLConnection;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.postgresql.xml.EmptyStringEntityResolver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +78,7 @@ import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 import com.ontimize.jee.server.dao.IOntimizeDaoSupport;
 import com.ontimize.jee.server.dao.ISQLQueryAdapter;
+import com.sun.xml.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 @Service("HotelService")
 @Lazy
@@ -326,8 +328,10 @@ public class HotelService implements IHotelService {
 		EntityResult resultado = new EntityResultWrong();
 		EntityResult pois = new EntityResultMapImpl();
 		try {
+			List<String> required = Arrays.asList(HotelDao.ATTR_ID);
 			cf.reset();
 			cf.addBasics(HotelDao.fields);
+			cf.setRequired(required);
 			cf.validate(keyMap);
 			cf.validate(attrList);
 			Map<String, Object> keyMapDireccion = new HashMap<>();
@@ -343,12 +347,13 @@ public class HotelService implements IHotelService {
 		}
 		String street = (String) resultado.getRecordValues(0).get(HotelDao.ATTR_STREET);
 		String city = (String) resultado.getRecordValues(0).get(HotelDao.ATTR_CITY);
-		String urlEnpoint = "https://nominatim.openstreetmap.org/search?street="
-				+ URLEncoder.encode(street, StandardCharsets.UTF_8) + "&city="
-				+ URLEncoder.encode(city, StandardCharsets.UTF_8) + "&format=json";
 
 		try {
-			URL url = new URL(urlEnpoint);
+			String urlEnpoint = "https://nominatim.openstreetmap.org/search?street="
+					+ URLEncoder.encode(street, StandardCharsets.UTF_8) + "&city="
+					+ URLEncoder.encode(city, StandardCharsets.UTF_8) + "&format=json";
+					URL url = new URL(urlEnpoint);
+			
 			HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
 			con.setRequestMethod("GET");
 			con.connect();
@@ -385,7 +390,6 @@ public class HotelService implements IHotelService {
 				con2.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 				
 				byte[] dataUrlEndPoint2 = urlParams.getBytes(StandardCharsets.UTF_8);
-				System.err.println(dataUrlEndPoint2.toString());
 				int dataLenght = dataUrlEndPoint2.length;
 				con2.setRequestProperty("Content-Lenght", Integer.toString(dataLenght)); //content lenght va en bytes
 				con2.setRequestMethod("POST");
@@ -400,7 +404,6 @@ public class HotelService implements IHotelService {
 				    while ((output = br.readLine()) != null) {
 				      sb.append(output);
 				    }
-				    System.err.println(sb.toString());
 				    JSONArray jsonarray2 = new JSONArray("["+sb.toString()+"]");
 					JSONObject jsonObject2 = jsonarray2.getJSONObject(0);
 					URL url3 = new URL(urlPoi);
@@ -447,6 +450,11 @@ public class HotelService implements IHotelService {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();}
+		catch(NullPointerException e) {
+			pois = new EntityResultWrong("Este hotel no se encuentra.");
+		}catch(JSONException e) {
+			pois = new EntityResultWrong("La dirección o ciudad del hotel no se encuentran");
+		}
 
 		return pois;
 
