@@ -808,7 +808,7 @@ public class StatisticsService implements IStatisticsService {
 	}
 	
 	
-
+	
 	/**
 	 * Dado el hotel y un rango de fechas, devuelven los beneficios netos, los gastos y los ingresos
 	 * 
@@ -825,103 +825,8 @@ public class StatisticsService implements IStatisticsService {
 		try {
 			List<String> required = new ArrayList<String>() {
 				{
-					add(HotelDao.ATTR_FROM); // fechas a comparar, filtro postman
+					add(HotelDao.ATTR_FROM);
 					add(HotelDao.ATTR_TO);
-					add(HotelDao.ATTR_ID);
-				}
-			};
-
-			Map<String, type> fields = new HashMap<String, type>() {
-				{
-					put(HotelDao.ATTR_ID, type.INTEGER);
-					put(HotelDao.ATTR_FROM, type.DATE); 
-					put(HotelDao.ATTR_TO, type.DATE);
-				}
-			};
-
-			cf.reset();
-			cf.addBasics(fields);
-			cf.setRequired(required);
-			cf.validate(keyMap);
-
-			cf.reset();
-			cf.setNoEmptyList(false);
-			cf.validate(attrList);
-
-			Date from = (Date) keyMap.get(HotelDao.ATTR_FROM);
-			Date to = (Date) keyMap.get(HotelDao.ATTR_TO);
-
-			ValidateFields.dataRange(from, to);
-			
-			EntityResult gastos = this.departmentExpensesByHotelQuery(keyMap, new ArrayList<String>());
-			BigDecimal total_expenses=new BigDecimal(0);
-			
-			for(int i=0; i<gastos.calculateRecordNumber(); i++) {	
-				total_expenses=total_expenses.add((BigDecimal) gastos.getRecordValues(i).get("total_expenses"));
-			}
-			
-			EntityResult ingresosBookings = this.bookingsIncomeByHotelQuery(keyMap, new ArrayList<String>());
-			
-			EntityResult ingresosServicesExtra = this.servicesExtraIncomeByHotelQuery(keyMap, new ArrayList<String>());
-			
-			BigDecimal incomeBooking = (BigDecimal)ingresosBookings.getRecordValues(0).get("rooms_income");
-			BigDecimal incomeServiceExtra = (BigDecimal)ingresosServicesExtra.getRecordValues(0).get("services_extra_income");
-			
-			if(incomeBooking==null) {
-				incomeBooking=new BigDecimal(0);
-			}
-			
-			if(incomeServiceExtra==null) {
-				incomeServiceExtra=new BigDecimal(0);
-			}
-			
-			BigDecimal total_income = incomeBooking.add(incomeServiceExtra);
-			
-			BigDecimal benefits = total_income.subtract(total_expenses);
-			
-			BigDecimal a = total_expenses;
-			
-			Map<String,Object> finalResult = new HashMap<String,Object>(){{
-				put(HotelDao.ATTR_ID,keyMap.get(HotelDao.ATTR_ID));
-				put("total_income",total_income);
-				put("total_expenses",a);
-				put("benefits",benefits);
-			}};
-			
-			resultado.addRecord(finalResult);
-	
-
-		} catch (ValidateException e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(e.getMessage());
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
-		}
-		return resultado;
-
-	}
-	
-	/**
-	 * Dado el hotel y un rango de fechas, devuelven los beneficios netos, los gastos y los ingresos
-	 * 
-	 * @param keyMap   (HotelDao.ATTR_FROM, HotelDao.ATTR_TO, HotelDao.ATTR_ID)
-	 * @param attrList (anyList())
-	 * @return EntityResult ("benefits","total_income","htl_id","total_expenses")
-	 * @throws OntimizeJEERuntimeException
-	 * */
-	@Override
-	public EntityResult incomeVsExpensesByHotel2Query(Map<String, Object> keyMap, List<String> attrList)
-			throws OntimizeJEERuntimeException {
-
-		EntityResult resultado = new EntityResultWrong();
-		try {
-			List<String> required = new ArrayList<String>() {
-				{
-					add(HotelDao.ATTR_FROM); // fechas a comparar, filtro postman
-					add(HotelDao.ATTR_TO);
-					//add(HotelDao.ATTR_ID);
 				}
 			};
 
@@ -1026,4 +931,98 @@ public class StatisticsService implements IStatisticsService {
 		return resultado;
 
 	}
+	
+//	/**
+//	 * Dado el hotel y un rango de fechas, devuelven los beneficios netos, los gastos y los ingresos
+//	 * 
+//	 * @param keyMap   (HotelDao.ATTR_FROM, HotelDao.ATTR_TO, HotelDao.ATTR_ID)
+//	 * @param attrList (anyList())
+//	 * @return EntityResult ("benefits","total_income","htl_id","total_expenses")
+//	 * @throws OntimizeJEERuntimeException
+//	 * */
+//	@Override
+//	public EntityResult incomeVsExpensesByHotelQuery(Map<String, Object> keyMap, List<String> attrList)
+//			throws OntimizeJEERuntimeException {
+//
+//		EntityResult resultado = new EntityResultWrong();
+//		try {
+//			List<String> required = new ArrayList<String>() {
+//				{
+//					add(HotelDao.ATTR_FROM); // fechas a comparar, filtro postman
+//					add(HotelDao.ATTR_TO);
+//					add(HotelDao.ATTR_ID);
+//				}
+//			};
+//
+//			Map<String, type> fields = new HashMap<String, type>() {
+//				{
+//					put(HotelDao.ATTR_ID, type.INTEGER);
+//					put(HotelDao.ATTR_FROM, type.DATE); 
+//					put(HotelDao.ATTR_TO, type.DATE);
+//				}
+//			};
+//
+//			cf.reset();
+//			cf.addBasics(fields);
+//			cf.setRequired(required);
+//			cf.validate(keyMap);
+//
+//			cf.reset();
+//			cf.setNoEmptyList(false);
+//			cf.validate(attrList);
+//
+//			Date from = (Date) keyMap.get(HotelDao.ATTR_FROM);
+//			Date to = (Date) keyMap.get(HotelDao.ATTR_TO);
+//
+//			ValidateFields.dataRange(from, to);
+//			
+//			EntityResult gastos = this.departmentExpensesByHotelQuery(keyMap, new ArrayList<String>());
+//			BigDecimal total_expenses=new BigDecimal(0);
+//			
+//			for(int i=0; i<gastos.calculateRecordNumber(); i++) {	
+//				total_expenses=total_expenses.add((BigDecimal) gastos.getRecordValues(i).get("total_expenses"));
+//			}
+//			
+//			EntityResult ingresosBookings = this.bookingsIncomeByHotelQuery(keyMap, new ArrayList<String>());
+//			
+//			EntityResult ingresosServicesExtra = this.servicesExtraIncomeByHotelQuery(keyMap, new ArrayList<String>());
+//			
+//			BigDecimal incomeBooking = (BigDecimal)ingresosBookings.getRecordValues(0).get("rooms_income");
+//			BigDecimal incomeServiceExtra = (BigDecimal)ingresosServicesExtra.getRecordValues(0).get("services_extra_income");
+//			
+//			if(incomeBooking==null) {
+//				incomeBooking=new BigDecimal(0);
+//			}
+//			
+//			if(incomeServiceExtra==null) {
+//				incomeServiceExtra=new BigDecimal(0);
+//			}
+//			
+//			BigDecimal total_income = incomeBooking.add(incomeServiceExtra);
+//			
+//			BigDecimal benefits = total_income.subtract(total_expenses);
+//			
+//			BigDecimal a = total_expenses;
+//			
+//			Map<String,Object> finalResult = new HashMap<String,Object>(){{
+//				put(HotelDao.ATTR_ID,keyMap.get(HotelDao.ATTR_ID));
+//				put("total_income",total_income);
+//				put("total_expenses",a);
+//				put("benefits",benefits);
+//			}};
+//			
+//			resultado.addRecord(finalResult);
+//	
+//
+//		} catch (ValidateException e) {
+//			e.printStackTrace();
+//			resultado = new EntityResultWrong(e.getMessage());
+//
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
+//		}
+//		return resultado;
+//
+//	}
 }

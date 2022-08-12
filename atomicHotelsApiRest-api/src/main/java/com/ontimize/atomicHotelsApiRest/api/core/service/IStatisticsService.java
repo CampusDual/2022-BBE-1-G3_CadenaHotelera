@@ -25,8 +25,7 @@ public interface IStatisticsService {
 	public EntityResult servicesExtraIncomeByHotelQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
 	public EntityResult incomeVsExpensesByHotelQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException;
-	public EntityResult incomeVsExpensesByHotel2Query(Map<String, Object> keyMap, List<String> attrList)
-			throws OntimizeJEERuntimeException;
+	
 
 
 }
