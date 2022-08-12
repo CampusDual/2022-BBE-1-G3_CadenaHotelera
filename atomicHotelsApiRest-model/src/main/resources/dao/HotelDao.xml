@@ -160,14 +160,14 @@ catalog="" schema="${mainschema}" table="hotels" datasource="mainDataSource" sql
 				FROM(
 						(SELECT bll_dpt_id AS dpt_id, sum(bll_amount) AS expenses
 							FROM bills  
-							WHERE  #DEP_HOTEL_DATE# 
+							WHERE  #DEP_HOTEL_DATE#
 							GROUP BY bll_dpt_id )
 				UNION
 						(SELECT aux.emp_dpt_id AS dpt_id, SUM(aux.daily_salary) AS expenses 
 							FROM 
 								(SELECT emp_htl_id, emp_dpt_id,emp_id, emp_hiring, emp_fired,(emp_salary/30) AS daily_salary, days.fecha,(CASE WHEN (DATE(emp_hiring) <= days.fecha AND ((DATE(emp_fired)>= days.fecha) OR emp_fired IS NULL))= TRUE THEN 'S' ELSE null END) AS working_employee
 									FROM employees,
-									(select fecha::date from #GEN_SERIES# fecha) days
+									(select fecha::date from  #GEN_SERIES# fecha) days
 								) AS aux
 							WHERE aux.working_employee='S' #HOTEL_EMPL#
 							GROUP BY aux.emp_dpt_id)
@@ -175,6 +175,23 @@ catalog="" schema="${mainschema}" table="hotels" datasource="mainDataSource" sql
 				GROUP BY dpt_id
 		    ]]>
 	    </Sentence>
-    </Query>		
+    </Query>	
+    <Query id="queryBookingsIncomeByHotel">	
+    <Sentence>
+		  <![CDATA[
+		  	SELECT aux.htl_id,aux.htl_name, aux.htl_city, SUM(aux.rmt_price) AS rooms_income
+			FROM
+				(SELECT htl_id, htl_name, htl_city, bkg_id, rmt_price,(CASE WHEN (DATE(bkg_start) <= days.fecha AND (DATE(bkg_end)> days.fecha))= TRUE THEN 'S' ELSE null END) AS ocupada
+     				FROM bookings 
+     				LEFT JOIN rooms ON bkg_rm_id = rm_id 
+     				LEFT JOIN room_types ON rmt_id = rm_rmt_id
+     				LEFT JOIN hotels ON rm_htl_id = htl_id,
+     				(select fecha::date from #GEN_SERIES# fecha) days
+     			) AS aux
+			WHERE aux.ocupada='S'
+			GROUP BY aux.htl_id,aux.htl_name, aux.htl_city;
+		    ]]>
+	    </Sentence>
+    </Query>	
  </Queries>
 </JdbcEntitySetup>
