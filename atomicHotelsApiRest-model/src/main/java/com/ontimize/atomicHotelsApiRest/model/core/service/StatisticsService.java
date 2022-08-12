@@ -495,31 +495,7 @@ public class StatisticsService implements IStatisticsService {
 	}
 
 	/**
-	 * Devuelve una lista de gastos de departamento, asociados a empleados y bills,
-	 * dentro de un rango de fechas tras filtrarlo por un htl_id y dicho rango
-	 * 
-	 */
-//	bll_htl_id = 4 
-//			and DATE (bll_date) <= '2022-01-01' 
-//			and  DATE (bll_date) >= '2019-01-01'
-
-	/**
-	 * Metodo para obtener una lista de las habitaciones ocupadas total o
-	 * parcialmente, en un rango de fechas y filtros (attributos BookingDao). Puede
-	 * contener duplicados.
-	 * 
-	 * @param startDate fecha de inicio (tiene en cuenta las salidas el mismo día
-	 *                  que ya son antes de las entradas)
-	 * @param endDate   fecha de fin de rango
-	 * @return List<Object> relación de ID de habitación que tiene reservas en esas
-	 *         fechas. Puede contener duplicados.
-	 * @throws OntimizeJEERuntimeException
-	 * @throws EntityResultRequiredException
-	 * @throws InvalidFieldsValuesException
-	 */
-
-	/**
-	 * 
+	 * Dado el hotel y un rango de fechas, devuelve los gastos por departamento
 	 * 
 	 * @param keyMap   (HotelDao.ATTR_FROM, HOtelDao.ATTR_TO,HotelDao.ATTR_ID)
 	 * @param attrList (anyList())
@@ -597,6 +573,15 @@ public class StatisticsService implements IStatisticsService {
 		return resultado;
 	}
 
+	/**
+	 * Dado el hotel y un rango de fechas, devuelve el total de gastos (los gastos y
+	 * los gastos en salario por departamento)
+	 * 
+	 * @param keyMap   (HotelDao.ATTR_FROM, HOtelDao.ATTR_TO,HotelDao.ATTR_ID)
+	 * @param attrList (anyList())
+	 * @return EntityResult (DepartmentDao.ATTR_ID,"total_expenses")
+	 * @throws OntimizeJEERuntimeException
+	 */
 	@Override
 	public EntityResult departmentExpensesByHotelQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
@@ -633,32 +618,32 @@ public class StatisticsService implements IStatisticsService {
 
 			ValidateFields.dataRange(from, to);
 
+			resultado = this.daoHelper.query(this.hotelDao, new HashMap<String, Object>(), attrList,
+					"queryTotalDepartmentExpensesByHotel", new ISQLQueryAdapter() {
 
-			resultado = this.daoHelper.query(this.hotelDao, new HashMap<String,Object>(), attrList, "queryTotalDepartmentExpensesByHotel",
-					new ISQLQueryAdapter() {
+						@Override
+						public SQLStatement adaptQuery(SQLStatement sqlStatement, IOntimizeDaoSupport dao,
+								Map<?, ?> keysValues, Map<?, ?> validKeysValues, List<?> attributes,
+								List<?> validAttributes, List<?> sort, String queryId) {
 
-				@Override
-				public SQLStatement adaptQuery(SQLStatement sqlStatement, IOntimizeDaoSupport dao,
-						Map<?, ?> keysValues, Map<?, ?> validKeysValues, List<?> attributes,
-						List<?> validAttributes, List<?> sort, String queryId) {
+							Date init_date = from;
+							Date end_date = to;
 
-					Date init_date = from;
-					Date end_date = to;
+							String init_s = new SimpleDateFormat("yyyy-MM-dd").format(init_date);
+							String end_s = new SimpleDateFormat("yyyy-MM-dd").format(end_date);
 
-					String init_s = new SimpleDateFormat("yyyy-MM-dd").format(init_date);
-					String end_s = new SimpleDateFormat("yyyy-MM-dd").format(end_date);
+							String gen_series = "generate_series('" + init_s + "', '" + end_s + "', '1 day'::interval)";
+							String hotel_empl = "AND aux.emp_htl_id = " + (int) keyMap.get(HotelDao.ATTR_ID);
+							String dep_hotel_dates = "bll_htl_id=" + (int) keyMap.get(HotelDao.ATTR_ID)
+									+ " AND DATE(bll_date) >='" + init_s + "' AND DATE(bll_date) <= '" + end_s + "'";
 
-					String gen_series = "generate_series('" + init_s + "', '" + end_s + "', '1 day'::interval)";
-					String hotel_empl = "AND aux.emp_htl_id = "+(int)keyMap.get(HotelDao.ATTR_ID);
-					String dep_hotel_dates = "bll_htl_id="+(int)keyMap.get(HotelDao.ATTR_ID)+" AND DATE(bll_date) >='" + init_s + "' AND DATE(bll_date) <= '" + end_s + "'";
+							SQLStatement result = new SQLStatement(sqlStatement.getSQLStatement()
+									.replaceAll("#GEN_SERIES#", gen_series).replaceAll("#HOTEL_EMPL#", hotel_empl)
+									.replaceAll(" #DEP_HOTEL_DATE#", dep_hotel_dates), sqlStatement.getValues());
 
-					SQLStatement result = new SQLStatement(
-							sqlStatement.getSQLStatement().replaceAll("#GEN_SERIES#", gen_series).replaceAll("#HOTEL_EMPL#", hotel_empl).replaceAll(" #DEP_HOTEL_DATE#", dep_hotel_dates),
-							sqlStatement.getValues());
-
-					return result;
-				}
-			});
+							return result;
+						}
+					});
 
 		} catch (ValidateException e) {
 			e.printStackTrace();
@@ -669,6 +654,82 @@ public class StatisticsService implements IStatisticsService {
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
+	}
+
+	@Override
+	public EntityResult bookingsIncomeByHotelQuery(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException {
+
+		EntityResult resultado = new EntityResultWrong();
+		try {
+			List<String> required = new ArrayList<String>() {
+				{
+					add(HotelDao.ATTR_FROM);
+					add(HotelDao.ATTR_TO);
+				}
+			};
+
+			Map<String, type> fields = new HashMap<String, type>() {
+				{
+					put(HotelDao.ATTR_ID, type.INTEGER);
+					put(HotelDao.ATTR_FROM, type.DATE); // fechas a comparar
+					put(HotelDao.ATTR_TO, type.DATE);
+				}
+			};
+
+			cf.reset();
+			cf.addBasics(fields);
+			cf.setRequired(required);
+			cf.validate(keyMap);
+
+			cf.reset();
+			cf.setNoEmptyList(false);
+			cf.validate(attrList);
+
+			Date from = (Date) keyMap.get(HotelDao.ATTR_FROM);
+			Date to = (Date) keyMap.get(HotelDao.ATTR_TO);
+
+			ValidateFields.dataRange(from, to);
+
+			resultado = this.daoHelper.query(this.hotelDao, new HashMap<String, Object>(), attrList,
+					"queryBookingsIncomeByHotel", new ISQLQueryAdapter() {
+
+						@Override
+						public SQLStatement adaptQuery(SQLStatement sqlStatement, IOntimizeDaoSupport dao,
+								Map<?, ?> keysValues, Map<?, ?> validKeysValues, List<?> attributes,
+								List<?> validAttributes, List<?> sort, String queryId) {
+
+							Date init_date = from;
+							Date end_date = to;
+
+							String init_s = new SimpleDateFormat("yyyy-MM-dd").format(init_date);
+							String end_s = new SimpleDateFormat("yyyy-MM-dd").format(end_date);
+
+							String gen_series = " generate_series('" + init_s + "', '" + end_s + "', '1 day'::interval)";
+
+							SQLStatement result = new SQLStatement(
+									sqlStatement.getSQLStatement().replaceAll("#GEN_SERIES#", gen_series),
+									sqlStatement.getValues());
+
+							return result;
+						}
+					});
+			
+			if (keyMap.get(HotelDao.ATTR_ID) != null) {
+				resultado = EntityResultTools.dofilter(resultado,
+						EntityResultTools.keysvalues(HotelDao.ATTR_ID, keyMap.get(HotelDao.ATTR_ID)));
+			}
+
+		} catch (ValidateException e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(e.getMessage());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
+		}
+		return resultado;
+
 	}
 
 	@Override

@@ -23,6 +23,8 @@ public interface IStatisticsService {
 	public EntityResult expensesEmployeesInRangeQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
 	public EntityResult departmentExpensesByHotelQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException;
+	public EntityResult bookingsIncomeByHotelQuery(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException;
 
 
 }
