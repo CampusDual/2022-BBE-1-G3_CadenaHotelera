@@ -33,7 +33,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
-
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlPermissions;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
@@ -80,6 +80,12 @@ public class EmployeeServiceTest {
 		@Test
 		@DisplayName("ControlFields usar validate() map y list")
 		void testEmployeeQueryControlFieldsValidate() {
+			try {
+                doNothing().when(cf).restricPermissions(anyMap());
+            } catch (Exception e) {
+                e.printStackTrace();
+                fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+                }
 			service.employeeQuery(TestingTools.getMapEmpty(), getColumsName());
 			try {
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
@@ -93,6 +99,12 @@ public class EmployeeServiceTest {
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testEmployeeQueryOK() {
+			try {
+                doNothing().when(cf).restricPermissions(anyMap());
+            } catch (Exception e) {
+                e.printStackTrace();
+                fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+                }
 			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
 
 			// válido: HashMap vacio (sin filtros)

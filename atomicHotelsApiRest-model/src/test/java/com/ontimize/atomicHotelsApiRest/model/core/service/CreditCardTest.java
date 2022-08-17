@@ -7,9 +7,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.description;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 
@@ -27,13 +29,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.DuplicateKeyException;
+import org.springframework.test.context.event.annotation.BeforeTestMethod;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
@@ -81,19 +81,27 @@ class CreditCardTest {
 		@Test
 		@DisplayName("ControlFields usar validate() map y list")
 		void testCreditCardQueryControlFieldsValidate() {
-			service.creditCardQuery(TestingTools.getMapEmpty(), getColumsName());
+			
 			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+				service.creditCardQuery(TestingTools.getMapEmpty(), getColumsName());
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyList());
 			} catch (Exception e) {
 				e.printStackTrace();
-				fail("excepción no capturada: " + e.getMessage());
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
 			}
 		}
 
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testCreditCardQueryOK() {
+			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
 			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
 
 			// válido: HashMap vacio (sin filtros)
@@ -139,7 +147,7 @@ class CreditCardTest {
 
 			} catch (Exception e) {
 				e.printStackTrace();
-				fail("excepción no capturada: " + e.getMessage());
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
 			}
 
 		}
@@ -166,7 +174,7 @@ class CreditCardTest {
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
 			} catch (Exception e) {
 				e.printStackTrace();
-				fail("excepción no capturada: " + e.getMessage());
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
 
 			}
 		}
@@ -174,6 +182,13 @@ class CreditCardTest {
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testCreditCardInsertOK() {
+			
+			try {
+				doNothing().when(cf).validate(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
 			doReturn(new EntityResultMapImpl()).when(daoHelper).insert(any(), anyMap());
 
 			// válido: HashMap campos mínimos
@@ -243,7 +258,10 @@ class CreditCardTest {
 	@DisplayName("Test for CreditCard deletes")
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	public class CreditCardDelete {
-
+		@BeforeTestMethod
+		public void buildSpy() {
+			cf = spy(cf);
+		}
 		@Test
 		@DisplayName("ControlFields usar reset()")
 		void testhotelDeleteControlFieldsReset() {
@@ -259,7 +277,7 @@ class CreditCardTest {
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
 			} catch (Exception e) {
 				e.printStackTrace();
-				fail("excepción no capturada: " + e.getMessage());
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
 
 			}
 		}
@@ -267,7 +285,13 @@ class CreditCardTest {
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testhotelDeleteOK() {
-			
+			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
+
 			doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(),anyList());
 			doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
 
@@ -280,6 +304,12 @@ class CreditCardTest {
 		@Test
 		@DisplayName("Valores Subcontulta Error")
 		void testhotelDeleteSubQueryKO() {
+			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
 			doReturn(new EntityResultWrong()).when(daoHelper).query(any(), anyMap(),anyList());
 //			doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
 			
@@ -292,6 +322,13 @@ class CreditCardTest {
 		@Test
 		@DisplayName("Valores Subconsultta 0 resultados")
 		void testhotelDeleteSubQueryNoResults() {
+			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
+			
 			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(),anyList());
 //			doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
 			
@@ -305,8 +342,12 @@ class CreditCardTest {
 		@DisplayName("Valores de entrada NO válidos")
 		void testhotelDeleteKO() {
 			try {
-				// lanzamos todas las excepciones de Validate para comprobar que están bien
-				// recogidas.
+				try {
+					doNothing().when(cf).restricPermissions(anyMap());
+				} catch (Exception e) {
+					e.printStackTrace();
+					fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+				}
 				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
 				eR = service.creditCardDelete(TestingTools.getMapEmpty());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
