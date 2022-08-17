@@ -18,6 +18,8 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.RestrictedFieldExcep
 import com.ontimize.atomicHotelsApiRest.api.core.service.ICountryService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.UserDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.UserRoleDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.TypeCodes.type;
 import com.ontimize.jee.common.db.SQLStatementBuilder;
 
@@ -298,6 +300,32 @@ public class ControlFields {
 					} else if ((keyMap.get(key) instanceof String)) {
 						try {
 							keyMap.replace(key, BookingDao.Action.valueOf((String) keyMap.get(key)));
+							validType = true;
+						} catch (IllegalArgumentException e) {
+							validType = false;
+						}
+					}
+					break;
+					
+				case USER_ACTION:
+					if ((keyMap.get(key) instanceof UserDao.Action)) {
+						validType = true;
+					} else if ((keyMap.get(key) instanceof String)) {
+						try {
+							keyMap.replace(key, UserDao.Action.valueOf((String) keyMap.get(key)));
+							validType = true;
+						} catch (IllegalArgumentException e) {
+							validType = false;
+						}
+					}
+					break;
+					
+				case USER_ROLE:
+					if ((keyMap.get(key) instanceof UserRoleDao.UserRole)) {
+						validType = true;
+					} else if ((keyMap.get(key) instanceof String)) {
+						try {
+							keyMap.replace(key, UserRoleDao.UserRole.valueOf((String) keyMap.get(key)));
 							validType = true;
 						} catch (IllegalArgumentException e) {
 							validType = false;

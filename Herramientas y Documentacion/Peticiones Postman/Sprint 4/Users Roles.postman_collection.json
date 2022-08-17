@@ -1,12 +1,12 @@
 {
 	"info": {
-		"_postman_id": "0d61cba5-2f0c-4b8d-829a-f7272fe0db04",
-		"name": "Users",
+		"_postman_id": "8c374c1e-df89-4f04-93bc-fbfd11095249",
+		"name": "Users Roles",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "-C user",
+			"name": "-C Role User",
 			"request": {
 				"auth": {
 					"type": "basic",
@@ -27,7 +27,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": " {\r\n    \"data\": {\r\n        \"user_\":\"asdasd\",\r\n        \"password\":\"ejemplo2\",\r\n        \"name\": \"manolito\"\r\n    }\r\n}",
+					"raw": " {\r\n    \"data\": {\r\n        \"user_\":\"asdasd\",\r\n        \"role\":\"CUSTOMER\"\r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -35,22 +35,22 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:33333/users/user",
+					"raw": "http://localhost:33333/usersRoles/userRole",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "33333",
 					"path": [
-						"users",
-						"user"
+						"usersRoles",
+						"userRole"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "-R User",
+			"name": "-R Role User",
 			"event": [
 				{
 					"listen": "test",
@@ -82,7 +82,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\": {\r\n     \"user_\": \"atom\"\r\n    },\r\n    \"columns\": [\"user_\",\"name\",\"surname\",\"email\",\"nif\",\"userblocked\",\"lastpasswordupdate\",\"htl_restriction\"]\r\n}",
+					"raw": "{\r\n    \"filter\": {\r\n     \"user_\": \"asdasd\"\r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -90,15 +90,15 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:33333/users/user/search",
+					"raw": "http://localhost:33333/usersRoles/userRole/search",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "33333",
 					"path": [
-						"users",
-						"user",
+						"usersRoles",
+						"userRole",
 						"search"
 					]
 				}
@@ -106,7 +106,7 @@
 			"response": []
 		},
 		{
-			"name": "-R all Users",
+			"name": "-R all Role User",
 			"event": [
 				{
 					"listen": "test",
@@ -138,7 +138,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"columns\": [\"user_\",\"name\",\"surname\",\"email\",\"nif\",\"userblocked\",\"lastpasswordupdate\",\"htl_restriction\"]\r\n}",
+					"raw": "{\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -146,15 +146,15 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:33333/users/user/search",
+					"raw": "http://localhost:33333/usersRoles/userRole/search",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "33333",
 					"path": [
-						"users",
-						"user",
+						"usersRoles",
+						"userRole",
 						"search"
 					]
 				}
@@ -162,7 +162,7 @@
 			"response": []
 		},
 		{
-			"name": "-D usuario",
+			"name": "-D Role User",
 			"event": [
 				{
 					"listen": "test",
@@ -187,127 +187,15 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:33333/users/user/",
+					"raw": "http://localhost:33333/usersRoles/userRole/",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "33333",
 					"path": [
-						"users",
-						"user",
-						""
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "-U user",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "username",
-							"value": "atom",
-							"type": "string"
-						},
-						{
-							"key": "password",
-							"value": "123456",
-							"type": "string"
-						}
-					]
-				},
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"filter\": {\r\n     \"user_\": \"pa64654684685co\"\r\n    },\r\n    \"data\": {\r\n        \"surname\": \"Apellido\"\r\n    }\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:33333/users/user/",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "33333",
-					"path": [
-						"users",
-						"user",
-						""
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "-U customerCancelUpdate",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "123456",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "atom",
-							"type": "string"
-						}
-					]
-				},
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"filter\": {\r\n        \"user_\": \"asdasd\"\r\n    },\r\n    \"data\": {\r\n        \"action\": \"CANCEL\"\r\n    }    \r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:33333/users/userCancel/",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "33333",
-					"path": [
-						"users",
-						"userCancel",
+						"usersRoles",
+						"userRole",
 						""
 					]
 				}

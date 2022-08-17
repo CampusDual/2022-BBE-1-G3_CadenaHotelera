@@ -25,6 +25,8 @@ import com.ontimize.atomicHotelsApiRest.model.core.dao.BedComboDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.UserRoleDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.UserRoleDao.UserRole;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao.Action;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
@@ -39,7 +41,7 @@ import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 public class UserRoleService implements IUserRoleService {
 
 	@Autowired
-	private UserRoleDao userRoleDao;
+	private UserRoleDao dao;
 
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
@@ -56,10 +58,13 @@ public class UserRoleService implements IUserRoleService {
 		EntityResult resultado = new EntityResultWrong();
 		try {
 			cf.reset();
-			cf.addBasics(UserRoleDao.fields);
+			cf.addBasics(dao.fields);
+			cf.setNoEmptyList(false);
+			cf.setControlPermissionsActive(false);
 			cf.validate(keyMap);
 			cf.validate(attrList);
-			resultado = this.daoHelper.query(this.userRoleDao, keyMap, attrList);
+			
+			resultado = this.daoHelper.query(this.dao, keyMap, attrList);
 
 		} catch (ValidateException e) {
 			e.printStackTrace();
@@ -79,26 +84,49 @@ public class UserRoleService implements IUserRoleService {
 
 			List<String> required = new ArrayList<String>() {
 				{
-					add(UserRoleDao.ATTR_USER);
-					add(UserRoleDao.ATTR_ID_ROLENAME);
+					add(dao.ATTR_USER);
+//					add(dao.ATTR_ID_ROLENAME);
+					add(dao.NON_ATTR_ROLE);
 				}
 			};
 
 			cf.reset();
-			cf.addBasics(UserRoleDao.fields);
+			cf.addBasics(dao.fields);
+			cf.setControlPermissionsActive(false);//para que con user_ no se sobre escriba consigo mismo
 			cf.setRequired(required);
 			cf.validate(attrMap);
 
-			System.out.println(attrMap);
-			System.out.println(cf.toString());
+//			System.out.println(attrMap);
+//			System.out.println(cf.toString());
+//			UserRoleDao.UserRole role = (UserRole) attrMap.get(dao.NON_ATTR_ACTION);
 
-			resultado = this.daoHelper.insert(this.userRoleDao, attrMap);
-			resultado.setMessage("Usuario registrado");
+			switch((UserRoleDao.UserRole )attrMap.get(dao.NON_ATTR_ROLE)){
+			case CEO:
+				attrMap.put(dao.ATTR_ID_ROLENAME, 1);
+				break;
+			case HOTEL_MANAGER:
+				attrMap.put(dao.ATTR_ID_ROLENAME, 2);
+				break;
+			case STAFF:
+				attrMap.put(dao.ATTR_ID_ROLENAME, 3);
+				break;
+			case CUSTOMER:
+				attrMap.put(dao.ATTR_ID_ROLENAME, 4);
+				break;
+			case USER:
+				attrMap.put(dao.ATTR_ID_ROLENAME, 5);
+				break;
+			}
+			attrMap.remove(dao.NON_ATTR_ROLE);
+			resultado = this.daoHelper.insert(this.dao, attrMap);
+			resultado.setMessage("Rol de Usuario, registrado");
 
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
+		} catch (DataIntegrityViolationException e) {
+			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
@@ -115,28 +143,30 @@ public class UserRoleService implements IUserRoleService {
 		try {
 			List<String> required = new ArrayList<String>() {
 				{
-					add(UserRoleDao.ATTR_USER);
+					add(dao.ATTR_USER);					
 				}
 			};
 			cf.reset();
-			cf.addBasics(UserRoleDao.fields);
+			cf.addBasics(dao.fields);
 			cf.setRequired(required);
+			cf.setControlPermissionsActive(false);//para que con user_ no se sobre escriba consigo mismo
+
 			cf.setOptional(false);
 			cf.validate(keyMap);
 
 //			Map<String, Object> subConsultaKeyMap = new HashMap<>() {
 //				{
-//					put(UserRoleDao.ATTR_USER, keyMap.get(UserRoleDao.ATTR_USER));
+//					put(dao.ATTR_USER, keyMap.get(dao.ATTR_USER));
 //				}
 //			};
 
-//			EntityResult auxEntity = userQuery(subConsultaKeyMap, EntityResultTools.attributes(UserRoleDao.ATTR_USER));
+//			EntityResult auxEntity = userQuery(subConsultaKeyMap, EntityResultTools.attributes(dao.ATTR_USER));
 
 //			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros...
 //				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
 //			} else {
-				resultado = this.daoHelper.delete(this.userRoleDao, keyMap);
-				resultado.setMessage("Rol de Usuario eliminado");
+				resultado = this.daoHelper.delete(this.dao, keyMap);
+				resultado.setMessage("Roles de Usuario eliminados");
 //			}
 
 		} catch (ValidateException e) {

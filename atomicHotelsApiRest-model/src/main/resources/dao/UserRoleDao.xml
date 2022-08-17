@@ -9,9 +9,27 @@
 		<Column>user_</Column>
 	</DeleteKeys>
 	<UpdateKeys>
-		<Column>usro_id</Column>
+		<Column>user_</Column>
 	</UpdateKeys>
 	<Queries>
+			<Query id="default">
+			<Sentence>
+                <![CDATA[
+                    SELECT
+                       user_ ,
+                       CASE 
+	                       WHEN id_rolename = 1 THEN 'CEO'
+	                       WHEN id_rolename = 2 THEN 'HOTEL_MANAGER'
+	                       WHEN id_rolename = 3 THEN 'STAFF'
+	                       WHEN id_rolename = 4 THEN 'CUSTOMER'
+	                       WHEN id_rolename = 5 THEN 'USER'
+	                   END as role                            
+                    FROM ${mainschema}.tuser_role
+                    #WHERE#
+                    #ORDER#
+                ]]>
+            </Sentence>
+		</Query>
 		<Query id="login">
 			<Sentence>
                 <![CDATA[

@@ -156,10 +156,11 @@
 		-- userRole
 		INSERT INTO tserver_permission VALUES (108,'com.ontimize.atomicHotelsApiRest.api.core.service.IUserRoleService/userRoleQuery');
 		INSERT INTO tserver_permission VALUES (109,'com.ontimize.atomicHotelsApiRest.api.core.service.IUserRoleService/userRoleInsert');
-		INSERT INTO tserver_permission VALUES (110,'com.ontimize.atomicHotelsApiRest.api.core.service.IUserRoleService/userRoleDelete');
-	
+		INSERT INTO tserver_permission VALUES (110,'com.ontimize.atomicHotelsApiRest.api.core.service.IUserRoleService/userRoleDelete');	
+
 		--varios
 		INSERT INTO tserver_permission VALUES (111,'com.ontimize.atomicHotelsApiRest.api.core.service.IHotelService/poiQuery');
+		INSERT INTO tserver_permission VALUES (112,'com.ontimize.atomicHotelsApiRest.api.core.service.IUserService/userCancelUpdate');
 
 --ROLES
 	INSERT INTO trole (id_rolename,rolename,xmlclientpermission) VALUES (1,'ceo','<?xml version="1.0" encoding="UTF-8"?><security></security>');
@@ -185,13 +186,15 @@ ALTER TABLE public.tuser ADD FOREIGN KEY(htl_restriction) REFERENCES hotels(htl_
 
 --ROLES/PERMISOS
 ALTER TABLE trole_server_permission ADD UNIQUE(id_rolename,id_server_permission);
+ALTER TABLE tuser_role ADD UNIQUE(id_rolename,user_);
 
 TRUNCATE TABLE trole_server_permission;
 ALTER SEQUENCE trole_server_permission_id_role_server_permission_seq RESTART WITH 1;
 
 	--ceo 1
 	INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 1,id_server_permission FROM tserver_permission WHERE id_server_permission >= 1 AND id_server_permission <= 9999999;
-	
+	INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (1,112);
+
 
 	--hotelManager 2		
 		INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 2,id_server_permission FROM tserver_permission WHERE id_server_permission >= 1 AND id_server_permission <= 107;

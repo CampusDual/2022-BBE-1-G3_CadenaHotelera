@@ -13,5 +13,7 @@ public interface IUserService {
 	 public EntityResult userInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException;
 	 public EntityResult userUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
 	 public EntityResult userDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
+	EntityResult userCancelUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
+			throws OntimizeJEERuntimeException;
 
 }

@@ -17,6 +17,7 @@ public class UserRoleDao extends OntimizeJdbcDaoSupport {
 	public static final String ATTR_ID= "id_user_role";
 	public static final String ATTR_ID_ROLENAME= "id_rolename";	
 	public static final String ATTR_USER= "user_";
+	public static final String NON_ATTR_ROLE= "role";
 	
 	//nombre de los roles en la DB
 	public static final String ROLE_CEO = "ceo";
@@ -24,10 +25,12 @@ public class UserRoleDao extends OntimizeJdbcDaoSupport {
 	public static final String ROLE_STAFF = "staff";
 	public static final String ROLE_CUSTOMER= "customer";
 	public static final String ROLE_USER= "user";
+	public enum UserRole {CEO, HOTEL_MANAGER, STAFF, CUSTOMER, USER};
 	
 	public static final Map<String,type> fields = new HashMap<>() {{
 		put(ATTR_ID,type.INTEGER);
 		put(ATTR_ID_ROLENAME,type.INTEGER);
+		put(NON_ATTR_ROLE,type.USER_ROLE);	
 		put(ATTR_USER,type.STRING);	
 	}};
 	

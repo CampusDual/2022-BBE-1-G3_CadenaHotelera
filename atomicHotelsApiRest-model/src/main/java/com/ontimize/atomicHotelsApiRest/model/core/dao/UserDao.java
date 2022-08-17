@@ -27,7 +27,9 @@ public class UserDao extends OntimizeJdbcDaoSupport {
 	public static final String ATTR_LAST_PASSWORD_UPDATE = "lastpasswordupdate";
 
 	public static final String ATTR_HTL = "htl_restriction";
-	
+	public static final String NON_ATTR_ACTION = "action";
+	public enum Action{CANCEL}
+
 	
 //	public static final String PASSWORD = "user_password";
 //	public static final String SCHEMA = "db_schema";
@@ -46,6 +48,8 @@ public class UserDao extends OntimizeJdbcDaoSupport {
 		put(ATTR_BLOCKED,type.DATE);	
 		put(ATTR_LAST_PASSWORD_UPDATE,type.DATE);	
 		put(ATTR_HTL,type.INTEGER);	
+		put(NON_ATTR_ACTION,type.USER_ACTION);
+
 	}};
 	
 	
