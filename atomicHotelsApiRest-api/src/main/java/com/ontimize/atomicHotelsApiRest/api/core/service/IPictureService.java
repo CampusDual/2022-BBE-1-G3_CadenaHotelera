@@ -9,11 +9,8 @@ import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
 
 public interface IPictureService {
-<<<<<<< Updated upstream
-	 //public EntityResult pictureQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
-=======
-	 public ResponseEntity pictureQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
->>>>>>> Stashed changes
+
+	 public EntityResult pictureQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
 	 public EntityResult pictureInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException;
 	 public EntityResult pictureUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
 	 public EntityResult pictureDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException;

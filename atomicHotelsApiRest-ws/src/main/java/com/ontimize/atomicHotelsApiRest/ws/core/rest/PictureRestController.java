@@ -15,24 +15,24 @@ import com.ontimize.atomicHotelsApiRest.api.core.service.IPictureService;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.server.rest.ORestController;
 
-@RestController 
-@RequestMapping("/pictures") 
-public class PictureRestController extends ORestController<IPictureService>{
+@RestController
+@RequestMapping("/pictures")
+public class PictureRestController extends ORestController<IPictureService> {
 
-	 @Autowired 
-	 private IPictureService pictureService;
+	@Autowired
+	private IPictureService pictureService;
 
-	 @Override
-	 public IPictureService getService() {
-	  return this.pictureService;
-	 }
-//		@RequestMapping(
-//				value = "/getPicture",
-//				method = RequestMethod.POST,
-//				produces = MediaType.APPLICATION_JSON_VALUE)
-//				public ResponseEntity<EntityResult> query(@RequestBody Map<String,Object> req) { 
-//				return this.getService().((Map<String,Object>)req.get("filter"),(List<String>)req.get("columns"));
-//				}
-//			
-//			}
+	@Override
+	public IPictureService getService() {
+		return this.pictureService;
+	}
+
+	@RequestMapping(
+				value = "/getPicture",
+				method = RequestMethod.POST,
+				produces = MediaType.APPLICATION_JSON_VALUE)
+				public ResponseEntity<EntityResult> query(@RequestBody Map<String,Object> req) {
+			 	return this.getService().getPicture((Map<String,Object>)req.get("filter"),(List<String>)req.get("columns"));
+				}
+
 }
