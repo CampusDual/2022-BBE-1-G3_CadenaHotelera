@@ -16,6 +16,10 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.service.IPictureService;
@@ -48,28 +52,24 @@ public class PictureService implements IPictureService {
 		
 		EntityResult resultado = new EntityResultWrong();
 		resultado=this.daoHelper.query(pictureDao, filter, columns);
-		Path p2=Paths.get("C:\\Users\\Arsito\\Pictures\\foto2.jpg" );
+		Path p2=Paths.get("C:\\foto2.jpg" );
 		
 		System.out.println(resultado.getRecordValues(0));
 		resultado.getRecordValues(0).get(pictureDao.ATTR_FILE);
 		BytesBlock bytes=(BytesBlock) resultado.getRecordValues(0).get(pictureDao.ATTR_FILE);
-		
-		EntityResult auxEntity=new EntityResultMapImpl();
-		Map<String,byte[]> auxMap=new HashMap<>();
-		auxMap.put("foto", bytes.getBytes());
-		auxEntity.addRecord(auxMap);
-		
-		resultado=auxEntity;
-		
-		
+		HttpHeaders header = new HttpHeaders();
+	    header.setContentType(MediaType.IMAGE_JPEG);
+	    String pictureName = "picture.jpg";
+	    header.setContentDispositionFormData(pictureName,pictureName);
+	    header.setCacheControl("must-revalidate, post-check=0, pre-check=0");       	
 		try {
 			Files.write(p2, bytes.getBytes(),StandardOpenOption.CREATE_NEW);
 		} catch (IOException e) {
 			// TODO Bloque catch generado automáticamente
 			e.printStackTrace();
 		}
-	
-		return resultado;
+		
+		return (EntityResult) new ResponseEntity(bytes,header,HttpStatus.OK);
 	}
 
 	@Override
@@ -116,4 +116,8 @@ public class PictureService implements IPictureService {
 		// TODO Esbozo de método generado automáticamente
 		return null;
 	}
+	
+
+	
+	
 }
