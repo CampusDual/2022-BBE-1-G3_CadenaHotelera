@@ -81,10 +81,12 @@ public class StatisticsServiceTest {
 		
 		@Test
 		@DisplayName("ControlFields usar validate() map y list") 
-		void testHotelMaximumCapacityQueryControlFieldsValidateList() {
-			 doNothing().when(cf).resetPermissions();
-			service.hotelMaximumCapacityQuery(getHotelId(), getColumsName());
+		void testHotelMaximumCapacityQueryControlFieldsValidateList()  {
+			
 			try {
+				 doNothing().when(cf).restricPermissions(anyMap());
+				service.hotelMaximumCapacityQuery(getHotelId(), getColumsName());
+					
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields map")).validate(anyMap());
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields list")).validate(anyList());	
 			} catch (Exception e) {
