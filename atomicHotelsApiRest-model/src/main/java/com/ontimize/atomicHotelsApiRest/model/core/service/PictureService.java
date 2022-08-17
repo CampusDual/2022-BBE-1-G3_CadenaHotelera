@@ -47,12 +47,36 @@ public class PictureService implements IPictureService {
 	ControlFields cf;
 
 	@Override
-	public EntityResult pictureQuery(Map<String, Object>filter, List<String> columns)
+//	public EntityResult pictureQuery(Map<String, Object>filter, List<String> columns)
+//			throws OntimizeJEERuntimeException {
+//		
+//		EntityResult resultado = new EntityResultWrong();
+//		resultado=this.daoHelper.query(pictureDao, filter, columns);
+//		Path p2=Paths.get("C:\\foto2.jpg" );
+//		
+//		System.out.println(resultado.getRecordValues(0));
+//		resultado.getRecordValues(0).get(pictureDao.ATTR_FILE);
+//		BytesBlock bytes=(BytesBlock) resultado.getRecordValues(0).get(pictureDao.ATTR_FILE);
+//		HttpHeaders header = new HttpHeaders();
+//	    header.setContentType(MediaType.IMAGE_JPEG);
+//	    String pictureName = "picture.jpg";
+//	    header.setContentDispositionFormData(pictureName,pictureName);
+//	    header.setCacheControl("must-revalidate, post-check=0, pre-check=0");       	
+//		try {
+//			Files.write(p2, bytes.getBytes(),StandardOpenOption.CREATE_NEW);
+//		} catch (IOException e) {
+//			// TODO Bloque catch generado automáticamente
+//			e.printStackTrace();
+//		}
+//		
+//		return (EntityResult) new ResponseEntity(bytes,header,HttpStatus.OK);
+//	}
+	public ResponseEntity getPicture(Map<String, Object>filter, List<String> columns)
 			throws OntimizeJEERuntimeException {
 		
 		EntityResult resultado = new EntityResultWrong();
 		resultado=this.daoHelper.query(pictureDao, filter, columns);
-		Path p2=Paths.get("C:\\foto2.jpg" );
+//		Path p2=Paths.get("C:\\foto2.jpg" );
 		
 		System.out.println(resultado.getRecordValues(0));
 		resultado.getRecordValues(0).get(pictureDao.ATTR_FILE);
@@ -62,14 +86,14 @@ public class PictureService implements IPictureService {
 	    String pictureName = "picture.jpg";
 	    header.setContentDispositionFormData(pictureName,pictureName);
 	    header.setCacheControl("must-revalidate, post-check=0, pre-check=0");       	
-		try {
-			Files.write(p2, bytes.getBytes(),StandardOpenOption.CREATE_NEW);
-		} catch (IOException e) {
-			// TODO Bloque catch generado automáticamente
-			e.printStackTrace();
-		}
+//		try {
+//			Files.write(p2, bytes.getBytes(),StandardOpenOption.CREATE_NEW);
+//		} catch (IOException e) {
+//			// TODO Bloque catch generado automáticamente
+//			e.printStackTrace();
+//		}
 		
-		return (EntityResult) new ResponseEntity(bytes,header,HttpStatus.OK);
+		return new ResponseEntity(bytes.getBytes(),header,HttpStatus.OK);
 	}
 
 	@Override
