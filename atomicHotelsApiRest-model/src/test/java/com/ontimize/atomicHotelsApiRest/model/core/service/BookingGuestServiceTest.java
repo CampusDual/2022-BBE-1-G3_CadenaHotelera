@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.description;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.reset;
@@ -91,8 +92,9 @@ class BookingGuestServiceTest {
 		@Test
 		@DisplayName("ControlFields usar validate() map y list")
 		void testBookingGuestQueryControlFieldsValidate() {
-			service.bookingGuestQuery(TestingTools.getMapEmpty(), getColumsName());
 			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+				service.bookingGuestQuery(TestingTools.getMapEmpty(), getColumsName());
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyList());
 			} catch (Exception e) {
@@ -104,6 +106,12 @@ class BookingGuestServiceTest {
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testBookingGuestQueryOK() {
+			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
 			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
 
 			// válido: HashMap vacio (sin filtros)
@@ -184,6 +192,12 @@ class BookingGuestServiceTest {
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void tesBookingGuestInsertOK() {
+			try {
+				doNothing().when(cf).validate(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
 			doReturn(new EntityResultMapImpl()).when(daoHelper).insert(any(), anyMap());
 			try {
 				when(bookingServiceMock.getBookingStatus(any())).thenReturn(BookingDao.Status.CONFIRMED);
@@ -247,6 +261,12 @@ class BookingGuestServiceTest {
 				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
 
 				reset(cf);
+				try {
+					doNothing().when(cf).restricPermissions(anyMap());
+				}catch (Exception e) {
+					e.printStackTrace();
+					fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+				}
 				doThrow(EntityResultRequiredException.class).when(bookingServiceMock).getBookingStatus(any());
 				eR = service.bookingGuestInsert(getMapRequiredInsert());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
@@ -288,14 +308,18 @@ class BookingGuestServiceTest {
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testbookingGuestDeleteOK() {
-
-			doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(), anyList());
-			doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
 			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+				
+				doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(), anyList());
+				doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
 				when(bookingServiceMock.getBookingStatus(any())).thenReturn(BookingDao.Status.CONFIRMED);
 			} catch (EntityResultRequiredException e) {
 				fail("Err");
 				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
 			}
 			// válido: HashMap campo único y exclusivo
 			eR = service.bookingGuestDelete(getMapId());
@@ -306,6 +330,12 @@ class BookingGuestServiceTest {
 		@Test
 		@DisplayName("Valores Subcontulta Error")
 		void testbookingServiceExtraDeleteSubQueryKO() {
+			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
 			doReturn(new EntityResultWrong()).when(daoHelper).query(any(), anyMap(), anyList());
 
 			//
@@ -317,6 +347,12 @@ class BookingGuestServiceTest {
 		@Test
 		@DisplayName("Valores Subconsultta 0 resultados")
 		void testbookingServiceExtraDeleteSubQueryNoResults() {
+			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
 			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
 			eR = service.bookingGuestDelete(getMapId());
 			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
@@ -375,6 +411,12 @@ class BookingGuestServiceTest {
 				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
 
 				reset(cf);
+//				try {
+//					doNothing().when(cf).restricPermissions(anyMap());
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//					fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+//				}
 				when(daoHelper.query(any(), anyMap(), anyList())).thenReturn(getEntityResultIdBookingId());
 				doThrow(new EntityResultRequiredException("Error al consultar estado de la reserva"))
 						.when(bookingServiceMock).getBookingStatus(any());
@@ -406,8 +448,11 @@ class BookingGuestServiceTest {
 		@Test
 		@DisplayName("ControlFields usar validate() map y list") 
 		void testGuestCountQueryControlFieldsValidateList() {
-			service.guestCountQuery(getBookingId(), getColumsName());
+			
 			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+				service.guestCountQuery(getBookingId(), getColumsName());
+				
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields map")).validate(anyMap());
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields list")).validate(anyList());	
 			} catch (Exception e) {
@@ -419,6 +464,12 @@ class BookingGuestServiceTest {
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testGuestCountQueryOK() {
+			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
 			doReturn(getEntityResultPrecioServcioUnidadesTotal()).when(daoHelper).query(any(), anyMap(), anyList(),
 					anyString());
 			eR = service.guestCountQuery(getBookingId(),new ArrayList());
@@ -485,8 +536,11 @@ class BookingGuestServiceTest {
 		@Test
 		@DisplayName("ControlFields usar validate() map y list") 
 		void testBookingGuestsInfoQueryControlFieldsValidateList() {
-			service.bookingGuestsInfoQuery(getBookingId(), getColumsBookingsGuestInfo());
+			
 			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+				service.bookingGuestsInfoQuery(getBookingId(), getColumsBookingsGuestInfo());
+				
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields map")).validate(anyMap());
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields list")).validate(anyList());	
 			} catch (Exception e) {
@@ -498,6 +552,12 @@ class BookingGuestServiceTest {
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testBookingGuestsInfoQueryOK() {
+			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
 			doReturn(getEntityResultBookingsGuestInfo()).when(daoHelper).query(any(), anyMap(), anyList(),
 					anyString());
 			eR = service.bookingGuestsInfoQuery(getBookingId(),new ArrayList());
