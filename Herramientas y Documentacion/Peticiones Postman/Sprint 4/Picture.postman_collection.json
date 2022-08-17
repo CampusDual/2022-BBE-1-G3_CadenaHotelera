@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "2e397194-3480-415f-a9bd-5c725f2457bb",
+		"_postman_id": "3f888828-63e4-48a3-910f-2052eb367649",
 		"name": "Picture",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "22294604"
@@ -72,7 +72,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\": {\r\n     \"pct_id\": 1\r\n    },\r\n    \"columns\": [\"pct_file\"]\r\n}",
+					"raw": "{\r\n    \"filter\": {\r\n     \"pct_id\": 9\r\n\r\n    },\r\n    \"columns\": [\"pct_file\"]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -80,7 +80,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:33333/pictures/picture/search",
+					"raw": "http://localhost:33333/pictures/getPicture",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -88,8 +88,7 @@
 					"port": "33333",
 					"path": [
 						"pictures",
-						"picture",
-						"search"
+						"getPicture"
 					]
 				}
 			},

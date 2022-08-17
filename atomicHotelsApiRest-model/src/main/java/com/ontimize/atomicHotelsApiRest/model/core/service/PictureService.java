@@ -34,34 +34,61 @@ import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 public class PictureService implements IPictureService {
 
 	@Autowired
-	private PictureDao pictureDao;
+	private PictureDao dao;
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
 	@Autowired
 	ControlFields cf;
 
-	public ResponseEntity getPicture(Map<String, Object> filter, List<String> columns)
+	public ResponseEntity getPicture(Map<String, Object> filter, List<String> columns) {
+	EntityResult resultado = new EntityResultWrong();
+	try {
+		
+		cf.reset();
+		cf.addBasics(dao.fields);
+		cf.validate(columns);
+		List<String> required = new ArrayList<>() {
+			{
+				add(dao.ATTR_ID);
+			}
+		};
+		cf.setRequired(required);
+		cf.validate(filter);
+	} catch (ValidateException e) {
+		e.getMessage();
+		resultado = new EntityResultWrong(e.getMessage());
 
-			throws OntimizeJEERuntimeException {
+	} catch (Exception e) {
+		e.printStackTrace();
+		resultado = new EntityResultWrong(ErrorMessage.ERROR);
+	}
+	
 
-		EntityResult resultado = new EntityResultWrong();
-		resultado = this.daoHelper.query(pictureDao, filter, columns);
+		
+		resultado = this.daoHelper.query(dao, filter, columns);
+		
+		
+		
 //		Path p2=Paths.get("C:\\foto2.jpg" );
+//		try {
+//		Files.write(p2, bytes.getBytes(),StandardOpenOption.CREATE_NEW);
+//	} catch (IOException e) {
+//		e.printStackTrace();
+//	}
 
 		System.out.println(resultado.getRecordValues(0));
-		resultado.getRecordValues(0).get(pictureDao.ATTR_FILE);
-		BytesBlock bytes = (BytesBlock) resultado.getRecordValues(0).get(pictureDao.ATTR_FILE);
+		resultado.getRecordValues(0).get(dao.ATTR_FILE);
+		BytesBlock bytes = (BytesBlock) resultado.getRecordValues(0).get(dao.ATTR_FILE);
+	
+		
+		
 		HttpHeaders header = new HttpHeaders();
 		header.setContentType(MediaType.IMAGE_JPEG);
 		String pictureName = "picture.jpg";
 		header.setContentDispositionFormData(pictureName, pictureName);
 		header.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-//		try {
-//			Files.write(p2, bytes.getBytes(),StandardOpenOption.CREATE_NEW);
-//		} catch (IOException e) {
-//			// TODO Bloque catch generado automáticamente
-//			e.printStackTrace();
-//		}
+		
+
 
 		return new ResponseEntity(bytes.getBytes(), header, HttpStatus.OK);
 
@@ -72,21 +99,21 @@ public class PictureService implements IPictureService {
 		EntityResult resultado = new EntityResultWrong();
 
 		try {
-			Path p = Paths.get((String) data.get(pictureDao.ATTR_FILE));
+			Path p = Paths.get((String) data.get(dao.ATTR_FILE));
 			cf.reset();
-			cf.addBasics(pictureDao.fields);
+			cf.addBasics(dao.fields);
 			List<String> required = new ArrayList<>() {
 				{
-					add(pictureDao.ATTR_NAME);
-					add(pictureDao.ATTR_FILE);
+					add(dao.ATTR_NAME);
+					add(dao.ATTR_FILE);
 				}
 			};
 			cf.setRequired(required);
 			cf.validate(data);
 
 			if (Files.exists(p)) {
-				data.put(pictureDao.ATTR_FILE, Files.readAllBytes(p));
-				resultado = daoHelper.insert(pictureDao, data);
+				data.put(dao.ATTR_FILE, Files.readAllBytes(p));
+				resultado = daoHelper.insert(dao, data);
 			} else {
 				resultado.setMessage("El archivo" + p.toAbsolutePath().toString() + "no existe. ");
 			}
