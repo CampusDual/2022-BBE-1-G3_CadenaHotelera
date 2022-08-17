@@ -92,6 +92,12 @@ class DepartmentServiceTest {
 		@Test
 		@DisplayName("ControlFields usar validate() map y list")
 		void testDepartmentQueryControlFieldsValidate() {
+			try {
+                doNothing().when(cf).restricPermissions(anyMap());
+            } catch (Exception e) {
+                e.printStackTrace();
+                fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+                }
 			service.departmentQuery(TestingTools.getMapEmpty(), getColumsName());
 			try {
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
@@ -105,6 +111,12 @@ class DepartmentServiceTest {
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testDepartmentQueryOK() {
+			try {
+                doNothing().when(cf).restricPermissions(anyMap());
+            } catch (Exception e) {
+                e.printStackTrace();
+                fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+                }
 			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
 
 			// válido: HashMap vacio (sin filtros)
@@ -406,7 +418,12 @@ class DepartmentServiceTest {
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testDepartmentDeleteOK() {
-			
+			try {
+				doNothing().when(cf).validate(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
 			doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(),anyList());
 			doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
 
@@ -419,6 +436,12 @@ class DepartmentServiceTest {
 		@Test
 		@DisplayName("Valores Subcontulta Error")
 		void testDepartmentDeleteSubQueryKO() {
+			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
 			doReturn(new EntityResultWrong()).when(daoHelper).query(any(), anyMap(),anyList());
 //			doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
 			
@@ -431,6 +454,12 @@ class DepartmentServiceTest {
 		@Test
 		@DisplayName("Valores Subconsultta 0 resultados")
 		void testDepartmentDeleteSubQueryNoResults() {
+			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
 			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(),anyList());
 //			doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
 			
