@@ -13,6 +13,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,11 +37,14 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.RestrictedFieldException;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingGuestDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingServiceExtraDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.ServicesXtraDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlPermissions;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.jee.common.dto.EntityResult;
+import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,12 +52,6 @@ public class StatisticsServiceTest {
 	
 	@Mock
 	DefaultOntimizeDaoHelper daoHelper;
-
-//	@Mock
-//	BookingService bookingServiceMock;
-//
-//	@Mock
-//	CustomerService customerServiceMock;
 
 	@Spy
 	ControlFields cf;		 
@@ -69,12 +67,12 @@ public class StatisticsServiceTest {
 	@Nested
 	@DisplayName("Test for hotelMaximumCapacity queries")
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	public class GuestCountQuery {
+	public class HotelMaximumCapacityQuery {
 
 		@Test
 		@DisplayName("ControlFields usar reset()")
 		void testHotelMaximumCapacityQueryControlFieldsReset() {
-			service.hotelMaximumCapacityQuery(TestingTools.getMapEmpty(), getColumsName());
+			service.hotelMaximumCapacityQuery(TestingTools.getMapEmpty(), getColumsNameMaximumCapacity());
 			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
 		}
 
@@ -85,7 +83,7 @@ public class StatisticsServiceTest {
 			
 			try {
 				 doNothing().when(cf).restricPermissions(anyMap());
-				service.hotelMaximumCapacityQuery(getHotelId(), getColumsName());
+				service.hotelMaximumCapacityQuery(getHotelId(), getColumsNameMaximumCapacity());
 					
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields map")).validate(anyMap());
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields list")).validate(anyList());	
@@ -93,59 +91,150 @@ public class StatisticsServiceTest {
 				e.printStackTrace();
 				fail("excepción no capturada: " + e.getMessage());
 			}
+		} 
+
+		@Test
+		@DisplayName("Valores de entrada válidos")
+		void testGuestCountQueryOK() {
+			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
+			doReturn(getEntityResultHotelMaximumCapacity()).when(daoHelper).query(any(), anyMap(), anyList(),
+					anyString());
+			eR = service.hotelMaximumCapacityQuery(getHotelId(),new ArrayList());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+
 		}
-//
-//		@Test
-//		@DisplayName("Valores de entrada válidos")
-//		void testGuestCountQueryOK() {
-//			doReturn(getEntityResultPrecioServcioUnidadesTotal()).when(daoHelper).query(any(), anyMap(), anyList(),
-//					anyString());
-//			eR = service.guestCountQuery(getBookingId(),new ArrayList());
-//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
-//
-//		}
-////
-//		@Test
-//		@DisplayName("Valores de entrada NO válidos")
-//		void testGuestCountQueryKO() {
-//			try {
-//				// lanzamos todas las excepciones de Validate para comprobar que están bien
-//				// recojidas.
-//				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
-//				eR = service.guestCountQuery(TestingTools.getMapEmpty(), getColumsName());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
-//				eR = service.guestCountQuery(TestingTools.getMapEmpty(), getColumsName());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
-//				eR = service.guestCountQuery(TestingTools.getMapEmpty(), getColumsName());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
-//				eR = service.guestCountQuery(TestingTools.getMapEmpty(), getColumsName());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
-//				eR = service.guestCountQuery(TestingTools.getMapEmpty(), getColumsName());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				fail("excepción no capturada: " + e.getMessage());
-//			}
-//
-//		}
+
+		@Test
+		@DisplayName("Valores de entrada NO válidos")
+		void testGuestCountQueryKO() {
+			try {
+				// lanzamos todas las excepciones de Validate para comprobar que están bien
+				// recojidas.
+				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
+				eR = service.hotelMaximumCapacityQuery(TestingTools.getMapEmpty(), getColumsNameMaximumCapacity());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
+				eR = service.hotelMaximumCapacityQuery(TestingTools.getMapEmpty(), getColumsNameMaximumCapacity());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
+				eR = service.hotelMaximumCapacityQuery(TestingTools.getMapEmpty(), getColumsNameMaximumCapacity());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
+				eR = service.hotelMaximumCapacityQuery(TestingTools.getMapEmpty(), getColumsNameMaximumCapacity());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
+				eR = service.hotelMaximumCapacityQuery(TestingTools.getMapEmpty(), getColumsNameMaximumCapacity());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("excepción no capturada: " + e.getMessage());
+			}
+
+		}
 
 	}
 	
-	List<String> getColumsName() {
+	@Nested
+	@DisplayName("Test for hotelOccupancyPercentage queries")
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	public class HotelOccupancyPercentageQuery {
+
+		@Test
+		@DisplayName("ControlFields usar reset()")
+		void testHotelOccupancyPercentageQueryControlFieldsReset() {
+			service.hotelOccupancyPercentageQuery(TestingTools.getMapEmpty(), getColumsNameMaximumCapacity());
+			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
+		}
+
+		
+		@Test
+		@DisplayName("ControlFields usar validate() map y list") 
+		void testHotelMaximumCapacityQueryControlFieldsValidateList()  {
+			
+			try {
+				 doNothing().when(cf).restricPermissions(anyMap());
+				service.hotelMaximumCapacityQuery(getHotelId(), getColumsNameMaximumCapacity());
+					
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields map")).validate(anyMap());
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields list")).validate(anyList());	
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("excepción no capturada: " + e.getMessage());
+			}
+		} 
+
+		@Test
+		@DisplayName("Valores de entrada válidos")
+		void testGuestCountQueryOK() {
+			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
+			doReturn(getEntityResultHotelMaximumCapacity()).when(daoHelper).query(any(), anyMap(), anyList(),
+					anyString());
+			eR = service.hotelMaximumCapacityQuery(getHotelId(),new ArrayList());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+
+		}
+
+		@Test
+		@DisplayName("Valores de entrada NO válidos")
+		void testGuestCountQueryKO() {
+			try {
+				// lanzamos todas las excepciones de Validate para comprobar que están bien
+				// recojidas.
+				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
+				eR = service.hotelMaximumCapacityQuery(TestingTools.getMapEmpty(), getColumsNameMaximumCapacity());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
+				eR = service.hotelMaximumCapacityQuery(TestingTools.getMapEmpty(), getColumsNameMaximumCapacity());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
+				eR = service.hotelMaximumCapacityQuery(TestingTools.getMapEmpty(), getColumsNameMaximumCapacity());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
+				eR = service.hotelMaximumCapacityQuery(TestingTools.getMapEmpty(), getColumsNameMaximumCapacity());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
+				eR = service.hotelMaximumCapacityQuery(TestingTools.getMapEmpty(), getColumsNameMaximumCapacity());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("excepción no capturada: " + e.getMessage());
+			}
+
+		}
+
+	}
+	
+	List<String> getColumsNameMaximumCapacity() {
 		List<String> columns = new ArrayList<>() {
 			{
 				add(HotelDao.ATTR_ID);
@@ -165,4 +254,34 @@ public class StatisticsServiceTest {
 		};
 		return filters;
 	};
+	
+	EntityResult getEntityResultHotelMaximumCapacity() {
+		EntityResult er = new EntityResultMapImpl();
+		er.addRecord(new HashMap<String, Object>() {
+			{
+				put(HotelDao.ATTR_ID,1);
+				put(HotelDao.ATTR_NAME,"Hotel 1");
+				put(HotelDao.ATTR_CITY,"Ciudad");
+				put(HotelDao.ATTR_MAXIMUN_CAPACITY,new BigDecimal(100));
+
+			}
+
+		});
+		return er;
+	}
+	
+	List<String> getColumsNameOccupancyPercentage() {
+		List<String> columns = new ArrayList<>() {
+			{
+				"occupancy_percentage_in_date_range",
+				 *         "htl_id","capacity_in_date_range","occupancy_in_date_range","htl_city",
+				 *         "htl_name"
+				add("occupancy_percentage_in_date_range");
+				add(HotelDao.ATTR_ID);
+				add(HotelDao.ATTR_CITY);
+				add(HotelDao.ATTR_MAXIMUN_CAPACITY);
+			}
+		};
+		return columns;
+	}
 }

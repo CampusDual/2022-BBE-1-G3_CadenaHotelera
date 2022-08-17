@@ -307,7 +307,8 @@ public class BookingGuestService implements IBookingGuestService {
 			if (auxEntity.calculateRecordNumber() == 0) {
 				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
 			} else {
-				if (bookingService.getBookingStatus(auxEntity.getRecordValues(0).get(dao.ATTR_BKG_ID))
+				Object id = auxEntity.getRecordValues(0).get(dao.ATTR_BKG_ID);
+				if (bookingService.getBookingStatus(id)
 						.equals(BookingDao.Status.CONFIRMED)) {
 
 					resultado = this.daoHelper.delete(this.dao, keyMap);
@@ -315,7 +316,7 @@ public class BookingGuestService implements IBookingGuestService {
 
 				} else {
 					resultado = new EntityResultWrong("Sólo se puede borrar huésped antes del Check_in");
-				}
+				} 
 			}
 		} catch (EntityResultRequiredException e) {
 			resultado = new EntityResultWrong(e.getMessage());
