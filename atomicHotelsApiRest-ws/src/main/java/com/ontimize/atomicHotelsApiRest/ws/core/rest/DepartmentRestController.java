@@ -18,6 +18,7 @@ public class DepartmentRestController extends ORestController<IDepartmentService
 	 @Override
 	 public IDepartmentService getService() {
 	  return this.departmentService;
+	 
 	 }
 
 }

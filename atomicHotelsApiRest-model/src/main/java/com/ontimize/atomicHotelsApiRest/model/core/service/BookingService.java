@@ -64,7 +64,7 @@ public class BookingService implements IBookingService {
 	private BookingGuestService bookingGuestsService;
 
 	@Autowired
-	private ICustomerService customerService;
+	private CustomerService customerService;
 
 	@Autowired
 	RoomService roomService;
@@ -294,7 +294,7 @@ public class BookingService implements IBookingService {
 				}
 				break;
 			}
-			if(!resultadoER.isWrong()) {
+			if (!resultadoER.isWrong()) {
 				resultadoER.setMessage("Operación realizada");
 			}
 
@@ -345,10 +345,10 @@ public class BookingService implements IBookingService {
 			cf.reset();
 
 			cf.setCPHtlColum(RoomDao.ATTR_HOTEL_ID);
+			cf.setCPUserColum(dao.ATTR_USER);
 			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF, UserRoleDao.ROLE_CUSTOMER);
-			cf.addBasics(CustomerDao.fields, dao.fields, RoomDao.fields, RoomTypeDao.fields, HotelDao.fields);
 
-			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF, UserRoleDao.ROLE_CUSTOMER);
+			cf.addBasics(CustomerDao.fields, dao.fields, RoomDao.fields, RoomTypeDao.fields, HotelDao.fields);
 
 			bookingsInRangeBuilder(keyMap, attrList);
 			resultado = this.daoHelper.query(this.dao, keyMap, attrList, "queryInfoBooking");
@@ -362,7 +362,6 @@ public class BookingService implements IBookingService {
 		return resultado;
 	}
 
-	
 	public EntityResult totalBookingsInRangeQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException, InvalidFieldsValuesException {
 		try {
@@ -370,7 +369,7 @@ public class BookingService implements IBookingService {
 
 			cf.addBasics(dao.fields);
 			cf.addBasics(RoomDao.fields);
-			//no ponemos permisos, para que tenga en cuenta todas las habitaciones
+			// no ponemos permisos, para que tenga en cuenta todas las habitaciones
 			bookingsInRangeBuilder(keyMap, attrList);
 			return this.daoHelper.query(this.dao, keyMap, attrList, "queryBasicBooking");
 		} catch (ValidateException | LiadaPardaException e) {
@@ -378,7 +377,7 @@ public class BookingService implements IBookingService {
 			return new EntityResultWrong(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Modifica las keyMap y attrList, para realizar las basic expresions
 	 * 
@@ -546,8 +545,7 @@ public class BookingService implements IBookingService {
 		return resultado;
 	}
 
-	@Override
-	@Secured({ PermissionsProviderSecured.SECURED })
+	
 	public EntityResult bookingsHotelsQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
@@ -603,6 +601,10 @@ public class BookingService implements IBookingService {
 		try {
 			List<String> required = Arrays.asList(dao.ATTR_ROOM_ID);
 			cf.reset();
+			
+			cf.setCPHtlColum(RoomDao.ATTR_HOTEL_ID);
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
+
 			cf.addBasics(dao.fields);
 			cf.setRequired(required);
 			cf.setOptional(false);
@@ -677,8 +679,12 @@ public class BookingService implements IBookingService {
 	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult bookingCompleteInfoQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
-
 		EntityResult resultadoFinal = new EntityResultWrong();
+		HashMap<String, Object> subConsulta = new HashMap<>() {
+			{
+				putAll(keyMap);
+			}
+		};
 		try {
 			List<String> required = new ArrayList<String>() {
 				{
@@ -694,33 +700,6 @@ public class BookingService implements IBookingService {
 			cf.setOptional(false);
 			cf.validate(keyMap);
 
-			// Devuelve todas las habitaciones de la reserva
-			EntityResult habitaciones = bookingHotelRoomRoomTypeQuery(keyMap, new ArrayList<String>());
-
-			Map<String, Object> bookingGuestsId = new HashMap<String, Object>() {
-				{
-					put(BookingGuestDao.ATTR_BKG_ID, keyMap.get(dao.ATTR_ID));
-				}
-			};
-
-			// Devuelve todos los huéspedes de la reserva
-			EntityResult huespedes = bookingGuestsService.bookingGuestsInfoQuery(bookingGuestsId,
-					new ArrayList<String>());
-
-			// Devuelve el número de huéspedes que ya están asociados a la reserva
-			EntityResult totalGuests = bookingGuestsService.guestCountQuery(bookingGuestsId, new ArrayList<String>());
-
-			if (totalGuests.isWrong()) {
-				throw new EntityResultRequiredException(totalGuests.getMessage());
-			}
-
-			// Devuleve la capacidad total de las habitaciones de la reserva
-			EntityResult totalSlots = this.bookingSlotsInfoQuery(keyMap, new ArrayList<String>());
-
-			if (totalSlots.isWrong()) {
-				throw new EntityResultRequiredException(totalSlots.getMessage());
-			}
-
 			List<String> listaGenericaBooking = new ArrayList<String>() {
 				{
 					add(dao.ATTR_ID);
@@ -735,36 +714,69 @@ public class BookingService implements IBookingService {
 			EntityResult resultadoGenerico = this.daoHelper.query(this.dao, keyMap, listaGenericaBooking,
 					"queryInfoBooking");
 
-			Map<String, Object> mapFinal = new HashMap<String, Object>();
+			if (resultadoGenerico.calculateRecordNumber() == 0) {
+				resultadoFinal = new EntityResultWrong(ErrorMessage.RESULT_REQUIRED);
+			} else {
 
-			List<Object> hab = new ArrayList<Object>();
-			for (int i = 0; i < habitaciones.calculateRecordNumber(); i++) {
-				Object h = habitaciones.getRecordValues(i);
-				hab.add(h);
+				// Devuelve todas las habitaciones de la reserva
+				EntityResult habitaciones = bookingHotelRoomRoomTypeQuery(subConsulta, new ArrayList<String>());
+
+				// Devuelve todos los huéspedes de la reserva
+				EntityResult huespedes = bookingGuestsService.bookingGuestsInfoQuery(new HashMap<String, Object>() {
+					{
+						put(BookingGuestDao.ATTR_BKG_ID, keyMap.get(dao.ATTR_ID));
+					}
+				}, new ArrayList<String>());
+
+				// Devuelve el número de huéspedes que ya están asociados a la reserva
+				EntityResult totalGuests = bookingGuestsService.guestCountQuery(new HashMap<String, Object>() {
+					{
+						put(BookingGuestDao.ATTR_BKG_ID, keyMap.get(dao.ATTR_ID));
+					}
+				}, new ArrayList<String>());
+
+				if (totalGuests.isWrong()) {
+					throw new EntityResultRequiredException(totalGuests.getMessage());
+				}
+
+				// Devuleve la capacidad total de las habitaciones de la reserva
+
+				EntityResult totalSlots = this.bookingSlotsInfoQuery(subConsulta, new ArrayList<String>());
+
+				if (totalSlots.isWrong()) {
+					throw new EntityResultRequiredException(totalSlots.getMessage());
+				}
+
+				Map<String, Object> mapFinal = new HashMap<String, Object>();
+
+				List<Object> hab = new ArrayList<Object>();
+				for (int i = 0; i < habitaciones.calculateRecordNumber(); i++) {
+					Object h = habitaciones.getRecordValues(i);
+					hab.add(h);
+				}
+
+				List<Object> huesp = new ArrayList<Object>();
+				for (int i = 0; i < huespedes.calculateRecordNumber(); i++) {
+					Object h = huespedes.getRecordValues(i);
+					huesp.add(h);
+				}
+
+				mapFinal.putAll(resultadoGenerico.getRecordValues(0));
+				mapFinal.putAll(totalGuests.getRecordValues(0));
+				mapFinal.putAll(totalSlots.getRecordValues(0));
+				mapFinal.put("rooms", hab);
+				mapFinal.put("guests", huesp);
+				resultadoFinal = new EntityResultMapImpl();
+				resultadoFinal.addRecord(mapFinal);
 			}
-
-			List<Object> huesp = new ArrayList<Object>();
-			for (int i = 0; i < huespedes.calculateRecordNumber(); i++) {
-				Object h = huespedes.getRecordValues(i);
-				huesp.add(h);
-			}
-
-			mapFinal.putAll(resultadoGenerico.getRecordValues(0));
-			mapFinal.putAll(totalGuests.getRecordValues(0));
-			mapFinal.putAll(totalSlots.getRecordValues(0));
-			mapFinal.put("rooms", hab);
-			mapFinal.put("guests", huesp);
-
-			resultadoFinal.addRecord(mapFinal);
-
 		} catch (ValidateException e) {
 			resultadoFinal = new EntityResultWrong(e.getMessage());
 		} catch (EntityResultRequiredException e) {
 			e.printStackTrace();
-			resultadoFinal = new EntityResultWrong(ErrorMessage.ERROR);
+			resultadoFinal = new EntityResultWrong(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
-			resultadoFinal = new EntityResultWrong(ErrorMessage.ERROR);
+			resultadoFinal = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultadoFinal;
 	}
@@ -778,8 +790,6 @@ public class BookingService implements IBookingService {
 	 * @return EntityResult (RoomDao.ATTR_NUMBER,RoomTypeDao.ATTR_NAME)
 	 * @throws OntimizeJEERuntimeException
 	 */
-//	@Override
-	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult bookingHotelRoomRoomTypeQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 

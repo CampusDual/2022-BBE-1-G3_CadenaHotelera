@@ -75,6 +75,7 @@ public class ControlFields {
 		permissions.reset();		
 		controlPermissionsActive = true;
 	}
+	
 	public void setAllowBasicExpression(boolean allowBasicExpression) {
 		this.allowBasicExpression = allowBasicExpression;
 	}
@@ -83,10 +84,13 @@ public class ControlFields {
 		this.controlPermissionsActive = controlPermissionsActive;
 	}
 
+
 	public void setCPHtlColum(String columna) {
 		permissions.setHtlColum(columna);
 	}
-
+	public void setCPUserColum(String columna) {
+		permissions.setUserColum(columna);
+	}
 	public void setCPRoleUsersRestrictions(String... roleUsersRestrictions) {
 		permissions.setRoleUsersRestrictions(roleUsersRestrictions);
 	}
@@ -340,7 +344,7 @@ public class ControlFields {
 		// permisos
 		if (controlPermissionsActive) {
 			restricPermissions(keyMap);
-		}
+		} 
 	}
 
 	public void restricPermissions(Map<String, Object> keyMap) throws InvalidFieldsValuesException, LiadaPardaException {	 
@@ -377,7 +381,7 @@ public class ControlFields {
 			if (required != null) {
 				for (String key : required) {
 					if (!columns.contains(key)) {
-						throw new MissingFieldsException(ErrorMessage.REQUIRED_FIELD);
+						throw new MissingFieldsException(ErrorMessage.REQUIRED_COLUMN);
 					}
 				}
 			}
@@ -385,7 +389,7 @@ public class ControlFields {
 			if (restricted != null) {
 				for (String key : restricted) {
 					if (columns.contains(key)) {
-						throw new RestrictedFieldException(ErrorMessage.INVALID_FIELD + key);
+						throw new RestrictedFieldException(ErrorMessage.INVALID_COLUM + key);
 					}
 				}
 			}
@@ -394,13 +398,13 @@ public class ControlFields {
 				throw new LiadaPardaException(ErrorMessage.INTERNAL_CAGADA);
 			} else {
 				if (!optional && (required.size() != columns.size())) {
-					throw new InvalidFieldsException(ErrorMessage.ALLOWED_FIELDS + required.toString());
+					throw new InvalidFieldsException(ErrorMessage.ALLOWED_COLUMSS + required.toString());
 				}
 			}
 
 			for (String key : columns) {
 				if (!fields.containsKey(key)) {
-					throw new InvalidFieldsException(ErrorMessage.INVALID_FIELD + key);
+					throw new InvalidFieldsException(ErrorMessage.INVALID_COLUM + key);
 				}
 			}
 		} else { // si tiene que ser lista vacía;

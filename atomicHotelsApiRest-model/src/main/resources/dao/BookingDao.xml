@@ -34,6 +34,7 @@ catalog="" schema="${mainschema}" table="bookings" datasource="mainDataSource" s
 				   	LEFT JOIN room_types ON rmt_id = rm_rmt_id		
 				   	LEFT JOIN hotels ON htl_id = rm_htl_id    				    					    		
 				    #WHERE#				    
+				    
 			    ]]>
 			</Sentence>
 		</Query>		
@@ -87,7 +88,7 @@ catalog="" schema="${mainschema}" table="bookings" datasource="mainDataSource" s
 				    	AND bkg_checkout is null 
 				    	AND bkg_checkin < now()
 				    	AND bkg_end > now()	
-				    #WHERE_CONCAT#					    
+				    #WHERE_CONCAT#
 			    ]]>
 			</Sentence>
 		</Query>

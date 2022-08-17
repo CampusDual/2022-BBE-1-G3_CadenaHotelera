@@ -268,11 +268,11 @@ class CustomerServiceTest {
 			try {
 				doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(), anyList(),
 						anyString());
-				resultado = service.isCustomerBlockeddQuery(999);
+				resultado = service.isCustomerBlockedQuery(999);
 				assertTrue(resultado);
 
 				doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
-				resultado = service.isCustomerBlockeddQuery(999);
+				resultado = service.isCustomerBlockedQuery(999);
 				assertFalse(resultado);
 
 			} catch (Exception e) {
@@ -287,12 +287,12 @@ class CustomerServiceTest {
 			boolean resultado;
 			try {
 				doReturn(new EntityResultWrong()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
-				assertThrows(EntityResultRequiredException.class, () -> service.isCustomerBlockeddQuery(999));
+				assertThrows(EntityResultRequiredException.class, () -> service.isCustomerBlockedQuery(999));
 
 				eR = TestingTools.getEntityOneRecord();
 				eR.setCode(EntityResult.OPERATION_WRONG);
 				doReturn(eR).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
-				assertThrows(EntityResultRequiredException.class, () -> service.isCustomerBlockeddQuery(999));
+				assertThrows(EntityResultRequiredException.class, () -> service.isCustomerBlockedQuery(999));
 
 			} catch (Exception e) {
 				e.printStackTrace();

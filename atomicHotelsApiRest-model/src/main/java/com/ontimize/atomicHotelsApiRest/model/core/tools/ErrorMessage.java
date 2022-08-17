@@ -36,7 +36,7 @@ public class ErrorMessage {
 	public static final String REQUIRED_HTL_ID = "Columna Hotel Id requerida y no especificada.";	 
 	public static final String WRONG_HTL_ID = "No tiene permisos para esa referencia de hotel";	 
 	public static final String INCOMPLETE_USER_DATA= "Configuración del usuario Incompleta";	 
-	public static final String UNKNOW_ROL = "Rol desconocido";	 
+	public static final String UNKNOWN_ROL = "Rol desconocido";	 
 	
 //ERRORES VARIOS
 	
@@ -44,9 +44,13 @@ public class ErrorMessage {
 	public static final String DATA_START_BEFORE_TODAY = "La fecha de inicio no puede ser anterior a hoy";
 	public static final String DATA_EXPIRY_BEFORE_TODAY = "Error de fecha o la fecha de validez no puede ser anterior a hoy ";
 	public static final String ALLOWED_FIELDS = "Campos permitidos: ";
+	public static final String ALLOWED_COLUMSS = "Columnas permitidas: ";
 	public static final String REQUIRED_FIELD = "Falta campo requerido - ";
+	public static final String REQUIRED_COLUMN = "Falta columna requerida - ";
 	public static final String REQUIRED_MINIMUM_COLUMS = "Se requiere mínimo una columna";
 	public static final String INVALID_FIELD = "Campo no válido - ";
+	public static final String INVALID_COLUM = "Columna no válida - ";
+	
 	public static final String REQUIRED_COLUMNS = "Faltan columnas requeridas";
 	public static final String INVALID_ACTION = "Acción no válida";
 	public static final String NEGATIVE_OR_CERO_NOT_ALLOWED="Número igual o menor a 0 no permitido";

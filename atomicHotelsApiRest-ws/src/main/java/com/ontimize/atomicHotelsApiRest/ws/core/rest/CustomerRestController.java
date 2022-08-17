@@ -17,6 +17,7 @@ public class CustomerRestController extends ORestController<ICustomerService>{
 	 @Override
 	 public ICustomerService getService() {
 	  return this.customerService;
+	 
 	 }
 
 }

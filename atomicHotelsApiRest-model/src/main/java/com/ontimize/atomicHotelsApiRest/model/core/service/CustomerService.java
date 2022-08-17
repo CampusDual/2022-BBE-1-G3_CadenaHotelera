@@ -10,10 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.EntityResultRequiredException;
-
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.RestrictedFieldException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.ICustomerService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
@@ -32,6 +37,7 @@ import com.ontimize.jee.common.db.SQLStatementBuilder.BasicOperator;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
+import com.ontimize.jee.common.security.PermissionsProviderSecured;
 import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 
@@ -48,13 +54,14 @@ public class CustomerService implements ICustomerService {
 	ControlFields cf;
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult customerQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 //TODO dividir esta consulta el bussiness y regular?
 		EntityResult resultado = new EntityResultWrong();
 		try {
 			cf.reset();
-				
+			cf.setCPUserColum(dao.ATTR_USER);			
 			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_CUSTOMER);
 			
 			cf.addBasics(dao.fields);
@@ -74,13 +81,18 @@ public class CustomerService implements ICustomerService {
 		return resultado;
 	}
 
-	@Override
 	public boolean isCustomerValidBookingHolder(Object customerId)
-			throws OntimizeJEERuntimeException, EntityResultRequiredException {
+			throws OntimizeJEERuntimeException, EntityResultRequiredException, MissingFieldsException, RestrictedFieldException, InvalidFieldsException, InvalidFieldsValuesException, LiadaPardaException {
 		EntityResult resultado = new EntityResultWrong();
 
 		Map<String, Object> keyMap = new HashMap<>();
 
+		cf.reset();
+		cf.addBasics(dao.fields);
+		cf.setCPUserColum(dao.ATTR_USER);			
+		cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_CUSTOMER);
+		cf.validate(keyMap);
+		
 		resultado = this.daoHelper.query(this.dao, keyMap, EntityResultTools.attributes(dao.ATTR_ID),
 				"isCustomerValidBookingHolder");
 		if (resultado.isWrong()) {
@@ -94,7 +106,7 @@ public class CustomerService implements ICustomerService {
 
 	}
 
-	public boolean isCustomerBlockeddQuery(Object customerId)
+	public boolean isCustomerBlockedQuery(Object customerId)
 			throws OntimizeJEERuntimeException, EntityResultRequiredException {
 		EntityResult resultado = new EntityResultWrong();
 
@@ -126,6 +138,7 @@ public class CustomerService implements ICustomerService {
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult businessCustomerInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 		try {
@@ -148,7 +161,12 @@ public class CustomerService implements ICustomerService {
 				}
 			};
 			cf.reset();
+
+			cf.setCPUserColum(dao.ATTR_USER);			
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_CUSTOMER);
+
 			cf.addBasics(dao.fields);
+			cf.addCPUser(true);
 			cf.setRequired(required);
 			cf.setRestricted(restricted);
 			cf.validate(attrMap);
@@ -180,6 +198,7 @@ public class CustomerService implements ICustomerService {
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult regularCustomerInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 		try {
@@ -201,8 +220,13 @@ public class CustomerService implements ICustomerService {
 				}
 			};
 			cf.reset();
+
+			cf.setCPUserColum(dao.ATTR_USER);			
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_CUSTOMER);
+
 			cf.addBasics(dao.fields);
 			cf.setRequired(required);
+			cf.addCPUser(true);
 			cf.setRestricted(restricted);
 			cf.validate(attrMap);
 
@@ -235,6 +259,7 @@ public class CustomerService implements ICustomerService {
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult customerBusinessUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
 
@@ -260,6 +285,7 @@ public class CustomerService implements ICustomerService {
 					add(dao.ATTR_SURNAME);
 					add(dao.ATTR_BIRTH_DATE);
 					add(dao.ATTR_IDEN_DOC);
+					add(dao.ATTR_USER);
 				}
 			};
 			cf.reset();
@@ -307,6 +333,7 @@ public class CustomerService implements ICustomerService {
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult customerRegularUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
 
@@ -330,6 +357,8 @@ public class CustomerService implements ICustomerService {
 				{
 					add(dao.ATTR_ID);// El id no se puede actualizar
 					add(dao.ATTR_VAT_NUMBER);
+					
+					add(dao.ATTR_USER);
 				}
 			};
 			cf.reset();
@@ -377,6 +406,7 @@ public class CustomerService implements ICustomerService {
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult customerDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 
 		EntityResult resultado = new EntityResultWrong("Operación no disponible");
@@ -385,6 +415,7 @@ public class CustomerService implements ICustomerService {
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult customerCancelUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
@@ -421,7 +452,7 @@ public class CustomerService implements ICustomerService {
 				resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
 
 			} else {
-				if (!isCustomerBlockeddQuery(keyMap.get(dao.ATTR_ID))) {
+				if (!isCustomerBlockedQuery(keyMap.get(dao.ATTR_ID))) {
 					Map<String, Object> finalAttrMap = new HashMap<>() {
 						{
 							put(dao.ATTR_CANCELED, new Date());
@@ -467,6 +498,8 @@ public class CustomerService implements ICustomerService {
 		EntityResult resultado = new EntityResultWrong();
 		try {
 			cf.reset();
+			cf.setCPUserColum(dao.ATTR_USER);			
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_CUSTOMER);
 			cf.addBasics(dao.fields);
 			cf.validate(keyMap);
 			cf.validate(attrList);

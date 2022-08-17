@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.UserDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.UserRoleDao;
@@ -20,8 +21,8 @@ import com.ontimize.jee.common.services.user.UserInformation;
 public class ControlPermissions {
 	private List<String> roleUsersRestrictions;
 	private Map<String, Object> keyMap;
-	private String htl_colum;
-	private String user_colum = "user_";
+	private String htlColum;
+	private String userColum;
 	private boolean addUser;
 
 	public ControlPermissions() {
@@ -31,12 +32,18 @@ public class ControlPermissions {
 	public void reset() {
 		this.roleUsersRestrictions = null;
 		this.keyMap = null;
-		this.htl_colum =  RoomDao.ATTR_HOTEL_ID;
+		this.htlColum =  RoomDao.ATTR_HOTEL_ID;
 		this.addUser = false;
+		this.userColum = BookingDao.ATTR_USER;
+
 	}
 
 	public void setHtlColum(String columna) {
-		this.htl_colum = columna;
+		this.htlColum = columna;
+	}
+	
+	public void setUserColum(String columna) {
+		this.userColum = columna;
 	}
 
 	public void setRoleUsersRestrictions(String... roleUsersRestrictions) {
@@ -50,8 +57,8 @@ public class ControlPermissions {
 		UserInformation ui = ((UserInformation) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 		String usuario = ((UserInformation) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
 				.getLogin();
-		if (addUser) {
-			keyMap.put(user_colum, usuario);
+		if (addUser || keyMap.containsKey(userColum)) {
+			keyMap.put(userColum, usuario);
 		}
 
 		if (roleUsersRestrictions != null) {
@@ -67,24 +74,24 @@ public class ControlPermissions {
 							throw new InvalidFieldsValuesException(ErrorMessage.INCOMPLETE_USER_DATA);
 						}
 						
-						if (!keyMap.containsKey(htl_colum)) { //si no contiene la id del htl la añadimos como filtro
-							keyMap.put(htl_colum, ui.getOtherData().get(UserDao.ATTR_HTL));
+						if (!keyMap.containsKey(htlColum)) { //si no contiene la id del htl la añadimos como filtro
+							keyMap.put(htlColum, ui.getOtherData().get(UserDao.ATTR_HTL));
 						} else {//si ya tiene la id comprobamos que sea la adecuada
-							if(!keyMap.get(htl_colum).equals(ui.getOtherData().get(UserDao.ATTR_HTL)) ) {
+							if(!keyMap.get(htlColum).equals(ui.getOtherData().get(UserDao.ATTR_HTL)) ) {
 								throw new InvalidFieldsValuesException(ErrorMessage.WRONG_HTL_ID);
 							}
 						}
 						break;
 
 					case UserRoleDao.ROLE_CUSTOMER:
-						keyMap.put(user_colum, usuario);
+						keyMap.put(userColum, usuario);
 						break;
 
 					case UserRoleDao.ROLE_USER:
 						// restricciones a nivel de permisos en metodo
 						break;
 					default:
-						throw new LiadaPardaException(ErrorMessage.UNKNOW_ROL);
+						throw new LiadaPardaException(ErrorMessage.UNKNOWN_ROL);
 					}
 				}
 			}

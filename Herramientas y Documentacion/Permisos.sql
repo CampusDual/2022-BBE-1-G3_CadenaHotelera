@@ -212,7 +212,7 @@ ALTER SEQUENCE trole_server_permission_id_role_server_permission_seq RESTART WIT
 	--customer 4	
 		INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 4,id_server_permission FROM tserver_permission WHERE id_server_permission >= 1 AND id_server_permission <= 85	;	
 		DELETE FROM trole_server_permission 
-			WHERE ( id_server_permission in(1,2,3,4,6,7,8,9,10,11,12,13,16,17,27,28,29,30,31,42,45,49,50,51,53,54,55,57,58,59,60,61,62,63,65,66,67,73,74,76,77,78,82,83,84) 
+			WHERE ( id_server_permission in(1,2,3,4,6,7,8,9,10,11,12,13,16,17,23,25,27,28,29,30,31,42,45,49,50,51,53,54,55,57,58,59,60,61,62,63,65,66,67,73,74,76,77,78,82,83,84) 
 			) AND ID_ROLENAME = 4;
 		
 		INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (4,111);
@@ -249,8 +249,11 @@ ALTER SEQUENCE trole_server_permission_id_role_server_permission_seq RESTART WIT
 --MODIFICACIONES EN TABLAS 
 ALTER TABLE public.bookings ADD user_ varchar(50) NULL;
 ALTER TABLE public.bookings ADD FOREIGN KEY(user_) REFERENCES tuser(user_)	;
-ALTER TABLE public.customers ADD user_ varchar(50) NULL;
 
+ALTER TABLE public.customers ADD cst_user varchar(50) NULL;
+ALTER TABLE public.customers ADD FOREIGN KEY(cst_user) REFERENCES tuser(user_)	;
+
+--ALTER TABLE public.customers RENAME COLUMN user_ TO cst_user;
 
 
 

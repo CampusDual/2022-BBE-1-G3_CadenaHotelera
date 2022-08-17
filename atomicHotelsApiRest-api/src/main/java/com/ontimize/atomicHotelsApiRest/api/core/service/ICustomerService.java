@@ -23,7 +23,7 @@ public interface ICustomerService {
 	public EntityResult regularCustomerInsert (Map<String, Object> attrMap) throws OntimizeJEERuntimeException;
 	EntityResult customerCancelUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException;
-	public boolean isCustomerValidBookingHolder(Object customerId) throws OntimizeJEERuntimeException,  EntityResultRequiredException;
+	//public boolean isCustomerValidBookingHolder(Object customerId) throws OntimizeJEERuntimeException,  EntityResultRequiredException;
 	EntityResult customerBusinessUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException;
 	EntityResult customerRegularUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
