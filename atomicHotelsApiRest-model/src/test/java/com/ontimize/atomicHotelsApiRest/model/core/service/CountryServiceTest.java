@@ -73,8 +73,9 @@ class CountryServiceTest {
 		@Test
 		@DisplayName("ControlFields usar validate() map y list")
 		void testCountryQueryControlFieldsValidate() {
-			service.countryQuery(TestingTools.getMapEmpty(), getColumsName());
 			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+				service.countryQuery(TestingTools.getMapEmpty(), getColumsName());
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyList());
 			} catch (Exception e) {
@@ -86,6 +87,7 @@ class CountryServiceTest {
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testCountryQueryOK() {
+		
 			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
 			try {
 				doNothing().when(cf).validate(anyMap());
