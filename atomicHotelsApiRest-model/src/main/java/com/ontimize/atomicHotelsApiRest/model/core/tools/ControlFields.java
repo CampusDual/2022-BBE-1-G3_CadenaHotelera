@@ -339,11 +339,11 @@ public class ControlFields {
 		}
 		// permisos
 		if (controlPermissionsActive) {
-			permissionsRestrict(keyMap);
+			restricPermissions(keyMap);
 		}
 	}
 
-	private void permissionsRestrict(Map<String, Object> keyMap) throws InvalidFieldsValuesException, LiadaPardaException {	 
+	public void restricPermissions(Map<String, Object> keyMap) throws InvalidFieldsValuesException, LiadaPardaException {	 
 		permissions.restrict(keyMap);
 	}
 

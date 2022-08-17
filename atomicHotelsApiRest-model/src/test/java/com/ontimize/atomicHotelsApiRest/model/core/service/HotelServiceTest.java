@@ -15,6 +15,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -44,6 +45,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.test.context.event.annotation.BeforeTestMethod;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
@@ -69,8 +71,8 @@ class HotelServiceTest {
 	DefaultOntimizeDaoHelper daoHelper;
 
 	@Spy
-	ControlFields cf;	
-	
+	ControlFields cf;
+
 	@InjectMocks
 	HotelService service;
 
@@ -84,7 +86,7 @@ class HotelServiceTest {
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	public class HotelQuery {
 
-		//hotelQuery
+		// hotelQuery
 		@Test
 		@DisplayName("ControlFields usar reset()")
 		void testHotelQueryControlFieldsReset() {
@@ -95,9 +97,10 @@ class HotelServiceTest {
 		@Test
 		@DisplayName("ControlFields usar validate() map y list")
 		void testHotelQueryControlFieldsValidate() {
-			doNothing().when(cf).resetPermissions();
-			service.hotelQuery(TestingTools.getMapEmpty(), getColumsName());
 			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+				service.hotelQuery(TestingTools.getMapEmpty(), getColumsName());
+
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyList());
 			} catch (Exception e) {
@@ -109,7 +112,12 @@ class HotelServiceTest {
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testHotelQueryOK() {
-			doNothing().when(cf).resetPermissions();
+			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
 			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
 
 			// válido: HashMap vacio (sin filtros)
@@ -159,7 +167,7 @@ class HotelServiceTest {
 			}
 
 		}
-		
+
 	}
 
 	@Nested
@@ -195,7 +203,7 @@ class HotelServiceTest {
 			} catch (Exception e) {
 				e.printStackTrace();
 				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
-			}									
+			}
 			doReturn(new EntityResultMapImpl()).when(daoHelper).insert(any(), anyMap());
 
 			// válido: HashMap campos mínimos
@@ -238,7 +246,7 @@ class HotelServiceTest {
 				eR = service.hotelInsert(TestingTools.getMapEmpty());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-				
+
 				doThrow(DuplicateKeyException.class).when(cf).validate(anyMap());
 				eR = service.hotelInsert(TestingTools.getMapEmpty());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
@@ -294,10 +302,10 @@ class HotelServiceTest {
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testhotelUpdateOK() {
-			doNothing().when(cf).resetPermissions();
-			doReturn(new EntityResultMapImpl()).when(daoHelper).update(any(), anyMap(), anyMap());
 			try {
-				doNothing().when(cf).validate(anyMap());									
+				doNothing().when(cf).restricPermissions(anyMap());
+				doReturn(new EntityResultMapImpl()).when(daoHelper).update(any(), anyMap(), anyMap());
+				doNothing().when(cf).validate(anyMap());
 			} catch (Exception e) {
 				e.printStackTrace();
 				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
@@ -352,7 +360,12 @@ class HotelServiceTest {
 				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
 				reset(cf);
-				doNothing().when(cf).resetPermissions();
+				try {
+					doNothing().when(cf).restricPermissions(anyMap());
+				}catch (Exception e) {
+					e.printStackTrace();
+					fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+				}
 				// extra para controlar required:
 				eR = service.hotelUpdate(getMapUpdate(), TestingTools.getMapEmpty());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
@@ -360,7 +373,6 @@ class HotelServiceTest {
 				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
 
 				// extra para controlar restricted:
-				doNothing().when(cf).resetPermissions();
 				eR = service.hotelUpdate(getMapId(), getMapId());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
@@ -368,7 +380,7 @@ class HotelServiceTest {
 
 				// error interno subconsulta
 				try {
-					doNothing().when(cf).validate(anyMap());					
+					doNothing().when(cf).validate(anyMap());
 				} catch (Exception e) {
 					e.printStackTrace();
 					fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
@@ -391,6 +403,11 @@ class HotelServiceTest {
 	@DisplayName("Test for Hotel deletes")
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	public class HotelDelete {
+		@BeforeTestMethod
+		public void buildSpy() {
+			cf = spy(cf);
+		}
+
 		@Test
 		@DisplayName("ControlFields usar reset()")
 		void testhotelDeleteControlFieldsReset() {
@@ -414,40 +431,49 @@ class HotelServiceTest {
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testhotelDeleteOK() {
-			reset(cf);
 			try {
-				doNothing().when(cf).validate(anyMap());
+				doNothing().when(cf).restricPermissions(anyMap());
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}		
-			doNothing().when(cf).resetPermissions();		
-			doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(),anyList());
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
+
+			doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(), anyList());
 			doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
 			// válido: HashMap campo único y exclusivo
 			eR = service.hotelDelete(getMapId());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
- 
+
 		}
-		
+
 		@Test
 		@DisplayName("Valores Subcontulta Error")
 		void testhotelDeleteSubQueryKO() {
-			doNothing().when(cf).resetPermissions();
-			doReturn(new EntityResultWrong()).when(daoHelper).query(any(), anyMap(),anyList());
+			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
+			doReturn(new EntityResultWrong()).when(daoHelper).query(any(), anyMap(), anyList());
 //			doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
-			
-			// 
+
+			//
 			eR = service.hotelDelete(getMapId());
 			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 			assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 		}
-		
+
 		@Test
 		@DisplayName("Valores Subconsulta 0 resultados")
 		void testhotelDeleteSubQueryNoResults() {
-			doNothing().when(cf).resetPermissions();
-			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(),anyList());
+			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
+			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
 //			doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
 //			try {			
 //				doNothing().when(cf).reset();//				
@@ -455,12 +481,12 @@ class HotelServiceTest {
 //				e.printStackTrace();
 //				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
 //			}
-			// 
+			//
 			eR = service.hotelDelete(getMapId());
 			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 			assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 		}
-		
+
 		@Test
 		@DisplayName("Valores de entrada NO válidos")
 		void testhotelDeleteKO() {
@@ -499,7 +525,7 @@ class HotelServiceTest {
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
-				reset(cf); //para quitar doThrow anterior
+				reset(cf); // para quitar doThrow anterior
 				// extra para controlar required:
 				eR = service.hotelDelete(TestingTools.getMapEmpty());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
@@ -538,8 +564,6 @@ class HotelServiceTest {
 	Map<String, Object> getMapUpdate() {
 		return getMapRequiredInsert();
 	}
-
-	
 
 	Map<String, Object> getMapRequiredInsertExtended() {
 
@@ -609,8 +633,6 @@ class HotelServiceTest {
 		return columns;
 	}
 	// fin datos entrada
-
-	
 
 //	@Test
 //	@DisplayName("XXX Valores de entrada NO válidos")
@@ -829,7 +851,7 @@ class HotelServiceTest {
 //		}
 //		return list;
 //	}
-	
+
 //    	@Test
 //		@DisplayName("Missing Fields")
 //		void when_unable_insert() {
