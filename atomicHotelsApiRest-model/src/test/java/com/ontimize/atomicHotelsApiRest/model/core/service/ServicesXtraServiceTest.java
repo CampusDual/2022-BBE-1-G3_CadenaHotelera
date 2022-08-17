@@ -92,8 +92,10 @@ class ServicesXtraServiceTest {
 				@Test
 				@DisplayName("ControlFields usar validate() map y list")
 				void testServicesXtraQueryControlFieldsValidate() {
-					service.servicesXtraQuery(TestingTools.getMapEmpty(), getColumsName());
 					try {
+						doNothing().when(cf).restricPermissions(anyMap());
+						service.servicesXtraQuery(TestingTools.getMapEmpty(), getColumsName());
+
 						verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
 						verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyList());
 					} catch (Exception e) {
@@ -105,6 +107,12 @@ class ServicesXtraServiceTest {
 				@Test
 				@DisplayName("Valores de entrada válidos")
 				void testServicesXtraQueryOK() {
+					try {
+						doNothing().when(cf).restricPermissions(anyMap());
+					} catch (Exception e) {
+						e.printStackTrace();
+						fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+					}
 					doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
 
 					// válido: HashMap vacio (sin filtros)
@@ -186,6 +194,13 @@ class ServicesXtraServiceTest {
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testServicesXtraInsertOK() {
+			
+			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
 			doReturn(new EntityResultMapImpl()).when(daoHelper).insert(any(), anyMap());
 	
 			// válido: HashMap campos mínimos
@@ -278,12 +293,19 @@ public class ServicesXtraUpdate {
 	@Test
 	@DisplayName("Valores de entrada válidos")
 	void testServicesXtraUpdateOK() {
-		doReturn(new EntityResultMapImpl()).when(daoHelper).update(any(), anyMap(), anyMap());
-
+		try {
+			doNothing().when(cf).restricPermissions(anyMap());
+	//		doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(), anyList());
+			doReturn(new EntityResultMapImpl()).when(daoHelper).update(any(), anyMap(), anyMap());
+			doNothing().when(cf).validate(anyMap());
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+		}
+		
 		// válido: HashMap campos y filtros
 		eR = service.servicesXtraUpdate(getMapUpdate(), getMapId());
 		assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
-
 	}
 
 	@Test
@@ -376,6 +398,13 @@ public class ServicesXtraDelete {
 	@DisplayName("Valores de entrada válidos")
 	void testServicesXtraDeleteOK() {
 		
+		try {
+			doNothing().when(cf).restricPermissions(anyMap());
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+		}
+		
 		doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(),anyList());
 		doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
 
@@ -383,10 +412,18 @@ public class ServicesXtraDelete {
 		eR = service.servicesXtraDelete(getMapId());
 		assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
 	}
+	//void testhotelDeleteOK() {
 	
 	@Test
 	@DisplayName("Valores Subcontulta Error")
 	void testServicesXtraDeleteSubQueryKO() {
+		
+		try {
+			doNothing().when(cf).restricPermissions(anyMap());
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+		}
 		doReturn(new EntityResultWrong()).when(daoHelper).query(any(), anyMap(),anyList());
 //		doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
 		
@@ -398,6 +435,13 @@ public class ServicesXtraDelete {
 	@Test
 	@DisplayName("Valores Subconsulta 0 resultados")
 	void testServicesXtraDeleteSubQueryNoResults() {
+		
+		try {
+			doNothing().when(cf).restricPermissions(anyMap());
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+		}
 		doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(),anyList());
 //		doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
 		
