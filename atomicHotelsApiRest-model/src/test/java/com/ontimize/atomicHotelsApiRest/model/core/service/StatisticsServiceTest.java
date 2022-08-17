@@ -24,6 +24,8 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,10 +56,7 @@ public class StatisticsServiceTest {
 //	CustomerService customerServiceMock;
 
 	@Spy
-	ControlFields cf;
-	
-//	@Spy
-//	ControlPermissions permissions;
+	ControlFields cf;		 
 
 	@InjectMocks
 	StatisticsService service;
@@ -83,11 +82,11 @@ public class StatisticsServiceTest {
 		@Test
 		@DisplayName("ControlFields usar validate() map y list") 
 		void testHotelMaximumCapacityQueryControlFieldsValidateList() {
+			 doNothing().when(cf).resetPermissions();
 			service.hotelMaximumCapacityQuery(getHotelId(), getColumsName());
 			try {
-//				doNothing().when(cf).reset();
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields map")).validate(anyMap());
-				//verify(cf, description("No se ha utilizado el metodo validate de ControlFields list")).validate(anyList());	
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields list")).validate(anyList());	
 			} catch (Exception e) {
 				e.printStackTrace();
 				fail("excepción no capturada: " + e.getMessage());

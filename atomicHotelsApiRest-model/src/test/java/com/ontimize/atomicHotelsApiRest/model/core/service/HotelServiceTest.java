@@ -304,6 +304,7 @@ class HotelServiceTest {
 		void testhotelUpdateOK() {
 			try {
 				doNothing().when(cf).restricPermissions(anyMap());
+				doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(), anyList());
 				doReturn(new EntityResultMapImpl()).when(daoHelper).update(any(), anyMap(), anyMap());
 				doNothing().when(cf).validate(anyMap());
 			} catch (Exception e) {
@@ -385,6 +386,7 @@ class HotelServiceTest {
 					e.printStackTrace();
 					fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
 				}
+				doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(), anyList());
 				doReturn(TestingTools.getEntitySuccesfulWithMsg()).when(daoHelper).update(any(), anyMap(), anyMap());
 				eR = service.hotelUpdate(getMapUpdate(), getMapId());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
