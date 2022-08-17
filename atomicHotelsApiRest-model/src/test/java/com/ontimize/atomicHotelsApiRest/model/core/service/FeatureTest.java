@@ -92,8 +92,11 @@ class FeatureTest {
 				@Test
 				@DisplayName("ControlFields usar validate() map y list")
 				void testFeatureQueryControlFieldsValidate() {
-					service.featureQuery(TestingTools.getMapEmpty(), getColumsName());
 					try {
+						doNothing().when(cf).restricPermissions(anyMap());
+						service.featureQuery(TestingTools.getMapEmpty(), getColumsName());
+
+						
 						verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
 						verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyList());
 					} catch (Exception e) {
@@ -105,6 +108,12 @@ class FeatureTest {
 				@Test
 				@DisplayName("Valores de entrada válidos")
 				void testFeatureQueryOK() {
+					try {
+						doNothing().when(cf).restricPermissions(anyMap());
+					} catch (Exception e) {
+						e.printStackTrace();
+						fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+					}
 					doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
 
 					// válido: HashMap vacio (sin filtros)
@@ -186,6 +195,12 @@ class FeatureTest {
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testFeatureInsertOK() {
+			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
 			doReturn(new EntityResultMapImpl()).when(daoHelper).insert(any(), anyMap());
 	
 			// válido: HashMap campos mínimos
@@ -278,6 +293,12 @@ public class FeatureUpdate {
 	@Test
 	@DisplayName("Valores de entrada válidos")
 	void testFeatureUpdateOK() {
+		try {
+			doNothing().when(cf).restricPermissions(anyMap());
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+		}
 		doReturn(new EntityResultMapImpl()).when(daoHelper).update(any(), anyMap(), anyMap());
 
 		// válido: HashMap campos y filtros
@@ -375,7 +396,12 @@ public class FeatureDelete {
 	@Test
 	@DisplayName("Valores de entrada válidos")
 	void testFeatureDeleteOK() {
-		
+		try {
+			doNothing().when(cf).restricPermissions(anyMap());
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+		}		
 		doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(),anyList());
 		doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
 
@@ -387,6 +413,12 @@ public class FeatureDelete {
 	@Test
 	@DisplayName("Valores Subcontulta Error")
 	void testFeatureDeleteDeleteSubQueryKO() {
+		try {
+			doNothing().when(cf).restricPermissions(anyMap());
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+		}
 		doReturn(new EntityResultWrong()).when(daoHelper).query(any(), anyMap(),anyList());
 //		doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
 		
@@ -398,6 +430,12 @@ public class FeatureDelete {
 	@Test
 	@DisplayName("Valores Subconsulta 0 resultados")
 	void testFeatureDeleteSubQueryNoResults() {
+		try {
+			doNothing().when(cf).restricPermissions(anyMap());
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+		}
 		doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(),anyList());
 //		doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
 		
