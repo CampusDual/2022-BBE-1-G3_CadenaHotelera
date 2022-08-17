@@ -49,9 +49,8 @@ public class ControlFields {
 
 	@Autowired
 	ValidateFields vF;
-
-	@Autowired
-	ControlPermissions permissions;
+	
+	ControlPermissions permissions = new ControlPermissions();
 
 	public ControlFields() {
 //		reset();
@@ -340,8 +339,12 @@ public class ControlFields {
 		}
 		// permisos
 		if (controlPermissionsActive) {
-			permissions.restrict(keyMap);
+			permissionsRestrict(keyMap);
 		}
+	}
+
+	private void permissionsRestrict(Map<String, Object> keyMap) throws InvalidFieldsValuesException, LiadaPardaException {	 
+		permissions.restrict(keyMap);
 	}
 
 	/**

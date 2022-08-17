@@ -249,6 +249,8 @@ ALTER SEQUENCE trole_server_permission_id_role_server_permission_seq RESTART WIT
 --MODIFICACIONES EN TABLAS 
 ALTER TABLE public.bookings ADD user_ varchar(50) NULL;
 ALTER TABLE public.bookings ADD FOREIGN KEY(user_) REFERENCES tuser(user_)	;
+ALTER TABLE public.customers ADD user_ varchar(50) NULL;
+
 
 
 

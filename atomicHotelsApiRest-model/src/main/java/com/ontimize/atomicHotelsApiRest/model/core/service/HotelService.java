@@ -298,7 +298,7 @@ public class HotelService implements IHotelService {
 			cf.addBasics(dao.fields);
 			cf.setRequired(required);
 			cf.setOptional(false);
-			cf.validate(keyMap);
+			cf.validate(keyMap);  
 
 			Map<String, Object> subConsultaKeyMap = new HashMap<>() {
 				{

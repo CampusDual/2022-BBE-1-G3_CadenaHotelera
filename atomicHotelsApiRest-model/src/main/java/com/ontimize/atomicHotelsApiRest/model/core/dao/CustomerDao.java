@@ -48,6 +48,7 @@ public class CustomerDao extends OntimizeJdbcDaoSupport {
 	public static final String ATTR_PHONE = TAG+"phone";
 	public static final String ATTR_CREATION= TAG+"creation";
 	public static final String ATTR_CANCELED= TAG+"canceled";	
+	public static final String ATTR_USER= "user_";	
 	public static final String NON_ATTR_ACTION = "action";
 	public enum Action{CANCEL}
 
@@ -69,6 +70,7 @@ public class CustomerDao extends OntimizeJdbcDaoSupport {
 		put(ATTR_PHONE,type.PHONE);
 		put(ATTR_CANCELED,type.DATETIME);
 		put(ATTR_CREATION,type.DATETIME);
+		put(ATTR_CREATION,type.STRING);
 		put(NON_ATTR_ACTION,type.CUSTOMER_ACTION);		
 	}};
 

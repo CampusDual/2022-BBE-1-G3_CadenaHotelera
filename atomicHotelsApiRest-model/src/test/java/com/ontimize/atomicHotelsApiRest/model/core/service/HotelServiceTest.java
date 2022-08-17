@@ -38,6 +38,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlPermissions;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ValidateFields;
@@ -67,8 +69,8 @@ class HotelServiceTest {
 	DefaultOntimizeDaoHelper daoHelper;
 
 	@Spy
-	ControlFields cf;
-
+	ControlFields cf;	
+	
 	@InjectMocks
 	HotelService service;
 
@@ -93,6 +95,7 @@ class HotelServiceTest {
 		@Test
 		@DisplayName("ControlFields usar validate() map y list")
 		void testHotelQueryControlFieldsValidate() {
+			doNothing().when(cf).resetPermissions();
 			service.hotelQuery(TestingTools.getMapEmpty(), getColumsName());
 			try {
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
@@ -106,6 +109,7 @@ class HotelServiceTest {
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testHotelQueryOK() {
+			doNothing().when(cf).resetPermissions();
 			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
 
 			// válido: HashMap vacio (sin filtros)
@@ -290,6 +294,7 @@ class HotelServiceTest {
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testhotelUpdateOK() {
+			doNothing().when(cf).resetPermissions();
 			doReturn(new EntityResultMapImpl()).when(daoHelper).update(any(), anyMap(), anyMap());
 			try {
 				doNothing().when(cf).validate(anyMap());									
@@ -347,21 +352,23 @@ class HotelServiceTest {
 				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
 				reset(cf);
+				doNothing().when(cf).resetPermissions();
 				// extra para controlar required:
 				eR = service.hotelUpdate(getMapUpdate(), TestingTools.getMapEmpty());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-				assertNotEquals(ErrorMessage.CREATION_ERROR, eR.getMessage(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
 
 				// extra para controlar restricted:
+				doNothing().when(cf).resetPermissions();
 				eR = service.hotelUpdate(getMapId(), getMapId());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-				assertNotEquals(ErrorMessage.CREATION_ERROR, eR.getMessage(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
 
-				// error interno
+				// error interno subconsulta
 				try {
-					doNothing().when(cf).validate(anyMap());
+					doNothing().when(cf).validate(anyMap());					
 				} catch (Exception e) {
 					e.printStackTrace();
 					fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
@@ -369,7 +376,7 @@ class HotelServiceTest {
 				doReturn(TestingTools.getEntitySuccesfulWithMsg()).when(daoHelper).update(any(), anyMap(), anyMap());
 				eR = service.hotelUpdate(getMapUpdate(), getMapId());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-				assertNotEquals(ErrorMessage.CREATION_ERROR, eR.getMessage(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
 
 			} catch (Exception e) {
@@ -407,10 +414,16 @@ class HotelServiceTest {
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testhotelDeleteOK() {
-			
+			reset(cf);
+			try {
+				doNothing().when(cf).validate(anyMap());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}		
+			doNothing().when(cf).resetPermissions();		
 			doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(),anyList());
 			doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
-
 			// válido: HashMap campo único y exclusivo
 			eR = service.hotelDelete(getMapId());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
@@ -420,6 +433,7 @@ class HotelServiceTest {
 		@Test
 		@DisplayName("Valores Subcontulta Error")
 		void testhotelDeleteSubQueryKO() {
+			doNothing().when(cf).resetPermissions();
 			doReturn(new EntityResultWrong()).when(daoHelper).query(any(), anyMap(),anyList());
 //			doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
 			
@@ -430,11 +444,17 @@ class HotelServiceTest {
 		}
 		
 		@Test
-		@DisplayName("Valores Subconsultta 0 resultados")
+		@DisplayName("Valores Subconsulta 0 resultados")
 		void testhotelDeleteSubQueryNoResults() {
+			doNothing().when(cf).resetPermissions();
 			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(),anyList());
 //			doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
-			
+//			try {			
+//				doNothing().when(cf).reset();//				
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+//			}
 			// 
 			eR = service.hotelDelete(getMapId());
 			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
@@ -472,8 +492,8 @@ class HotelServiceTest {
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
-				// lanzamos todas las excepciones de SQL para comprobar que están bien
-				// recogidas.
+//				// lanzamos todas las excepciones de SQL para comprobar que están bien
+//				// recogidas.
 				doThrow(DataIntegrityViolationException.class).when(cf).validate(anyMap());
 				eR = service.hotelDelete(TestingTools.getMapEmpty());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
@@ -486,7 +506,7 @@ class HotelServiceTest {
 				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
 
-				// extra para controlar restricted:
+//				// extra para controlar restricted:
 				eR = service.hotelDelete(getMapRequiredDeletetExtendedWidthRestricted());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
