@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -312,10 +313,10 @@ class BookingGuestServiceTest {
 				reset(cf);
 				doNothing().when(cf).restricPermissions(anyMap());
 				
-				doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(), anyList());
+				doReturn(getEntityResultIdBookingId()).when(daoHelper).query(any(), anyMap(), anyList());
 				doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
-				doReturn(BookingDao.Status.CONFIRMED).when(bookingServiceMock).getBookingStatus(any());
-//				when(bookingServiceMock.getBookingStatus(any())).thenReturn(BookingDao.Status.CONFIRMED);
+//				doReturn(BookingDao.Status.CONFIRMED).when(bookingServiceMock).getBookingStatus(any());				
+				when(bookingServiceMock.getBookingStatus(anyInt())).thenReturn(BookingDao.Status.CONFIRMED);
 			} catch (EntityResultRequiredException e) {
 				fail("Err");
 				e.printStackTrace();
@@ -413,15 +414,15 @@ class BookingGuestServiceTest {
 				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
 
 				reset(cf);
-//				try {
-//					doNothing().when(cf).restricPermissions(anyMap());
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//					fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
-//				}
+				try {
+					doNothing().when(cf).restricPermissions(anyMap());
+				} catch (Exception e) {
+					e.printStackTrace();
+					fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+				}
 				when(daoHelper.query(any(), anyMap(), anyList())).thenReturn(getEntityResultIdBookingId());
 				doThrow(new EntityResultRequiredException("Error al consultar estado de la reserva"))
-						.when(bookingServiceMock).getBookingStatus(any());
+						.when(bookingServiceMock).getBookingStatus(anyInt());
 				eR = service.bookingGuestDelete(getMapId());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 				assertEquals("Error al consultar estado de la reserva", eR.getMessage(), eR.getMessage());
