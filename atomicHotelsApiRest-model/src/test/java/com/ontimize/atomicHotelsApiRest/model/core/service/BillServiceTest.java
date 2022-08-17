@@ -71,16 +71,16 @@ class BillServiceTest {
 
 	@Autowired
 	BillDao dao;
-	
+
 	@Autowired
 	HotelDao hotelDao;
-	
+
 	@Autowired
 	DepartmentDao departmentDao;
-	
+
 	@Mock
 	HotelService hotelServiceMock;
-	
+
 	@Mock
 	DepartmentService departmentServiceMock;
 
@@ -91,7 +91,7 @@ class BillServiceTest {
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	public class billQuery {
 
-		//billQuery
+		// billQuery
 		@Test
 		@DisplayName("ControlFields usar reset()")
 		void testBillQueryControlFieldsReset() {
@@ -102,8 +102,11 @@ class BillServiceTest {
 		@Test
 		@DisplayName("ControlFields usar validate() map y list")
 		void testBillQueryControlFieldsValidate() {
-			service.billQuery(TestingTools.getMapEmpty(), getColumsName());
+
 			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+				service.billQuery(TestingTools.getMapEmpty(), getColumsName());
+
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyList());
 			} catch (Exception e) {
@@ -115,6 +118,12 @@ class BillServiceTest {
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testBillQueryOK() {
+			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
 			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
 
 			// válido: HashMap vacio (sin filtros)
@@ -131,7 +140,8 @@ class BillServiceTest {
 		@DisplayName("Valores de entrada NO válidos")
 		void testBillQueryKO() {
 			try {
-				// lanzamos todas las excepciones de Validate para comprobar que están bien recogidas.
+				// lanzamos todas las excepciones de Validate para comprobar que están bien
+				// recogidas.
 				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
 				eR = service.billQuery(TestingTools.getMapEmpty(), getColumsName());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
@@ -163,7 +173,7 @@ class BillServiceTest {
 			}
 
 		}
-		
+
 	}
 
 	@Nested
@@ -194,6 +204,12 @@ class BillServiceTest {
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testBillInsertOK() throws OntimizeJEERuntimeException, MissingFieldsException {
+			try {
+				doNothing().when(cf).validate(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
 			doReturn(new EntityResultMapImpl()).when(daoHelper).insert(any(), anyMap());
 
 			// válido: HashMap campos mínimos
@@ -210,7 +226,8 @@ class BillServiceTest {
 		@DisplayName("Valores de entrada NO válidos")
 		void testBillInsertKO() {
 			try {
-				// lanzamos todas las excepciones de Validate para comprobar que están bien recogidas.
+				// lanzamos todas las excepciones de Validate para comprobar que están bien
+				// recogidas.
 				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
 				eR = service.billInsert(TestingTools.getMapEmpty());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
@@ -286,8 +303,14 @@ class BillServiceTest {
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testBillUpdateOK() {
-			doReturn(new EntityResultMapImpl()).when(daoHelper).update(any(), anyMap(),anyMap());
-
+			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+				doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(), anyList());
+				doReturn(new EntityResultMapImpl()).when(daoHelper).update(any(), anyMap(), anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
 			// válido: HashMap campos y filtros
 			eR = service.billUpdate(getMapUpdate(), getMapId());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
@@ -298,7 +321,8 @@ class BillServiceTest {
 		@DisplayName("Valores de entrada NO válidos")
 		void testBillServiceExtraUpdateKO() {
 			try {
-				// lanzamos todas las excepciones de Validate para comprobar que están bien recogidas.
+				// lanzamos todas las excepciones de Validate para comprobar que están bien
+				// recogidas.
 				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
 				eR = service.billUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
@@ -324,7 +348,8 @@ class BillServiceTest {
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
-				// lanzamos todas las excepciones de SQL para comprobar que están bien recogidas.
+				// lanzamos todas las excepciones de SQL para comprobar que están bien
+				// recogidas.
 				doThrow(DuplicateKeyException.class).when(cf).validate(anyMap());
 				eR = service.billUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
@@ -384,45 +409,64 @@ class BillServiceTest {
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testBillDeleteOK() {
-			
-			doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(),anyList());
+
+			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
+			doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(), anyList());
 			doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
 
 			// válido: HashMap campo único y exclusivo
 			eR = service.billDelete(getMapId());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
- 
+
 		}
-		
+
 		@Test
 		@DisplayName("Valores Subcontulta Error")
 		void testBillDeleteSubQueryKO() {
-			doReturn(new EntityResultWrong()).when(daoHelper).query(any(), anyMap(),anyList());
+			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
+			doReturn(new EntityResultWrong()).when(daoHelper).query(any(), anyMap(), anyList());
 //			doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
-			
-			// 
+
+			//
 			eR = service.billDelete(getMapId());
 			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 			assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 		}
-		
+
 		@Test
 		@DisplayName("Valores Subconsultta 0 resultados")
 		void testBillDeleteSubQueryNoResults() {
-			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(),anyList());
+			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
+			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList());
 //			doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
-			
-			// 
+
+			//
 			eR = service.billDelete(getMapId());
 			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 			assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 		}
-		
+
 		@Test
 		@DisplayName("Valores de entrada NO válidos")
 		void testBillDeleteKO() {
 			try {
-				// lanzamos todas las excepciones de Validate para comprobar que están bien recogidas.
+				// lanzamos todas las excepciones de Validate para comprobar que están bien
+				// recogidas.
 				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
 				eR = service.billDelete(TestingTools.getMapEmpty());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
@@ -448,13 +492,14 @@ class BillServiceTest {
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
-				// lanzamos todas las excepciones de SQL para comprobar que están bien recogidas.
+				// lanzamos todas las excepciones de SQL para comprobar que están bien
+				// recogidas.
 				doThrow(DataIntegrityViolationException.class).when(cf).validate(anyMap());
 				eR = service.billDelete(TestingTools.getMapEmpty());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
-				reset(cf); //para quitar doThrow anterior
+				reset(cf); // para quitar doThrow anterior
 				// extra para controlar required:
 				eR = service.billDelete(TestingTools.getMapEmpty());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
@@ -473,13 +518,13 @@ class BillServiceTest {
 			}
 		}
 	}
-	
+
 	@Nested
 	@DisplayName("Test for bills By Hotel Department query")
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	public class billsByHotelDepartmentQuery {
 
-		//billsByHotelDepartmentQuery
+		// billsByHotelDepartmentQuery
 		@Test
 		@DisplayName("ControlFields usar reset()")
 		void testBillsByHotelDepartmentQueryControlFieldsReset() {
@@ -493,9 +538,10 @@ class BillServiceTest {
 			service.billsByHotelDepartmentQuery(TestingTools.getMapEmpty(), getColumsName2());
 			try {
 				verify(cf, description("No se ha utilizado el método validate de ControlFields")).validate(anyMap());
-	
-				//por no required
-				//			verify(cf, description("No se ha utilizado el método validate de ControlFields")).validate(anyList());
+
+				// por no required
+				// verify(cf, description("No se ha utilizado el método validate de
+				// ControlFields")).validate(anyList());
 			} catch (Exception e) {
 				e.printStackTrace();
 				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
@@ -505,6 +551,12 @@ class BillServiceTest {
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testBillsByHotelDepartmentQueryOK() {
+			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
 			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
 
 			// válido: HashMap vacio (sin filtros)
@@ -521,7 +573,8 @@ class BillServiceTest {
 		@DisplayName("Valores de entrada NO válidos")
 		void testBillQueryKO() {
 			try {
-				// lanzamos todas las excepciones de Validate para comprobar que están bien recogidas.
+				// lanzamos todas las excepciones de Validate para comprobar que están bien
+				// recogidas.
 				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
 				eR = service.billsByHotelDepartmentQuery(TestingTools.getMapEmpty(), getColumsName());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
@@ -553,7 +606,7 @@ class BillServiceTest {
 			}
 		}
 	}
-	
+
 	@Nested
 	@DisplayName("Test for gastos Departamento Query")
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -581,18 +634,20 @@ class BillServiceTest {
 		@Test
 		@DisplayName("Valores de entrada válidos")
 		void testGastosDepartamentoQueryOK() {
+			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
 			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
-	
-			
-			
-	
-		//		when(hotelServiceMock.getBookingStatus(any())).thenReturn(BookingDao.Status.CONFIRMED);
-				when(departmentServiceMock.departmentQuery(anyMap(), anyList())).thenReturn(getEntityResultDepartamentos());//entityRsultextratools.entityresultempty(hashmap
-				doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList(),anyString());
-		//		when(this.bookingSlotsInfoQuery(anyMap(), anyList())).thenReturn(getTotalSlots());
-		
-			
-			
+
+			// when(hotelServiceMock.getBookingStatus(any())).thenReturn(BookingDao.Status.CONFIRMED);
+			when(departmentServiceMock.departmentQuery(anyMap(), anyList())).thenReturn(getEntityResultDepartamentos());// entityRsultextratools.entityresultempty(hashmap
+			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
+			// when(this.bookingSlotsInfoQuery(anyMap(),
+			// anyList())).thenReturn(getTotalSlots());
+
 			// válido: HashMap campos y filtros
 			eR = service.gastosDepartamentoQuery(getMapId3(), getColumsName3());
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
@@ -605,12 +660,12 @@ class BillServiceTest {
 				// lanzamos todas las excepciones de Validate para comprobar que están bien
 				// recojidas.
 				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
-				eR = service.gastosDepartamentoQuery(TestingTools.getMapEmpty(),  getColumsName());
+				eR = service.gastosDepartamentoQuery(TestingTools.getMapEmpty(), getColumsName());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
 				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
-				eR = service.gastosDepartamentoQuery(TestingTools.getMapEmpty(),  getColumsName());
+				eR = service.gastosDepartamentoQuery(TestingTools.getMapEmpty(), getColumsName());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
@@ -620,18 +675,18 @@ class BillServiceTest {
 				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
 				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
-				eR = service.gastosDepartamentoQuery(TestingTools.getMapEmpty(),  getColumsName());
+				eR = service.gastosDepartamentoQuery(TestingTools.getMapEmpty(), getColumsName());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
 				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
-				eR = service.gastosDepartamentoQuery(TestingTools.getMapEmpty(),  getColumsName());
+				eR = service.gastosDepartamentoQuery(TestingTools.getMapEmpty(), getColumsName());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
 
 				reset(cf);
 				// extra para controlar required:
-				eR = service.gastosDepartamentoQuery(getMapUpdate(),  getColumsName());
+				eR = service.gastosDepartamentoQuery(getMapUpdate(), getColumsName());
 				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 				assertNotEquals(ErrorMessage.CREATION_ERROR, eR.getMessage(), eR.getMessage());
 				assertFalse(eR.getMessage().isEmpty(), eR.getMessage());
@@ -649,8 +704,7 @@ class BillServiceTest {
 
 		}
 	}
-	
-	
+
 	// datos entrada
 
 	Map<String, Object> getMapRequiredInsert() {
@@ -668,16 +722,16 @@ class BillServiceTest {
 	Map<String, Object> getMapUpdate() {
 		return getMapRequiredInsert();
 	}
-	
+
 	Map<String, Object> getMapUpdate2() {
 		return new HashMap<>() {
 			{
 				put(DepartmentDao.ATTR_ID, 2);
 				put(HotelDao.ATTR_ID, 2);
 			}
-		};	
+		};
 	}
-	
+
 	Map<String, Object> getMapUpdate3() {
 		return new HashMap<>() {
 			{
@@ -685,7 +739,7 @@ class BillServiceTest {
 				put(HotelDao.ATTR_ID, 2);
 				put(dao.ATTR_ID, 2);
 			}
-		};	
+		};
 	}
 
 	Map<String, Object> getMapRequiredInsertExtended() {
@@ -703,7 +757,7 @@ class BillServiceTest {
 	Map<String, Object> getMapRequiredInsertExtendedWidthRestricted() {
 		return new HashMap<>() {
 			{
-				put(dao.ATTR_ID,1);
+				put(dao.ATTR_ID, 1);
 				put(dao.ATTR_ID_HTL, 2);
 				put(dao.ATTR_ID_DPT, 3);
 				put(dao.ATTR_CONCEPT, "boda");
@@ -725,6 +779,7 @@ class BillServiceTest {
 		};
 		return filters;
 	};
+
 	HashMap<String, Object> getMapId2() {
 		HashMap<String, Object> filters = new HashMap<>() {
 			{
@@ -733,7 +788,7 @@ class BillServiceTest {
 		};
 		return filters;
 	};
-	
+
 	HashMap<String, Object> getMapId3() {
 		HashMap<String, Object> filters = new HashMap<>() {
 			{
@@ -745,7 +800,6 @@ class BillServiceTest {
 		return filters;
 	};
 
-
 //		HashMap<String, Object> getMapIdWrongValue() {
 //			HashMap<String, Object> filters = new HashMap<>() {
 //				{
@@ -755,7 +809,7 @@ class BillServiceTest {
 //			return filters;
 //		};
 
-	List<String> getColumsName2() { 
+	List<String> getColumsName2() {
 		List<String> columns = new ArrayList<>() {
 			{
 				add(dao.ATTR_CONCEPT);
@@ -769,44 +823,44 @@ class BillServiceTest {
 		};
 		return columns;
 	}
-	
+
 	List<String> getColumsName() {
 		List<String> columns = new ArrayList<>() {
 			{
 				add(dao.ATTR_CONCEPT);
-				
+
 			}
 		};
 		return columns;
 	}
-	
+
 	List<String> getColumsName3() {
 		List<String> columns = new ArrayList<>() {
 			{
-		//		add(BillDao.ATTR_ID);
-		//		add(BillDao.ATTR_CONCEPT);
-		//		add(BillDao.ATTR_DATE);
-		//		add(BillDao.ATTR_AMOUNT);
+				// add(BillDao.ATTR_ID);
+				// add(BillDao.ATTR_CONCEPT);
+				// add(BillDao.ATTR_DATE);
+				// add(BillDao.ATTR_AMOUNT);
 				add(DepartmentDao.ATTR_NAME);
 				add(DepartmentDao.ATTR_DESCRIPTION);
-	//			add(HotelDao.ATTR_NAME);
+				// add(HotelDao.ATTR_NAME);
 			}
 		};
 		return columns;
 	}
-	
+
 	EntityResult getEntityResultDepartamentos() {
 		EntityResult er = new EntityResultMapImpl();
 		er.addRecord(new HashMap<String, Object>() {
 			{
-				put(DepartmentDao.ATTR_NAME, 1);//da igual lo q se devuelva
+				put(DepartmentDao.ATTR_NAME, 1);// da igual lo q se devuelva
 				put(DepartmentDao.ATTR_DESCRIPTION, "a");
-				
+
 			}
 		});
 		return er;
 	}
-	
+
 	// fin datos entrada
 
 }

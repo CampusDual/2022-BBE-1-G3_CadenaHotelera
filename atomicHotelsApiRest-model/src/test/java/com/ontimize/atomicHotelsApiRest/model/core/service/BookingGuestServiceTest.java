@@ -309,11 +309,13 @@ class BookingGuestServiceTest {
 		@DisplayName("Valores de entrada válidos")
 		void testbookingGuestDeleteOK() {
 			try {
+				reset(cf);
 				doNothing().when(cf).restricPermissions(anyMap());
 				
 				doReturn(TestingTools.getEntityOneRecord()).when(daoHelper).query(any(), anyMap(), anyList());
 				doReturn(new EntityResultMapImpl()).when(daoHelper).delete(any(), anyMap());
-				when(bookingServiceMock.getBookingStatus(any())).thenReturn(BookingDao.Status.CONFIRMED);
+				doReturn(BookingDao.Status.CONFIRMED).when(bookingServiceMock).getBookingStatus(any());
+//				when(bookingServiceMock.getBookingStatus(any())).thenReturn(BookingDao.Status.CONFIRMED);
 			} catch (EntityResultRequiredException e) {
 				fail("Err");
 				e.printStackTrace();
