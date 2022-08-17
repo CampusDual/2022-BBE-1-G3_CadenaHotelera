@@ -129,7 +129,7 @@ public class StatisticsService implements IStatisticsService {
 					put(HotelDao.ATTR_FROM, type.DATE);
 					put(HotelDao.ATTR_TO, type.DATE);
 				}
-			};
+			}; 
 
 			List<String> required = Arrays.asList(HotelDao.ATTR_FROM, HotelDao.ATTR_TO);
 			cf.reset();
