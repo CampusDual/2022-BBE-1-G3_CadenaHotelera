@@ -47,6 +47,7 @@ public class PictureService implements IPictureService {
 	ControlFields cf;
 
 	@Override
+<<<<<<< Updated upstream
 //	public EntityResult pictureQuery(Map<String, Object>filter, List<String> columns)
 //			throws OntimizeJEERuntimeException {
 //		
@@ -72,6 +73,9 @@ public class PictureService implements IPictureService {
 //		return (EntityResult) new ResponseEntity(bytes,header,HttpStatus.OK);
 //	}
 	public ResponseEntity getPicture(Map<String, Object>filter, List<String> columns)
+=======
+	public ResponseEntity pictureQuery(Map<String, Object>filter, List<String> columns)
+>>>>>>> Stashed changes
 			throws OntimizeJEERuntimeException {
 		
 		EntityResult resultado = new EntityResultWrong();
@@ -93,7 +97,11 @@ public class PictureService implements IPictureService {
 //			e.printStackTrace();
 //		}
 		
+<<<<<<< Updated upstream
 		return new ResponseEntity(bytes.getBytes(),header,HttpStatus.OK);
+=======
+		return new ResponseEntity(bytes,header,HttpStatus.OK);
+>>>>>>> Stashed changes
 	}
 
 	@Override
