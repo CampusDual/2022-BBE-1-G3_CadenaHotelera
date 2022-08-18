@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "eabcff35-5e19-4868-8bcd-2f74b16573f7",
+		"_postman_id": "f957b35f-cf84-4ce0-a8a2-211e18765aeb",
 		"name": "departments",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -141,13 +141,13 @@
 					"type": "basic",
 					"basic": [
 						{
-							"key": "password",
-							"value": "1253456",
+							"key": "username",
+							"value": "personalAtom01",
 							"type": "string"
 						},
 						{
-							"key": "username",
-							"value": "atom",
+							"key": "password",
+							"value": "1253456",
 							"type": "string"
 						}
 					]
@@ -156,7 +156,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "",
+					"raw": " {\r\n    \"filter\": {\r\n        \"dpt_id\": 14\r\n    },\r\n    \"data\":  {\r\n    \"dpt_name\":\"el bueno\", \r\n    \"dpt_description\":\"el mejor\"\r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -164,7 +164,16 @@
 					}
 				},
 				"url": {
-					"raw": ""
+					"raw": "http://localhost:33333/department/department",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"department",
+						"department"
+					]
 				}
 			},
 			"response": []
