@@ -41,6 +41,11 @@
   <groupId>com.amadeus</groupId>
   <artifactId>amadeus-java</artifactId>
 </dependency>
+<dependency>
+    <groupId>net.sf.jasperreports</groupId>
+    <artifactId>jasperreports</artifactId>
+    <version>6.20.0</version>
+</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter</artifactId>
