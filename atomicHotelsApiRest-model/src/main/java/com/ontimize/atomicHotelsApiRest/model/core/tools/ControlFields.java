@@ -45,13 +45,14 @@ public class ControlFields {
 	private boolean noColumns;
 	private boolean allowBasicExpression;
 	private boolean controlPermissionsActive;
+	private String detailsMsg = "";
 
 	@Autowired
 	ICountryService countryService;
 
 	@Autowired
 	ValidateFields vF;
-	
+
 	ControlPermissions permissions = new ControlPermissions();
 
 	public ControlFields() {
@@ -73,11 +74,11 @@ public class ControlFields {
 	}
 
 	public void resetPermissions() {
-		// permisos		
-		permissions.reset();		
+		// permisos
+		permissions.reset();
 		controlPermissionsActive = true;
 	}
-	
+
 	public void setAllowBasicExpression(boolean allowBasicExpression) {
 		this.allowBasicExpression = allowBasicExpression;
 	}
@@ -86,13 +87,14 @@ public class ControlFields {
 		this.controlPermissionsActive = controlPermissionsActive;
 	}
 
-
 	public void setCPHtlColum(String columna) {
 		permissions.setHtlColum(columna);
 	}
+
 	public void setCPUserColum(String columna) {
 		permissions.setUserColum(columna);
 	}
+
 	public void setCPRoleUsersRestrictions(String... roleUsersRestrictions) {
 		permissions.setRoleUsersRestrictions(roleUsersRestrictions);
 	}
@@ -184,21 +186,53 @@ public class ControlFields {
 //validar typos y valores
 		for (String key : keyMap.keySet()) {
 			boolean validType = false;
-
+			detailsMsg = "";
 			if (fields.containsKey(key)) {// valida que exista en los fields
 				if (keyMap.get(key) == null) {
 					throw new MissingFieldsException(ErrorMessage.NO_NULL_VALUE + key);
 				}
 
 				switch (fields.get(key)) {
-				case STRING:
+
+				case NO_EMPTY_STRING:
 					if ((keyMap.get(key) instanceof String)) {
-						validType = true;
+						if (((String) keyMap.get(key)).isEmpty()) {
+							detailsMsg = ErrorMessage.STRING_EMPTY;
+						} else if (((String) keyMap.get(key)).length() > 255) {
+							detailsMsg = "Cadena demasiado larga, max 255 caracteres.";
+						} else {
+							validType = true;
+						}
 					}
 					break;
-				case NO_EMPTY_STRING:
-					if ((keyMap.get(key) instanceof String && !((String) keyMap.get(key)).isEmpty())) {
-						validType = true;
+				case STRING:
+					if ((keyMap.get(key) instanceof String)) {
+						if (((String) keyMap.get(key)).length() > 255) {
+							detailsMsg = ErrorMessage.STRING_TOO_LONG;
+						} else {
+							validType = true;
+						}
+					}
+					break;
+
+				case NO_EMPTY_SMALL_STRING:
+					if ((keyMap.get(key) instanceof String)) {
+						if (((String) keyMap.get(key)).isEmpty()) {
+							detailsMsg = ErrorMessage.STRING_EMPTY;
+						} else if (((String) keyMap.get(key)).length() > 50) {
+							detailsMsg = ErrorMessage.SMALL_STRING_TOO_LONG;
+						} else {
+							validType = true;
+						}
+					}
+					break;
+				case SMALL_STRING:
+					if ((keyMap.get(key) instanceof String)) {
+						if (((String) keyMap.get(key)).length() > 50) {
+							detailsMsg = ErrorMessage.SMALL_STRING_TOO_LONG;
+						} else {
+							validType = true;
+						}
 					}
 					break;
 				case INTEGER:
@@ -306,7 +340,7 @@ public class ControlFields {
 						}
 					}
 					break;
-					
+
 				case USER_ACTION:
 					if ((keyMap.get(key) instanceof UserDao.Action)) {
 						validType = true;
@@ -319,7 +353,7 @@ public class ControlFields {
 						}
 					}
 					break;
-					
+
 				case USER_ROLE:
 					if ((keyMap.get(key) instanceof UserRoleDao.UserRole)) {
 						validType = true;
@@ -352,8 +386,8 @@ public class ControlFields {
 				}
 
 				if (!validType) {
-					throw new InvalidFieldsValuesException(
-							ErrorMessage.WRONG_TYPE + key + ErrorMessage.REQUIRED_TYPE + fields.get(key));
+					throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + key + ErrorMessage.REQUIRED_TYPE
+							+ fields.get(key) + " " + detailsMsg);
 				}
 
 				// STRING, INTEGER, INTEGER_UNSIGNED, LONG, LONG_UNSIGNED, DOUBLE,
@@ -372,10 +406,11 @@ public class ControlFields {
 		// permisos
 		if (controlPermissionsActive) {
 			restricPermissions(keyMap);
-		} 
+		}
 	}
 
-	public void restricPermissions(Map<String, Object> keyMap) throws InvalidFieldsValuesException, LiadaPardaException {	 
+	public void restricPermissions(Map<String, Object> keyMap)
+			throws InvalidFieldsValuesException, LiadaPardaException {
 		permissions.restrict(keyMap);
 	}
 

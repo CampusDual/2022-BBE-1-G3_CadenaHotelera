@@ -74,5 +74,9 @@ public class ErrorMessage {
 	public static final String NO_ALLOW_COLUMS = "Esta consulta no permite especificar las Columnas de retorno";
 	public static final String UNCAUGHT_EXCEPTION = "Excepción no capturada.";
 	
+	public static final String STRING_TOO_LONG =  "Cadena demasiado larga, máximo 255 caracteres.";
+	public static final String SMALL_STRING_TOO_LONG =  "Cadena demasiado larga, máximo 50 caracteres.";
+	public static final String STRING_EMPTY=  "No se admiten textos vacios.";
+	
 
 }

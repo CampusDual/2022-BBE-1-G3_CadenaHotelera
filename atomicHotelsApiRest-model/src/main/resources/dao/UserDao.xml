@@ -12,7 +12,7 @@
         <Column>user_</Column>
     </UpdateKeys>
     <Queries>
-        <!-- 
+        
         	<Query id="default">        
             <ValidColumns>
                 <Column>USER_</Column>
@@ -20,7 +20,7 @@
                 <Column>PASSWORD</Column>
                 <Column>NAME</Column>
                 <Column>SURNAME</Column>
-                <Column>HTL_RESTRICTION</Column>
+                <Column>htl_restriction</Column>
             </ValidColumns>
             <Sentence>
                 <![CDATA[
@@ -39,7 +39,7 @@
                 <Column>PASSWORD</Column>
                 <Column>NAME</Column>
                 <Column>SURNAME</Column>
-                <Column>HTL_RESTRICTION</Column>
+                <Column>htl_restriction</Column>
             </ValidColumns>
             <Sentence>
                 <![CDATA[
@@ -47,10 +47,11 @@
                         #COLUMNS#
                     FROM                        
                         ${mainschema}.TUSER
-                    #WHERE#
+                    WHERE userblocked is null
+                    #WHERE_CONCAT#
                 ]]>
             </Sentence>
         </Query>
-        -->
+        
     </Queries>
 </JdbcEntitySetup>
