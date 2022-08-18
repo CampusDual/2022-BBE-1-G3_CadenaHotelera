@@ -48,7 +48,7 @@ public class CustomerDao extends OntimizeJdbcDaoSupport {
 	public static final String ATTR_PHONE = TAG+"phone";
 	public static final String ATTR_CREATION= TAG+"creation";
 	public static final String ATTR_CANCELED= TAG+"canceled";	
-	public static final String ATTR_USER= TAG+"user_";	
+	public static final String ATTR_USER= TAG+"user";	
 	public static final String NON_ATTR_ACTION = "action";
 	public enum Action{CANCEL}
 

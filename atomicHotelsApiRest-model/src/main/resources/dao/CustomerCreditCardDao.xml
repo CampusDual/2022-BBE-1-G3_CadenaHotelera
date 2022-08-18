@@ -10,5 +10,20 @@ catalog="" schema="${mainschema}" table="customers_creditcard" datasource="mainD
 		<Column>cst_id</Column>
 		<Column>crd_id</Column>
 	</UpdateKeys>
-	
+	<Queries>
+
+		<Query id="default">
+			<Sentence>
+				<![CDATA[
+                    SELECT
+				     	#COLUMNS#					                          
+                    FROM ${mainschema}.customers_creditcard ccc
+                    LEFT JOIN customers cst USING(cst_id)
+                    LEFT JOIN creditcard cc USING(crd_id)
+                    #WHERE#
+                    #ORDER#
+                ]]>
+			</Sentence>
+		</Query>
+	</Queries>
 </JdbcEntitySetup>

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 
@@ -18,10 +19,13 @@ import com.ontimize.atomicHotelsApiRest.api.core.service.ICreditCardService;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
+import com.ontimize.jee.common.security.PermissionsProviderSecured;
 import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BedComboDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.CreditCardDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.UserRoleDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
@@ -38,27 +42,33 @@ public class CreditCardService implements ICreditCardService{
 	ControlFields cf;
 
 	@Override 
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult creditCardQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado=new EntityResultWrong();
 		try {
 		cf.reset();
+		
+		cf.setCPUserColum(CustomerDao.ATTR_USER);			
+		cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_CUSTOMER);
+		
 		cf.addBasics(CreditCardDao.fields);
 		cf.validate(keyMap);
 		cf.validate(attrList);
-		return this.daoHelper.query(this.creditCardDao, keyMap, attrList);
-		}catch(ValidateException e) {
-			e.getMessage();
+		resultado =  this.daoHelper.query(this.creditCardDao, keyMap, attrList);
+		}catch(ValidateException e) {		
+			e.printStackTrace();
 			resultado=new EntityResultWrong(e.getMessage());
 		}catch(Exception e) {
-			e.getStackTrace();
-			resultado=new EntityResultWrong(ErrorMessage.ERROR);
+			e.printStackTrace();
+			resultado=new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
 	} 
 	
 	 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult creditCardInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException { 
 		
 		EntityResult resultado = new EntityResultWrong();
@@ -93,13 +103,14 @@ public class CreditCardService implements ICreditCardService{
 			resultado =new EntityResultWrong(ErrorMessage.CREATION_ERROR+e.getMessage());
 		}
 		catch(Exception e) {
-			resultado=new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 			e.printStackTrace();
+			resultado=new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
 	}
 	
-	
+	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult creditCardDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado=new EntityResultWrong();
 		try {
@@ -132,10 +143,10 @@ public class CreditCardService implements ICreditCardService{
 		}
 
 		} catch (ValidateException e) {
-			e.getStackTrace();
+			e.printStackTrace();
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (DataIntegrityViolationException e) {
-			e.getStackTrace();
+			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
 		} catch (Exception e) {
 			e.printStackTrace();

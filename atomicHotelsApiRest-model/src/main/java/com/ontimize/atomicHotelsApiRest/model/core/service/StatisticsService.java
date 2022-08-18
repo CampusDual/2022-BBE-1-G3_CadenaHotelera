@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.EntityResultRequiredException;
@@ -25,6 +26,7 @@ import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelServiceDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.ReceiptDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.UserRoleDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultExtraTools;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
@@ -38,6 +40,7 @@ import com.ontimize.jee.common.db.SQLStatementBuilder.SQLStatement;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
+import com.ontimize.jee.common.security.PermissionsProviderSecured;
 import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 import com.ontimize.jee.server.dao.IOntimizeDaoSupport;
@@ -51,7 +54,7 @@ public class StatisticsService implements IStatisticsService {
 	private HotelDao hotelDao;
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
-	
+
 	@Autowired
 	HotelService hotelService;
 
@@ -69,6 +72,7 @@ public class StatisticsService implements IStatisticsService {
 	 *         HotelDao.ATTR_CITY, HotelDao.ATTR_MAXIMUN_CAPACITY)
 	 */
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult hotelMaximumCapacityQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 
@@ -83,6 +87,8 @@ public class StatisticsService implements IStatisticsService {
 				}
 			};
 			cf.reset();
+			cf.setCPHtlColum(HotelDao.ATTR_ID);
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER);
 			cf.addBasics(fields);
 			cf.validate(keyMap);
 
@@ -116,6 +122,7 @@ public class StatisticsService implements IStatisticsService {
 	 *         "htl_name")
 	 */
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult hotelOccupancyPercentageQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 
@@ -129,11 +136,13 @@ public class StatisticsService implements IStatisticsService {
 					put(HotelDao.ATTR_FROM, type.DATE);
 					put(HotelDao.ATTR_TO, type.DATE);
 				}
-			}; 
+			};
 
 			List<String> required = Arrays.asList(HotelDao.ATTR_FROM, HotelDao.ATTR_TO);
 			cf.reset();
 			cf.addBasics(fields);
+			cf.setCPHtlColum(HotelDao.ATTR_ID);
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER);
 			cf.setRequired(required);
 			cf.validate(keyMap);
 
@@ -197,6 +206,7 @@ public class StatisticsService implements IStatisticsService {
 	 *         HotelDao.ATTR_CITY, HotelDao.ATTR_CAPACITY_IN_DATE_RANGE)
 	 */
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult hotelCapacityInDateRangeQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 
@@ -213,6 +223,8 @@ public class StatisticsService implements IStatisticsService {
 			};
 			List<String> required = Arrays.asList(HotelDao.ATTR_FROM, HotelDao.ATTR_TO);
 			cf.reset();
+			cf.setCPHtlColum(HotelDao.ATTR_ID);
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER);	
 			cf.addBasics(fields);
 			cf.setRequired(required);
 			cf.validate(keyMap);
@@ -276,7 +288,6 @@ public class StatisticsService implements IStatisticsService {
 	 * @return EntityResult (CustomerDao.ATTR_COUNTRY,
 	 *         HotelDao.ATTR_OCCUPANCY_IN_DATE_RANGE)
 	 */
-	@Override
 	public EntityResult hotelOccupancyByNationalityQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 
@@ -359,6 +370,7 @@ public class StatisticsService implements IStatisticsService {
 	 *         (CustomerDao.ATTR_COUNTRY,HotelDao.ATTR_CAPACITY_IN_DATE_RANGE,HotelDao.ATTR_OCCUPANCY_IN_DATE_RANGE,HotelDao.ATTR_OCCUPANCY_PERCENTAGE_IN_DATE_RANGE)
 	 */
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult hotelOccupancyByNationalityPercentageQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 
@@ -375,6 +387,8 @@ public class StatisticsService implements IStatisticsService {
 			};
 			List<String> required = Arrays.asList(HotelDao.ATTR_ID, HotelDao.ATTR_FROM, HotelDao.ATTR_TO);
 			cf.reset();
+			cf.setCPHtlColum(HotelDao.ATTR_ID);
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER);
 			cf.addBasics(fields);
 			cf.setRequired(required);
 			cf.validate(keyMap);
@@ -454,7 +468,6 @@ public class StatisticsService implements IStatisticsService {
 
 	}
 
-
 	/**
 	 * Dado el hotel y un rango de fechas, devuelve el total de gastos (los gastos y
 	 * los gastos en salario por departamento)
@@ -465,6 +478,7 @@ public class StatisticsService implements IStatisticsService {
 	 * @throws OntimizeJEERuntimeException
 	 */
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult departmentExpensesByHotelQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 
@@ -488,6 +502,8 @@ public class StatisticsService implements IStatisticsService {
 
 			cf.reset();
 			cf.addBasics(fields);
+			cf.setCPHtlColum(HotelDao.ATTR_ID);
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER);
 			cf.setRequired(required);
 			cf.validate(keyMap);
 
@@ -537,10 +553,9 @@ public class StatisticsService implements IStatisticsService {
 		}
 		return resultado;
 	}
-	
-	
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult roomsIncomeByHotelQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 
@@ -562,6 +577,8 @@ public class StatisticsService implements IStatisticsService {
 			};
 
 			cf.reset();
+			cf.setCPHtlColum(HotelDao.ATTR_ID);
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER);
 			cf.addBasics(fields);
 			cf.setRequired(required);
 			cf.validate(keyMap);
@@ -589,7 +606,8 @@ public class StatisticsService implements IStatisticsService {
 							String init_s = new SimpleDateFormat("yyyy-MM-dd").format(init_date);
 							String end_s = new SimpleDateFormat("yyyy-MM-dd").format(end_date);
 
-							String gen_series = " generate_series('" + init_s + "', '" + end_s + "', '1 day'::interval)";
+							String gen_series = " generate_series('" + init_s + "', '" + end_s
+									+ "', '1 day'::interval)";
 
 							SQLStatement result = new SQLStatement(
 									sqlStatement.getSQLStatement().replaceAll("#GEN_SERIES#", gen_series),
@@ -598,7 +616,7 @@ public class StatisticsService implements IStatisticsService {
 							return result;
 						}
 					});
-			
+
 			if (keyMap.get(HotelDao.ATTR_ID) != null) {
 				resultado = EntityResultTools.dofilter(resultado,
 						EntityResultTools.keysvalues(HotelDao.ATTR_ID, keyMap.get(HotelDao.ATTR_ID)));
@@ -616,16 +634,17 @@ public class StatisticsService implements IStatisticsService {
 
 	}
 
-
 	/**
-	 * Dado el hotel y un rango de fechas, devuelve el total de ingresos recibidos por los servicios extra abonados
+	 * Dado el hotel y un rango de fechas, devuelve el total de ingresos recibidos
+	 * por los servicios extra abonados
 	 * 
 	 * @param keyMap   (HotelDao.ATTR_FROM, HotelDao.ATTR_TO, HotelDao.ATTR_ID)
 	 * @param attrList (anyList())
 	 * @return EntityResult (DepartmentDao.ATTR_ID,"total_income")
 	 * @throws OntimizeJEERuntimeException
-	 * */
+	 */
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult servicesExtraIncomeByHotelQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 
@@ -641,12 +660,14 @@ public class StatisticsService implements IStatisticsService {
 			Map<String, type> fields = new HashMap<String, type>() {
 				{
 					put(HotelDao.ATTR_ID, type.INTEGER);
-					put(HotelDao.ATTR_FROM, type.DATE); 
+					put(HotelDao.ATTR_FROM, type.DATE);
 					put(HotelDao.ATTR_TO, type.DATE);
 				}
 			};
 
 			cf.reset();
+			cf.setCPHtlColum(HotelDao.ATTR_ID);
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER);
 			cf.addBasics(fields);
 			cf.setRequired(required);
 			cf.validate(keyMap);
@@ -662,7 +683,7 @@ public class StatisticsService implements IStatisticsService {
 
 			resultado = this.daoHelper.query(this.hotelDao, new HashMap<String, Object>(), attrList,
 					"queryServicesExtrasIncomeByHotel");
-			
+
 			if (keyMap.get(HotelDao.ATTR_ID) != null) {
 				resultado = EntityResultTools.dofilter(resultado,
 						EntityResultTools.keysvalues(HotelDao.ATTR_ID, keyMap.get(HotelDao.ATTR_ID)));
@@ -679,18 +700,18 @@ public class StatisticsService implements IStatisticsService {
 		return resultado;
 
 	}
-	
-	
-	
+
 	/**
-	 * Dado el hotel y un rango de fechas, devuelven los beneficios netos, los gastos y los ingresos
+	 * Dado el hotel y un rango de fechas, devuelven los beneficios netos, los
+	 * gastos y los ingresos
 	 * 
 	 * @param keyMap   (HotelDao.ATTR_FROM, HotelDao.ATTR_TO, HotelDao.ATTR_ID)
 	 * @param attrList (anyList())
 	 * @return EntityResult ("benefits","total_income","htl_id","total_expenses")
 	 * @throws OntimizeJEERuntimeException
-	 * */
+	 */
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult incomeVsExpensesByHotelQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 
@@ -706,12 +727,14 @@ public class StatisticsService implements IStatisticsService {
 			Map<String, type> fields = new HashMap<String, type>() {
 				{
 					put(HotelDao.ATTR_ID, type.INTEGER);
-					put(HotelDao.ATTR_FROM, type.DATE); 
+					put(HotelDao.ATTR_FROM, type.DATE);
 					put(HotelDao.ATTR_TO, type.DATE);
 				}
 			};
 
 			cf.reset();
+//			cf.setCPHtlColum(HotelDao.ATTR_ID);
+//			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER);
 			cf.addBasics(fields);
 			cf.setRequired(required);
 			cf.validate(keyMap);
@@ -724,67 +747,73 @@ public class StatisticsService implements IStatisticsService {
 			Date to = (Date) keyMap.get(HotelDao.ATTR_TO);
 
 			ValidateFields.dataRange(from, to);
-			
-			List<String> idHoteles = new ArrayList<String>() {{
-				add(HotelDao.ATTR_ID);
-				add(HotelDao.ATTR_NAME);
-				add(HotelDao.ATTR_CITY);
-				}};
-				
-			
-			EntityResult hoteles = hotelService.hotelQuery(new HashMap<String,Object>(), idHoteles);
-			
-			Map<String,Object> finalResult = new HashMap<String,Object>();
-			
-			for(int j=0; j<hoteles.calculateRecordNumber();j++) {
-				int h =(int)hoteles.getRecordValues(j).get(HotelDao.ATTR_ID);
-				String name =(String)hoteles.getRecordValues(j).get(HotelDao.ATTR_NAME);
-				String city =(String)hoteles.getRecordValues(j).get(HotelDao.ATTR_CITY);
-				
-				Map<String,Object> cadaHotel = new HashMap<String,Object>(){{
-					put(HotelDao.ATTR_ID,h);
-					put(HotelDao.ATTR_FROM, keyMap.get(HotelDao.ATTR_FROM)); 
-					put(HotelDao.ATTR_TO, keyMap.get(HotelDao.ATTR_TO));
-				}};
-				
+
+			List<String> idHoteles = new ArrayList<String>() {
+				{
+					add(HotelDao.ATTR_ID);
+					add(HotelDao.ATTR_NAME);
+					add(HotelDao.ATTR_CITY);
+				}
+			};
+
+			EntityResult hoteles = hotelService.hotelQuery(new HashMap<String, Object>(), idHoteles);
+
+			Map<String, Object> finalResult = new HashMap<String, Object>();
+
+			for (int j = 0; j < hoteles.calculateRecordNumber(); j++) {
+				int h = (int) hoteles.getRecordValues(j).get(HotelDao.ATTR_ID);
+				String name = (String) hoteles.getRecordValues(j).get(HotelDao.ATTR_NAME);
+				String city = (String) hoteles.getRecordValues(j).get(HotelDao.ATTR_CITY);
+
+				Map<String, Object> cadaHotel = new HashMap<String, Object>() {
+					{
+						put(HotelDao.ATTR_ID, h);
+						put(HotelDao.ATTR_FROM, keyMap.get(HotelDao.ATTR_FROM));
+						put(HotelDao.ATTR_TO, keyMap.get(HotelDao.ATTR_TO));
+					}
+				};
+
 				EntityResult gastos = this.departmentExpensesByHotelQuery(cadaHotel, new ArrayList<String>());
-				BigDecimal total_expenses=new BigDecimal(0);
-				
-				for(int i=0; i<gastos.calculateRecordNumber(); i++) {	
-					total_expenses=total_expenses.add((BigDecimal) gastos.getRecordValues(i).get("total_expenses"));
+				BigDecimal total_expenses = new BigDecimal(0);
+
+				for (int i = 0; i < gastos.calculateRecordNumber(); i++) {
+					total_expenses = total_expenses.add((BigDecimal) gastos.getRecordValues(i).get("total_expenses"));
 				}
-				
-				
+
 				EntityResult ingresosBookings = this.roomsIncomeByHotelQuery(cadaHotel, new ArrayList<String>());
-				
-				EntityResult ingresosServicesExtra = this.servicesExtraIncomeByHotelQuery(cadaHotel, new ArrayList<String>());
-				
-				BigDecimal incomeBooking = (BigDecimal)ingresosBookings.getRecordValues(0).get("rooms_income");
-				BigDecimal incomeServiceExtra = (BigDecimal)ingresosServicesExtra.getRecordValues(0).get("services_extra_income");
-				
-				if(incomeBooking==null) {
-					incomeBooking=new BigDecimal(0);
+
+				EntityResult ingresosServicesExtra = this.servicesExtraIncomeByHotelQuery(cadaHotel,
+						new ArrayList<String>());
+
+				BigDecimal incomeBooking = (BigDecimal) ingresosBookings.getRecordValues(0).get("rooms_income");
+				BigDecimal incomeServiceExtra = (BigDecimal) ingresosServicesExtra.getRecordValues(0)
+						.get("services_extra_income");
+
+				if (incomeBooking == null) {
+					incomeBooking = new BigDecimal(0);
 				}
-				
-				if(incomeServiceExtra==null) {
-					incomeServiceExtra=new BigDecimal(0);
+
+				if (incomeServiceExtra == null) {
+					incomeServiceExtra = new BigDecimal(0);
 				}
-				
+
 				BigDecimal total_income = incomeBooking.add(incomeServiceExtra);
-				
+
 				BigDecimal benefits = total_income.subtract(total_expenses);
-				
+
 				BigDecimal a = total_expenses;
-				
-				finalResult = new HashMap<String,Object>(){{
-					put(HotelDao.ATTR_ID,h);
-					put(HotelDao.ATTR_NAME,name);
-					put(HotelDao.ATTR_CITY,city);
-					put("total_income",total_income);
-					put("total_expenses",a);
-					put("benefits",benefits);
-				}};
-				
+
+				finalResult = new HashMap<String, Object>() {
+					{
+						put(HotelDao.ATTR_ID, h);
+						put(HotelDao.ATTR_NAME, name);
+						put(HotelDao.ATTR_CITY, city);
+						put("total_income", total_income);
+						put("total_expenses", a);
+						put("benefits", benefits);
+					}
+				};
+
 				resultado.addRecord(finalResult);
 			}
 
@@ -804,7 +833,7 @@ public class StatisticsService implements IStatisticsService {
 		return resultado;
 
 	}
-	
+
 //	/**
 //	 * Dado el hotel y un rango de fechas, devuelven los beneficios netos, los gastos y los ingresos
 //	 * 
