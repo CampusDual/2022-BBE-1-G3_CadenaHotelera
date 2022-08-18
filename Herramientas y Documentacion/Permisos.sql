@@ -168,6 +168,13 @@
 		INSERT INTO tserver_permission VALUES (119,'com.ontimize.atomicHotelsApiRest.api.core.service.IStatisticsService/servicesExtraIncomeByHotelQuery');
 		INSERT INTO tserver_permission VALUES (120,'com.ontimize.atomicHotelsApiRest.api.core.service.IStatisticsService/incomeVsExpensesByHotelQuery');
 
+	-- picture
+		INSERT INTO tserver_permission VALUES (121,'com.ontimize.atomicHotelsApiRest.api.core.service.IPictureService/pictureQuery');
+		INSERT INTO tserver_permission VALUES (122,'com.ontimize.atomicHotelsApiRest.api.core.service.IPictureService/pictureInsert');
+		INSERT INTO tserver_permission VALUES (123,'com.ontimize.atomicHotelsApiRest.api.core.service.IPictureService/pictureUpdate');
+		INSERT INTO tserver_permission VALUES (124,'com.ontimize.atomicHotelsApiRest.api.core.service.IPictureService/pictureDelete');
+		INSERT INTO tserver_permission VALUES (125,'com.ontimize.atomicHotelsApiRest.api.core.service.IPictureService/getPicture');
+
 		--varios
 		INSERT INTO tserver_permission VALUES (111,'com.ontimize.atomicHotelsApiRest.api.core.service.IHotelService/poiQuery');
 		INSERT INTO tserver_permission VALUES (112,'com.ontimize.atomicHotelsApiRest.api.core.service.IUserService/userCancelUpdate');
@@ -201,10 +208,11 @@ ALTER TABLE tuser_role ADD UNIQUE(id_rolename,user_);
 
 TRUNCATE TABLE trole_server_permission;
 ALTER SEQUENCE trole_server_permission_id_role_server_permission_seq RESTART WITH 1;
-
+	--admin
+		INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 0,id_server_permission FROM tserver_permission WHERE id_server_permission >= 1 AND id_server_permission <= 9999999;
 	--ceo 1
 	INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 1,id_server_permission FROM tserver_permission WHERE id_server_permission >= 1 AND id_server_permission <= 9999999;
-	INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (1,112);
+	--INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (1,112);
 	--DELETE FROM trole_server_permission WHERE id_rolename = 1
 
 

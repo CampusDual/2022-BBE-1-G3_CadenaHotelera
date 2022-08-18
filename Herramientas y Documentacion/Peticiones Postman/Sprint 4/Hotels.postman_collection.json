@@ -119,13 +119,13 @@
 					"type": "basic",
 					"basic": [
 						{
-							"key": "password",
-							"value": "123456",
+							"key": "username",
+							"value": "usuarioLibre",
 							"type": "string"
 						},
 						{
-							"key": "username",
-							"value": "usuarioLibre",
+							"key": "password",
+							"value": "123456",
 							"type": "string"
 						}
 					]

@@ -15,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.service.IPictureService;
@@ -24,6 +25,7 @@ import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
+import com.ontimize.jee.common.security.PermissionsProviderSecured;
 import com.ontimize.jee.common.util.remote.BytesBlock;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
@@ -40,6 +42,8 @@ public class PictureService implements IPictureService {
 	@Autowired
 	ControlFields cf;
 
+	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public ResponseEntity getPicture(Map<String, Object> filter, List<String> columns) {
 	EntityResult resultado = new EntityResultWrong();
 	try {
@@ -95,6 +99,7 @@ public class PictureService implements IPictureService {
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult pictureInsert(Map<String, Object> data) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 
@@ -129,23 +134,26 @@ public class PictureService implements IPictureService {
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult pictureDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 		// TODO Esbozo de método generado automáticamente
-		return null;
+		return new EntityResultWrong("Operación no disponible");
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult pictureUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
 		// TODO Esbozo de método generado automáticamente
-		return null;
+		return new EntityResultWrong("Operación no disponible");
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult pictureQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		// TODO Esbozo de método generado automáticamente
-		return null;
+		return new EntityResultWrong("Operación no disponible");
 	}
 
 }
