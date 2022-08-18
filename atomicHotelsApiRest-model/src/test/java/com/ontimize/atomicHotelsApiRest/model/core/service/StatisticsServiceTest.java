@@ -476,11 +476,12 @@ public class StatisticsServiceTest {
 //			}
 //			
 //			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(),anyList());
-//			
-//			when(service.hotelCapacityInDateRangeQuery(anyMap(),new ArrayList()))
-//					.thenReturn(getEntityResultHotelCapacityInDateRange());
-//			when(service.hotelOccupancyByNationalityQuery(anyMap(),new ArrayList()))
-//					.thenReturn(getEntityResultHotelOccupancyByNationality());
+//			doReturn(getEntityResultHotelCapacityInDateRange()).when(daoHelper).query(any(), anyMap(), anyList(),anyString(),any(ISQLQueryAdapter.class));
+////			when(service.hotelCapacityInDateRangeQuery(anyMap(),new ArrayList()))
+////					.thenReturn(getEntityResultHotelCapacityInDateRange());
+//			doReturn(getEntityResultHotelOccupancyByNationality()).when(daoHelper).query(any(), anyMap(), anyList(),anyString(),any(ISQLQueryAdapter.class));
+////			when(service.hotelOccupancyByNationalityQuery(anyMap(),new ArrayList()))
+////					.thenReturn(getEntityResultHotelOccupancyByNationality());
 //			eR = service.hotelOccupancyByNationalityPercentageQuery(getFromToHotelId(), new ArrayList());
 //			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
 //
@@ -806,96 +807,96 @@ public class StatisticsServiceTest {
 	}
 	
 	
-	@Nested
-	@DisplayName("Test for IncomeVsExpensesByHotel queries")
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	public class IncomeVsExpensesByHotelQuery {
-
-		@Test
-		@DisplayName("ControlFields usar reset()")
-		void testIncomeVsExpensesByHotelQueryControlFieldsReset() {
-			service.incomeVsExpensesByHotelQuery(TestingTools.getMapEmpty(), getColumsNameServicesExtraIncomeByHotel());
-			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
-		}
-
-		@Test
-		@DisplayName("ControlFields usar validate() map y list")
-		void testIncomeVsExpensesByHotelQueryControlFieldsValidateList() {
-
-			try {
-				doNothing().when(cf).restricPermissions(anyMap());
-				service.incomeVsExpensesByHotelQuery(getFromToHotelId(), getColumsNameServicesExtraIncomeByHotel());
-
-				verify(cf, description("No se ha utilizado el metodo validate de ControlFields map"))
-						.validate(anyMap());
-				verify(cf, description("No se ha utilizado el metodo validate de ControlFields list"))
-						.validate(anyList());
-			} catch (Exception e) {
-				e.printStackTrace();
-				fail("excepción no capturada: " + e.getMessage());
-			}
-		}
-
-		@Test
-		@DisplayName("Valores de entrada válidos")
-		void testIncomeVsExpensesByHotelQueryOK() {
-			try {
-				doNothing().when(cf).restricPermissions(anyMap());
-			} catch (Exception e) {
-				e.printStackTrace();
-				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
-			}
-			doReturn(getEntityResulteServicesExtraIncomeByHotel()).when(daoHelper).query(any(), anyMap(), anyList(),
-					anyString());
-			eR = service.incomeVsExpensesByHotelQuery(getFromTo(), new ArrayList());
-			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
-
-		}
-
-		@Test
-		@DisplayName("Valores de entrada NO válidos")
-		void testIncomeVsExpensesByHotelQueryKO() {
-			try {
-				// lanzamos todas las excepciones de Validate para comprobar que están bien
-				// recojidas.
-				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
-				eR = service.incomeVsExpensesByHotelQuery(TestingTools.getMapEmpty(),
-						getColumsNameServicesExtraIncomeByHotel());
-				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-
-				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
-				eR = service.incomeVsExpensesByHotelQuery(TestingTools.getMapEmpty(),
-						getColumsNameServicesExtraIncomeByHotel());
-				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-
-				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
-				eR = service.incomeVsExpensesByHotelQuery(TestingTools.getMapEmpty(),
-						getColumsNameServicesExtraIncomeByHotel());
-				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-
-				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
-				eR = service.incomeVsExpensesByHotelQuery(TestingTools.getMapEmpty(),
-						getColumsNameServicesExtraIncomeByHotel());
-				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-
-				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
-				eR = service.incomeVsExpensesByHotelQuery(TestingTools.getMapEmpty(),
-						getColumsNameServicesExtraIncomeByHotel());
-				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-
-			} catch (Exception e) {
-				e.printStackTrace();
-				fail("excepción no capturada: " + e.getMessage());
-			}
-
-		}
-
-	}
+//	@Nested
+//	@DisplayName("Test for IncomeVsExpensesByHotel queries")
+//	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+//	public class IncomeVsExpensesByHotelQuery {
+//
+//		@Test
+//		@DisplayName("ControlFields usar reset()")
+//		void testIncomeVsExpensesByHotelQueryControlFieldsReset() {
+//			service.incomeVsExpensesByHotelQuery(TestingTools.getMapEmpty(), getColumsNameServicesExtraIncomeByHotel());
+//			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
+//		}
+//
+//		@Test
+//		@DisplayName("ControlFields usar validate() map y list")
+//		void testIncomeVsExpensesByHotelQueryControlFieldsValidateList() {
+//
+//			try {
+//				doNothing().when(cf).restricPermissions(anyMap());
+//				service.incomeVsExpensesByHotelQuery(getFromToHotelId(), getColumsNameServicesExtraIncomeByHotel());
+//
+//				verify(cf, description("No se ha utilizado el metodo validate de ControlFields map"))
+//						.validate(anyMap());
+//				verify(cf, description("No se ha utilizado el metodo validate de ControlFields list"))
+//						.validate(anyList());
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//				fail("excepción no capturada: " + e.getMessage());
+//			}
+//		}
+//
+//		@Test
+//		@DisplayName("Valores de entrada válidos")
+//		void testIncomeVsExpensesByHotelQueryOK() {
+//			try {
+//				doNothing().when(cf).restricPermissions(anyMap());
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+//			}
+//			doReturn(getEntityResulteServicesExtraIncomeByHotel()).when(daoHelper).query(any(), anyMap(), anyList(),
+//					anyString());
+//			eR = service.incomeVsExpensesByHotelQuery(getFromTo(), new ArrayList());
+//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+//
+//		}
+//
+//		@Test
+//		@DisplayName("Valores de entrada NO válidos")
+//		void testIncomeVsExpensesByHotelQueryKO() {
+//			try {
+//				// lanzamos todas las excepciones de Validate para comprobar que están bien
+//				// recojidas.
+//				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
+//				eR = service.incomeVsExpensesByHotelQuery(TestingTools.getMapEmpty(),
+//						getColumsNameServicesExtraIncomeByHotel());
+//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+//
+//				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
+//				eR = service.incomeVsExpensesByHotelQuery(TestingTools.getMapEmpty(),
+//						getColumsNameServicesExtraIncomeByHotel());
+//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+//
+//				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
+//				eR = service.incomeVsExpensesByHotelQuery(TestingTools.getMapEmpty(),
+//						getColumsNameServicesExtraIncomeByHotel());
+//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+//
+//				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
+//				eR = service.incomeVsExpensesByHotelQuery(TestingTools.getMapEmpty(),
+//						getColumsNameServicesExtraIncomeByHotel());
+//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+//
+//				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
+//				eR = service.incomeVsExpensesByHotelQuery(TestingTools.getMapEmpty(),
+//						getColumsNameServicesExtraIncomeByHotel());
+//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+//				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+//
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//				fail("excepción no capturada: " + e.getMessage());
+//			}
+//
+//		}
+//
+//	}
 
 	List<String> getColumsNameMaximumCapacity() {
 		List<String> columns = new ArrayList<>() {
@@ -1129,10 +1130,10 @@ public class StatisticsServiceTest {
 		EntityResult er = new EntityResultMapImpl();
 		er.addRecord(new HashMap<String, Object>() {
 			{
-				put(HotelDao.ATTR_ID, 1);
+				put(HotelDao.ATTR_ID,1);
 				put(HotelDao.ATTR_NAME, "Hotel 1");
 				put(HotelDao.ATTR_CITY, "Ciudad");
-				put(HotelDao.ATTR_CAPACITY_IN_DATE_RANGE, new BigDecimal(12));
+				put(HotelDao.ATTR_CAPACITY_IN_DATE_RANGE, new BigDecimal(100));
 
 			}
 
