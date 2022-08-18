@@ -13,7 +13,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\": {\r\n     \"htl_id\":2\r\n    },\r\n    \"columns\": [\"htl_street\",\"htl_city\"]\r\n}",
+					"raw": "{\r\n    \"filter\": {\r\n     \"htl_id\":2\r\n    },\r\n    \"columns\": [\"htl_street\",\"htl_city\",\"htl_id\"]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
