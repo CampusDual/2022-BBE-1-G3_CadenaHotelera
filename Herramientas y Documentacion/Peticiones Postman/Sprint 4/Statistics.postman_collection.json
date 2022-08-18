@@ -6,51 +6,6 @@
 	},
 	"item": [
 		{
-			"name": "R - occupancyPercentageByNationality",
-			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "123456",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "atom",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n \"filter\":{\r\n     \"from\":\"2022-07-12\",\r\n     \"to\":\"2022-12-13\",\r\n     \"htl_id\":1\r\n }\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:33333/statistics/hotelOccupancyByNationalityPercentage/search",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "33333",
-					"path": [
-						"statistics",
-						"hotelOccupancyByNationalityPercentage",
-						"search"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "R - hotelMaximumCapacity",
 			"request": {
 				"auth": {
@@ -89,141 +44,6 @@
 					"path": [
 						"statistics",
 						"hotelMaximumCapacity",
-						"search"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "R - occupancyByNationality",
-			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "123456",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "atom",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n \"filter\":{\r\n     \"from\":\"2019-12-12\",\r\n     \"to\":\"2025-12-13\",\r\n     \"htl_id\":1\r\n }\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:33333/statistics/hotelOccupancyByNationality/search",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "33333",
-					"path": [
-						"statistics",
-						"hotelOccupancyByNationality",
-						"search"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "R- hotelOccupancyPercentage",
-			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "123456",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "atom",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"filter\":{\r\n        \"from\":\"2019-12-12\",\r\n        \"to\":\"2025-12-12\",\r\n        \"htl_id\":1\r\n    }\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:33333/statistics/hotelOccupancyPercentage/search",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "33333",
-					"path": [
-						"statistics",
-						"hotelOccupancyPercentage",
-						"search"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "R - departmentExpensesByHotel",
-			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "123456",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "atom",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"filter\":{\r\n        \"from\":\"2022-08-09\",\r\n        \"to\":\"2022-08-15\",\r\n        \"htl_id\":1\r\n    }\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:33333/statistics/departmentExpensesByHotel/search",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "33333",
-					"path": [
-						"statistics",
-						"departmentExpensesByHotel",
 						"search"
 					]
 				}
@@ -276,7 +96,142 @@
 			"response": []
 		},
 		{
-			"name": "R- bookingsIncomeByHotel",
+			"name": "R- hotelOccupancyPercentage",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "atom",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"from\":\"2019-12-12\",\r\n        \"to\":\"2025-12-12\",\r\n        \"htl_id\":1\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/statistics/hotelOccupancyPercentage/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"statistics",
+						"hotelOccupancyPercentage",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "R - occupancyPercentageByNationality",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "atom",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \"filter\":{\r\n     \"from\":\"2022-07-12\",\r\n     \"to\":\"2022-12-13\",\r\n     \"htl_id\":1\r\n }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/statistics/hotelOccupancyByNationalityPercentage/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"statistics",
+						"hotelOccupancyByNationalityPercentage",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "R - departmentExpensesByHotel",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "atom",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"from\":\"2022-08-09\",\r\n        \"to\":\"2022-08-15\",\r\n        \"htl_id\":1\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/statistics/departmentExpensesByHotel/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"statistics",
+						"departmentExpensesByHotel",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "R- roomsIncomeByHotel",
 			"request": {
 				"auth": {
 					"type": "basic",
@@ -305,7 +260,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:33333/statistics/bookingsIncomeByHotel/search",
+					"raw": "http://localhost:33333/statistics/roomsIncomeByHotel/search",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -313,7 +268,7 @@
 					"port": "33333",
 					"path": [
 						"statistics",
-						"bookingsIncomeByHotel",
+						"roomsIncomeByHotel",
 						"search"
 					]
 				}
