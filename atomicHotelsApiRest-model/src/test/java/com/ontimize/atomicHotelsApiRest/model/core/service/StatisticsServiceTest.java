@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.description;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -65,6 +66,9 @@ public class StatisticsServiceTest {
 
 	@InjectMocks
 	StatisticsService service;
+	
+	@Mock
+	HotelService hotelServiceMock;
 
 	@Autowired
 	HotelDao hotelDao;
@@ -465,27 +469,23 @@ public class StatisticsServiceTest {
 			}
 		}
 
-//		@Test
-//		@DisplayName("Valores de entrada válidos")
-//		void testHotelOccupancyByNationalityPercentageQueryOK() {
-//			try {
-//				doNothing().when(cf).restricPermissions(anyMap());
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
-//			}
-//			
-//			doReturn(new EntityResultMapImpl()).when(daoHelper).query(any(), anyMap(),anyList());
-//			doReturn(getEntityResultHotelCapacityInDateRange()).when(daoHelper).query(any(), anyMap(), anyList(),anyString(),any(ISQLQueryAdapter.class));
-////			when(service.hotelCapacityInDateRangeQuery(anyMap(),new ArrayList()))
-////					.thenReturn(getEntityResultHotelCapacityInDateRange());
-//			doReturn(getEntityResultHotelOccupancyByNationality()).when(daoHelper).query(any(), anyMap(), anyList(),anyString(),any(ISQLQueryAdapter.class));
-////			when(service.hotelOccupancyByNationalityQuery(anyMap(),new ArrayList()))
-////					.thenReturn(getEntityResultHotelOccupancyByNationality());
-//			eR = service.hotelOccupancyByNationalityPercentageQuery(getFromToHotelId(), new ArrayList());
-//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
-//
-//		}
+		@Test
+		@DisplayName("Valores de entrada válidos")
+		void testHotelOccupancyByNationalityPercentageQueryOK() {
+			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
+			
+			doReturn(getEntityResultHotelCapacityInDateRange()).when(daoHelper).query(any(), anyMap(), anyList(),eq("queryCapacityInRange"),any(ISQLQueryAdapter.class));
+			doReturn(getEntityResultHotelOccupancyByNationality()).when(daoHelper).query(any(), anyMap(), anyList(),eq("queryOccupancyByNationality"),any(ISQLQueryAdapter.class));
+
+			eR = service.hotelOccupancyByNationalityPercentageQuery(getFromToHotelId(), new ArrayList());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+
+		}
 
 		@Test
 		@DisplayName("Valores de entrada NO válidos")
@@ -807,96 +807,101 @@ public class StatisticsServiceTest {
 	}
 	
 	
-//	@Nested
-//	@DisplayName("Test for IncomeVsExpensesByHotel queries")
-//	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-//	public class IncomeVsExpensesByHotelQuery {
-//
-//		@Test
-//		@DisplayName("ControlFields usar reset()")
-//		void testIncomeVsExpensesByHotelQueryControlFieldsReset() {
-//			service.incomeVsExpensesByHotelQuery(TestingTools.getMapEmpty(), getColumsNameServicesExtraIncomeByHotel());
-//			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
-//		}
-//
-//		@Test
-//		@DisplayName("ControlFields usar validate() map y list")
-//		void testIncomeVsExpensesByHotelQueryControlFieldsValidateList() {
-//
-//			try {
-//				doNothing().when(cf).restricPermissions(anyMap());
-//				service.incomeVsExpensesByHotelQuery(getFromToHotelId(), getColumsNameServicesExtraIncomeByHotel());
-//
-//				verify(cf, description("No se ha utilizado el metodo validate de ControlFields map"))
-//						.validate(anyMap());
-//				verify(cf, description("No se ha utilizado el metodo validate de ControlFields list"))
-//						.validate(anyList());
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				fail("excepción no capturada: " + e.getMessage());
-//			}
-//		}
-//
-//		@Test
-//		@DisplayName("Valores de entrada válidos")
-//		void testIncomeVsExpensesByHotelQueryOK() {
-//			try {
-//				doNothing().when(cf).restricPermissions(anyMap());
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
-//			}
+	@Nested
+	@DisplayName("Test for IncomeVsExpensesByHotel queries")
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	public class IncomeVsExpensesByHotelQuery {
+
+		@Test
+		@DisplayName("ControlFields usar reset()")
+		void testIncomeVsExpensesByHotelQueryControlFieldsReset() {
+			service.incomeVsExpensesByHotelQuery(TestingTools.getMapEmpty(), getColumsNameIncomeVsExpensesByHotel());
+			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
+		}
+
+		@Test
+		@DisplayName("ControlFields usar validate() map y list")
+		void testIncomeVsExpensesByHotelQueryControlFieldsValidateList() {
+
+			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+				service.incomeVsExpensesByHotelQuery(getFromToHotelId(), getColumsNameIncomeVsExpensesByHotel());
+
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields map"))
+						.validate(anyMap());
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields list"))
+						.validate(anyList());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("excepción no capturada: " + e.getMessage());
+			}
+		}
+
+		@Test
+		@DisplayName("Valores de entrada válidos")
+		void testIncomeVsExpensesByHotelQueryOK() {
+			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
+			
+			when(hotelServiceMock.hotelQuery(anyMap(), anyList())).thenReturn(getEntityResulteRoomsIncomeByHotel());
+			doReturn(getEntityResultDepartmentExpensesByHotel()).when(daoHelper).query(any(), anyMap(), anyList(),eq("queryTotalDepartmentExpensesByHotel"),any(ISQLQueryAdapter.class));
+			doReturn(getEntityResulteRoomsIncomeByHotel()).when(daoHelper).query(any(), anyMap(), anyList(),eq("queryBookingsIncomeByHotel"),any(ISQLQueryAdapter.class));
+			doReturn(getEntityResulteServicesExtraIncomeByHotel()).when(daoHelper).query(any(), anyMap(), anyList(),eq("queryServicesExtrasIncomeByHotel"));
 //			doReturn(getEntityResulteServicesExtraIncomeByHotel()).when(daoHelper).query(any(), anyMap(), anyList(),
 //					anyString());
-//			eR = service.incomeVsExpensesByHotelQuery(getFromTo(), new ArrayList());
-//			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
-//
-//		}
-//
-//		@Test
-//		@DisplayName("Valores de entrada NO válidos")
-//		void testIncomeVsExpensesByHotelQueryKO() {
-//			try {
-//				// lanzamos todas las excepciones de Validate para comprobar que están bien
-//				// recojidas.
-//				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
-//				eR = service.incomeVsExpensesByHotelQuery(TestingTools.getMapEmpty(),
-//						getColumsNameServicesExtraIncomeByHotel());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
-//				eR = service.incomeVsExpensesByHotelQuery(TestingTools.getMapEmpty(),
-//						getColumsNameServicesExtraIncomeByHotel());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
-//				eR = service.incomeVsExpensesByHotelQuery(TestingTools.getMapEmpty(),
-//						getColumsNameServicesExtraIncomeByHotel());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
-//				eR = service.incomeVsExpensesByHotelQuery(TestingTools.getMapEmpty(),
-//						getColumsNameServicesExtraIncomeByHotel());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
-//				eR = service.incomeVsExpensesByHotelQuery(TestingTools.getMapEmpty(),
-//						getColumsNameServicesExtraIncomeByHotel());
-//				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
-//				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
-//
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				fail("excepción no capturada: " + e.getMessage());
-//			}
-//
-//		}
-//
-//	}
+			eR = service.incomeVsExpensesByHotelQuery(getFromTo(), new ArrayList());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+
+		}
+
+		@Test
+		@DisplayName("Valores de entrada NO válidos")
+		void testIncomeVsExpensesByHotelQueryKO() {
+			try {
+				// lanzamos todas las excepciones de Validate para comprobar que están bien
+				// recojidas.
+				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
+				eR = service.incomeVsExpensesByHotelQuery(TestingTools.getMapEmpty(),
+						getColumsNameIncomeVsExpensesByHotel());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
+				eR = service.incomeVsExpensesByHotelQuery(TestingTools.getMapEmpty(),
+						getColumsNameIncomeVsExpensesByHotel());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
+				eR = service.incomeVsExpensesByHotelQuery(TestingTools.getMapEmpty(),
+						getColumsNameIncomeVsExpensesByHotel());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
+				eR = service.incomeVsExpensesByHotelQuery(TestingTools.getMapEmpty(),
+						getColumsNameIncomeVsExpensesByHotel());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
+				eR = service.incomeVsExpensesByHotelQuery(TestingTools.getMapEmpty(),
+						getColumsNameIncomeVsExpensesByHotel());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("excepción no capturada: " + e.getMessage());
+			}
+
+		}
+
+	}
 
 	List<String> getColumsNameMaximumCapacity() {
 		List<String> columns = new ArrayList<>() {
@@ -1044,16 +1049,20 @@ public class StatisticsServiceTest {
 		return columns;
 	}
 	
-//	List<String> getColumsNameServicesExtraIncomeByHotel() {
-//		List<String> columns = new ArrayList<>() {
-//			{
-//				add(DepartmentDao.ATTR_ID);
-//				add("total_income");
-//
-//			}
-//		};
-//		return columns;
-//	}
+	List<String> getColumsNameIncomeVsExpensesByHotel() {
+		List<String> columns = new ArrayList<>() {
+			{
+				add(HotelDao.ATTR_ID);
+				add(HotelDao.ATTR_NAME);
+				add(HotelDao.ATTR_CITY);
+				add("benefits");
+				add("total_income");
+				add("total_expenses");
+
+			}
+		};
+		return columns;
+	}
 	
 	EntityResult getEntityResulteServicesExtraIncomeByHotel() {
 		EntityResult er = new EntityResultMapImpl();

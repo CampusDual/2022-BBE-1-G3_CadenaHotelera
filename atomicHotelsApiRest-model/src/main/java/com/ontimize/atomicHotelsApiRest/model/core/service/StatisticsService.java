@@ -321,7 +321,8 @@ public class StatisticsService implements IStatisticsService {
 				{
 					put(RoomDao.ATTR_HOTEL_ID, keyMap.get(HotelDao.ATTR_ID));
 				}
-			};
+			}; 
+			
 
 			resultado = this.daoHelper.query(this.hotelDao, idHotel, attrList, "queryOccupancyByNationality",
 					new ISQLQueryAdapter() {
@@ -741,7 +742,7 @@ public class StatisticsService implements IStatisticsService {
 
 			cf.reset();
 			cf.setNoEmptyList(false);
-			cf.validate(attrList);
+			cf.validate(attrList); 
 
 			Date from = (Date) keyMap.get(HotelDao.ATTR_FROM);
 			Date to = (Date) keyMap.get(HotelDao.ATTR_TO);
