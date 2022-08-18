@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "9b8813e5-7a2b-4377-9be1-dc39b39f1d24",
+		"_postman_id": "75bf4280-870d-48ad-a0d1-b1f915e4cc2d",
 		"name": "Hotels",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -126,6 +126,62 @@
 						{
 							"key": "username",
 							"value": "usuarioLibre",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"htl_id\": 1\r\n    },\r\n    \"columns\": [\"htl_id\",\"htl_name\",\"htl_city\",\"htl_postal_code\",\"htl_state\",\"htl_cnt_iso\",\"htl_phone\",\"htl_email\",\r\n                \"htl_description\",\"htl_is_open\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/hotels/hotel/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"hotels",
+						"hotel",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R hotel Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "gerenteAtom01",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "123456",
 							"type": "string"
 						}
 					]

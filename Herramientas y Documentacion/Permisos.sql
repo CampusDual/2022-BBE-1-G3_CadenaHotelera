@@ -157,11 +157,22 @@
 		INSERT INTO tserver_permission VALUES (108,'com.ontimize.atomicHotelsApiRest.api.core.service.IUserRoleService/userRoleQuery');
 		INSERT INTO tserver_permission VALUES (109,'com.ontimize.atomicHotelsApiRest.api.core.service.IUserRoleService/userRoleInsert');
 		INSERT INTO tserver_permission VALUES (110,'com.ontimize.atomicHotelsApiRest.api.core.service.IUserRoleService/userRoleDelete');	
+	
+		-- statistics
+		INSERT INTO tserver_permission VALUES (113,'com.ontimize.atomicHotelsApiRest.api.core.service.IStatisticsService/hotelMaximumCapacityQuery');
+		INSERT INTO tserver_permission VALUES (114,'com.ontimize.atomicHotelsApiRest.api.core.service.IStatisticsService/hotelOccupancyPercentageQuery');
+		INSERT INTO tserver_permission VALUES (115,'com.ontimize.atomicHotelsApiRest.api.core.service.IStatisticsService/hotelCapacityInDateRangeQuery');
+		INSERT INTO tserver_permission VALUES (116,'com.ontimize.atomicHotelsApiRest.api.core.service.IStatisticsService/hotelOccupancyByNationalityPercentageQuery');
+		INSERT INTO tserver_permission VALUES (117,'com.ontimize.atomicHotelsApiRest.api.core.service.IStatisticsService/departmentExpensesByHotelQuery');
+		INSERT INTO tserver_permission VALUES (118,'com.ontimize.atomicHotelsApiRest.api.core.service.IStatisticsService/roomsIncomeByHotelQuery');
+		INSERT INTO tserver_permission VALUES (119,'com.ontimize.atomicHotelsApiRest.api.core.service.IStatisticsService/servicesExtraIncomeByHotelQuery');
+		INSERT INTO tserver_permission VALUES (120,'com.ontimize.atomicHotelsApiRest.api.core.service.IStatisticsService/incomeVsExpensesByHotelQuery');
 
 		--varios
 		INSERT INTO tserver_permission VALUES (111,'com.ontimize.atomicHotelsApiRest.api.core.service.IHotelService/poiQuery');
 		INSERT INTO tserver_permission VALUES (112,'com.ontimize.atomicHotelsApiRest.api.core.service.IUserService/userCancelUpdate');
 
+	UPDATE tserver_permission SET permission_name = 'com.ontimize.atomicHotelsApiRest.api.core.service.IStatisticsService/departmentExpensesByHotelQuery' WHERE id_server_permission = 117
 --ROLES
 	INSERT INTO trole (id_rolename,rolename,xmlclientpermission) VALUES (1,'ceo','<?xml version="1.0" encoding="UTF-8"?><security></security>');
 	INSERT INTO trole (id_rolename,rolename,xmlclientpermission) VALUES (2,'hotelManager','<?xml version="1.0" encoding="UTF-8"?><security></security>');
@@ -194,20 +205,32 @@ ALTER SEQUENCE trole_server_permission_id_role_server_permission_seq RESTART WIT
 	--ceo 1
 	INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 1,id_server_permission FROM tserver_permission WHERE id_server_permission >= 1 AND id_server_permission <= 9999999;
 	INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (1,112);
+	--DELETE FROM trole_server_permission WHERE id_rolename = 1
 
 
 	--hotelManager 2		
 		INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 2,id_server_permission FROM tserver_permission WHERE id_server_permission >= 1 AND id_server_permission <= 107;
 		DELETE FROM trole_server_permission 
-			WHERE ( id_server_permission in(1,2,4,6,7,8,49,50,51,73,74,76,77,78,82,83,84,94,95,96) 
+			WHERE ( id_server_permission in(2,4,6,7,8,49,50,51,73,74,76,77,78,82,83,84,94,95,96) 
 					OR id_server_permission >= 86 AND id_server_permission <= 92
 			) AND ID_ROLENAME = 2;	
 		INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (2,111);
-	
+		INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (2,113);
+		INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (2,114);
+		INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (2,115);
+		INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (2,116);
+		INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (2,117);
+		INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (2,118);
+		INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (2,119);
+		INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (2,120);
+
+		
+		--DELETE FROM trole_server_permission WHERE id_rolename = 2
+
 	--staff 3
 		INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 3,id_server_permission FROM tserver_permission WHERE id_server_permission >= 1 AND id_server_permission <= 93	;		
 		DELETE FROM trole_server_permission
-			WHERE ( id_server_permission in(1,2,3,4,6,7,8,49,50,51,53,55,57,58,59,65,66,67,73,74,76,77,78,82,83,84) 
+			WHERE ( id_server_permission in(2,3,4,6,7,8,49,50,51,53,55,57,58,59,65,66,67,73,74,76,77,78,82,83,84) 
 					OR id_server_permission >= 86 AND id_server_permission <= 92
 			) AND ID_ROLENAME = 3;
 		INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (3,111);
@@ -215,13 +238,13 @@ ALTER SEQUENCE trole_server_permission_id_role_server_permission_seq RESTART WIT
 	--customer 4	
 		INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 4,id_server_permission FROM tserver_permission WHERE id_server_permission >= 1 AND id_server_permission <= 85	;	
 		DELETE FROM trole_server_permission 
-			WHERE ( id_server_permission in(1,2,3,4,6,7,8,9,10,11,12,13,16,17,23,25,27,28,29,30,31,42,45,49,50,51,53,54,55,57,58,59,60,61,62,63,65,66,67,73,74,76,77,78,82,83,84) 
+			WHERE ( id_server_permission in(2,3,4,6,7,8,9,10,11,12,13,16,17,23,25,27,28,29,30,31,42,45,49,50,51,53,54,55,57,58,59,60,61,62,63,65,66,67,73,74,76,77,78,82,83,84) 
 			) AND ID_ROLENAME = 4;
 		
 		INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (4,111);
 	
-	--user 5 - información pública
-	INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 5,id_server_permission FROM tserver_permission WHERE id_server_permission in(1);
+	--user 5 - información pública	
+	INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (5,1);
 	INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (5,111);
 
 

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "6f642a6a-2da9-4b4b-b7df-aa629cedae71",
+		"_postman_id": "38198511-2a5a-48f4-8f07-427c0f5d05a7",
 		"name": "Customers",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -156,7 +156,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\": {\r\n     \"cst_id\": 5\r\n    },\r\n    \"columns\": [\"cst_id\",\"cst_name\",\"cst_surname\",\"cst_email\",\"cst_birth_date\",\"cst_identity_document\",\"cst_address\",\"cst_phone\",\"user_\"]\r\n    \r\n}",
+					"raw": "{\r\n    \"filter\": {\r\n     \"cst_id\": 5\r\n    },\r\n    \"columns\": [\"cst_id\",\"cst_name\",\"cst_surname\",\"cst_email\",\"cst_birth_date\",\"cst_identity_document\",\"cst_address\",\"cst_phone\",\"cst_user\"]\r\n    \r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -201,7 +201,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\": {\r\n     \"cst_identity_document\": \"51233355Y\"\r\n    },\r\n    \"columns\": [\"cst_id\",\"cst_name\",\"cst_surname\",\"cst_email\",\"cst_birth_date\",\"cst_identity_document\",\"cst_address\",\"cst_phone\",\"user_\"]\r\n    \r\n}",
+					"raw": "{\r\n    \"filter\": {\r\n     \"cst_identity_document\": \"51233355Y\"\r\n    },\r\n    \"columns\": [\"cst_id\",\"cst_name\",\"cst_surname\",\"cst_email\",\"cst_birth_date\",\"cst_identity_document\",\"cst_address\",\"cst_phone\",\"cst_user\"]\r\n    \r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -277,12 +277,12 @@
 					"basic": [
 						{
 							"key": "password",
-							"value": "demouser",
+							"value": "123456",
 							"type": "string"
 						},
 						{
 							"key": "username",
-							"value": "demo",
+							"value": "turisticas",
 							"type": "string"
 						}
 					]
@@ -321,13 +321,13 @@
 					"type": "basic",
 					"basic": [
 						{
-							"key": "password",
-							"value": "demouser",
+							"key": "username",
+							"value": "atom",
 							"type": "string"
 						},
 						{
-							"key": "username",
-							"value": "demo",
+							"key": "password",
+							"value": "123456",
 							"type": "string"
 						}
 					]
@@ -336,7 +336,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\":{\r\n        \"cst_id\":3\r\n    },\r\n \"columns\": [\"cst_name\", \"cst_surname\", \"cst_email\", \"cst_agree_spam\"]\r\n}",
+					"raw": "{\r\n    \"filter\":{\r\n        \"cst_id\":4\r\n    },\r\n \"columns\": [\"cst_name\", \"cst_surname\", \"cst_email\", \"cst_agree_spam\"]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -426,7 +426,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\":{\r\n        \"cst_agree_spam\": 1\r\n    },\r\n \"columns\": [\"cst_name\", \"cst_surname\", \"cst_email\", \"cst_agree_spam\",\"user_\"]\r\n}",
+					"raw": "{\r\n    \"filter\":{\r\n        \"cst_agree_spam\": 1\r\n    },\r\n \"columns\": [\"cst_name\", \"cst_surname\", \"cst_email\", \"cst_agree_spam\",\"cst_user\"]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
