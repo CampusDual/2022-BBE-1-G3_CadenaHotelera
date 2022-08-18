@@ -188,7 +188,7 @@ public class StatisticsServiceTest {
 
 		@Test
 		@DisplayName("Valores de entrada válidos")
-		void testGuestCountQueryOK() {
+		void testHotelOccupancyPercentageQueryOK() {
 			try {
 				doNothing().when(cf).restricPermissions(anyMap());
 			} catch (Exception e) {
@@ -201,12 +201,12 @@ public class StatisticsServiceTest {
 			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
 
 		}
-//		
+	
 
 		
 		@Test
 		@DisplayName("Valores de entrada NO válidos")
-		void testGuestCountQueryKO() {
+		void testHotelOccupancyPercentageQueryKO() {
 			try {
 				// lanzamos todas las excepciones de Validate para comprobar que están bien
 				// recojidas.
@@ -241,7 +241,95 @@ public class StatisticsServiceTest {
 			}
 
 		}
-//
+
+	}
+	
+	@Nested
+	@DisplayName("Test for hotelOccupancyPercentage queries")
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	public class HotelCapacityInDateRangeQuery {
+
+		@Test
+		@DisplayName("ControlFields usar reset()")
+		void testHotelCapacityInDateRangeQueryControlFieldsReset() {
+			service.hotelCapacityInDateRangeQuery(TestingTools.getMapEmpty(), getColumsNameOccupancyPercentage());
+			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
+		}
+
+		
+		@Test
+		@DisplayName("ControlFields usar validate() map y list") 
+		void testHotelOccupancyPercentageQueryControlFieldsValidateList()  {
+			
+			try {
+				 doNothing().when(cf).restricPermissions(anyMap());
+				service.hotelOccupancyPercentageQuery(getFromTo(), getColumsNameOccupancyPercentage());
+					
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields map")).validate(anyMap());
+				verify(cf, description("No se ha utilizado el metodo validate de ControlFields list")).validate(anyList());	
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("excepción no capturada: " + e.getMessage());
+			}
+		} 
+
+
+		@Test
+		@DisplayName("Valores de entrada válidos")
+		void testHotelOccupancyPercentageQueryOK() {
+			try {
+				doNothing().when(cf).restricPermissions(anyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+			}
+			doReturn(getEntityResultHotelOccupancyPercentage()).when(daoHelper).query(any(), anyMap(), anyList(),
+					anyString(),any(ISQLQueryAdapter.class));
+			eR = service.hotelOccupancyPercentageQuery(getFromTo(),new ArrayList());
+			assertEquals(EntityResult.OPERATION_SUCCESSFUL, eR.getCode(), eR.getMessage());
+
+		}
+	
+
+		
+		@Test
+		@DisplayName("Valores de entrada NO válidos")
+		void testHotelOccupancyPercentageQueryKO() {
+			try {
+				// lanzamos todas las excepciones de Validate para comprobar que están bien
+				// recojidas.
+				doThrow(MissingFieldsException.class).when(cf).validate(anyMap());
+				eR = service.hotelOccupancyPercentageQuery(TestingTools.getMapEmpty(), getColumsNameOccupancyPercentage());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(RestrictedFieldException.class).when(cf).validate(anyMap());
+				eR = service.hotelOccupancyPercentageQuery(TestingTools.getMapEmpty(), getColumsNameOccupancyPercentage());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsException.class).when(cf).validate(anyMap());
+				eR = service.hotelOccupancyPercentageQuery(TestingTools.getMapEmpty(), getColumsNameOccupancyPercentage());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(InvalidFieldsValuesException.class).when(cf).validate(anyMap());
+				eR = service.hotelOccupancyPercentageQuery(TestingTools.getMapEmpty(), getColumsNameOccupancyPercentage());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+				doThrow(LiadaPardaException.class).when(cf).validate(anyMap());
+				eR = service.hotelOccupancyPercentageQuery(TestingTools.getMapEmpty(), getColumsNameOccupancyPercentage());
+				assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
+				assertEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("excepción no capturada: " + e.getMessage());
+			}
+
+		}
+
 	}
 	
 	List<String> getColumsNameMaximumCapacity() {

@@ -454,127 +454,6 @@ public class StatisticsService implements IStatisticsService {
 
 	}
 
-	/**
-	 * Devuelve una lista de gastos de departamento, asociados a empleados y bills,
-	 * tras pasarle un htl_id
-	 * 
-	 */
-	@Override
-	public EntityResult gastosDepartamentoPersonalHotelQuery(Map<String, Object> keyMap, List<String> attrList)
-			throws OntimizeJEERuntimeException {
-
-		EntityResult resultado = new EntityResultWrong();
-		try {
-			List<String> required = new ArrayList<String>() {
-				{
-					add(hotelDao.ATTR_ID);
-				}
-			};
-			cf.reset();
-			cf.addBasics(HotelDao.fields);
-			cf.addBasics(BillDao.fields);
-			cf.addBasics(DepartmentDao.fields);
-			cf.addBasics(EmployeeDao.fields);
-			cf.addBasics(ReceiptDao.fields);
-//			cf.setRequired(required);
-//			cf.setOptional(false);
-			cf.validate(keyMap);
-
-			/*
-			 * //Si no quisiéramos aceptar columnas:
-			 * 
-			 * cf.reset(); cf.setNoEmptyList(false); cf.validate(attrList);
-			 */
-			resultado = this.daoHelper.query(this.hotelDao, keyMap, attrList, "queryGastosDepartamentoPersonalHotel");
-
-		} catch (ValidateException e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(e.getMessage());
-		} catch (Exception e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
-		}
-		return resultado;
-	}
-
-	/**
-	 * Dado el hotel y un rango de fechas, devuelve los gastos por departamento
-	 * 
-	 * @param keyMap   (HotelDao.ATTR_FROM, HOtelDao.ATTR_TO,HotelDao.ATTR_ID)
-	 * @param attrList (anyList())
-	 * @return EntityResult (BillDao.ATTR_ID_DPT,"gastos")
-	 * @throws OntimizeJEERuntimeException
-	 */
-	@Override
-	public EntityResult expensesDepartmentsInRangeQuery(Map<String, Object> keyMap, List<String> attrList)
-			throws OntimizeJEERuntimeException {
-
-		EntityResult resultado = new EntityResultWrong();
-		try {
-			List<String> required = new ArrayList<String>() {
-				{
-					add(HotelDao.ATTR_FROM);
-					add(HotelDao.ATTR_TO);
-				}
-			};
-
-			Map<String, type> fields = new HashMap<String, type>() {
-				{
-					put(HotelDao.ATTR_ID, type.INTEGER);
-					put(HotelDao.ATTR_FROM, type.DATE); // fechas a comparar
-					put(HotelDao.ATTR_TO, type.DATE);
-				}
-			};
-
-			cf.reset();
-			cf.addBasics(fields);
-			cf.setRequired(required);
-			cf.validate(keyMap);
-
-			cf.reset();
-			cf.setNoEmptyList(false);
-			cf.validate(attrList);
-
-			Date from = (Date) keyMap.get(HotelDao.ATTR_FROM);
-			Date to = (Date) keyMap.get(HotelDao.ATTR_TO);
-
-			ValidateFields.dataRange(from, to);
-			/*
-			 * bll_htl_id = 4 and DATE (bll_date) >= '2019-01-01' and DATE (bll_date) <=
-			 * '2022-01-01'
-			 */
-
-			BasicField hotelId = new BasicField(BillDao.ATTR_ID_HTL);
-			BasicExpression expresion1 = new BasicExpression(hotelId, BasicOperator.EQUAL_OP,
-					keyMap.get(HotelDao.ATTR_ID));
-
-			BasicField date = new BasicField(BillDao.ATTR_DATE);
-			BasicExpression expresion2 = new BasicExpression(date, BasicOperator.MORE_EQUAL_OP, from);
-
-			// BasicField date2 = new BasicField(BillDao.ATTR_DATE);
-			BasicExpression expresion3 = new BasicExpression(date, BasicOperator.LESS_EQUAL_OP, to);
-
-			// Ahora juntamos las 3 expresiones q forman el filtro de postman
-
-			BasicExpression exp12 = new BasicExpression(expresion1, BasicOperator.AND_OP, expresion2);
-			BasicExpression exp123 = new BasicExpression(exp12, BasicOperator.AND_OP, expresion3);
-
-			Map<String, Object> bkeyMap = new HashMap<>();
-
-			EntityResultExtraTools.putBasicExpression(bkeyMap, exp123);
-
-			resultado = this.daoHelper.query(this.hotelDao, bkeyMap, attrList, "queryPrueba");
-
-		} catch (ValidateException e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(e.getMessage());
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
-		}
-		return resultado;
-	}
 
 	/**
 	 * Dado el hotel y un rango de fechas, devuelve el total de gastos (los gastos y
@@ -662,7 +541,7 @@ public class StatisticsService implements IStatisticsService {
 	
 
 	@Override
-	public EntityResult bookingsIncomeByHotelQuery(Map<String, Object> keyMap, List<String> attrList)
+	public EntityResult roomsIncomeByHotelQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 
 		EntityResult resultado = new EntityResultWrong();
@@ -737,12 +616,6 @@ public class StatisticsService implements IStatisticsService {
 
 	}
 
-	@Override
-	public EntityResult expensesEmployeesInRangeQuery(Map<String, Object> keyMap, List<String> attrList)
-			throws OntimizeJEERuntimeException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	/**
 	 * Dado el hotel y un rango de fechas, devuelve el total de ingresos recibidos por los servicios extra abonados
@@ -882,7 +755,7 @@ public class StatisticsService implements IStatisticsService {
 				}
 				
 				
-				EntityResult ingresosBookings = this.bookingsIncomeByHotelQuery(cadaHotel, new ArrayList<String>());
+				EntityResult ingresosBookings = this.roomsIncomeByHotelQuery(cadaHotel, new ArrayList<String>());
 				
 				EntityResult ingresosServicesExtra = this.servicesExtraIncomeByHotelQuery(cadaHotel, new ArrayList<String>());
 				
