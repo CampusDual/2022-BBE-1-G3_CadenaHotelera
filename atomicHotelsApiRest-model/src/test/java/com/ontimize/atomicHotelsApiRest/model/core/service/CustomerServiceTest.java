@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -64,11 +66,23 @@ class CustomerServiceTest {
 	CustomerDao dao;
 
 	EntityResult eR;
+	
+	@BeforeEach
+	void passRestrictPermissions() {
+		try {
+			reset(cf);
+			doNothing().when(cf).restricPermissions(anyMap());
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(ErrorMessage.UNCAUGHT_EXCEPTION + e.getMessage());
+		}
+	}
 
 	@Nested
 	@DisplayName("Test for Customers queries")
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)	
 	public class CustomerQuery {
+				
 		@Test
 		@DisplayName("ControlFields usar reset()")
 		void testCustomerQueryControlFieldsReset() {
@@ -285,6 +299,7 @@ class CustomerServiceTest {
 		@DisplayName("BlockedQuery - Valores de salida NO válidos - error consulta")
 		void testIsCustomerBlockedQueryKO() {
 			boolean resultado;
+			reset(cf);//para omitir el @beforeAll
 			try {
 				doReturn(new EntityResultWrong()).when(daoHelper).query(any(), anyMap(), anyList(), anyString());
 				assertThrows(EntityResultRequiredException.class, () -> service.isCustomerBlockedQuery(999));
@@ -421,6 +436,7 @@ class CustomerServiceTest {
 		@Test
 		@DisplayName("Bussiness - ControlFields usar reset()")
 		void testcustomerInsertControlFieldsReset() {
+			reset(cf);//para omitir el @beforeAll
 			service.regularCustomerInsert(TestingTools.getMapEmpty());
 			verify(cf, description("No se ha utilizado el metodo reset de ControlFields")).reset();
 		}
@@ -660,6 +676,7 @@ class CustomerServiceTest {
 				@Test
 				@DisplayName("Regular - ControlFields usar validate() map ")
 				void testCustomerRegularUpdateControlFieldsValidate() {
+					reset(cf);//para omitir el @beforeAll
 					service.customerRegularUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
 					try {
 						verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
@@ -785,6 +802,7 @@ class CustomerServiceTest {
 		@Test
 		@DisplayName("ControlFields usar validate() map ")
 		void testCustomerUpdateControlFieldsValidate() {
+			reset(cf);//para omitir el @beforeAll
 			service.customerCancelUpdate(TestingTools.getMapEmpty(), TestingTools.getMapEmpty());
 			try {
 				verify(cf, description("No se ha utilizado el metodo validate de ControlFields")).validate(anyMap());
@@ -911,7 +929,8 @@ class CustomerServiceTest {
 	public class CustomerDelete {
 		@Test
 		@DisplayName("Valores de entrada NO válidos")
-		void testhotelDeleteOK() {			
+		void testhotelDeleteOK() {		
+			reset(cf);//para omitir el @beforeAll
 			eR = service.customerDelete(TestingTools.getMapEmpty());
 			assertEquals(EntityResult.OPERATION_WRONG, eR.getCode(), eR.getMessage());
 			assertNotEquals(ErrorMessage.UNKNOWN_ERROR, eR.getMessage(), eR.getMessage());
