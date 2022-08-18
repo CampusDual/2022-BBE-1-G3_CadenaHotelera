@@ -72,7 +72,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\": {\r\n     \"pct_id\": 9\r\n\r\n    },\r\n    \"columns\": [\"pct_file\"]\r\n}",
+					"raw": "{\r\n    \"filter\": {\r\n     \"pct_id\": 3\r\n\r\n    },\r\n    \"columns\": [\"pct_file\"]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
