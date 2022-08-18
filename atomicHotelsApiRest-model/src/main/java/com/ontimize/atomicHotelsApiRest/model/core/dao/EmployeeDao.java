@@ -40,7 +40,7 @@ public class EmployeeDao extends OntimizeJdbcDaoSupport {
 	public static final Map<String,type> fields = new HashMap<>() {
 		{
 		put(ATTR_ID,type.INTEGER);
-		put(ATTR_NAME,type.STRING);
+		put(ATTR_NAME,type.NO_EMPTY_STRING);
 		put(ATTR_SURNAME,type.STRING);
 		put(ATTR_IDEN_DOC,type.DNI);//cambiar tipo
 		put(ATTR_SOCIAL_DOC,type.NO_EMPTY_STRING);

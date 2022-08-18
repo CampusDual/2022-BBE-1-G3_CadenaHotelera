@@ -21,6 +21,6 @@ public class CountryDao extends OntimizeJdbcDaoSupport {
 	
 	public static final Map<String,type> fields = new HashMap<>() {{
 		put(ATTR_ISO,type.COUNTRY);
-		put(ATTR_NAME,type.STRING);				
+		put(ATTR_NAME,type.NO_EMPTY_SMALL_STRING);				
 	}};
 }

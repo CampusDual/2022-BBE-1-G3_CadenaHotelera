@@ -27,7 +27,7 @@ public class PictureDao extends OntimizeJdbcDaoSupport {
 			put(ATTR_NAME, type.STRING);
 			put(ATTR_DESCRIPTION, type.STRING);
 			put(ATTR_TAMANO, type.INTEGER_UNSIGNED);
-			put(ATTR_FILE, type.STRING);
+			put(ATTR_FILE, type.TEXT);
 	}
 	};
 }

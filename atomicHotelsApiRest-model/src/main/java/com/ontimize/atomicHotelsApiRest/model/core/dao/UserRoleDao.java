@@ -31,7 +31,7 @@ public class UserRoleDao extends OntimizeJdbcDaoSupport {
 		put(ATTR_ID,type.INTEGER);
 		put(ATTR_ID_ROLENAME,type.INTEGER);
 		put(NON_ATTR_ROLE,type.USER_ROLE);	
-		put(ATTR_USER,type.STRING);	
+		put(ATTR_USER,type.NO_EMPTY_SMALL_STRING);	
 	}};
 	
 

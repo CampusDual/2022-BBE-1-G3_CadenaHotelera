@@ -55,7 +55,7 @@ public class CustomerDao extends OntimizeJdbcDaoSupport {
 
 	public static final Map<String,type> fields = new HashMap<>() {{
 		put(ATTR_ID,type.INTEGER);
-		put(ATTR_NAME,type.STRING);
+		put(ATTR_NAME,type.NO_EMPTY_STRING);
 		put(ATTR_SURNAME,type.STRING);
 		put(ATTR_EMAIL,type.EMAIL);
 		put(ATTR_COUNTRY,type.COUNTRY);	
@@ -65,13 +65,13 @@ public class CustomerDao extends OntimizeJdbcDaoSupport {
 		put(ATTR_ZIP_CODE,type.STRING);	
 		put(ATTR_BIRTH_DATE,type.DATE);
 		put(ATTR_AGREE_SPAM,type.BOOLEAN);
-		put(ATTR_IDEN_DOC,type.NO_EMPTY_STRING);//cambiar tipo
-		put(ATTR_VAT_NUMBER,type.NO_EMPTY_STRING);//cambiar tipo
+		put(ATTR_IDEN_DOC,type.NO_EMPTY_SMALL_STRING);//cambiar tipo
+		put(ATTR_VAT_NUMBER,type.NO_EMPTY_SMALL_STRING);//cambiar tipo
 		put(ATTR_PHONE,type.PHONE);
 		put(ATTR_CANCELED,type.DATETIME);
 		put(ATTR_CREATION,type.DATETIME);
 		put(ATTR_CREATION,type.STRING);
-		put(ATTR_USER,type.STRING);
+		put(ATTR_USER,type.NO_EMPTY_SMALL_STRING);
 		put(NON_ATTR_ACTION,type.CUSTOMER_ACTION);		
 	}};
 

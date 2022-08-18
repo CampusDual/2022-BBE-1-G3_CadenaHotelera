@@ -23,7 +23,7 @@ public class RoomTypeDao extends OntimizeJdbcDaoSupport {
 	
 	public static final Map<String,type> fields = new HashMap<>() {{
 		put(ATTR_ID,type.INTEGER);
-		put(ATTR_NAME,type.STRING);
+		put(ATTR_NAME,type.NO_EMPTY_STRING);
 		put(ATTR_DESCRIPTION,type.STRING);
 		put(ATTR_PRICE,type.PRICE);
 		put(ATTR_BEDS_COMBO,type.INTEGER);					

@@ -39,12 +39,12 @@ public class UserDao extends OntimizeJdbcDaoSupport {
 	
 	
 	public static final Map<String,type> fields = new HashMap<>() {{
-		put(ATTR_USER,type.STRING);
-		put(ATTR_PASSWORD,type.STRING);
-		put(ATTR_NAME,type.STRING);
-		put(ATTR_SURNAME,type.STRING);
-		put(ATTR_EMAIL,type.EMAIL);
-		put(ATTR_NIF,type.STRING);	
+		put(ATTR_USER,type.NO_EMPTY_SMALL_STRING);
+		put(ATTR_PASSWORD,type.NO_EMPTY_SMALL_STRING);
+		put(ATTR_NAME,type.SMALL_STRING);
+		put(ATTR_SURNAME,type.SMALL_STRING);
+		put(ATTR_EMAIL,type.SMALL_STRING);
+		put(ATTR_NIF,type.SMALL_STRING);	
 		put(ATTR_BLOCKED,type.DATE);	
 		put(ATTR_LAST_PASSWORD_UPDATE,type.DATE);	
 		put(ATTR_HTL,type.INTEGER);	

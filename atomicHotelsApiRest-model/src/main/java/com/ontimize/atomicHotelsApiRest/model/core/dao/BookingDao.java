@@ -42,7 +42,7 @@ public class BookingDao extends OntimizeJdbcDaoSupport {
 		put(ATTR_CREATED,type.DATETIME);	
 		put(ATTR_CUSTOMER_ID,type.INTEGER);	
 		put(ATTR_ROOM_ID,type.INTEGER);
-		put(ATTR_USER,type.STRING);
+		put(ATTR_USER,type.NO_EMPTY_SMALL_STRING);
 		put(NON_ATTR_ACTION,type.BOOKING_ACTION);
 	}};
 

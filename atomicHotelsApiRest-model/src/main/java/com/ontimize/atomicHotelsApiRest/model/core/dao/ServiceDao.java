@@ -25,7 +25,7 @@ public class ServiceDao extends OntimizeJdbcDaoSupport {
 	{
 		{
 		put(ServiceDao.ATTR_ID,type.INTEGER);
-		put(ServiceDao.ATTR_NAME,type.STRING);
+		put(ServiceDao.ATTR_NAME,type.NO_EMPTY_STRING);
 		put(ServiceDao.ATTR_DESCRIPTION,type.STRING);
 	}
 	};

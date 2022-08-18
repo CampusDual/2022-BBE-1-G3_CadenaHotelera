@@ -193,7 +193,21 @@ public class ControlFields {
 				}
 
 				switch (fields.get(key)) {
-
+				case TEXT:
+					if ((keyMap.get(key) instanceof String)) {
+						validType = true;
+					}
+					break;
+					
+				case NO_EMPTY_TEXT:
+					if ((keyMap.get(key) instanceof String)) {
+						if (((String) keyMap.get(key)).isEmpty()) {
+							detailsMsg = ErrorMessage.STRING_EMPTY;
+						} else {
+							validType = true;
+						}
+					}
+					break;
 				case NO_EMPTY_STRING:
 					if ((keyMap.get(key) instanceof String)) {
 						if (((String) keyMap.get(key)).isEmpty()) {

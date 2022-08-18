@@ -22,7 +22,7 @@ public class FeatureDao extends OntimizeJdbcDaoSupport {
 	
 	public static final Map<String,type> fields = new HashMap<>() {{
 		put(ATTR_ID,type.INTEGER);
-		put(ATTR_NAME,type.STRING);
+		put(ATTR_NAME,type.NO_EMPTY_STRING);
 		put(ATTR_DESCRIPTION,type.STRING);			
 	}};
 

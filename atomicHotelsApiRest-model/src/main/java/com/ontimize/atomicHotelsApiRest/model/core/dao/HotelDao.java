@@ -43,7 +43,7 @@ public class HotelDao extends OntimizeJdbcDaoSupport {
 	
 	public static final Map<String,type> fields = new HashMap<>() {{
 		put(ATTR_ID,type.INTEGER);
-		put(ATTR_NAME,type.STRING);
+		put(ATTR_NAME,type.NO_EMPTY_STRING);
 		put(ATTR_STREET,type.STRING);
 		put(ATTR_CITY,type.STRING);
 		put(ATTR_CP,type.STRING);
@@ -53,8 +53,8 @@ public class HotelDao extends OntimizeJdbcDaoSupport {
 		put(ATTR_EMAIL,type.EMAIL);
 		put(ATTR_DESCRIPTION,type.STRING);
 		put(ATTR_IS_OPEN,type.BOOLEAN);	
-		put(ATTR_LON,type.STRING);
-		put(ATTR_LAT, type.STRING);
+		put(ATTR_LON,type.SMALL_STRING);
+		put(ATTR_LAT, type.SMALL_STRING);
 	}};
 	
 	
