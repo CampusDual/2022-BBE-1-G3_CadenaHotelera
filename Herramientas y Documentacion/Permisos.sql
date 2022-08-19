@@ -193,6 +193,8 @@ ALTER TABLE public.tuser ADD htl_restriction integer NULL;
 ALTER TABLE public.tuser ADD FOREIGN KEY(htl_restriction) REFERENCES hotels(htl_id)	;
 
 
+	INSERT INTO tuser (user_ ,"password","name") VALUES ('admin','123456','Administrador del sistema');
+
 	INSERT INTO tuser (user_ ,"password","name",surname) VALUES ('atom','123456','Mr Atom','Rodriguez');
 	INSERT INTO tuser (user_ ,"password","name",htl_restriction) VALUES ('gerenteAtom01','123456','Gerente del Hotel Atom 1',1);
 	INSERT INTO tuser (user_ ,"password","name",htl_restriction) VALUES ('gerenteAtom02','123456','Gerente del Hotel Atom 1',2);
@@ -266,6 +268,9 @@ ALTER SEQUENCE trole_server_permission_id_role_server_permission_seq RESTART WIT
 		--	OR id_server_permission >= 9 AND id_server_permission <= 15
 		--	OR id_server_permission >= 18 AND id_server_permission <= 20
 --ROLES/USUARIOS
+
+	--admin 
+	INSERT INTO tuser_role (id_rolename,user_) VALUES (0,'admin');
 
 	--ceo 1
 	INSERT INTO tuser_role (id_rolename,user_) VALUES (1,'atom');
