@@ -74,13 +74,9 @@ public class ReportService implements IReportService{
 			
 			PruebaHoteles h = new PruebaHoteles(id,name,city);
 			a.add(h);
-		}
-		
-		for(PruebaHoteles ph: a) {
-			System.out.println(ph.ID+" "+ph.NAME+" "+ph.CITY);
 		}		
 		
-		String filePath="C:\\Users\\Estefania\\Desktop\\workspace-vamonosAtomos\\BBE-2022-G3\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Hotels_template2.jrxml";
+		String filePath="..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Hotels_template.jrxml";
 		 
 		Map<String,Object> parameters = new HashMap<String,Object>(){{
 			 put("hotels_title","HOTELES ATÓMICOS");
@@ -105,7 +101,7 @@ public class ReportService implements IReportService{
 
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters,dataSource);
 
-        JasperExportManager.exportReportToPdfFile(jasperPrint,"C:\\Users\\Estefania\\Desktop\\workspace-vamonosAtomos\\BBE-2022-G3\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Hotels_report.pdf");
+        JasperExportManager.exportReportToPdfFile(jasperPrint,"..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Hotels_report.pdf");
 		
 		}catch(ValidateException e) {
 			e.printStackTrace();
