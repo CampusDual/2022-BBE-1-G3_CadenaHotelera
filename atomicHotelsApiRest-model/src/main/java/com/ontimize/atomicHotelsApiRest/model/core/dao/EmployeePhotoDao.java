@@ -11,14 +11,14 @@ import com.ontimize.jee.server.dao.jdbc.OntimizeJdbcDaoSupport;
 @Repository("PictureDao")
 @Lazy
 @ConfigurationFile(configurationFile = "dao/PictureDao.xml", configurationFilePlaceholder = "dao/placeholders.properties")
-public class PictureDao extends OntimizeJdbcDaoSupport {
+public class EmployeePhotoDao extends OntimizeJdbcDaoSupport {
 	
 	public static final String TAG = "pct_";
 	public static final String ATTR_ID = TAG+"id";
 	public static final String ATTR_NAME = TAG+"name";
 	public static final String ATTR_DESCRIPTION = TAG+"description";
-	public static final String ATTR_TAMANO=TAG+"tamano";
 	public static final String ATTR_FILE=TAG+"file";
+	public static final String ATTR_EMPLOYEEID=TAG+"emp_dni";
 	
 	public static final Map<String,type> fields=new HashMap<>()
 	{
@@ -26,8 +26,8 @@ public class PictureDao extends OntimizeJdbcDaoSupport {
 			put(ATTR_ID, type.INTEGER);
 			put(ATTR_NAME, type.STRING);
 			put(ATTR_DESCRIPTION, type.STRING);
-			put(ATTR_TAMANO, type.INTEGER_UNSIGNED);
 			put(ATTR_FILE, type.TEXT);
+			put(ATTR_FILE,type.DNI);
 	}
 	};
 }

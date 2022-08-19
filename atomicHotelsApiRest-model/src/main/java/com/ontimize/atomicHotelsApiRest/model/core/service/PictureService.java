@@ -19,7 +19,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.service.IPictureService;
-import com.ontimize.atomicHotelsApiRest.model.core.dao.PictureDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.EmployeePhotoDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
@@ -36,7 +36,7 @@ import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 public class PictureService implements IPictureService {
 
 	@Autowired
-	private PictureDao dao;
+	private EmployeePhotoDao dao;
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
 	@Autowired
