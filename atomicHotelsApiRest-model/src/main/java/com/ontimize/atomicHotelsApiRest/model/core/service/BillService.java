@@ -415,12 +415,16 @@ public class BillService implements IBillService {
 			cf.reset();
 			cf.setCPHtlColum(dao.ATTR_ID_HTL);
 			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER);
+			
+			cf.setNoEmptyList(false);
+			
 			cf.addBasics(HotelDao.fields);
 			cf.addBasics(dao.fields);
 			cf.addBasics(DepartmentDao.fields);
 //			cf.setRequired(required);
 //			cf.setOptional(false);
 			cf.validate(keyMap);
+			cf.validate(attrList);
 
 			/*
 			 * //Si no quisiéramos aceptar columnas:
