@@ -89,7 +89,7 @@ public class ReportService implements IReportService{
 		 
 //		 JRDataSource data = new JRDataSource().getFieldValue(resultado);
 		 
-//		 JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(a);
+		 JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(a);
 		
 //		JRDataSource dataSource = new JRDataSource(new EntityResultDataSource(resultado).getFields());
 		 
