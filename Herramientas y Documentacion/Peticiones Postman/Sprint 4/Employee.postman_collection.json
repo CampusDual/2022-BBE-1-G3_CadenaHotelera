@@ -51,6 +51,47 @@
 			"response": []
 		},
 		{
+			"name": "-R all employee",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "atom",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:33333/employees/employee?columns=emp_id,emp_name,emp_surname,emp_identity_document,emp_social_security_number,emp_salary,emp_phone_number,emp_account_number,emp_email,emp_city,emp_state,emp_address,emp_zip_code,emp_dpt_id,emp_htl_id,emp_cnt_iso,emp_hiring,emp_fired",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"employees",
+						"employee"
+					],
+					"query": [
+						{
+							"key": "columns",
+							"value": "emp_id,emp_name,emp_surname,emp_identity_document,emp_social_security_number,emp_salary,emp_phone_number,emp_account_number,emp_email,emp_city,emp_state,emp_address,emp_zip_code,emp_dpt_id,emp_htl_id,emp_cnt_iso,emp_hiring,emp_fired"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "-R Employee for DNI",
 			"request": {
 				"auth": {
@@ -96,47 +137,6 @@
 			"response": []
 		},
 		{
-			"name": "-R all employee",
-			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "123456",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "atom",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:33333/employees/employee?columns=emp_id,emp_name,emp_surname,emp_identity_document,emp_social_security_number,emp_salary,emp_phone_number,emp_account_number,emp_email,emp_city,emp_state,emp_address,emp_zip_code,emp_dpt_id,emp_htl_id,emp_cnt_iso,emp_hiring,emp_fired",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "33333",
-					"path": [
-						"employees",
-						"employee"
-					],
-					"query": [
-						{
-							"key": "columns",
-							"value": "emp_id,emp_name,emp_surname,emp_identity_document,emp_social_security_number,emp_salary,emp_phone_number,emp_account_number,emp_email,emp_city,emp_state,emp_address,emp_zip_code,emp_dpt_id,emp_htl_id,emp_cnt_iso,emp_hiring,emp_fired"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "-U Employee",
 			"request": {
 				"auth": {
@@ -158,7 +158,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\":{\r\n        \"emp_identity_document\":\"12345678Z\"\r\n        \r\n},\r\n\"data\":{\r\n   \"emp_fired\" :\"2022-08-12\"\r\n}\r\n}",
+					"raw": "{\r\n    \"filter\":{\r\n        \"emp_identity_document\":\"99999999R\"\r\n        \r\n},\r\n\"data\":{\r\n   \"emp_fired\" :\"2021-08-11\"\r\n}\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -202,7 +202,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\":{\r\n        \"emp_identity_document\":\"12345678Z\"\r\n        \r\n},\r\n\"data\":{\r\n   \r\n}\r\n}",
+					"raw": "{\r\n    \"filter\":{\r\n        \"emp_identity_document\":\"99999999R\"\r\n        \r\n},\r\n\"data\":{\r\n   \r\n}\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
