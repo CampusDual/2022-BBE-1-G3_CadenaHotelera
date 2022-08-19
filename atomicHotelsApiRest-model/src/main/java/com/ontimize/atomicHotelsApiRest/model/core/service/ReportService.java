@@ -57,7 +57,75 @@ public class ReportService implements IReportService {
 
 	@Autowired
 	ControlFields cf;
+	
+	private final String HOTEL_TEMPLATE_01_PATH = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Hotels_template.jrxml";
 
+	@Override
+	public ResponseEntity test(Map<String, Object> keyMap, List<String> attrList) {
+		EntityResult consulta = new EntityResultMapImpl();
+		ResponseEntity resultado;
+		try {
+
+			cf.reset();
+			cf.addBasics(HotelDao.fields);
+			cf.validate(keyMap);
+
+			List<String> required = Arrays.asList(HotelDao.ATTR_ID, HotelDao.ATTR_NAME, HotelDao.ATTR_CITY);
+			cf.reset();
+			cf.addBasics(HotelDao.fields);
+//			cf.setRequired(required);
+//			cf.setOptional(false);
+			cf.validate(attrList);
+
+			consulta = hotelService.hotelQuery(keyMap, attrList);
+
+			List<PruebaHoteles> a = new ArrayList<PruebaHoteles>();
+
+			for (int i = 0; i < consulta.calculateRecordNumber(); i++) {
+				Integer id = (Integer) consulta.getRecordValues(i).get(HotelDao.ATTR_ID);
+				String name = (String) consulta.getRecordValues(i).get(HotelDao.ATTR_NAME);
+				String city = (String) consulta.getRecordValues(i).get(HotelDao.ATTR_CITY);
+
+				PruebaHoteles h = new PruebaHoteles(id, name, city);
+				a.add(h);
+			}
+
+
+			Map<String, Object> parameters = new HashMap<String, Object>() {
+				{
+					put("hotels_title", "HOTELES ATÓMICOS");
+					put("hotels_subtitle", "Grupo Cadena de Hoteles Atómicos");
+				}
+			};
+
+			JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(a);
+
+			JasperReport jasperReport = JasperCompileManager.compileReport(HOTEL_TEMPLATE_01_PATH);
+
+			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+
+			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
+
+		} catch (ValidateException e) {
+			e.printStackTrace();
+			resultado = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = null;
+		}
+		return resultado;
+
+	}
+
+	public ResponseEntity returnFile(byte[] bytesPdf) {
+		HttpHeaders header = new HttpHeaders();
+		header.setContentType(MediaType.APPLICATION_PDF);
+		String pdfName = "report.pdf";
+		header.setContentDispositionFormData(pdfName, pdfName);
+		header.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+		return new ResponseEntity(bytesPdf, header, HttpStatus.OK);
+	}
+	
 //	@Override
 //	public EntityResult reportPruebaQuery(Map<String, Object> keyMap, List<String> attrList)
 //			throws OntimizeJEERuntimeException {
@@ -130,71 +198,4 @@ public class ReportService implements IReportService {
 //
 //		return resultado;
 //	}
-
-	@Override
-	public ResponseEntity test(Map<String, Object> keyMap, List<String> attrList) {
-		EntityResult consulta = new EntityResultMapImpl();
-		ResponseEntity resultado;
-		try {
-
-			cf.reset();
-			cf.addBasics(HotelDao.fields);
-			cf.validate(keyMap);
-
-			List<String> required = Arrays.asList(HotelDao.ATTR_ID, HotelDao.ATTR_NAME, HotelDao.ATTR_CITY);
-			cf.reset();
-			cf.addBasics(HotelDao.fields);
-//			cf.setRequired(required);
-//			cf.setOptional(false);
-			cf.validate(attrList);
-
-			consulta = hotelService.hotelQuery(keyMap, attrList);
-
-			List<PruebaHoteles> a = new ArrayList<PruebaHoteles>();
-
-			for (int i = 0; i < consulta.calculateRecordNumber(); i++) {
-				Integer id = (Integer) consulta.getRecordValues(i).get(HotelDao.ATTR_ID);
-				String name = (String) consulta.getRecordValues(i).get(HotelDao.ATTR_NAME);
-				String city = (String) consulta.getRecordValues(i).get(HotelDao.ATTR_CITY);
-
-				PruebaHoteles h = new PruebaHoteles(id, name, city);
-				a.add(h);
-			}
-
-			String filePath = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Hotels_template.jrxml";
-
-			Map<String, Object> parameters = new HashMap<String, Object>() {
-				{
-					put("hotels_title", "HOTELES ATÓMICOS");
-					put("hotels_subtitle", "Grupo Cadena de Hoteles Atómicos");
-				}
-			};
-
-			JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(a);
-
-			JasperReport jasperReport = JasperCompileManager.compileReport(filePath);
-
-			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
-
-			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
-
-		} catch (ValidateException e) {
-			e.printStackTrace();
-			resultado = null;
-		} catch (Exception e) {
-			e.printStackTrace();
-			resultado = null;
-		}
-		return resultado;
-
-	}
-
-	public ResponseEntity returnFile(byte[] bytesPdf) {
-		HttpHeaders header = new HttpHeaders();
-		header.setContentType(MediaType.APPLICATION_PDF);
-		String pdfName = "report.pdf";
-		header.setContentDispositionFormData(pdfName, pdfName);
-		header.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-		return new ResponseEntity(bytesPdf, header, HttpStatus.OK);
-	}
 }

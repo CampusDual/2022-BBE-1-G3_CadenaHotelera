@@ -24,7 +24,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="102" splitType="Stretch">
+		<band height="121" splitType="Stretch">
 			<frame>
 				<reportElement mode="Opaque" x="0" y="0" width="721" height="66" backcolor="#000000" uuid="d8d9e644-3a32-491d-97cb-a277aff17133"/>
 				<textField>
@@ -33,6 +33,13 @@
 						<font size="14"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{hotels_subtitle}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="60" y="1" width="350" height="64" forecolor="#FFFFFF" uuid="93567842-cb0a-44d6-ac07-ac803f2e683f"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="26"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{hotels_title}]]></textFieldExpression>
 				</textField>
 			</frame>
 			<frame>
@@ -45,13 +52,6 @@
 					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 				</textField>
 			</frame>
-			<textField>
-				<reportElement x="20" y="0" width="350" height="64" forecolor="#FFFFFF" uuid="93567842-cb0a-44d6-ac07-ac803f2e683f"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="26"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{hotels_title}]]></textFieldExpression>
-			</textField>
 		</band>
 	</title>
 	<pageHeader>
