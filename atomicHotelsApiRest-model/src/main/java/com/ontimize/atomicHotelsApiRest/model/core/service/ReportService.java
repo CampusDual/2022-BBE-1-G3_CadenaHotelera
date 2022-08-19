@@ -3,6 +3,7 @@ package com.ontimize.atomicHotelsApiRest.model.core.service;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,6 +30,7 @@ import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.TypeCodes.type;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
@@ -51,6 +53,9 @@ public class ReportService implements IReportService {
 
 	@Autowired
 	private HotelService hotelService;
+	
+	@Autowired
+	private StatisticsService statisticsService;
 
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
@@ -60,6 +65,7 @@ public class ReportService implements IReportService {
 	
 	private final String HOTEL_TEMPLATE_01_PATH = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Hotels_template.jrxml";
 	private final String PRUEBA_PATH = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\prueba.jrxml";
+	private final String CHAR_PATH = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Benefits_template.jrxml";
 
 	@Override
 	public ResponseEntity test(Map<String, Object> keyMap, List<String> attrList) {
@@ -92,18 +98,21 @@ public class ReportService implements IReportService {
 			}
 
 
+			String fotoPath = "C:\\Users\\Estefania\\Desktop\\workspace-vamonosAtomos\\BBE-2022-G3\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\images";
+
+			Files.readAllBytes(Paths.get(fotoPath));
+			
 			Map<String, Object> parameters = new HashMap<String, Object>() {
 				{
 					put("hotels_title", "HOTELES ATÓMICOS");
 					put("hotels_subtitle", "Grupo Cadena de Hoteles Atómicos");
+					put("foto",Files.readAllBytes(Paths.get(fotoPath)));
 				}
 			};
 
 			JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(a);
-
-			JasperReport jasperReport = JasperCompileManager.compileReport(HOTEL_TEMPLATE_01_PATH);
-
-			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+            JasperReport jasperReport = JasperCompileManager.compileReport(HOTEL_TEMPLATE_01_PATH);
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
 			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
 
@@ -116,6 +125,62 @@ public class ReportService implements IReportService {
 		}
 		return resultado;
 
+	}
+	
+	@Override
+	public ResponseEntity testChar(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException {
+		EntityResult consulta = new EntityResultMapImpl();
+		ResponseEntity resultado;
+		try {
+			
+			List<String> required = new ArrayList<String>() {
+				{
+					add(HotelDao.ATTR_FROM);
+					add(HotelDao.ATTR_TO);
+				}
+			};
+
+			Map<String, type> fields = new HashMap<String, type>() {
+				{
+					put(HotelDao.ATTR_ID, type.INTEGER);
+					put(HotelDao.ATTR_FROM, type.DATE);
+					put(HotelDao.ATTR_TO, type.DATE);
+				}
+			};
+
+			cf.reset();
+			cf.addBasics(fields);
+			cf.setRequired(required);
+			cf.validate(keyMap);
+	
+			consulta = statisticsService.incomeVsExpensesByHotelQuery(keyMap, new ArrayList<String>());
+
+			List<BenefitsBean> a = new ArrayList<BenefitsBean>();
+
+			for (int i = 0; i < consulta.calculateRecordNumber(); i++) {
+				BigDecimal expenses = (BigDecimal) consulta.getRecordValues(i).get("total_expenses");
+				BigDecimal income = (BigDecimal) consulta.getRecordValues(i).get("total_income");
+				String hotel = (String) consulta.getRecordValues(i).get(HotelDao.ATTR_NAME);
+
+				BenefitsBean h = new BenefitsBean(hotel, expenses,income);
+				a.add(h);
+			}
+
+
+			JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(a);
+			JasperReport jasperReport = JasperCompileManager.compileReport(CHAR_PATH);
+			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap<String,Object>(), dataSource);
+
+			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
+
+		} catch (ValidateException e) {
+			e.printStackTrace();
+			resultado = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = null;
+		}
+		return resultado;
 	}
 
 	public ResponseEntity returnFile(byte[] bytesPdf) {
