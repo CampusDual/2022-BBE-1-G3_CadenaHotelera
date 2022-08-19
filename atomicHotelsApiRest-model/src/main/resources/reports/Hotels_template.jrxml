@@ -52,6 +52,10 @@
 					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 				</textField>
 			</frame>
+			<image onErrorType="Blank">
+				<reportElement x="10" y="10" width="50" height="50" uuid="bcee4db9-e2e5-4e8d-82a2-fff67da781b6"/>
+				<imageExpression><![CDATA["atom.png"]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>

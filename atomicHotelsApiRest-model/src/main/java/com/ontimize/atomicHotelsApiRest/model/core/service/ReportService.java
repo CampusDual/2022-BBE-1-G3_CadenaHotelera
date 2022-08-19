@@ -59,6 +59,7 @@ public class ReportService implements IReportService {
 	ControlFields cf;
 	
 	private final String HOTEL_TEMPLATE_01_PATH = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Hotels_template.jrxml";
+	private final String PRUEBA_PATH = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\prueba.jrxml";
 
 	@Override
 	public ResponseEntity test(Map<String, Object> keyMap, List<String> attrList) {
