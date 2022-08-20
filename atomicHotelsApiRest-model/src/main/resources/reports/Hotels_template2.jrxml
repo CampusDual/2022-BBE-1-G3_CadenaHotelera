@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Cherry_Landscape_1" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7a5c9b49-9dc5-422a-ac69-e92cf61ef530">
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Beans Adapter"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Hotels_template2" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7a5c9b49-9dc5-422a-ac69-e92cf61ef530">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Adaptador JRDataSource"/>
 	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false"/>
 	<style name="SubTitle" forecolor="#CCCCCC" fontName="Times New Roman" fontSize="18" isBold="false"/>
 	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true"/>
@@ -14,7 +14,6 @@
 	</style>
 	<parameter name="hotels_title" class="java.lang.String"/>
 	<parameter name="hotels_subtitle" class="java.lang.String"/>
-	<parameter name="foto" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -25,22 +24,22 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="121" splitType="Stretch">
+		<band height="102" splitType="Stretch">
 			<frame>
 				<reportElement mode="Opaque" x="0" y="0" width="721" height="66" backcolor="#000000" uuid="d8d9e644-3a32-491d-97cb-a277aff17133"/>
 				<textField>
-					<reportElement x="440" y="30" width="272" height="30" forecolor="#FFFFFF" uuid="56db8290-53a0-4a66-b903-09eaebc15bad"/>
+					<reportElement x="2" y="0" width="338" height="58" forecolor="#FFFFFF" uuid="53ec603a-94d3-480e-93d2-df67fa0e3a0a"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="24"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{hotels_title}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="470" y="30" width="251" height="30" forecolor="#FFFFFF" uuid="dfd2ece9-2f47-48d9-8161-04c1e7fed935"/>
 					<textElement textAlignment="Right" verticalAlignment="Bottom">
 						<font size="14"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{hotels_subtitle}]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement x="60" y="1" width="350" height="64" forecolor="#FFFFFF" uuid="93567842-cb0a-44d6-ac07-ac803f2e683f"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="26"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$P{hotels_title}]]></textFieldExpression>
 				</textField>
 			</frame>
 			<frame>
@@ -53,75 +52,64 @@
 					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 				</textField>
 			</frame>
-			<image onErrorType="Blank">
-				<reportElement x="10" y="10" width="50" height="50" uuid="bcee4db9-e2e5-4e8d-82a2-fff67da781b6"/>
-				<imageExpression><![CDATA[$P{foto}]]></imageExpression>
-			</image>
 		</band>
 	</title>
 	<pageHeader>
 		<band splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
-		<band height="30" splitType="Stretch">
-			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		<band height="28" splitType="Stretch">
 			<staticText>
-				<reportElement x="30" y="6" width="90" height="18" uuid="c2731aad-3f54-4a58-a62e-eac2732dd138">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="47dfc36e-8f2d-474d-a9c5-3350003e5c57"/>
+				<reportElement x="80" y="8" width="100" height="18" uuid="a0b7fcda-4fb9-496c-9a05-7e4744a82b7b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4a9c9865-5e20-45c4-981a-686d2b21408a"/>
 				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[ID]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="190" y="6" width="151" height="18" uuid="869a1a84-38e5-4c06-b4e8-65acfeea6274">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1f80f64f-8080-4399-b8e4-48d9617b7f37"/>
+				<reportElement x="349" y="0" width="100" height="28" uuid="e19b5234-b883-46b2-be59-6a2a7e6bddb1">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2f70f2d1-3567-4c52-b2f2-e15b25e6c9eb"/>
 				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[NAME]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="401" y="6" width="119" height="18" uuid="3b87db63-a150-4832-9121-c956f9ee3d0b">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6a7b2a44-7d65-47b4-9d2b-464da0e7784f"/>
+				<reportElement x="638" y="0" width="100" height="28" uuid="4813b730-41e2-4d3d-be70-d7ed0a6685d0">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f8596a4a-dd2a-4775-9b98-59ccfabc6bec"/>
 				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[CITY]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="39" splitType="Stretch">
-			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		<band height="60" splitType="Stretch">
 			<textField>
-				<reportElement x="50" y="9" width="50" height="30" uuid="f1c5a203-b366-49ae-a29d-280d57d86a6a">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="47dfc36e-8f2d-474d-a9c5-3350003e5c57"/>
+				<reportElement x="70" y="0" width="120" height="28" uuid="46e7defa-0aa6-49ef-be5d-781ed1aaafa7">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4a9c9865-5e20-45c4-981a-686d2b21408a"/>
 				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
 				<textFieldExpression><![CDATA[$F{ID}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="170" y="9" width="190" height="30" uuid="e2852385-8969-4110-807c-e0f456134ccd">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1f80f64f-8080-4399-b8e4-48d9617b7f37"/>
+				<reportElement x="349" y="9" width="100" height="30" uuid="3eedbca3-1464-4a71-a432-917208b1329d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2f70f2d1-3567-4c52-b2f2-e15b25e6c9eb"/>
 				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{NAME}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="390" y="6" width="140" height="30" uuid="7a956fea-5648-4042-bc0b-0988f8467f54">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6a7b2a44-7d65-47b4-9d2b-464da0e7784f"/>
+				<reportElement x="610" y="10" width="100" height="30" uuid="15995bb7-79e2-453e-835a-15bc7380c831">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f8596a4a-dd2a-4775-9b98-59ccfabc6bec"/>
 				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{CITY}]]></textFieldExpression>
 			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="7" splitType="Stretch">
 			<line>
-				<reportElement positionType="FixRelativeToBottom" x="10" y="5" width="555" height="1" uuid="501ac6c4-e9d4-43cb-ba6b-7f2f44394cf3"/>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="3" width="555" height="1" uuid="501ac6c4-e9d4-43cb-ba6b-7f2f44394cf3"/>
 				<graphicElement>
 					<pen lineWidth="0.5" lineColor="#999999"/>
 				</graphicElement>
 			</line>
 		</band>
-	</detail>
-	<columnFooter>
-		<band height="7" splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
 		<band height="25" splitType="Stretch">

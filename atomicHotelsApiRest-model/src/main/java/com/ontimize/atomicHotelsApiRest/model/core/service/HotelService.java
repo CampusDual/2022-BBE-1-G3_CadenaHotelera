@@ -348,14 +348,24 @@ public class HotelService implements IHotelService {
 //		return queryRes;
 ////		return null;
 //	}
-
+	
 	@SuppressWarnings("static-access")
 	@Override
 	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult poiQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 		EntityResult pois = new EntityResultMapImpl();
+		String category = (keyMap.containsKey("category")) ? (String) keyMap.get("category") : "" ;
+		String radius = (keyMap.containsKey("radius")) ? (String) keyMap.get("radius") : "1" ;
+		
 		try {
+			if(keyMap.containsKey("category")){
+				keyMap.remove("category");
+			}
+			if(keyMap.containsKey("radius")) {
+				keyMap.remove("radius");
+			}
+			
 			List<String> required = Arrays.asList(dao.ATTR_ID);
 			cf.reset();
 			cf.addBasics(dao.fields);
@@ -367,7 +377,6 @@ public class HotelService implements IHotelService {
 				keyMapDireccion.put(dao.ATTR_ID, keyMap.get(dao.ATTR_ID));
 			}
 			resultado = hotelQuery(keyMapDireccion, attrList);
-
 		} catch (MissingFieldsException | RestrictedFieldException | InvalidFieldsException
 				| InvalidFieldsValuesException | LiadaPardaException e1) {
 			// TODO Auto-generated catch block
@@ -410,8 +419,8 @@ public class HotelService implements IHotelService {
 
 				String urlEndpoint2 = "https://test.api.amadeus.com/v1/security/oauth2/token";
 				String urlParams = "grant_type=client_credentials&client_id=h3nxa8Fz2gDyhWAhSY8nhlAGaZ43tGHv&client_secret=yTjGtt92Ww2ezfAT";
-				String urlPoi = "https://test.api.amadeus.com/v1/shopping/activities?latitude=" + latitude
-						+ "&longitude=" + longitude + "&radius=1&categories=";
+				String urlPoi = "https://test.api.amadeus.com/v1/reference-data/locations/pois?latitude=" + latitude
+						+ "&longitude=" + longitude + "&radius="+radius+"&categories="+category;
 
 				URL url2 = new URL(urlEndpoint2);
 				HttpsURLConnection con2 = (HttpsURLConnection) url2.openConnection();
@@ -442,7 +451,6 @@ public class HotelService implements IHotelService {
 					con3.setRequestMethod("GET");
 					con3.connect();
 					BufferedReader in2 = new BufferedReader(new InputStreamReader(con3.getInputStream()));
-					String output2;
 
 					StringBuffer response2 = new StringBuffer();
 					while ((output = in2.readLine()) != null) {
@@ -451,9 +459,24 @@ public class HotelService implements IHotelService {
 
 					in2.close();
 					// printing result from response
+					System.out.println(response2.toString());
 					JSONObject jsonarray3 = new JSONObject(response2.toString());
 					JSONArray jsarray = (JSONArray) jsonarray3.get("data");
+					
+					
 
+					int u=0;
+					System.out.println(jsarray.length());
+					StringBuilder cc = new StringBuilder();
+					while(u<jsarray.length())
+					{
+						JSONObject coor = (JSONObject)jsarray.get(u);
+						cc.append(coor.get("geoCode"));
+						u++;
+					}
+					System.err.println(cc.toString());
+					
+					
 					@SuppressWarnings("unchecked")
 					Map<String, Object> aux = resultado.getRecordValues(0); // obtenemos el HashMap 0 de resultado.
 					List<Object> auxList = new ArrayList<>(); // creamos una lista auxiliar
@@ -462,6 +485,14 @@ public class HotelService implements IHotelService {
 						JSONObject nuevo = (JSONObject) jsarray.get(i);
 						// System.out.println(nuevo.get("name"));
 						poisMp.put("Poins", nuevo.get("name")); // creamos POINS en el hashmap POISMP
+						
+						JSONObject Ogeo = nuevo.getJSONObject("geoCode");
+						Map<String, Object> coorM= new HashMap<>();
+						coorM.put("latitude", Ogeo.get("latitude"));
+						coorM.put("longitude", Ogeo.get("longitude"));
+						poisMp.put("geoCode", coorM);
+						
+						poisMp.put("Category", nuevo.get("category"));
 						auxList.add(poisMp); //
 					}
 					aux.put("POINS", auxList);

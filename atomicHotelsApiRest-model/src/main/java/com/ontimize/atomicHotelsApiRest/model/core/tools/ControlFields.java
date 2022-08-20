@@ -458,7 +458,7 @@ public class ControlFields {
 			if (required != null) {
 				for (String key : required) {
 					if (!columns.contains(key)) {
-						throw new MissingFieldsException(ErrorMessage.REQUIRED_COLUMN);
+						throw new MissingFieldsException(ErrorMessage.REQUIRED_COLUMN + key);
 					}
 				}
 			}
