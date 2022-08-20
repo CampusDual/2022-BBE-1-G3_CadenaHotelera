@@ -5,7 +5,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import java.util.ArrayList;
-
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
-import com.ontimize.atomicHotelsApiRest.api.core.service.IPictureService;
+import com.ontimize.atomicHotelsApiRest.api.core.service.IEmployeePhotoService;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.EmployeeDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.EmployeePhotoDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
@@ -30,20 +31,24 @@ import com.ontimize.jee.common.util.remote.BytesBlock;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 
-@Service("PictureService")
+@Service("EmployeePhotoService")
 @Lazy
 
-public class PictureService implements IPictureService {
+public class EmployeePhotoService implements IEmployeePhotoService {
 
+	
+	
 	@Autowired
 	private EmployeePhotoDao dao;
+	@Autowired
+	private EmployeeService es;
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
 	@Autowired
 	ControlFields cf;
 
 	@Override
-	@Secured({ PermissionsProviderSecured.SECURED })
+//	@Secured({ PermissionsProviderSecured.SECURED })
 	public ResponseEntity getPicture(Map<String, Object> filter, List<String> columns) {
 	EntityResult resultado = new EntityResultWrong();
 	try {
@@ -54,6 +59,7 @@ public class PictureService implements IPictureService {
 		List<String> required = new ArrayList<>() {
 			{
 				add(dao.ATTR_ID);
+				add(dao.ATTR_EMPLOYEE_DNI);
 			}
 		};
 		cf.setRequired(required);
@@ -66,41 +72,37 @@ public class PictureService implements IPictureService {
 		e.printStackTrace();
 		resultado = new EntityResultWrong(ErrorMessage.ERROR);
 	}
+		
+	Map<String, Object> consultaKeyMap = new HashMap<>() 
+			{
+			{
+				put(dao.ATTR_EMPLOYEE_DNI,filter.get(dao.ATTR_EMPLOYEE_DNI));
+			}
+			};
+			
+		
+		if(es.employeeQuery(filter, List.of(EmployeeDao.ATTR_IDEN_DOC)).calculateRecordNumber()>0) {
 	
-
-		
 		resultado = this.daoHelper.query(dao, filter, columns);
-		
-		
-		
-//		Path p2=Paths.get("C:\\foto2.jpg" );
-//		try {
-//		Files.write(p2, bytes.getBytes(),StandardOpenOption.CREATE_NEW);
-//	} catch (IOException e) {
-//		e.printStackTrace();
-//	}
-
 		System.out.println(resultado.getRecordValues(0));
 		resultado.getRecordValues(0).get(dao.ATTR_FILE);
 		BytesBlock bytes = (BytesBlock) resultado.getRecordValues(0).get(dao.ATTR_FILE);
-	
-		
-		
 		HttpHeaders header = new HttpHeaders();
 		header.setContentType(MediaType.IMAGE_JPEG);
 		String pictureName = "picture.jpg";
 		header.setContentDispositionFormData(pictureName, pictureName);
 		header.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-		
-
-
 		return new ResponseEntity(bytes.getBytes(), header, HttpStatus.OK);
-
+		}else {
+			
+			return null;
+		}
+		
 	}
 
 	@Override
-	@Secured({ PermissionsProviderSecured.SECURED })
-	public EntityResult pictureInsert(Map<String, Object> data) throws OntimizeJEERuntimeException {
+//	@Secured({ PermissionsProviderSecured.SECURED })
+	public EntityResult employeePhotoInsert(Map<String, Object> data) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 
 		try {
@@ -111,6 +113,7 @@ public class PictureService implements IPictureService {
 				{
 					add(dao.ATTR_NAME);
 					add(dao.ATTR_FILE);
+					add(dao.ATTR_EMPLOYEE_DNI);
 				}
 			};
 			cf.setRequired(required);
@@ -135,14 +138,14 @@ public class PictureService implements IPictureService {
 
 	@Override
 	@Secured({ PermissionsProviderSecured.SECURED })
-	public EntityResult pictureDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
+	public EntityResult employeePhotoDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 		// TODO Esbozo de método generado automáticamente
 		return new EntityResultWrong("Operación no disponible");
 	}
 
 	@Override
 	@Secured({ PermissionsProviderSecured.SECURED })
-	public EntityResult pictureUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
+	public EntityResult employeePhotoUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
 		// TODO Esbozo de método generado automáticamente
 		return new EntityResultWrong("Operación no disponible");
@@ -150,7 +153,7 @@ public class PictureService implements IPictureService {
 
 	@Override
 	@Secured({ PermissionsProviderSecured.SECURED })
-	public EntityResult pictureQuery(Map<String, Object> keyMap, List<String> attrList)
+	public EntityResult employeePhotoQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		// TODO Esbozo de método generado automáticamente
 		return new EntityResultWrong("Operación no disponible");

@@ -11,20 +11,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import com.ontimize.atomicHotelsApiRest.api.core.service.IPictureService;
+import com.ontimize.atomicHotelsApiRest.api.core.service.IEmployeePhotoService;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.server.rest.ORestController;
 
 @RestController
-@RequestMapping("/pictures")
-public class PictureRestController extends ORestController<IPictureService> {
+@RequestMapping("/employeephoto")
+public class EmployeePhotoController extends ORestController<IEmployeePhotoService> {
 
 	@Autowired
-	private IPictureService pictureService;
+	private IEmployeePhotoService employeePhotoService;
 
 	@Override
-	public IPictureService getService() {
-		return this.pictureService;
+	public IEmployeePhotoService getService() {
+		return this.employeePhotoService;
 	}
 
 	@RequestMapping(
