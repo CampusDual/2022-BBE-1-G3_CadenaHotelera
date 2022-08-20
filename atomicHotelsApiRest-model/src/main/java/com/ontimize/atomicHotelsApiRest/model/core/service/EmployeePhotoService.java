@@ -9,8 +9,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -40,6 +42,7 @@ public class EmployeePhotoService implements IEmployeePhotoService {
 	
 	@Autowired
 	private EmployeePhotoDao dao;
+
 	@Autowired
 	private EmployeeService es;
 	@Autowired
@@ -76,12 +79,12 @@ public class EmployeePhotoService implements IEmployeePhotoService {
 	Map<String, Object> consultaKeyMap = new HashMap<>() 
 			{
 			{
-				put(dao.ATTR_EMPLOYEE_DNI,filter.get(dao.ATTR_EMPLOYEE_DNI));
+				put(EmployeeDao.ATTR_IDEN_DOC,filter.get(dao.ATTR_EMPLOYEE_DNI));
 			}
 			};
 			
 		
-		if(es.employeeQuery(filter, List.of(EmployeeDao.ATTR_IDEN_DOC)).calculateRecordNumber()>0) {
+		if(es.employeeQuery(consultaKeyMap, List.of(EmployeeDao.ATTR_IDEN_DOC)).calculateRecordNumber()>0) {
 	
 		resultado = this.daoHelper.query(dao, filter, columns);
 		System.out.println(resultado.getRecordValues(0));
@@ -118,21 +121,35 @@ public class EmployeePhotoService implements IEmployeePhotoService {
 			};
 			cf.setRequired(required);
 			cf.validate(data);
-
+			Map<String, Object> consultaKeyMap = new HashMap<>() 
+			{
+			{
+				put(EmployeeDao.ATTR_IDEN_DOC,data.get(dao.ATTR_EMPLOYEE_DNI));
+			}
+			};
+			
+			if(es.employeeQuery(consultaKeyMap, List.of(EmployeeDao.ATTR_IDEN_DOC)).calculateRecordNumber()==0) {
+				resultado.setMessage("El documento de indentidad " +data.get(dao.ATTR_EMPLOYEE_DNI) + " no existe en la base de datos empleados.");
+			}else {
 			if (Files.exists(p)) {
-				data.put(dao.ATTR_FILE, Files.readAllBytes(p));
+		    	data.put(dao.ATTR_FILE, Files.readAllBytes(p));
 				resultado = daoHelper.insert(dao, data);
+				resultado.setMessage("El archivo" + p.toAbsolutePath().toString() + " cargado correctamente para el DNI "+data.get(dao.ATTR_EMPLOYEE_DNI)+"." );
 			} else {
-				resultado.setMessage("El archivo" + p.toAbsolutePath().toString() + "no existe. ");
+				resultado.setMessage("El archivo" + p.toAbsolutePath().toString() + " no existe. ");
+			}
 			}
 		} catch (ValidateException e) {
 			e.getMessage();
 			resultado = new EntityResultWrong(e.getMessage());
-
+			
+		}catch (DuplicateKeyException e) {
+			resultado.setMessage("El Dni introducido "+data.get(dao.ATTR_EMPLOYEE_DNI)+" ya tiene foto asociada");
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}
+		
 		return resultado;
 	}
 
