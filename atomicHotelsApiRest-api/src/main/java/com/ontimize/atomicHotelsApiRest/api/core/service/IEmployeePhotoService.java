@@ -12,7 +12,6 @@ public interface IEmployeePhotoService {
 
 	 public EntityResult employeePhotoQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
 	 public EntityResult employeePhotoInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException;
-	 public EntityResult employeePhotoUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
 	 public EntityResult employeePhotoDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
 	public ResponseEntity getPicture(Map<String, Object> filter, List<String> columns) throws OntimizeJEERuntimeException;
 

@@ -3,10 +3,10 @@
 xsi:schemaLocation="http://www.ontimize.com/schema/jdbc http://www.ontimize.com/schema/jdbc/ontimize-jdbc-dao.xsd" 
 catalog="" schema="${mainschema}" table="employeesphotos" datasource="mainDataSource" sqlhandler="dbSQLStatementHandler">
 	<DeleteKeys>
-		<Column>pct_id</Column>
+		<Column>pct_emp_dni</Column>
 	</DeleteKeys>
 	<UpdateKeys>
-		<Column>pct_id</Column>
+		<Column>pct_emp_dni</Column>
 	</UpdateKeys>
 	<GeneratedKey>pct_id</GeneratedKey>	
 </JdbcEntitySetup>

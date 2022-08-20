@@ -5,11 +5,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
-import org.postgresql.util.PSQLException;
+import javax.annotation.processing.Filer;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DuplicateKeyException;
@@ -49,60 +53,6 @@ public class EmployeePhotoService implements IEmployeePhotoService {
 	private DefaultOntimizeDaoHelper daoHelper;
 	@Autowired
 	ControlFields cf;
-
-	@Override
-//	@Secured({ PermissionsProviderSecured.SECURED })
-	public ResponseEntity getPicture(Map<String, Object> filter, List<String> columns) {
-	EntityResult resultado = new EntityResultWrong();
-	try {
-		
-		cf.reset();
-		cf.addBasics(dao.fields);
-		cf.validate(columns);
-		List<String> required = new ArrayList<>() {
-			{
-				add(dao.ATTR_ID);
-				add(dao.ATTR_EMPLOYEE_DNI);
-			}
-		};
-		cf.setRequired(required);
-		cf.validate(filter);
-	} catch (ValidateException e) {
-		e.getMessage();
-		resultado = new EntityResultWrong(e.getMessage());
-
-	} catch (Exception e) {
-		e.printStackTrace();
-		resultado = new EntityResultWrong(ErrorMessage.ERROR);
-	}
-		
-	Map<String, Object> consultaKeyMap = new HashMap<>() 
-			{
-			{
-				put(EmployeeDao.ATTR_IDEN_DOC,filter.get(dao.ATTR_EMPLOYEE_DNI));
-			}
-			};
-			
-		
-		if(es.employeeQuery(consultaKeyMap, List.of(EmployeeDao.ATTR_IDEN_DOC)).calculateRecordNumber()>0) {
-	
-		resultado = this.daoHelper.query(dao, filter, columns);
-		System.out.println(resultado.getRecordValues(0));
-		resultado.getRecordValues(0).get(dao.ATTR_FILE);
-		BytesBlock bytes = (BytesBlock) resultado.getRecordValues(0).get(dao.ATTR_FILE);
-		HttpHeaders header = new HttpHeaders();
-		header.setContentType(MediaType.IMAGE_JPEG);
-		String pictureName = "picture.jpg";
-		header.setContentDispositionFormData(pictureName, pictureName);
-		header.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-		return new ResponseEntity(bytes.getBytes(), header, HttpStatus.OK);
-		}else {
-			
-			return null;
-		}
-		
-	}
-
 	@Override
 //	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult employeePhotoInsert(Map<String, Object> data) throws OntimizeJEERuntimeException {
@@ -152,28 +102,108 @@ public class EmployeePhotoService implements IEmployeePhotoService {
 		
 		return resultado;
 	}
-
 	@Override
-	@Secured({ PermissionsProviderSecured.SECURED })
-	public EntityResult employeePhotoDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
-		// TODO Esbozo de método generado automáticamente
-		return new EntityResultWrong("Operación no disponible");
+//	@Secured({ PermissionsProviderSecured.SECURED })
+	public ResponseEntity getPicture(Map<String, Object> filter, List<String> columns) {
+		EntityResult resultado = new EntityResultWrong();
+
+		Map<String, Object> consultaKeyMap = new HashMap<>() {
+			{
+
+				put(dao.ATTR_EMPLOYEE_DNI, filter.get(dao.ATTR_EMPLOYEE_DNI));
+			}
+		};
+		Map<String, Object> consultaKeyMap2 = new HashMap<>() {
+			{
+
+				put(EmployeeDao.ATTR_IDEN_DOC, filter.get(dao.ATTR_EMPLOYEE_DNI));
+			}
+		};
+
+		if (employeePhotoQuery(consultaKeyMap, List.of(dao.ATTR_EMPLOYEE_DNI)).calculateRecordNumber() > 0
+				&& es.employeeQuery(consultaKeyMap2, List.of(EmployeeDao.ATTR_IDEN_DOC)).calculateRecordNumber() > 0) {
+
+			resultado = this.daoHelper.query(dao, filter, columns);
+			BytesBlock bytes = (BytesBlock) resultado.getRecordValues(0).get(dao.ATTR_FILE);
+			HttpHeaders header = new HttpHeaders();
+			header.setContentType(MediaType.IMAGE_JPEG);
+			String pictureName = "picture.jpg";
+			header.setContentDispositionFormData(pictureName, pictureName);
+			header.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+			return new ResponseEntity(bytes.getBytes(), header, HttpStatus.OK);
+
+		} else {
+			filter.put(dao.ATTR_EMPLOYEE_DNI, "00000000T");
+			resultado = this.daoHelper.query(dao, filter, columns);
+			BytesBlock bytes = (BytesBlock) resultado.getRecordValues(0).get(dao.ATTR_FILE);
+			HttpHeaders header = new HttpHeaders();
+			header.setContentType(MediaType.IMAGE_JPEG);
+			String pictureName = "picture.jpg";
+			header.setContentDispositionFormData(pictureName, pictureName);
+			header.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+			return new ResponseEntity(bytes.getBytes(), header, HttpStatus.OK);
+		}
+
 	}
 
-	@Override
-	@Secured({ PermissionsProviderSecured.SECURED })
-	public EntityResult employeePhotoUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
-			throws OntimizeJEERuntimeException {
-		// TODO Esbozo de método generado automáticamente
-		return new EntityResultWrong("Operación no disponible");
-	}
 
 	@Override
-	@Secured({ PermissionsProviderSecured.SECURED })
-	public EntityResult employeePhotoQuery(Map<String, Object> keyMap, List<String> attrList)
-			throws OntimizeJEERuntimeException {
-		// TODO Esbozo de método generado automáticamente
-		return new EntityResultWrong("Operación no disponible");
+//	@Secured({ PermissionsProviderSecured.SECURED })
+	public EntityResult employeePhotoDelete(Map<String, Object> filter) throws OntimizeJEERuntimeException {
+		
+	EntityResult resultado= new EntityResultWrong();
+	try {
+		cf.reset();
+	cf.addBasics(dao.fields);	
+	cf.setRequired(List.of(dao.ATTR_EMPLOYEE_DNI));
+	cf.validate(filter);
+	Map<String,Object> consulta=new HashMap<>();
+	consulta.put(dao.ATTR_EMPLOYEE_DNI,filter.get(dao.ATTR_EMPLOYEE_DNI));
+	
+	if(daoHelper.query(dao, consulta,List.of(dao.ATTR_EMPLOYEE_DNI)).calculateRecordNumber()>0) {
+	resultado=daoHelper.delete(dao, filter);
+	resultado.setMessage("Foto del DNI : "+filter.get(dao.ATTR_EMPLOYEE_DNI)+". borrada");
+	}else {
+		resultado=new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
+	}
+	} catch (ValidateException e) {
+		e.getMessage();
+		resultado = new EntityResultWrong(e.getMessage());
+	} catch (Exception e) {
+		e.printStackTrace();
+		resultado = new EntityResultWrong(ErrorMessage.ERROR);
+	}
+	
+	return resultado;
+	
+		
+	}
+
+
+
+	@Override
+	//@Secured({ PermissionsProviderSecured.SECURED })
+	public EntityResult employeePhotoQuery(Map<String, Object>filter , List<String> columns) throws OntimizeJEERuntimeException {
+		 EntityResult resultado=new EntityResultWrong();
+		 
+		 try {
+		 cf.reset();
+		 cf.addBasics(dao.fields);
+		 cf.setRequired(List.of(dao.ATTR_EMPLOYEE_DNI));
+		 cf.validate(filter);
+		 cf.validate(columns);
+		 resultado=daoHelper.query(dao, filter, columns);
+		 } catch (ValidateException e) {
+				e.getMessage();
+				resultado = new EntityResultWrong(e.getMessage());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				resultado = new EntityResultWrong(ErrorMessage.ERROR);
+			}
+		 
+		 return resultado;
+		
 	}
 
 }

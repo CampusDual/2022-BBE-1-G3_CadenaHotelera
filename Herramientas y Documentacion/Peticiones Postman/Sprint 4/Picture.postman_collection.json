@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "4cc8a6be-ef0c-4de5-9224-4fce5c23e070",
+		"_postman_id": "6ffd4ce6-ea76-41f7-86d6-41630e941e76",
 		"name": "Picture",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "22294604"
 	},
 	"item": [
 		{
@@ -27,7 +28,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"data\":\r\n    {\"pct_name\":\"Equipo A\",\r\n    \"pct_description\": \"2022 BootCamp\",\r\n    \"pct_file\": \"c:\\\\all.jpg\"\r\n    }\r\n}",
+					"raw": "{\"data\":\r\n    {\"pct_name\":\"Equipo c\",\r\n    \"pct_description\": \"2022 BootCamp\",\r\n    \"pct_file\": \"c:\\\\all2.jpg\",\r\n    \"pct_emp_dni\":\"99999999R\"\r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -35,22 +36,22 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:33333/pictures/picture",
+					"raw": "http://localhost:33333/employeephoto/employeePhoto",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "33333",
 					"path": [
-						"pictures",
-						"picture"
+						"employeephoto",
+						"employeePhoto"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "-R picture id",
+			"name": "-R picture dni",
 			"request": {
 				"auth": {
 					"type": "basic",
@@ -71,7 +72,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\": {\r\n     \"pct_id\": 3\r\n\r\n    },\r\n    \"columns\": [\"pct_file\"]\r\n}",
+					"raw": "{\r\n    \"filter\": {\r\n     \"pct_emp_dni\":\"34896d415c\"\r\n    },\r\n    \"columns\": [\"pct_file\"]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -79,15 +80,59 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:33333/pictures/getPicture",
+					"raw": "http://localhost:33333/employeephoto/getPicture",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "33333",
 					"path": [
-						"pictures",
+						"employeephoto",
 						"getPicture"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-D picture",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "atom",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"pct_emp_dni\": \"99999999R\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/employeephoto/employeePhoto",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"employeephoto",
+						"employeePhoto"
 					]
 				}
 			},
