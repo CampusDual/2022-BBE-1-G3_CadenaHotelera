@@ -28,7 +28,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"data\":\r\n    {\"pct_name\":\"Equipo c\",\r\n    \"pct_description\": \"2022 BootCamp\",\r\n    \"pct_file\": \"c:\\\\all2.jpg\",\r\n    \"pct_emp_dni\":\"99999999R\"\r\n    }\r\n}",
+					"raw": "{\"data\":\r\n    {\"pct_name\":\"Armando\",\r\n    \"pct_description\": \"2022 BootCamp\",\r\n    \"pct_file\": \"c:\\\\armando.jpg\",\r\n    \"pct_emp_dni\":\"99999999R\"\r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -72,7 +72,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\": {\r\n     \"pct_emp_dni\":\"34896d415c\"\r\n    },\r\n    \"columns\": [\"pct_file\"]\r\n}",
+					"raw": "{\r\n    \"filter\": {\r\n     \"pct_emp_dni\":\"9999999R\"\r\n    },\r\n    \"columns\": [\"pct_file\"]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"

@@ -133,7 +133,7 @@ public class EmployeePhotoService implements IEmployeePhotoService {
 			return new ResponseEntity(bytes.getBytes(), header, HttpStatus.OK);
 
 		} else {
-			filter.put(dao.ATTR_EMPLOYEE_DNI, "00000000T");
+			filter.put(dao.ATTR_EMPLOYEE_DNI, "00000000");
 			resultado = this.daoHelper.query(dao, filter, columns);
 			BytesBlock bytes = (BytesBlock) resultado.getRecordValues(0).get(dao.ATTR_FILE);
 			HttpHeaders header = new HttpHeaders();
