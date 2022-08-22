@@ -1,36 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Hotels_template3" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ef2db053-b34b-4f1a-b0b2-84ae1cf81f07">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Hotels_template3" pageWidth="595" pageHeight="842" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ef2db053-b34b-4f1a-b0b2-84ae1cf81f07">
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="total_income" class="java.math.BigDecimal"/>
 	<field name="benefits" class="java.math.BigDecimal"/>
-	<field name="total_expenses" class="java.math.BigDecimal"/>
 	<field name="htl_id" class="java.lang.Integer"/>
+	<field name="htl_name" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="79" splitType="Stretch"/>
+		<band height="31" splitType="Stretch"/>
 	</title>
 	<detail>
-		<band height="190" splitType="Stretch"/>
+		<band height="20" splitType="Stretch"/>
 	</detail>
 	<summary>
-		<band height="227" splitType="Stretch">
+		<band height="238" splitType="Stretch">
 			<pie3DChart>
 				<chart evaluationTime="Report">
-					<reportElement x="220" y="-40" width="380" height="200" uuid="33c40e9c-3cd2-4d8e-b34c-74582fe5953a"/>
+					<reportElement x="130" y="10" width="260" height="198" uuid="b476d4df-ba69-4d80-bd08-598a39009f2b"/>
 					<chartTitle/>
 					<chartSubtitle/>
 					<chartLegend/>
 				</chart>
-				<pieDataset>
+				<pieDataset maxCount="5">
 					<dataset resetType="Report"/>
-					<keyExpression><![CDATA[$F{htl_id}.toString()]]></keyExpression>
-					<valueExpression><![CDATA[$F{total_expenses}]]></valueExpression>
-					<labelExpression><![CDATA[$F{htl_id}.toString( )]]></labelExpression>
+					<keyExpression><![CDATA[$F{htl_name}]]></keyExpression>
+					<valueExpression><![CDATA[$F{benefits}]]></valueExpression>
 				</pieDataset>
 				<pie3DPlot>
 					<plot/>

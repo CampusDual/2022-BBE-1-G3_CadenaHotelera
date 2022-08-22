@@ -50,6 +50,7 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.data.JRTableModelDataSource;
+import net.sf.jasperreports.engine.type.OrientationEnum;
 
 @Service("ReportService")
 @Lazy
@@ -71,7 +72,7 @@ public class ReportService implements IReportService {
 	private final String HOTEL_TEMPLATE_02_PATH = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Hotels_template2.jrxml";
 	private final String HOTEL_TEMPLATE_03_PATH = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Hotels_template3.jrxml";
 	private final String PRUEBA_PATH = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\prueba.jrxml";
-	private final String CHAR_PATH = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Benefits_template.jrxml";
+	private final String INCOME_VS_EXPENSES_CHART = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\incomeVsExpensesChart.jrxml";
 
 	@Override
 	public ResponseEntity test(Map<String, Object> keyMap, List<String> attrList) {
@@ -137,7 +138,7 @@ public class ReportService implements IReportService {
 	}
 	
 	@Override
-	public ResponseEntity testChar(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException {
+	public ResponseEntity incomeVsExpensesChart(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException {
 		EntityResult consulta = new EntityResultMapImpl();
 		ResponseEntity resultado;
 		try {
@@ -177,7 +178,7 @@ public class ReportService implements IReportService {
 
 			//			JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(a);
 			EntityResult consultaCategorizada = new EntityResultMapImpl();
-			for(int i = 0; i <consulta.calculateRecordNumber();i++) {
+				for(int i = 0; i <consulta.calculateRecordNumber();i++) {
 				HashMap<String,Object> auxMap = new HashMap<>();
 				auxMap.put("htl_id", consulta.getRecordValues(i).get("htl_id"));
 				auxMap.put("htl_name", consulta.getRecordValues(i).get("htl_name"));
@@ -196,10 +197,9 @@ public class ReportService implements IReportService {
 			
 			System.err.println(consultaCategorizada);
 			JRTableModelDataSource dataSource = new JRTableModelDataSource(EntityResultUtils.createTableModel(consultaCategorizada));
-//			JasperReport jasperReport = JasperCompileManager.compileReport(HOTEL_TEMPLATE_03_PATH);
-			JasperReport jasperReport = JasperCompileManager.compileReport(CHAR_PATH);
+			JasperReport jasperReport = JasperCompileManager.compileReport(INCOME_VS_EXPENSES_CHART);
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap<String,Object>(), dataSource);
-
+			jasperPrint.setOrientation(OrientationEnum.LANDSCAPE);
 			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
 
 		} catch (ValidateException e) {
