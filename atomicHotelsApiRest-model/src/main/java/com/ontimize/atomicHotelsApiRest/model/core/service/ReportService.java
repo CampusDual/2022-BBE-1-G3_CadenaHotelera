@@ -254,7 +254,7 @@ public class ReportService implements IReportService {
 			System.err.println(consultaCategorizada);
 			JRTableModelDataSource dataSource = new JRTableModelDataSource(EntityResultUtils.createTableModel(consultaCategorizada));
 			JasperReport jasperReport = JasperCompileManager.compileReport(INCOME_VS_EXPENSES_CHART);
-			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap<String,Object>(), dataSource);
+			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, ReportsConfig.getBasicParameters(), dataSource);
 			jasperPrint.setOrientation(OrientationEnum.LANDSCAPE);
 			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
 
