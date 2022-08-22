@@ -17,5 +17,6 @@ public interface IReportService {
 	ResponseEntity incomeVsExpensesChart(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException;
 	public ResponseEntity receipt(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
+	ResponseEntity plantilla(Map<String, Object> keyMap, List<String> attrList);
 
 }

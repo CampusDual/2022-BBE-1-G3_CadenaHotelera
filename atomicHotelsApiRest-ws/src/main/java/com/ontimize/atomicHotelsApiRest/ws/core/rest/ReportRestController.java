@@ -52,4 +52,12 @@ public class ReportRestController extends ORestController<IReportService>{
 				public ResponseEntity<EntityResult> b(@RequestBody Map<String,Object> req) {
 			 	return this.getService().receipt((Map<String,Object>)req.get("filter"),(List<String>)req.get("columns"));
 				}
+	 
+	 @RequestMapping(
+			 value = "/plantilla",
+			 method = RequestMethod.POST,
+			 produces = MediaType.APPLICATION_JSON_VALUE)
+	 public ResponseEntity<EntityResult> plantilla(@RequestBody Map<String,Object> req) {
+		 return this.getService().plantilla((Map<String,Object>)req.get("filter"),(List<String>)req.get("columns"));
+	 }
 }

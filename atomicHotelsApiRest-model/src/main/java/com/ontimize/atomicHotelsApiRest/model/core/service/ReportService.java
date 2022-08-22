@@ -34,6 +34,7 @@ import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultUtils;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.ReportsConfig;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.TypeCodes.type;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
@@ -72,6 +73,7 @@ public class ReportService implements IReportService {
 	@Autowired
 	ControlFields cf;
 	
+	private final String HOTEL_TEMPLATE_PATH = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\plantilla.jrxml";
 	private final String HOTEL_TEMPLATE_01_PATH = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Hotels_template.jrxml";
 	private final String HOTEL_TEMPLATE_02_PATH = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Hotels_template2.jrxml";
 	private final String HOTEL_TEMPLATE_03_PATH = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Hotels_template3.jrxml";
@@ -101,14 +103,14 @@ public class ReportService implements IReportService {
 
 			List<PruebaHoteles> a = new ArrayList<PruebaHoteles>();
 
-			for (int i = 0; i < consulta.calculateRecordNumber(); i++) {
-				Integer id = (Integer) consulta.getRecordValues(i).get(HotelDao.ATTR_ID);
-				String name = (String) consulta.getRecordValues(i).get(HotelDao.ATTR_NAME);
-				String city = (String) consulta.getRecordValues(i).get(HotelDao.ATTR_CITY);
-
-				PruebaHoteles h = new PruebaHoteles(id, name, city);
-				a.add(h);
-			}
+//			for (int i = 0; i < consulta.calculateRecordNumber(); i++) {
+//				Integer id = (Integer) consulta.getRecordValues(i).get(HotelDao.ATTR_ID);
+//				String name = (String) consulta.getRecordValues(i).get(HotelDao.ATTR_NAME);
+//				String city = (String) consulta.getRecordValues(i).get(HotelDao.ATTR_CITY);
+//
+//				PruebaHoteles h = new PruebaHoteles(id, name, city);
+//				a.add(h);
+//			}
 
 			String fotoPath = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\images\\atom.png";
 
@@ -123,7 +125,7 @@ public class ReportService implements IReportService {
 //					put("foto",Files.readAllBytes(Paths.get(fotoPath)));
 				}
 			};
-			
+//			
 //			JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(a);
             
 			JRTableModelDataSource dataSource = new JRTableModelDataSource(EntityResultUtils.createTableModel(consulta));			
@@ -141,6 +143,54 @@ public class ReportService implements IReportService {
 		}
 		return resultado;
 
+	}
+	
+	@Override
+	public ResponseEntity plantilla(Map<String, Object> keyMap, List<String> attrList) {
+		EntityResult consulta = new EntityResultMapImpl();
+		ResponseEntity resultado;
+		try {
+			
+			cf.reset();
+			cf.addBasics(HotelDao.fields);
+			cf.validate(keyMap);
+			
+			List<String> required = Arrays.asList(HotelDao.ATTR_ID, HotelDao.ATTR_NAME, HotelDao.ATTR_CITY);
+			cf.reset();
+			cf.addBasics(HotelDao.fields);
+//			cf.setRequired(required);
+//			cf.setOptional(false);
+			cf.validate(attrList);
+			
+			consulta = hotelService.hotelQuery(keyMap, attrList);
+			
+			List<PruebaHoteles> a = new ArrayList<PruebaHoteles>();
+			
+			for (int i = 0; i < consulta.calculateRecordNumber(); i++) {
+				Integer id = (Integer) consulta.getRecordValues(i).get(HotelDao.ATTR_ID);
+				String name = (String) consulta.getRecordValues(i).get(HotelDao.ATTR_NAME);
+				String city = (String) consulta.getRecordValues(i).get(HotelDao.ATTR_CITY);
+				
+				PruebaHoteles h = new PruebaHoteles(id, name, city);
+				a.add(h);
+			}
+			
+			
+			JRTableModelDataSource dataSource = new JRTableModelDataSource(EntityResultUtils.createTableModel(consulta));			
+			JasperReport jasperReport = JasperCompileManager.compileReport(HOTEL_TEMPLATE_PATH);
+			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, ReportsConfig.getBasicParameters(), dataSource);
+			
+			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
+			
+		} catch (ValidateException e) {
+			e.printStackTrace();
+			resultado = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = null;
+		}
+		return resultado;
+		
 	}
 	
 	@Override
