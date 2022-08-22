@@ -149,6 +149,7 @@ public class ReceiptService implements IReceiptService {
 			}
 
 			calculoReceipt.put(dao.ATTR_SERVICIOS_EXTRA, servicios);
+			
 			reciboCompleto = new EntityResultMapImpl();
 			reciboCompleto.addRecord(calculoReceipt);
 
