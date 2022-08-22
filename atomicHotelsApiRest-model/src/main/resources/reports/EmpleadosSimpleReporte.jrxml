@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="EmpleadosSimpleReporte" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="095036f7-ac69-4614-b262-b2868e184c38">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Backend_2022_G3"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT htl_name,dpt_name,emp_name,
+	emp_identity_document,
+	pct_file
+FROM employees inner join  employeesphotos on employeesphotos.pct_emp_dni=employees.emp_identity_document 
+  inner join hotels on hotels.htl_id=employees.emp_htl_id
+  inner join departments on employees.emp_dpt_id=departments.dpt_id
+  Order by htl_name,dpt_name
+]]>
+	</queryString>
+	<field name="htl_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="htl_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="htl_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="hotels"/>
+	</field>
+	<field name="dpt_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="dpt_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="dpt_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="departments"/>
+	</field>
+	<field name="emp_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="emp_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="emp_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="employees"/>
+	</field>
+	<field name="emp_identity_document" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="emp_identity_document"/>
+		<property name="com.jaspersoft.studio.field.label" value="emp_identity_document"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="employees"/>
+	</field>
+	<field name="pct_file" class="byte[]">
+		<property name="com.jaspersoft.studio.field.name" value="pct_file"/>
+		<property name="com.jaspersoft.studio.field.label" value="pct_file"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="employeesphotos"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="-20" y="0" width="595" height="79" forecolor="#DAE9F5" backcolor="#1F1818" uuid="8bf6f891-7921-465d-8138-237a1598c466"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Albertus Extra Bold" size="37"/>
+				</textElement>
+				<text><![CDATA[Listado de empleados con foto]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="2" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="23" splitType="Stretch">
+			<staticText>
+				<reportElement x="-10" y="0" width="100" height="20" uuid="d079964a-482d-4371-8dba-ff54dc9f51c8">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="233d23af-c2d7-4f07-8e96-2d6d2e3a7069"/>
+				</reportElement>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Nombre]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="90" y="0" width="114" height="20" uuid="789de4b1-c5a4-446a-b81b-825801d48e4e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f6b078ca-fd28-4e01-a7c4-c4fe3dd37b7c"/>
+				</reportElement>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Document de indetidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="204" y="0" width="100" height="20" uuid="6df9d65a-e3aa-49fb-8779-a5ce2834f010">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="02ece20d-fc2a-40bf-98d8-8153a18e7f0b"/>
+				</reportElement>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Hotel]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="304" y="0" width="100" height="20" uuid="a7fe8f35-14c2-42fd-b6ee-f382ec7c3633">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3fd7d2fa-1ede-4a11-855c-85c353581257"/>
+				</reportElement>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Departamento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="404" y="0" width="154" height="23" uuid="3b81b771-dfea-4a6b-84cc-19ba467f17c2">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ccaa3635-b373-43f1-a5c6-b7bbf0050e53"/>
+				</reportElement>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Foto]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="47" splitType="Stretch">
+			<textField>
+				<reportElement x="-10" y="7" width="100" height="20" uuid="2703ebc9-4823-468a-a7da-fe9f9c1b5181">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="233d23af-c2d7-4f07-8e96-2d6d2e3a7069"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{emp_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="90" y="7" width="114" height="20" uuid="f730358c-9b81-4d41-8e44-833ea15753d5">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f6b078ca-fd28-4e01-a7c4-c4fe3dd37b7c"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{emp_identity_document}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="204" y="7" width="100" height="20" uuid="f96651bb-55ea-4291-9019-51002faa0602">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="02ece20d-fc2a-40bf-98d8-8153a18e7f0b"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{htl_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="304" y="7" width="100" height="20" uuid="20e4fb93-a383-4909-a52a-30a82ac06293">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3fd7d2fa-1ede-4a11-855c-85c353581257"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{dpt_name}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="460" y="0" width="80" height="35" uuid="d4335aa5-997e-4dfc-9832-e01568e48e62"/>
+				<imageExpression><![CDATA[$F{pct_file}]]></imageExpression>
+			</image>
+		</band>
+	</detail>
+</jasperReport>
