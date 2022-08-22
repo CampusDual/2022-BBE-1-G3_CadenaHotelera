@@ -56,7 +56,7 @@ public class ReceiptService implements IReceiptService {
 
 	@Autowired
 	private BookingServiceExtraService bookingServiceExtraService;
-	
+
 	@Autowired
 	ControlFields cf;
 
@@ -68,8 +68,8 @@ public class ReceiptService implements IReceiptService {
 
 		try {
 
-			cf.reset();			
-			
+			cf.reset();
+
 			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
 
 			cf.addBasics(dao.fields);
@@ -103,7 +103,7 @@ public class ReceiptService implements IReceiptService {
 				}
 			};
 			cf.reset();
-			
+
 			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
 
 			cf.addBasics(dao.fields);
@@ -120,7 +120,7 @@ public class ReceiptService implements IReceiptService {
 			lista.add(dao.ATTR_TOTAL_SERVICES);
 			lista.add(dao.ATTR_TOTAL);
 
-			EntityResult reciboSimple = this.daoHelper.query(this.dao, keyMap, lista); 
+			EntityResult reciboSimple = this.daoHelper.query(this.dao, keyMap, lista);
 
 			Map<String, Object> calculoReceipt = reciboSimple.getRecordValues(0);
 
@@ -128,19 +128,10 @@ public class ReceiptService implements IReceiptService {
 			Map<String, Object> keyMapServciosExtra = new HashMap<String, Object>();
 			keyMapServciosExtra.put(BookingServiceExtraDao.ATTR_ID_BKG,
 					reciboSimple.getRecordValues(0).get(dao.ATTR_BOOKING_ID));
-			
-			List<String> listaCualquiera = new ArrayList<String>();
 
-//			List<String> listaServiciosExtra = new ArrayList<String>();
-//			listaServiciosExtra.add(ServicesXtraDao.ATTR_NAME);
-//			listaServiciosExtra.add(ServicesXtraDao.ATTR_DESCRIPTION);
-//			listaServiciosExtra.add(BookingServiceExtraDao.ATTR_ID_UNITS);
-//			listaServiciosExtra.add(BookingServiceExtraDao.ATTR_PRECIO);
-//			listaServiciosExtra.add(BookingServiceExtraDao.ATTR_DATE);
-
-			// El resultado de esto se añade dentro del resultado de la siguente	
+			// El resultado de esto se añade dentro del resultado de la siguente
 			EntityResult serviciosExtra = bookingServiceExtraService
-					.extraServicesNameDescriptionUnitsPriceDateQuery(keyMapServciosExtra, listaCualquiera);//Devuelve unos atributos fijos independientemente de la lista que se le pase
+					.extraServicesNameDescriptionUnitsPriceDateQuery(keyMapServciosExtra, new ArrayList<String>());// Devuelve unos atributos fijos independientemente de la lista que se le pase
 
 			List<Object> servicios = new ArrayList<Object>();
 			for (int i = 0; i < serviciosExtra.calculateRecordNumber(); i++) {
@@ -149,7 +140,7 @@ public class ReceiptService implements IReceiptService {
 			}
 
 			calculoReceipt.put(dao.ATTR_SERVICIOS_EXTRA, servicios);
-			
+
 			reciboCompleto = new EntityResultMapImpl();
 			reciboCompleto.addRecord(calculoReceipt);
 
@@ -186,13 +177,12 @@ public class ReceiptService implements IReceiptService {
 				}
 			};
 			cf.reset();
-			
+
 			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
 			cf.addBasics(BookingDao.fields);
 			cf.validate(consultaBookingStatus);
-			
-			if (bookingService.getBookingStatus(consultaBookingStatus)
-					.equals(BookingDao.Status.COMPLETED)) {
+
+			if (bookingService.getBookingStatus(consultaBookingStatus).equals(BookingDao.Status.COMPLETED)) {
 
 				Object reservaEnRecibo = attrMap.get(dao.ATTR_BOOKING_ID);
 				Map<String, Object> bkg_id = new HashMap<String, Object>();
@@ -201,17 +191,9 @@ public class ReceiptService implements IReceiptService {
 				Map<String, Object> bsx_bkg_id = new HashMap<String, Object>();
 				bsx_bkg_id.put(BookingServiceExtraDao.ATTR_ID_BKG, reservaEnRecibo);
 
-				// Cálculo del precio total de la habitación
-				List<String> reciboHabitacion = new ArrayList<String>();
-				reciboHabitacion.add(BookingDao.ATTR_ID);
-				reciboHabitacion.add(RoomTypeDao.ATTR_PRICE);
-				reciboHabitacion.add(dao.ATTR_DIAS);
-				
-				List<String> listaVacia = new ArrayList<String>();
+				EntityResult habitacion = bookingService.bookingDaysUnitaryRoomPriceQuery(bkg_id,
+						new ArrayList<String>());
 
-				EntityResult habitacion = bookingService.bookingDaysUnitaryRoomPriceQuery(bkg_id, listaVacia);
-				
-						
 				int reservaHabitacion = (int) habitacion.getRecordValues(0).get(BookingDao.ATTR_ID);
 				BigDecimal precioHabitacion = (BigDecimal) habitacion.getRecordValues(0).get(RoomTypeDao.ATTR_PRICE);
 				int dias = (int) habitacion.getRecordValues(0).get(dao.ATTR_DIAS);
@@ -220,19 +202,10 @@ public class ReceiptService implements IReceiptService {
 
 				attrMap.put(dao.ATTR_TOTAL_ROOM, totalHabitacion);
 				attrMap.put(dao.ATTR_DIAS, dias);
-				
-				
 
-				// Cálculo del precio total de los servcios extras
-//				List<String> reciboServiciosExtra = new ArrayList<String>();
-//				reciboServiciosExtra.add(BookingServiceExtraDao.ATTR_ID_BKG);
-//				reciboServiciosExtra.add(BookingServiceExtraDao.ATTR_PRECIO);
-//				reciboServiciosExtra.add(BookingServiceExtraDao.ATTR_ID_UNITS);
-//				reciboServiciosExtra.add("total");
-				
-				//Devuelve unos atributos fijos independientemente de la lista que se le pase
+				// Devuelve unos atributos fijos independientemente de la lista que se le pase
 				EntityResult servicios = bookingServiceExtraService.bookingExtraServicePriceUnitsTotalQuery(bsx_bkg_id,
-						listaVacia);
+						new ArrayList<String>());
 
 				BigDecimal totalTodosServiciosExtra = new BigDecimal(0);
 
@@ -264,10 +237,10 @@ public class ReceiptService implements IReceiptService {
 			}
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
-		
-		}catch(EntityResultRequiredException e) {
-			resultado = new EntityResultWrong(ErrorMessage.RESULT_REQUIRED+" "+ErrorMessage.NO_BOOKING_ID);
-		
+
+		} catch (EntityResultRequiredException e) {
+			resultado = new EntityResultWrong(ErrorMessage.RESULT_REQUIRED + " " + ErrorMessage.NO_BOOKING_ID);
+
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 
@@ -352,6 +325,5 @@ public class ReceiptService implements IReceiptService {
 		}
 		return resultado;
 	}
-
 
 }

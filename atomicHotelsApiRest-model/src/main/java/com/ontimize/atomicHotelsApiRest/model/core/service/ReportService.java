@@ -77,6 +77,8 @@ public class ReportService implements IReportService {
 	private final String HOTEL_TEMPLATE_03_PATH = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Hotels_template3.jrxml";
 	private final String PRUEBA_PATH = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\prueba.jrxml";
 	private final String INCOME_VS_EXPENSES_CHART = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\incomeVsExpensesChart.jrxml";
+	private final String RECEIPT = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Receipt_template.jrxml";
+	private final String EXTRA_SERVICES = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Extra_services_template.jrxml";
 
 	@Override
 	public ResponseEntity test(Map<String, Object> keyMap, List<String> attrList) {
@@ -236,29 +238,57 @@ public class ReportService implements IReportService {
 	
 			consulta = receiptService.completeReceiptQuery(keyMap, new ArrayList<String>());
 
-			EntityResult consultaCategorizada = new EntityResultMapImpl();
-				for(int i = 0; i <consulta.calculateRecordNumber();i++) {
-				HashMap<String,Object> auxMap = new HashMap<>();
-				auxMap.put("htl_id", consulta.getRecordValues(i).get("htl_id"));
-				auxMap.put("htl_name", consulta.getRecordValues(i).get("htl_name"));
-				
-				auxMap.put("serie", "total_income");
-				auxMap.put("value", consulta.getRecordValues(i).get("total_income"));
-				
-				consultaCategorizada.addRecord(auxMap);
-				
-				auxMap.put("serie", "total_expenses");
-				auxMap.put("value", consulta.getRecordValues(i).get("total_expenses"));
-				
-				consultaCategorizada.addRecord(auxMap);
+//			EntityResult consultaCategorizada = new EntityResultMapImpl();
+//				for(int i = 0; i <consulta.calculateRecordNumber();i++) {
+//				HashMap<String,Object> auxMap = new HashMap<>();
+//				auxMap.put("htl_id", consulta.getRecordValues(i).get("htl_id"));
+//				auxMap.put("htl_name", consulta.getRecordValues(i).get("htl_name"));
+//				
+//				auxMap.put("serie", "total_income");
+//				auxMap.put("value", consulta.getRecordValues(i).get("total_income"));
+//				
+//				consultaCategorizada.addRecord(auxMap);
+//				
+//				auxMap.put("serie", "total_expenses");
+//				auxMap.put("value", consulta.getRecordValues(i).get("total_expenses"));
+//				
+//				consultaCategorizada.addRecord(auxMap);
+//			
+//			}
 			
+//			Map<String,Object> consultaServicios= new HashMap<String,Object>();
+			
+			EntityResult servciosExtra = new EntityResultMapImpl();
+			List<Object> lista = (List<Object>)consulta.getRecordValues(0).get("extra_services");
+			for(Object a:lista) {
+				servciosExtra.addRecord((HashMap<String,Object>)a);
 			}
 			
-			System.err.println(consultaCategorizada);
-			JRTableModelDataSource dataSource = new JRTableModelDataSource(EntityResultUtils.createTableModel(consultaCategorizada));
-			JasperReport jasperReport = JasperCompileManager.compileReport(INCOME_VS_EXPENSES_CHART);
-			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap<String,Object>(), dataSource);
+//			List<Object> listaServciosExtra = new ArrayList<Object>();
+//			for (int i = 0; i < ((List<Object>)consulta.getRecordValues(0).get("extra_services")).size(); i++) {
+//				Object h = ((List<Object>)consulta.getRecordValues(0).get("extra_services")).get(i);
+//				listaServciosExtra.add(h);
+//			}
+			
+//			consultaServicios.put("extra_services", listaServciosExtra);
+//			
+//			
+//			servciosExtra.addRecord(consultaServicios);
+			
+			JRTableModelDataSource dataSourceServices = new JRTableModelDataSource(EntityResultUtils.createTableModel(servciosExtra));
+			JasperReport jasperReportServices = JasperCompileManager.compileReport(EXTRA_SERVICES);
+     		JasperPrint jasperPrintServices= JasperFillManager.fillReport(jasperReportServices, new HashMap<String,Object>(), dataSourceServices);
+//			
+			Map<String,Object> subReport = new HashMap<String,Object>(){{
+				put("subReport",jasperPrintServices);
+			}};
+			
+			System.err.println(consulta);
+			JRTableModelDataSource dataSource = new JRTableModelDataSource(EntityResultUtils.createTableModel(consulta));
+			JasperReport jasperReport = JasperCompileManager.compileReport(RECEIPT);
+			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, subReport, dataSource);
 			jasperPrint.setOrientation(OrientationEnum.LANDSCAPE);
+			
 			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
 
 		} catch (ValidateException e) {
