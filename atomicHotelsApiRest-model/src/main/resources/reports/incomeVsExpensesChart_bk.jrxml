@@ -15,17 +15,14 @@
 	<title>
 		<band height="24" splitType="Stretch"/>
 	</title>
-	<pageHeader>
-		<band height="35" splitType="Stretch"/>
-	</pageHeader>
 	<detail>
-		<band height="19" splitType="Stretch"/>
+		<band height="18" splitType="Stretch"/>
 	</detail>
 	<summary>
 		<band height="309" splitType="Stretch">
 			<barChart>
 				<chart evaluationTime="Report">
-					<reportElement x="100" y="-40" width="610" height="337" uuid="73722ba3-8f66-495c-b7a0-f9eda43258f0"/>
+					<reportElement x="0" y="0" width="800" height="307" uuid="fb76970a-0d1f-4463-95ff-64731d4d9282"/>
 					<chartTitle/>
 					<chartSubtitle/>
 					<chartLegend/>
@@ -34,7 +31,7 @@
 					<dataset resetType="Report"/>
 					<categorySeries>
 						<seriesExpression><![CDATA[$F{serie}]]></seriesExpression>
-						<categoryExpression><![CDATA[$F{htl_id}.toString()]]></categoryExpression>
+						<categoryExpression><![CDATA[$F{htl_name}]]></categoryExpression>
 						<valueExpression><![CDATA[$F{value}]]></valueExpression>
 					</categorySeries>
 				</categoryDataset>

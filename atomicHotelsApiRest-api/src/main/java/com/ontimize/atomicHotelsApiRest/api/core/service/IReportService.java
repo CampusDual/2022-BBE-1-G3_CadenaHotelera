@@ -13,6 +13,9 @@ public interface IReportService {
 //	public EntityResult reportPruebaQuery(Map<String, Object> keyMap, List<String> attrList)
 //			throws OntimizeJEERuntimeException;
 	public ResponseEntity test(Map<String, Object> filter, List<String> columns) throws OntimizeJEERuntimeException;
-	public ResponseEntity testChar(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
+//	public ResponseEntity testChar(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
+	ResponseEntity incomeVsExpensesChart(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException;
+	public ResponseEntity receipt(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
 
 }
