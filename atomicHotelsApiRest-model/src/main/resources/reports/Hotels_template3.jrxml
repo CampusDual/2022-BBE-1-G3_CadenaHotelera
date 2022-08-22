@@ -21,7 +21,7 @@
 		<band height="227" splitType="Stretch">
 			<pie3DChart>
 				<chart evaluationTime="Report">
-					<reportElement x="210" y="0" width="380" height="200" uuid="33c40e9c-3cd2-4d8e-b34c-74582fe5953a"/>
+					<reportElement x="220" y="-40" width="380" height="200" uuid="33c40e9c-3cd2-4d8e-b34c-74582fe5953a"/>
 					<chartTitle/>
 					<chartSubtitle/>
 					<chartLegend/>

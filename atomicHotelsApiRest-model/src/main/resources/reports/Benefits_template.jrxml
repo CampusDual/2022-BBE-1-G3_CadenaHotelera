@@ -5,9 +5,10 @@
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
+	<field name="serie" class="java.lang.String"/>
+	<field name="htl_name" class="java.lang.String"/>
 	<field name="htl_id" class="java.lang.Integer"/>
-	<field name="total_income" class="java.math.BigDecimal"/>
-	<field name="total_expenses" class="java.math.BigDecimal"/>
+	<field name="value" class="java.math.BigDecimal"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -24,7 +25,7 @@
 		<band height="309" splitType="Stretch">
 			<barChart>
 				<chart evaluationTime="Report">
-					<reportElement x="100" y="-40" width="610" height="337" uuid="2ae5fed8-0e58-43e4-a388-fda99db9a0c9"/>
+					<reportElement x="100" y="-40" width="610" height="337" uuid="73722ba3-8f66-495c-b7a0-f9eda43258f0"/>
 					<chartTitle/>
 					<chartSubtitle/>
 					<chartLegend/>
@@ -32,10 +33,9 @@
 				<categoryDataset>
 					<dataset resetType="Report"/>
 					<categorySeries>
-						<seriesExpression><![CDATA["EXPENSES"]]></seriesExpression>
+						<seriesExpression><![CDATA[$F{serie}]]></seriesExpression>
 						<categoryExpression><![CDATA[$F{htl_id}.toString()]]></categoryExpression>
-						<valueExpression><![CDATA[$F{total_expenses}]]></valueExpression>
-						<labelExpression><![CDATA[$F{total_expenses}.toPlainString()]]></labelExpression>
+						<valueExpression><![CDATA[$F{value}]]></valueExpression>
 					</categorySeries>
 				</categoryDataset>
 				<barPlot isShowTickMarks="false">

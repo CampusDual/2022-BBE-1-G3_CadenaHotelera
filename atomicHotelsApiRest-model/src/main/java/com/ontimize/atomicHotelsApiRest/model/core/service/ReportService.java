@@ -176,8 +176,26 @@ public class ReportService implements IReportService {
 //			}
 
 			//			JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(a);
-			System.err.println(consulta);			
-			JRTableModelDataSource dataSource = new JRTableModelDataSource(EntityResultUtils.createTableModel(consulta));
+			EntityResult consultaCategorizada = new EntityResultMapImpl();
+			for(int i = 0; i <consulta.calculateRecordNumber();i++) {
+				HashMap<String,Object> auxMap = new HashMap<>();
+				auxMap.put("htl_id", consulta.getRecordValues(i).get("htl_id"));
+				auxMap.put("htl_name", consulta.getRecordValues(i).get("htl_name"));
+				
+				auxMap.put("serie", "total_income");
+				auxMap.put("value", consulta.getRecordValues(i).get("total_income"));
+				
+				consultaCategorizada.addRecord(auxMap);
+				
+				auxMap.put("serie", "total_expenses");
+				auxMap.put("value", consulta.getRecordValues(i).get("total_expenses"));
+				
+				consultaCategorizada.addRecord(auxMap);
+			
+			}
+			
+			System.err.println(consultaCategorizada);
+			JRTableModelDataSource dataSource = new JRTableModelDataSource(EntityResultUtils.createTableModel(consultaCategorizada));
 //			JasperReport jasperReport = JasperCompileManager.compileReport(HOTEL_TEMPLATE_03_PATH);
 			JasperReport jasperReport = JasperCompileManager.compileReport(CHAR_PATH);
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap<String,Object>(), dataSource);
