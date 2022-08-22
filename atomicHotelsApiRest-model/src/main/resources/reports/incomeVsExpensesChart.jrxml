@@ -42,7 +42,7 @@
 				<textElement>
 					<font fontName="Times New Roman"/>
 				</textElement>
-				<text><![CDATA[Gastos vs beneficios por hotel.]]></text>
+				<text><![CDATA[Gastos vs beneficios]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="172" y="94" width="383" height="42" uuid="f0bfb1ea-a85a-47cd-a1a4-43f22b45e80f"/>
