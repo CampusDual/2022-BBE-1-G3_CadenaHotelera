@@ -14,7 +14,8 @@
 	</style>
 	<parameter name="hotels_title" class="java.lang.String"/>
 	<parameter name="hotels_subtitle" class="java.lang.String"/>
-	<parameter name="foto" class="java.lang.String"/>
+	<parameter name="foto" class="java.io.InputStream"/>
+	<parameter name="foto2" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -53,7 +54,7 @@
 					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 				</textField>
 			</frame>
-			<image onErrorType="Blank">
+			<image>
 				<reportElement x="10" y="10" width="50" height="50" uuid="bcee4db9-e2e5-4e8d-82a2-fff67da781b6"/>
 				<imageExpression><![CDATA[$P{foto}]]></imageExpression>
 			</image>

@@ -760,6 +760,7 @@ public class StatisticsService implements IStatisticsService {
 			EntityResult hoteles = hotelService.hotelQuery(new HashMap<String, Object>(), idHoteles);
 
 			Map<String, Object> finalResult = new HashMap<String, Object>();
+			resultado = new EntityResultMapImpl();
 
 			for (int j = 0; j < hoteles.calculateRecordNumber(); j++) {
 				int h = (int) hoteles.getRecordValues(j).get(HotelDao.ATTR_ID);
@@ -814,7 +815,6 @@ public class StatisticsService implements IStatisticsService {
 						put("benefits", benefits);
 					}
 				};
-
 				resultado.addRecord(finalResult);
 			}
 

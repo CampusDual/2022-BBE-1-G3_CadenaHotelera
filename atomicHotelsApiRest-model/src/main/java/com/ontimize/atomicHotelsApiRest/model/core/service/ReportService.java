@@ -1,5 +1,6 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -68,6 +69,7 @@ public class ReportService implements IReportService {
 	
 	private final String HOTEL_TEMPLATE_01_PATH = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Hotels_template.jrxml";
 	private final String HOTEL_TEMPLATE_02_PATH = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Hotels_template2.jrxml";
+	private final String HOTEL_TEMPLATE_03_PATH = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Hotels_template3.jrxml";
 	private final String PRUEBA_PATH = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\prueba.jrxml";
 	private final String CHAR_PATH = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Benefits_template.jrxml";
 
@@ -101,7 +103,7 @@ public class ReportService implements IReportService {
 				a.add(h);
 			}
 
-			String fotoPath = "C:\\Users\\Estefania\\Desktop\\workspace-vamonosAtomos\\BBE-2022-G3\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\images\\atom.png";
+			String fotoPath = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\images\\atom.png";
 
 			Files.readAllBytes(Paths.get(fotoPath));
 //			
@@ -109,13 +111,15 @@ public class ReportService implements IReportService {
 				{
 					put("hotels_title", "HOTELES ATÓMICOS");
 					put("hotels_subtitle", "Grupo Cadena de Hoteles Atómicos");
-					put("foto",Files.readAllBytes(Paths.get(fotoPath)));
+					put("foto",new ByteArrayInputStream(Files.readAllBytes(Paths.get(fotoPath))));
+					put("foto2",Paths.get(fotoPath));
+//					put("foto",Files.readAllBytes(Paths.get(fotoPath)));
 				}
 			};
 			
 //			JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(a);
             
-			JRTableModelDataSource dataSource = new JRTableModelDataSource(EntityResultUtils.createTableModel(consulta));
+			JRTableModelDataSource dataSource = new JRTableModelDataSource(EntityResultUtils.createTableModel(consulta));			
 			JasperReport jasperReport = JasperCompileManager.compileReport(HOTEL_TEMPLATE_01_PATH);
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
@@ -160,20 +164,21 @@ public class ReportService implements IReportService {
 	
 			consulta = statisticsService.incomeVsExpensesByHotelQuery(keyMap, new ArrayList<String>());
 
-			List<BenefitsBean> a = new ArrayList<BenefitsBean>();
+//			List<BenefitsBean> a = new ArrayList<BenefitsBean>();
 
-			for (int i = 0; i < consulta.calculateRecordNumber(); i++) {
-				BigDecimal expenses = (BigDecimal) consulta.getRecordValues(i).get("total_expenses");
-				BigDecimal income = (BigDecimal) consulta.getRecordValues(i).get("total_income");
-				String hotel = (String) consulta.getRecordValues(i).get(HotelDao.ATTR_NAME);
-
-				BenefitsBean h = new BenefitsBean(hotel, expenses,income);
-				a.add(h);
-			}
+//			for (int i = 0; i < consulta.calculateRecordNumber(); i++) {
+//				BigDecimal expenses = (BigDecimal) consulta.getRecordValues(i).get("total_expenses");
+//				BigDecimal income = (BigDecimal) consulta.getRecordValues(i).get("total_income");
+//				String hotel = (String) consulta.getRecordValues(i).get(HotelDao.ATTR_NAME);
+//
+//				BenefitsBean h = new BenefitsBean(hotel, expenses,income);
+//				a.add(h);
+//			}
 
 			//			JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(a);
-			
+			System.err.println(consulta);			
 			JRTableModelDataSource dataSource = new JRTableModelDataSource(EntityResultUtils.createTableModel(consulta));
+//			JasperReport jasperReport = JasperCompileManager.compileReport(HOTEL_TEMPLATE_03_PATH);
 			JasperReport jasperReport = JasperCompileManager.compileReport(CHAR_PATH);
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap<String,Object>(), dataSource);
 

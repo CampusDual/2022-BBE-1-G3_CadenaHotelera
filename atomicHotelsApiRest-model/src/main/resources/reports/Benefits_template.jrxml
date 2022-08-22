@@ -12,19 +12,19 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="79" splitType="Stretch"/>
+		<band height="24" splitType="Stretch"/>
 	</title>
 	<pageHeader>
 		<band height="35" splitType="Stretch"/>
 	</pageHeader>
-	<columnHeader>
-		<band height="61" splitType="Stretch"/>
-	</columnHeader>
 	<detail>
-		<band height="337" splitType="Stretch">
+		<band height="19" splitType="Stretch"/>
+	</detail>
+	<summary>
+		<band height="309" splitType="Stretch">
 			<barChart>
 				<chart evaluationTime="Report">
-					<reportElement x="60" y="50" width="610" height="287" uuid="2f6833c8-771a-4040-811f-f09cc6d0f55a"/>
+					<reportElement x="100" y="-40" width="610" height="337" uuid="2ae5fed8-0e58-43e4-a388-fda99db9a0c9"/>
 					<chartTitle/>
 					<chartSubtitle/>
 					<chartLegend/>
@@ -50,14 +50,5 @@
 				</barPlot>
 			</barChart>
 		</band>
-	</detail>
-	<columnFooter>
-		<band height="45" splitType="Stretch"/>
-	</columnFooter>
-	<pageFooter>
-		<band height="54" splitType="Stretch"/>
-	</pageFooter>
-	<summary>
-		<band height="42" splitType="Stretch"/>
 	</summary>
 </jasperReport>
