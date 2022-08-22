@@ -23,11 +23,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
+
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IReportService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BillDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultUtils;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.TypeCodes.type;
@@ -46,6 +48,7 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.data.JRTableModelDataSource;
 
 @Service("ReportService")
 @Lazy
@@ -64,6 +67,7 @@ public class ReportService implements IReportService {
 	ControlFields cf;
 	
 	private final String HOTEL_TEMPLATE_01_PATH = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Hotels_template.jrxml";
+	private final String HOTEL_TEMPLATE_02_PATH = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Hotels_template2.jrxml";
 	private final String PRUEBA_PATH = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\prueba.jrxml";
 	private final String CHAR_PATH = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Benefits_template.jrxml";
 
@@ -97,11 +101,10 @@ public class ReportService implements IReportService {
 				a.add(h);
 			}
 
-
-			String fotoPath = "C:\\Users\\Estefania\\Desktop\\workspace-vamonosAtomos\\BBE-2022-G3\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\images";
+			String fotoPath = "C:\\Users\\Estefania\\Desktop\\workspace-vamonosAtomos\\BBE-2022-G3\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\images\\atom.png";
 
 			Files.readAllBytes(Paths.get(fotoPath));
-			
+//			
 			Map<String, Object> parameters = new HashMap<String, Object>() {
 				{
 					put("hotels_title", "HOTELES ATÓMICOS");
@@ -109,9 +112,11 @@ public class ReportService implements IReportService {
 					put("foto",Files.readAllBytes(Paths.get(fotoPath)));
 				}
 			};
-
-			JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(a);
-            JasperReport jasperReport = JasperCompileManager.compileReport(HOTEL_TEMPLATE_01_PATH);
+			
+//			JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(a);
+            
+			JRTableModelDataSource dataSource = new JRTableModelDataSource(EntityResultUtils.createTableModel(consulta));
+			JasperReport jasperReport = JasperCompileManager.compileReport(HOTEL_TEMPLATE_01_PATH);
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
 			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
@@ -166,8 +171,9 @@ public class ReportService implements IReportService {
 				a.add(h);
 			}
 
-
-			JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(a);
+			//			JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(a);
+			
+			JRTableModelDataSource dataSource = new JRTableModelDataSource(EntityResultUtils.createTableModel(consulta));
 			JasperReport jasperReport = JasperCompileManager.compileReport(CHAR_PATH);
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap<String,Object>(), dataSource);
 

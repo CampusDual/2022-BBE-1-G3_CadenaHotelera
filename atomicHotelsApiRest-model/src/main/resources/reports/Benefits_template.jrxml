@@ -5,9 +5,9 @@
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="HOTEL" class="java.lang.String"/>
-	<field name="INCOME" class="java.math.BigDecimal"/>
-	<field name="EXPENSES" class="java.math.BigDecimal"/>
+	<field name="htl_name" class="java.lang.String"/>
+	<field name="total_income" class="java.math.BigDecimal"/>
+	<field name="total_expenses" class="java.math.BigDecimal"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -24,16 +24,16 @@
 		<band height="302" splitType="Stretch">
 			<pieChart>
 				<chart evaluationTime="Report">
-					<reportElement x="50" y="-96" width="670" height="398" uuid="1a1a4a99-bba6-4f02-9709-2e930473bf3d"/>
+					<reportElement x="50" y="-96" width="670" height="398" uuid="13d4e32f-194b-42e8-81d1-5efbd0ab89cd"/>
 					<chartTitle/>
 					<chartSubtitle/>
 					<chartLegend/>
 				</chart>
 				<pieDataset>
 					<dataset resetType="Report"/>
-					<keyExpression><![CDATA[$F{HOTEL}]]></keyExpression>
-					<valueExpression><![CDATA[$F{EXPENSES}]]></valueExpression>
-					<labelExpression><![CDATA[$F{HOTEL}]]></labelExpression>
+					<keyExpression><![CDATA[$F{htl_name}]]></keyExpression>
+					<valueExpression><![CDATA[$F{total_expenses}]]></valueExpression>
+					<labelExpression><![CDATA[$F{htl_name}]]></labelExpression>
 				</pieDataset>
 				<piePlot>
 					<plot/>

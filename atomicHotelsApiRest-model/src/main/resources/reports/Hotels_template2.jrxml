@@ -17,9 +17,9 @@
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="ID" class="java.lang.Integer"/>
-	<field name="NAME" class="java.lang.String"/>
-	<field name="CITY" class="java.lang.String"/>
+	<field name="htl_id" class="java.lang.Integer"/>
+	<field name="htl_name" class="java.lang.String"/>
+	<field name="htl_city" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -85,19 +85,19 @@
 				<reportElement x="70" y="0" width="120" height="28" uuid="46e7defa-0aa6-49ef-be5d-781ed1aaafa7">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4a9c9865-5e20-45c4-981a-686d2b21408a"/>
 				</reportElement>
-				<textFieldExpression><![CDATA[$F{ID}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{htl_id}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="349" y="9" width="100" height="30" uuid="3eedbca3-1464-4a71-a432-917208b1329d">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2f70f2d1-3567-4c52-b2f2-e15b25e6c9eb"/>
 				</reportElement>
-				<textFieldExpression><![CDATA[$F{NAME}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{htl_name}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="610" y="10" width="100" height="30" uuid="15995bb7-79e2-453e-835a-15bc7380c831">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f8596a4a-dd2a-4775-9b98-59ccfabc6bec"/>
 				</reportElement>
-				<textFieldExpression><![CDATA[$F{CITY}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{htl_city}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
