@@ -29,6 +29,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IReportService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BillDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.ReceiptDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultUtils;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
@@ -61,6 +62,9 @@ public class ReportService implements IReportService {
 	
 	@Autowired
 	private StatisticsService statisticsService;
+	
+	@Autowired
+	private ReceiptService receiptService;
 
 	@Autowired
 	private DefaultOntimizeDaoHelper daoHelper;
@@ -177,6 +181,61 @@ public class ReportService implements IReportService {
 //			}
 
 			//			JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(a);
+			EntityResult consultaCategorizada = new EntityResultMapImpl();
+				for(int i = 0; i <consulta.calculateRecordNumber();i++) {
+				HashMap<String,Object> auxMap = new HashMap<>();
+				auxMap.put("htl_id", consulta.getRecordValues(i).get("htl_id"));
+				auxMap.put("htl_name", consulta.getRecordValues(i).get("htl_name"));
+				
+				auxMap.put("serie", "total_income");
+				auxMap.put("value", consulta.getRecordValues(i).get("total_income"));
+				
+				consultaCategorizada.addRecord(auxMap);
+				
+				auxMap.put("serie", "total_expenses");
+				auxMap.put("value", consulta.getRecordValues(i).get("total_expenses"));
+				
+				consultaCategorizada.addRecord(auxMap);
+			
+			}
+			
+			System.err.println(consultaCategorizada);
+			JRTableModelDataSource dataSource = new JRTableModelDataSource(EntityResultUtils.createTableModel(consultaCategorizada));
+			JasperReport jasperReport = JasperCompileManager.compileReport(INCOME_VS_EXPENSES_CHART);
+			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap<String,Object>(), dataSource);
+			jasperPrint.setOrientation(OrientationEnum.LANDSCAPE);
+			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
+
+		} catch (ValidateException e) {
+			e.printStackTrace();
+			resultado = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = null;
+		}
+		return resultado;
+	}
+	
+	@Override //TODO hacer recibos
+	public ResponseEntity receipt(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException {
+		EntityResult consulta = new EntityResultMapImpl();
+		ResponseEntity resultado;
+		try {
+			
+			List<String> required = new ArrayList<String>() {
+				{
+					add(ReceiptDao.ATTR_ID);
+				}
+			};
+
+			cf.reset();
+			cf.addBasics(ReceiptDao.fields);
+			cf.setRequired(required);
+			cf.setOptional(false);
+			cf.validate(keyMap);
+	
+			consulta = receiptService.completeReceiptQuery(keyMap, new ArrayList<String>());
+
 			EntityResult consultaCategorizada = new EntityResultMapImpl();
 				for(int i = 0; i <consulta.calculateRecordNumber();i++) {
 				HashMap<String,Object> auxMap = new HashMap<>();
