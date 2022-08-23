@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IEmployeePhotoService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.EmployeeDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.EmployeePhotoDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.UserRoleDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
@@ -42,8 +43,6 @@ import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 
 public class EmployeePhotoService implements IEmployeePhotoService {
 
-	
-	
 	@Autowired
 	private EmployeePhotoDao dao;
 
@@ -53,8 +52,9 @@ public class EmployeePhotoService implements IEmployeePhotoService {
 	private DefaultOntimizeDaoHelper daoHelper;
 	@Autowired
 	ControlFields cf;
+
 	@Override
-//	@Secured({ PermissionsProviderSecured.SECURED })
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult employeePhotoInsert(Map<String, Object> data) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 
@@ -71,39 +71,41 @@ public class EmployeePhotoService implements IEmployeePhotoService {
 			};
 			cf.setRequired(required);
 			cf.validate(data);
-			Map<String, Object> consultaKeyMap = new HashMap<>() 
-			{
-			{
-				put(EmployeeDao.ATTR_IDEN_DOC,data.get(dao.ATTR_EMPLOYEE_DNI));
-			}
+			Map<String, Object> consultaKeyMap = new HashMap<>() {
+				{
+					put(EmployeeDao.ATTR_IDEN_DOC, data.get(dao.ATTR_EMPLOYEE_DNI));
+				}
 			};
-			
-			if(es.employeeQuery(consultaKeyMap, List.of(EmployeeDao.ATTR_IDEN_DOC)).calculateRecordNumber()==0) {
-				resultado.setMessage("El documento de indentidad " +data.get(dao.ATTR_EMPLOYEE_DNI) + " no existe en la base de datos empleados.");
-			}else {
-			if (Files.exists(p)) {
-		    	data.put(dao.ATTR_FILE, Files.readAllBytes(p));
-				resultado = daoHelper.insert(dao, data);
-				resultado.setMessage("El archivo" + p.toAbsolutePath().toString() + " cargado correctamente para el DNI "+data.get(dao.ATTR_EMPLOYEE_DNI)+"." );
+
+			if (es.employeeQuery(consultaKeyMap, List.of(EmployeeDao.ATTR_IDEN_DOC)).calculateRecordNumber() == 0) {
+				resultado.setMessage("El documento de indentidad " + data.get(dao.ATTR_EMPLOYEE_DNI)
+						+ " no existe en la base de datos empleados.");
 			} else {
-				resultado.setMessage("El archivo" + p.toAbsolutePath().toString() + " no existe. ");
-			}
+				if (Files.exists(p)) {
+					data.put(dao.ATTR_FILE, Files.readAllBytes(p));
+					resultado = daoHelper.insert(dao, data);
+					resultado.setMessage("El archivo" + p.toAbsolutePath().toString()
+							+ " cargado correctamente para el DNI " + data.get(dao.ATTR_EMPLOYEE_DNI) + ".");
+				} else {
+					resultado.setMessage("El archivo" + p.toAbsolutePath().toString() + " no existe. ");
+				}
 			}
 		} catch (ValidateException e) {
 			e.getMessage();
 			resultado = new EntityResultWrong(e.getMessage());
-			
-		}catch (DuplicateKeyException e) {
-			resultado.setMessage("El Dni introducido "+data.get(dao.ATTR_EMPLOYEE_DNI)+" ya tiene foto asociada");
+
+		} catch (DuplicateKeyException e) {
+			resultado.setMessage("El Dni introducido " + data.get(dao.ATTR_EMPLOYEE_DNI) + " ya tiene foto asociada");
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}
-		
+
 		return resultado;
 	}
+
 	@Override
-//	@Secured({ PermissionsProviderSecured.SECURED })
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public ResponseEntity getPicture(Map<String, Object> filter, List<String> columns) {
 		EntityResult resultado = new EntityResultWrong();
 
@@ -146,64 +148,67 @@ public class EmployeePhotoService implements IEmployeePhotoService {
 
 	}
 
-
 	@Override
-//	@Secured({ PermissionsProviderSecured.SECURED })
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult employeePhotoDelete(Map<String, Object> filter) throws OntimizeJEERuntimeException {
-		
-	EntityResult resultado= new EntityResultWrong();
-	try {
-		cf.reset();
-	cf.addBasics(dao.fields);	
-	cf.setRequired(List.of(dao.ATTR_EMPLOYEE_DNI));
-	cf.validate(filter);
-	Map<String,Object> consulta=new HashMap<>();
-	consulta.put(dao.ATTR_EMPLOYEE_DNI,filter.get(dao.ATTR_EMPLOYEE_DNI));
-	
-	if(daoHelper.query(dao, consulta,List.of(dao.ATTR_EMPLOYEE_DNI)).calculateRecordNumber()>0) {
-	resultado=daoHelper.delete(dao, filter);
-	resultado.setMessage("Foto del DNI : "+filter.get(dao.ATTR_EMPLOYEE_DNI)+". borrada");
-	}else {
-		resultado=new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
-	}
-	} catch (ValidateException e) {
-		e.getMessage();
-		resultado = new EntityResultWrong(e.getMessage());
-	} catch (Exception e) {
-		e.printStackTrace();
-		resultado = new EntityResultWrong(ErrorMessage.ERROR);
-	}
-	
-	return resultado;
-	
-		
-	}
 
+		EntityResult resultado = new EntityResultWrong();
+		try {
+			cf.reset();
+			cf.addBasics(dao.fields);
+			cf.setRequired(List.of(dao.ATTR_EMPLOYEE_DNI));
+			cf.validate(filter);
+			Map<String, Object> consulta = new HashMap<>();
+			consulta.put(dao.ATTR_EMPLOYEE_DNI, filter.get(dao.ATTR_EMPLOYEE_DNI));
 
+			if (employeePhotoQuery(consulta, List.of(dao.ATTR_EMPLOYEE_DNI)).calculateRecordNumber() > 0) {
+				resultado = daoHelper.delete(dao, filter);
+				resultado.setMessage("Foto del DNI : " + filter.get(dao.ATTR_EMPLOYEE_DNI) + ". borrada");
+			} else {
+				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
+			}
+		} catch (ValidateException e) {
+			e.getMessage();
+			resultado = new EntityResultWrong(e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.ERROR);
+		}
+
+		return resultado;
+
+	}
 
 	@Override
-	//@Secured({ PermissionsProviderSecured.SECURED })
-	public EntityResult employeePhotoQuery(Map<String, Object>filter , List<String> columns) throws OntimizeJEERuntimeException {
-		 EntityResult resultado=new EntityResultWrong();
-		 
-		 try {
-		 cf.reset();
-		 cf.addBasics(dao.fields);
-		 cf.setRequired(List.of(dao.ATTR_EMPLOYEE_DNI));
-		 cf.validate(filter);
-		 cf.validate(columns);
-		 resultado=daoHelper.query(dao, filter, columns);
-		 } catch (ValidateException e) {
-				e.getMessage();
-				resultado = new EntityResultWrong(e.getMessage());
+	@Secured({ PermissionsProviderSecured.SECURED })
+	public EntityResult employeePhotoQuery(Map<String, Object> filter, List<String> columns)
+			throws OntimizeJEERuntimeException {
+		EntityResult resultado = new EntityResultWrong();
 
-			} catch (Exception e) {
-				e.printStackTrace();
-				resultado = new EntityResultWrong(ErrorMessage.ERROR);
-			}
-		 
-		 return resultado;
-		
+		try {
+			cf.reset();
+			
+			cf.setCPHtlColum(EmployeeDao.ATTR_HOTEL);
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER);
+			
+			cf.addBasics(dao.fields);
+//			cf.setRequired(List.of(dao.ATTR_EMPLOYEE_DNI));
+			cf.validate(filter);
+			
+			
+			cf.validate(columns);
+			resultado = daoHelper.query(dao, filter, columns);
+		} catch (ValidateException e) {
+			e.getMessage();
+			resultado = new EntityResultWrong(e.getMessage());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.ERROR);
+		}
+
+		return resultado;
+
 	}
 
 }
