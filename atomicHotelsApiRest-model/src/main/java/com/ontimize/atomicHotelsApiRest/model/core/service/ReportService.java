@@ -85,6 +85,7 @@ public class ReportService implements IReportService {
 	private final String PRUEBA_PATH = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\prueba.jrxml";
 	private final String INCOME_VS_EXPENSES_CHART = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\incomeVsExpensesChart.jrxml";
 	private final String RECEIPT = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Receipt_template.jrxml";
+	private final String OCCUPANCY_CHART = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\occupancyChart.jrxml";
 
 	@Override
 	public ResponseEntity test(Map<String, Object> keyMap, List<String> attrList) {
@@ -274,7 +275,7 @@ public class ReportService implements IReportService {
 		return resultado;
 	}
 
-	@Override // TODO hacer recibos
+	@Override 
 	public ResponseEntity receipt(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 
@@ -385,6 +386,75 @@ public class ReportService implements IReportService {
 		header.setContentDispositionFormData(pdfName, pdfName);
 		header.setCacheControl("must-revalidate, post-check=0, pre-check=0");
 		return new ResponseEntity(bytesPdf, header, HttpStatus.OK);
+	}
+	
+	@Override
+	public ResponseEntity occupancyChart(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException {
+		EntityResult consulta = new EntityResultMapImpl();
+		ResponseEntity resultado;
+		try {
+
+			List<String> required = new ArrayList<String>() {
+				{
+					add(HotelDao.ATTR_FROM);
+					add(HotelDao.ATTR_TO);
+				}
+			};
+
+			Map<String, type> fields = new HashMap<String, type>() {
+				{
+					put(HotelDao.ATTR_ID, type.INTEGER);
+					put(HotelDao.ATTR_FROM, type.DATE);
+					put(HotelDao.ATTR_TO, type.DATE);
+				}
+			};
+
+			cf.reset();
+			cf.addBasics(fields);
+			cf.setRequired(required);
+			cf.validate(keyMap);
+
+			consulta = statisticsService.hotelOccupancyPercentageQuery(keyMap, new ArrayList<String>());
+
+			EntityResult consultaCategorizada = new EntityResultMapImpl();
+			for (int i = 0; i < consulta.calculateRecordNumber(); i++) {
+				HashMap<String, Object> auxMap = new HashMap<>();
+				auxMap.put("htl_id", consulta.getRecordValues(i).get("htl_id"));
+				auxMap.put("htl_name", consulta.getRecordValues(i).get("htl_name"));
+
+				auxMap.put("serie", "capacity_in_date_range");
+				auxMap.put("value", consulta.getRecordValues(i).get("capacity_in_date_range"));
+
+				consultaCategorizada.addRecord(auxMap);
+
+				auxMap.put("serie", "occupancy_in_date_range");
+				auxMap.put("value", consulta.getRecordValues(i).get("occupancy_in_date_range"));
+
+				consultaCategorizada.addRecord(auxMap);
+
+			}
+
+			Map<String,Object> fechas = new HashMap<String,Object>(){{
+				put("from",keyMap.get("from"));
+				put("to",keyMap.get("to"));
+			}};
+			
+			JRTableModelDataSource dataSource = new JRTableModelDataSource(
+					EntityResultUtils.createTableModel(consultaCategorizada));
+			JasperReport jasperReport = JasperCompileManager.compileReport(OCCUPANCY_CHART);
+			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, ReportsConfig.getBasicParametersPutAll(fechas),
+					dataSource);
+			jasperPrint.setOrientation(OrientationEnum.LANDSCAPE);
+			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
+
+		} catch (ValidateException e) {			
+			resultado = ResponseEntity.ok(new EntityResultWrong(e.getMessage()));
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = ResponseEntity.ok(new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR));
+		}
+		return resultado;
 	}
 
 //	@Override

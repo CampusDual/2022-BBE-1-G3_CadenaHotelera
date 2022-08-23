@@ -18,5 +18,7 @@ public interface IReportService {
 			throws OntimizeJEERuntimeException;
 	public ResponseEntity receipt(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
 	ResponseEntity plantilla(Map<String, Object> keyMap, List<String> attrList);
+	public ResponseEntity occupancyChart(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException;
 
 }
