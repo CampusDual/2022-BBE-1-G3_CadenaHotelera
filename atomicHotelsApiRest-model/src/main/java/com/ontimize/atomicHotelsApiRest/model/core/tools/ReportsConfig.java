@@ -32,6 +32,11 @@ public abstract class ReportsConfig {
 		return result;
 	}
 
+	public static Map<String, Object> getBasicParametersPutAll(Map<String, Object> extra){
+		Map<String, Object> result = getBasicParameters();
+		result.putAll(extra);
+		return result;
+	}
 	private static ByteArrayInputStream getImage(String path) {		
 		try {
 			return new ByteArrayInputStream(Files.readAllBytes(Paths.get(path)));
