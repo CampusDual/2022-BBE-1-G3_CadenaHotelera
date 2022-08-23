@@ -119,6 +119,7 @@ public class ReceiptService implements IReceiptService {
 			lista.add(dao.ATTR_TOTAL_ROOM);
 			lista.add(dao.ATTR_TOTAL_SERVICES);
 			lista.add(dao.ATTR_TOTAL);
+			lista.add(dao.ATTR_ID);
 
 			EntityResult reciboSimple = this.daoHelper.query(this.dao, keyMap, lista);
 

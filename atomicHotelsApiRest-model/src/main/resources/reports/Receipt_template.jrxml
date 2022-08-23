@@ -17,7 +17,9 @@
 	<parameter name="logo_02" class="java.io.InputStream"/>
 	<parameter name="icon" class="java.io.InputStream"/>
 	<parameter name="rcp_days" class="java.lang.Integer"/>
-	<parameter name="rcp_id" class="java.lang.Integer"/>
+	<parameter name="rcp_id" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[$P{rcp_id}]]></defaultValueExpression>
+	</parameter>
 	<parameter name="rcp_date" class="java.sql.Timestamp"/>
 	<parameter name="rcp_total_services" class="java.math.BigDecimal"/>
 	<parameter name="rcp_total" class="java.math.BigDecimal"/>
@@ -166,7 +168,7 @@
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<frame>
 				<reportElement style="Row" mode="Opaque" x="0" y="0" width="555" height="15" uuid="a98495d8-3c8d-4fa0-81f5-30c3efc2f766"/>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="8" y="3" width="112" height="28" uuid="c245ea9e-f4ea-4a67-a4ca-dc61f86256f7">
 						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="aee27727-9763-44f5-83c9-3ae55bb77272"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -175,7 +177,7 @@
 					<textElement verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{sxt_name}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="130" y="3" width="100" height="28" uuid="c77859f6-ea9d-41bc-b39b-12d101be0202">
 						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6b955120-716d-49d4-a947-306ac40666b0"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -184,7 +186,7 @@
 					<textElement verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{sxt_description}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="327" y="3" width="100" height="28" uuid="34a0fcb1-c5a9-4bde-88a8-30aefd6199f2">
 						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3f111d76-552d-4e79-9a96-573bfbd1e83b"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -193,7 +195,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{bsx_precio}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="260" y="3" width="60" height="28" uuid="a2fe630b-5cea-4d23-99db-0b40659eccfa">
 						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="815228a8-4637-4d35-a969-d3f99eeb6e8a"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -202,7 +204,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{bsx_units}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="447" y="3" width="83" height="28" uuid="7d16a9d0-8beb-41b9-9ec0-028b340395f4">
 						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7714c06b-0585-4466-9b9f-536dde731fd3"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
