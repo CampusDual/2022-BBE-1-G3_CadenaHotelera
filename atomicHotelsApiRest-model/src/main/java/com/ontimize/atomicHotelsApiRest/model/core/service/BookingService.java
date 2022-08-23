@@ -513,7 +513,7 @@ public class BookingService implements IBookingService {
 	 * @throws OntimizeJEERuntimeException
 	 */
 //	@Override
-	@Secured({ PermissionsProviderSecured.SECURED })
+
 	public EntityResult bookingDaysUnitaryRoomPriceQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 

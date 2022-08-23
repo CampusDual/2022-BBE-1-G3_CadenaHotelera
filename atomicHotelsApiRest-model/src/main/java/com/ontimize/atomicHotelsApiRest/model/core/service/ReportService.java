@@ -28,8 +28,11 @@ import org.springframework.stereotype.Service;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IReportService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BillDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.ReceiptDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomTypeDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultUtils;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
@@ -65,6 +68,9 @@ public class ReportService implements IReportService {
 	private StatisticsService statisticsService;
 	
 	@Autowired
+	private BookingService bookingService;
+	
+	@Autowired
 	private ReceiptService receiptService;
 
 	@Autowired
@@ -80,7 +86,6 @@ public class ReportService implements IReportService {
 	private final String PRUEBA_PATH = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\prueba.jrxml";
 	private final String INCOME_VS_EXPENSES_CHART = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\incomeVsExpensesChart.jrxml";
 	private final String RECEIPT = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Receipt_template.jrxml";
-	private final String EXTRA_SERVICES = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Extra_services_template.jrxml";
 
 	@Override
 	public ResponseEntity test(Map<String, Object> keyMap, List<String> attrList) {
@@ -270,7 +275,11 @@ public class ReportService implements IReportService {
 	
 	@Override //TODO hacer recibos
 	public ResponseEntity receipt(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException {
-		EntityResult consulta = new EntityResultMapImpl();
+		
+		EntityResult consultaRecibo = new EntityResultMapImpl();
+		EntityResult consultaReserva = new EntityResultMapImpl();
+		EntityResult consultaHabitacion = new EntityResultMapImpl();
+		
 		ResponseEntity resultado;
 		try {
 			
@@ -286,67 +295,50 @@ public class ReportService implements IReportService {
 			cf.setOptional(false);
 			cf.validate(keyMap);
 	
-			consulta = receiptService.completeReceiptQuery(keyMap, new ArrayList<String>());
+			consultaRecibo = receiptService.completeReceiptQuery(keyMap, new ArrayList<String>());
 			
-			EntityResult consultaFinal =consulta;
-
-//			EntityResult consultaCategorizada = new EntityResultMapImpl();
-//				for(int i = 0; i <consulta.calculateRecordNumber();i++) {
-//				HashMap<String,Object> auxMap = new HashMap<>();
-//				auxMap.put("htl_id", consulta.getRecordValues(i).get("htl_id"));
-//				auxMap.put("htl_name", consulta.getRecordValues(i).get("htl_name"));
-//				
-//				auxMap.put("serie", "total_income");
-//				auxMap.put("value", consulta.getRecordValues(i).get("total_income"));
-//				
-//				consultaCategorizada.addRecord(auxMap);
-//				
-//				auxMap.put("serie", "total_expenses");
-//				auxMap.put("value", consulta.getRecordValues(i).get("total_expenses"));
-//				
-//				consultaCategorizada.addRecord(auxMap);
-//			
-//			}
+			EntityResult consultaReciboFinal =consultaRecibo;
 			
-//			Map<String,Object> consultaServicios= new HashMap<String,Object>();
+			Map<String,Object> idBooking = new HashMap<String,Object>(){{
+				put(BookingDao.ATTR_ID,consultaReciboFinal.getRecordValues(0).get(ReceiptDao.ATTR_BOOKING_ID));
+				}};
+			
+				consultaReserva = bookingService.bookingCompleteInfoQuery(idBooking,new ArrayList<String>());
+				
+				consultaHabitacion = bookingService.bookingDaysUnitaryRoomPriceQuery(idBooking, new ArrayList<String>());
+				
+				EntityResult consultaReservaFinal =consultaReserva;
+				EntityResult consultaHabitacionFinal =consultaHabitacion;
 			
 			EntityResult servciosExtra = new EntityResultMapImpl();
-			List<Object> lista = (List<Object>)consulta.getRecordValues(0).get("extra_services");
+			List<Object> lista = (List<Object>)consultaRecibo.getRecordValues(0).get("extra_services");
 			for(Object a:lista) {
 				servciosExtra.addRecord((HashMap<String,Object>)a);
 			}
-			
-//			List<Object> listaServciosExtra = new ArrayList<Object>();
-//			for (int i = 0; i < ((List<Object>)consulta.getRecordValues(0).get("extra_services")).size(); i++) {
-//				Object h = ((List<Object>)consulta.getRecordValues(0).get("extra_services")).get(i);
-//				listaServciosExtra.add(h);
-//			}
-			
-//			consultaServicios.put("extra_services", listaServciosExtra);
-//			
-//			
-//			servciosExtra.addRecord(consultaServicios);
-			
-//			JRTableModelDataSource dataSourceServices = new JRTableModelDataSource(EntityResultUtils.createTableModel(servciosExtra));
-//			JasperReport jasperReportServices = JasperCompileManager.compileReport(EXTRA_SERVICES);
-//     		JasperPrint jasperPrintServices= JasperFillManager.fillReport(jasperReportServices, new HashMap<String,Object>(), dataSourceServices);
-////			
-//			Map<String,Object> subReport = new HashMap<String,Object>(){{
-//				put("subReport",jasperPrintServices);
-//			}};
+
 			
 			Map<String,Object> parameters = new HashMap<String,Object>(){{
-				put("rcp_date",consultaFinal.getRecordValues(0).get("rcp_date"));
-				put("rcp_bkg_id",consultaFinal.getRecordValues(0).get("rcp_bkg_id"));
-				put("rcp_days",consultaFinal.getRecordValues(0).get("rcp_days"));
-				put("rcp_total_services",consultaFinal.getRecordValues(0).get("rcp_total_services"));
-				put("rcp_total_room",consultaFinal.getRecordValues(0).get("rcp_total_room"));
-				put("rcp_total",consultaFinal.getRecordValues(0).get("rcp_total"));
+				
+				put(ReceiptDao.ATTR_DATE,consultaReciboFinal.getRecordValues(0).get(ReceiptDao.ATTR_DATE));
+				put(ReceiptDao.ATTR_BOOKING_ID,consultaReciboFinal.getRecordValues(0).get(ReceiptDao.ATTR_BOOKING_ID));
+				put(ReceiptDao.ATTR_DIAS,consultaReciboFinal.getRecordValues(0).get(ReceiptDao.ATTR_DIAS));
+				put(ReceiptDao.ATTR_TOTAL_SERVICES,consultaReciboFinal.getRecordValues(0).get(ReceiptDao.ATTR_TOTAL_SERVICES));
+				put(ReceiptDao.ATTR_TOTAL_ROOM,consultaReciboFinal.getRecordValues(0).get(ReceiptDao.ATTR_TOTAL_ROOM));
+				put(ReceiptDao.ATTR_TOTAL,consultaReciboFinal.getRecordValues(0).get(ReceiptDao.ATTR_TOTAL));
+				put(ReceiptDao.ATTR_ID,consultaReciboFinal.getRecordValues(0).get(ReceiptDao.ATTR_ID));
+				
+				put(CustomerDao.ATTR_NAME,consultaReservaFinal.getRecordValues(0).get(CustomerDao.ATTR_NAME));
+				put(CustomerDao.ATTR_SURNAME,consultaReservaFinal.getRecordValues(0).get(CustomerDao.ATTR_SURNAME));
+				
+				put(BookingDao.ATTR_CHECKIN,consultaHabitacionFinal.getRecordValues(0).get(BookingDao.ATTR_CHECKIN));
+				put(BookingDao.ATTR_CHECKOUT,consultaHabitacionFinal.getRecordValues(0).get(BookingDao.ATTR_CHECKOUT));
+				put(RoomTypeDao.ATTR_PRICE,consultaHabitacionFinal.getRecordValues(0).get(RoomTypeDao.ATTR_PRICE));
 			}};
+			
 
 			JRTableModelDataSource dataSource = new JRTableModelDataSource(EntityResultUtils.createTableModel(servciosExtra));
 			JasperReport jasperReport = JasperCompileManager.compileReport(RECEIPT);
-			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, ReportsConfig.getBasicParametersPutAll(parameters), dataSource);
 			jasperPrint.setOrientation(OrientationEnum.LANDSCAPE);
 			
 			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
