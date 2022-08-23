@@ -20,6 +20,10 @@ public class HotelPhotoDao extends OntimizeJdbcDaoSupport {
 	public static final String ATTR_FILE=TAG+"file";
 	public static final String ATTR_PRIORITY=TAG+"priority";
 	
+	public static final String ATTR_FILE_URL=TAG+"file_url";
+	public static final String ATTR_FILE_BYTE=TAG+"file_byte";
+	public static final String ATTR_FILE_PATH=TAG+"file_path";
+	
 	public static final Map<String,type> fields=new HashMap<>()
 	{
 	{
@@ -28,6 +32,10 @@ public class HotelPhotoDao extends OntimizeJdbcDaoSupport {
 			put(ATTR_DESCRIPTION, type.STRING);
 			put(ATTR_FILE, type.TEXT);
 			put(ATTR_PRIORITY,type.FLOAT);
+			
+			put(ATTR_FILE_URL, type.TEXT);
+			put(ATTR_FILE_BYTE, type.BYTETEA);
+			put(ATTR_FILE_PATH, type.TEXT);
 	}
 	};
 }

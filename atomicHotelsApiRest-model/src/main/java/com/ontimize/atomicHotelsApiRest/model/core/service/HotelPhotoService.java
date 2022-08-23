@@ -1,15 +1,13 @@
 package com.ontimize.atomicHotelsApiRest.model.core.service;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.io.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,6 +21,8 @@ import java.util.Optional;
 import javax.annotation.processing.Filer;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import org.apache.poi.ss.util.ImageUtils;
@@ -42,11 +42,12 @@ import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelPhotoDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
+import com.ontimize.atomicHotelsApiRest.model.core.tools.TypeCodes.type;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
 import com.ontimize.jee.common.security.PermissionsProviderSecured;
 import com.ontimize.jee.common.util.remote.BytesBlock;
-import com.lowagie.text.pdf.codec.Base64.InputStream;
+import com.lowagie.text.Image;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 
@@ -73,12 +74,11 @@ public class HotelPhotoService implements IHotelPhotoService {
 		EntityResult resultado = new EntityResultWrong();
 
 		try {
-			Path p = Paths.get((String) data.get(dao.ATTR_FILE));
-			
+
 			List<String> required = new ArrayList<>() {
 				{
 					add(dao.ATTR_NAME);
-					add(dao.ATTR_FILE);
+	//				add(dao.ATTR_FILE);
 				}
 			};
 			
@@ -93,14 +93,111 @@ public class HotelPhotoService implements IHotelPhotoService {
 			cf.setRequired(required);
 			cf.setRestricted(restricted);
 			cf.validate(data);
-	
-			if (Files.exists(p)) {
-		    	data.put(dao.ATTR_FILE, Files.readAllBytes(p));
-				resultado = daoHelper.insert(this.dao, data);
-				resultado.setMessage("El archivo" + p.toAbsolutePath().toString() + " cargado correctamente para "+data.get(dao.ATTR_FILE)+"." );
-			} else {
-				resultado.setMessage("El archivo" + p.toAbsolutePath().toString() + " no existe. ");
+			
+			if(data.get(dao.ATTR_FILE_PATH) !=null && data.get(dao.ATTR_FILE_URL) ==null && data.get(dao.ATTR_FILE_BYTE) ==null) {
+				Path p = Paths.get((String) data.get(dao.ATTR_FILE_PATH));
+				if (Files.exists(p)) {
+			    	data.put(dao.ATTR_FILE, Files.readAllBytes(p));
+					resultado = daoHelper.insert(this.dao, data);
+					resultado.setMessage("El archivo" + p.toAbsolutePath().toString() + " cargado correctamente para "+data.get(dao.ATTR_FILE)+"." );
+				} else {
+					resultado.setMessage("El archivo" + p.toAbsolutePath().toString() + " no existe. ");
+				}
 			}
+			/*
+			 * URL u = new URL(content);
+
+			 */
+			if(data.get(dao.ATTR_FILE_URL) !=null && data.get(dao.ATTR_FILE_PATH) ==null && data.get(dao.ATTR_FILE_BYTE) ==null) {
+				URL u = new URL((String) data.get(dao.ATTR_FILE_URL));
+/*				int contentLength = u.openConnection().getContentLength();
+				InputStream openStream = u.openStream();
+				byte[] binaryData = new byte[contentLength];
+*/
+
+/*				openStream = u.openStream();
+		int contentLength = openStream.available();
+		byte[] binaryData = new byte[contentLength];
+		openStream.read(binaryData);
+*/
+				
+				
+//			    data.put(dao.ATTR_FILE, binaryData);
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				InputStream is = null;
+				try {
+				  is = u.openStream ();
+				  byte[] byteChunk = new byte[4096]; // Or whatever size you want to read in at a time.
+				  int n;
+
+				  while ( (n = is.read(byteChunk)) > 0 ) {
+				    baos.write(byteChunk, 0, n);
+				  }
+				}
+				catch (IOException e) {
+				  System.err.printf ("Failed while reading bytes from %s: %s", u.toExternalForm(), e.getMessage());
+				  e.printStackTrace ();
+				  // Perform any other exception handling that's appropriate.
+				}
+				finally {
+				  if (is != null) { is.close(); }
+				}
+				data.put(dao.ATTR_FILE, baos);
+				
+				
+				resultado = daoHelper.insert(this.dao, data);
+				resultado.setMessage("Archivo cargado correctamente ." );
+			} else {
+				resultado.setMessage("El archivo no existe. ");
+			}
+			if(data.get(dao.ATTR_FILE_BYTE) !=null && data.get(dao.ATTR_FILE_URL) ==null && data.get(dao.ATTR_FILE_PATH) ==null) {
+/*				
+				  ByteArrayInputStream bis = new ByteArrayInputStream((byte[]) data.get(dao.ATTR_FILE_BYTE));
+			        Iterator<?> readers = ImageIO.getImageReadersByFormatName("jpg");
+			        //ImageIO is a class containing static convenience methods for locating ImageReaders
+			        //and ImageWriters, and performing simple encoding and decoding.
+			 
+			        ImageReader reader = (ImageReader) readers.next();
+			        Object source = bis; // File or InputStream, it seems file is OK
+			 
+			        ImageInputStream iis = ImageIO.createImageInputStream(source);
+			        //Returns an ImageInputStream that will take its input from the given Object
+			 
+			        reader.setInput(iis, true);
+			        ImageReadParam param = reader.getDefaultReadParam();
+			 
+			        Image image = reader.read(0, param);
+			        //got an image file
+			 
+			        BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_RGB);
+			        //bufferedImage is the RenderedImage to be written
+			        Graphics2D g2 = bufferedImage.createGraphics();
+			        g2.drawImage(image, null, null);
+			        File imageFile = new File("C:\\newrose2.jpg");
+			        ImageIO.write(bufferedImage, "jpg", imageFile);
+			        //"jpg" is the format of the image
+			        //imageFile is the file to be written to.
+			 
+			        System.out.println(imageFile.getPath());
+			    }
+				
+*/				
+				
+				
+				
+			
+		//		data.put(dao.ATTR_FILE, data.get(dao.ATTR_FILE_BYTE));
+				ByteArrayInputStream bis = (ByteArrayInputStream) data.get(dao.ATTR_FILE_BYTE);
+				BufferedImage imagen = ImageIO.read(bis);
+		//		portada.setIcon(Imagen);
+			    data.put(dao.ATTR_FILE, imagen);
+				resultado = daoHelper.insert(this.dao, data);
+				resultado.setMessage("Archivo cargado correctamente." );
+			} else {
+				resultado.setMessage("El archivo no existe. ");
+			}
+			
+		
 
 		} catch (ValidateException e) {
 			e.getMessage();
@@ -115,11 +212,11 @@ public class HotelPhotoService implements IHotelPhotoService {
 		
 		return resultado;
 	}
-	
-	
-	@Override
+
+	/*
+	 * @Override
 //	@Secured({ PermissionsProviderSecured.SECURED })
-	public EntityResult hotelPhoto2Insert(Map<String, Object> data) throws OntimizeJEERuntimeException {
+	public EntityResult hotelPhotoInsert(Map<String, Object> data) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 
 		try {
@@ -142,26 +239,68 @@ public class HotelPhotoService implements IHotelPhotoService {
 			cf.setRequired(required);
 			cf.setRestricted(restricted);
 			cf.validate(data);
+			
+	
+			Path p = Paths.get((String) data.get(dao.ATTR_FILE));
+			if (Files.exists(p)) {
+		    	data.put(dao.ATTR_FILE, Files.readAllBytes(p));
+				resultado = daoHelper.insert(this.dao, data);
+				resultado.setMessage("El archivo" + p.toAbsolutePath().toString() + " cargado correctamente para "+data.get(dao.ATTR_FILE)+"." );
+			} else {
+				resultado.setMessage("El archivo" + p.toAbsolutePath().toString() + " no existe. ");
+			}
+
+		} catch (ValidateException e) {
+			e.getMessage();
+			resultado = new EntityResultWrong(e.getMessage());
+			
+		}catch (DuplicateKeyException e) {
+			resultado.setMessage("El nombre introducido "+data.get(dao.ATTR_NAME)+" ya tiene foto asociada");
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.ERROR);
+		}
+		
+		return resultado;
+	}
+	 */
+	
+	@Override
+//	@Secured({ PermissionsProviderSecured.SECURED })
+	public EntityResult hotelPhoto2Insert(Map<String, Object> data) throws OntimizeJEERuntimeException {
+		EntityResult resultado = new EntityResultWrong();
+
+		try {
+
+			List<String> required = new ArrayList<>() {
+				{
+					add(dao.ATTR_NAME);
+//					add(dao.ATTR_FILE);
+				}
+			};
+			
+			List<String> restricted = new ArrayList<String>() {
+				{
+					add(dao.ATTR_ID);
+				}
+			};
+			
+			cf.reset();
+			cf.addBasics(dao.fields);
+			cf.setRequired(required);
+			cf.setRestricted(restricted);
+			cf.validate(data);
+
+			URL u = new URL((String) data.get(dao.ATTR_FILE_URL));
+			int contentLength = u.openConnection().getContentLength();
+			InputStream openStream = u.openStream();
+			byte[] binaryData = new byte[contentLength];
 
 
-			try{
-		        File archivo = (File) data.get(dao.ATTR_FILE);
-		//		 File archivo = new File("c:\\atom1.jpg");
-		        byte[] imgFoto = new byte[(int)archivo.length()];
-		        FileInputStream inte = new FileInputStream(archivo);
-		        inte.read(imgFoto);
-		     
-		        BufferedImage image = null;
-		        ByteArrayInputStream in = new ByteArrayInputStream(imgFoto);
-		        image = ImageIO.read(in);
-
-		        ImageIcon icono = new ImageIcon(image);
-		        JOptionPane.showMessageDialog(null, "Imagenes", "Imagen", JOptionPane.INFORMATION_MESSAGE, icono);
-		    }catch(Exception ex){
-		        System.out.println(ex.getMessage());
-		    }
-
-
+		    data.put(dao.ATTR_FILE, binaryData);
+			resultado = daoHelper.insert(this.dao, data);
+			resultado.setMessage("Archivo cargado correctamente ." );
+				
 		} catch (ValidateException e) {
 			e.getMessage();
 			resultado = new EntityResultWrong(e.getMessage());
