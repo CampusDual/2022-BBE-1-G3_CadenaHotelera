@@ -49,16 +49,16 @@ public class ValidateFields {
 	 * @throws MissingFieldsException Excepción lanzada ante la primera clave que no
 	 *                                encuentre.
 	 */
-	public static void required(Map<String, Object> keyMap, String... fields) throws MissingFieldsException {
-		for (String field : fields) {
-			if (!keyMap.containsKey(field)) {
-				throw new MissingFieldsException("Falta el campo " + field);
-			}
-			if (keyMap.get(field) == null) {
-				throw new MissingFieldsException("El campo " + field + " es nulo");
-			}
-		}
-	}
+//	public static void required(Map<String, Object> keyMap, String... fields) throws MissingFieldsException {
+//		for (String field : fields) {
+//			if (!keyMap.containsKey(field)) {
+//				throw new MissingFieldsException("Falta el campo " + field);
+//			}
+//			if (keyMap.get(field) == null) {
+//				throw new MissingFieldsException("El campo " + field + " es nulo");
+//			}
+//		}
+//	}
 
 	/**
 	 * Comprueba si de todas las claves facilitadas, al menos una se encuentra en el
@@ -68,17 +68,17 @@ public class ValidateFields {
 	 * @param fields
 	 * @throws MissingFieldsException
 	 */
-	public static void atLeastOneRequired(Map<String, Object> keyMap, String... fields) throws MissingFieldsException {
-		int contador = 0;
-		for (String field : fields) {
-			if (keyMap.containsKey(field) && keyMap.get(field) != null) {
-				contador++;
-			}
-		}
-		if (contador <= 0) {
-			throw new MissingFieldsException();
-		}
-	}
+//	public static void atLeastOneRequired(Map<String, Object> keyMap, String... fields) throws MissingFieldsException {
+//		int contador = 0;
+//		for (String field : fields) {
+//			if (keyMap.containsKey(field) && keyMap.get(field) != null) {
+//				contador++;
+//			}
+//		}
+//		if (contador <= 0) {
+//			throw new MissingFieldsException();
+//		}
+//	}
 
 	/**
 	 * Comprueba si alguno de los elementos está en la lista
@@ -87,20 +87,20 @@ public class ValidateFields {
 	 * @param fields
 	 * @throws MissingFieldsException
 	 */
-	public static void atLeastOneRequired(List<String> attrList, String... fields) throws MissingColumnsException {
-		int contador = 0;
-		for (int i = 0; i < attrList.size(); i++) {
-			for (String field : fields) {
-				if (attrList.get(i).equals(field)) {
-					contador++;
-				}
-			}
-		}
-		if (contador <= 0) {
-			throw new MissingColumnsException();
-		}
-
-	}
+//	public static void atLeastOneRequired(List<String> attrList, String... fields) throws MissingColumnsException {
+//		int contador = 0;
+//		for (int i = 0; i < attrList.size(); i++) {
+//			for (String field : fields) {
+//				if (attrList.get(i).equals(field)) {
+//					contador++;
+//				}
+//			}
+//		}
+//		if (contador <= 0) {
+//			throw new MissingColumnsException();
+//		}
+//
+//	}
 
 	/**
 	 * Elimina campos restringidos del HashMap
@@ -108,11 +108,11 @@ public class ValidateFields {
 	 * @param keyMap HashMap a actualizar
 	 * @param fields campos a eliminar
 	 */
-	public static void restricted(Map<String, Object> keyMap, String... fields) {
-		for (String field : fields) {
-			keyMap.remove(field);
-		}
-	}
+//	public static void restricted(Map<String, Object> keyMap, String... fields) {
+//		for (String field : fields) {
+//			keyMap.remove(field);
+//		}
+//	}
 
 	/**
 	 * Elimina todos los campos a excepción de las claves especificadas
@@ -120,9 +120,9 @@ public class ValidateFields {
 	 * @param keyMap HashMap donde se eliminan las claves
 	 * @param fields Claves a persistir.
 	 */
-	public static void onlyThis(Map<String, Object> keyMap, String... fields) {
-		keyMap.keySet().retainAll(Arrays.asList(fields));
-	}
+//	public static void onlyThis(Map<String, Object> keyMap, String... fields) {
+//		keyMap.keySet().retainAll(Arrays.asList(fields));
+//	}
 
 	/**
 	 * Elimina todos los elementos de una lista a excepción de los especificadas
@@ -130,9 +130,9 @@ public class ValidateFields {
 	 * @param list   List donde se eliminan las claves
 	 * @param fields elementos a persistir.
 	 */
-	public static void onlyThis(List<String> list, String... fields) {
-		list.retainAll(Arrays.asList(fields));
-	}
+//	public static void onlyThis(List<String> list, String... fields) {
+//		list.retainAll(Arrays.asList(fields));
+//	}
 
 	/**
 	 * Elimina campos restringidos de la lista
@@ -140,11 +140,11 @@ public class ValidateFields {
 	 * @param keyMap HashMap a actualizar
 	 * @param fields campos a eliminar
 	 */
-	public static void restricted(List<String> attrList, String... fields) {
-		for (String field : fields) {
-			attrList.remove(field);
-		}
-	}
+//	public static void restricted(List<String> attrList, String... fields) {
+//		for (String field : fields) {
+//			attrList.remove(field);
+//		}
+//	}
 
 	/**
 	 * Convierte un fecha en string a Date con formato "yyyy-MM-dd".
@@ -227,23 +227,23 @@ public class ValidateFields {
 	 * @throws MissingFieldsException -> Mensaje de error arrojado según los
 	 *                                criterios indicados
 	 */
-	public static void emptyFields(Map<String, Object> keyMap, String... fields) throws MissingFieldsException {
-		for (String field : fields) {
-			emptyField(keyMap, field);
-		}
-	}
-
-	public static void emptyField(Map<String, Object> keyMap, String field) throws MissingFieldsException {
-		if (!keyMap.containsKey(field)) {
-			throw new MissingFieldsException("Falta el campo " + field);
-		}
-		if (keyMap.get(field) == null) {
-			throw new MissingFieldsException("El campo " + field + " es nulo");
-		}
-		if (keyMap.get(field).toString().trim().length() == 0) {
-			throw new MissingFieldsException("El campo " + field + " no puede contener sólo espacios en blanco.");
-		}
-	}
+//	public static void emptyFields(Map<String, Object> keyMap, String... fields) throws MissingFieldsException {
+//		for (String field : fields) {
+//			emptyField(keyMap, field);
+//		}
+//	}
+//
+//	public static void emptyField(Map<String, Object> keyMap, String field) throws MissingFieldsException {
+//		if (!keyMap.containsKey(field)) {
+//			throw new MissingFieldsException("Falta el campo " + field);
+//		}
+//		if (keyMap.get(field) == null) {
+//			throw new MissingFieldsException("El campo " + field + " es nulo");
+//		}
+//		if (keyMap.get(field).toString().trim().length() == 0) {
+//			throw new MissingFieldsException("El campo " + field + " no puede contener sólo espacios en blanco.");
+//		}
+//	}
 
 	/*
 	 * comprueba que un formato de precio tenga como maximo 2 decimales
@@ -338,15 +338,16 @@ public class ValidateFields {
 	 * }
 	 */
 
-	public static void checkMail(String mail) throws InvalidFieldsValuesException {
+	public static boolean checkMail(String mail) throws InvalidFieldsValuesException {
 		String regex = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(-[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 		Pattern pat = Pattern.compile(regex);
 		Matcher mat = pat.matcher(mail);
-		if (mat.matches()) {
-
-		} else {
-			throw new InvalidFieldsValuesException(ErrorMessage.INVALID_MAIL);
-		}
+//		if (mat.matches()) {
+//
+//		} else {
+//			throw new InvalidFieldsValuesException(ErrorMessage.INVALID_MAIL);
+//		}
+		return mat.matches();
 	}
 
 	/**
@@ -473,11 +474,14 @@ public class ValidateFields {
 	 * @param booleano en formato numero
 	 * @throws InvalidFieldsValuesException
 	 */
-	public static void isBoolean(Integer value) throws InvalidFieldsValuesException {
-		if (!(value == 0 || value == 1)) {
-			throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + value);
-		}
+	public static boolean isBoolean(Integer value) throws InvalidFieldsValuesException {
+		return (value == 0 || value == 1);		
 	}
+//	public static void isBoolean(Integer value) throws InvalidFieldsValuesException {
+//		if (!(value == 0 || value == 1)) {
+//			throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + value);
+//		}
+//	}
 
 	/**
 	 * Valida que el codigo iso de pais es válido
@@ -485,13 +489,14 @@ public class ValidateFields {
 	 * @param country Codigo iso, por ejemplo ES o GB
 	 * @throws InvalidFieldsValuesException Si el valor es incorrecto.
 	 */
-	public void country(String country) throws InvalidFieldsValuesException {
-		if (!countryService.mapCountries().containsKey(country)) {
-			throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + country);
-		}
+	public boolean isCountry(String country) throws InvalidFieldsValuesException {
+//		if (!countryService.mapCountries().containsKey(country)) {
+//			throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + country);
+//		}
 //		if (country.length() != 2 || country.compareTo(country.toUpperCase()) != 0) {
 //			throw new InvalidFieldsValuesException(ErrorMessage.WRONG_TYPE + " - " + country);
 //		}
+		return countryService.mapCountries().containsKey(country);
 	}
 
 	/*
@@ -499,13 +504,14 @@ public class ValidateFields {
 	 * caracter.
 	 */
 
-	public static void isPhone(String phone) throws InvalidFieldsValuesException {
+	public static boolean isPhone(String phone) throws InvalidFieldsValuesException {
 		String regex = "^[+]?[\\s\\d]{8,20}$";
 		Pattern pat = Pattern.compile(regex);
 		Matcher mat = pat.matcher(phone.toString());
-		if (!mat.matches()) {
-			throw new InvalidFieldsValuesException(ErrorMessage.INVALID_PHONE);
-		}
+//		if (!mat.matches()) {
+//			throw new InvalidFieldsValuesException(ErrorMessage.INVALID_PHONE);
+//		}
+		return mat.matches();
 	}
 	private static boolean isNumeric(String str) { 
 	    try {  
@@ -520,19 +526,21 @@ public class ValidateFields {
 	 * caracter.
 	 */
 	
-	 public static void  isDNI(String itDNI) throws InvalidFieldsValuesException {
+	 public static boolean  isDNI(String itDNI) throws InvalidFieldsValuesException {
 		 		final String dniChars="TRWAGMYFPDXBNJZSQVHLCKE";
 		 		if (itDNI.length()!= 9) {
-	            	throw new InvalidFieldsValuesException(ErrorMessage.INVALID_DNI);
+//	            	throw new InvalidFieldsValuesException(ErrorMessage.INVALID_DNI);
+		 			return false;
 	            }
 		 		
 	            String intPartDNI = itDNI.trim().replaceAll(" ", "").substring(0, 8);
 	            char ltrDNI = Character.toUpperCase(itDNI.charAt(8));
 	            int valNumDni = Integer.parseInt(intPartDNI) % 23;
 	            
-	            if ( isNumeric(intPartDNI) == false || dniChars.charAt(valNumDni)!= ltrDNI) {
-	            	throw new InvalidFieldsValuesException(ErrorMessage.INVALID_DNI);
-	            } 
+//	            if ( isNumeric(intPartDNI) == false || dniChars.charAt(valNumDni)!= ltrDNI) {
+//	            	throw new InvalidFieldsValuesException(ErrorMessage.INVALID_DNI);
+//	            } 
+	            return ( isNumeric(intPartDNI) && dniChars.charAt(valNumDni) == ltrDNI);
 	        }
 
 }

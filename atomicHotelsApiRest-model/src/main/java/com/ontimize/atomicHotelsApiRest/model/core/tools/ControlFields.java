@@ -194,11 +194,9 @@ public class ControlFields {
 
 				switch (fields.get(key)) {
 				case TEXT:
-					if ((keyMap.get(key) instanceof String)) {
-						validType = true;
-					}
+					validType = ((keyMap.get(key) instanceof String));
 					break;
-					
+
 				case NO_EMPTY_TEXT:
 					if ((keyMap.get(key) instanceof String)) {
 						if (((String) keyMap.get(key)).isEmpty()) {
@@ -208,17 +206,19 @@ public class ControlFields {
 						}
 					}
 					break;
+
 				case NO_EMPTY_STRING:
 					if ((keyMap.get(key) instanceof String)) {
 						if (((String) keyMap.get(key)).isEmpty()) {
 							detailsMsg = ErrorMessage.STRING_EMPTY;
 						} else if (((String) keyMap.get(key)).length() > 255) {
-							detailsMsg = "Cadena demasiado larga, max 255 caracteres.";
+							detailsMsg = ErrorMessage.STRING_TOO_LONG;
 						} else {
 							validType = true;
 						}
 					}
 					break;
+
 				case STRING:
 					if ((keyMap.get(key) instanceof String)) {
 						if (((String) keyMap.get(key)).length() > 255) {
@@ -240,6 +240,7 @@ public class ControlFields {
 						}
 					}
 					break;
+
 				case SMALL_STRING:
 					if ((keyMap.get(key) instanceof String)) {
 						if (((String) keyMap.get(key)).length() > 50) {
@@ -249,59 +250,59 @@ public class ControlFields {
 						}
 					}
 					break;
+
 				case INTEGER:
-					if ((keyMap.get(key) instanceof Integer)) {
-						validType = true;
-					}
+					validType = ((keyMap.get(key) instanceof Integer));
 					break;
+
 				case LONG:
-					if (keyMap.get(key) instanceof Integer || keyMap.get(key) instanceof Long) {
-						validType = true;
-					}
+					validType = (keyMap.get(key) instanceof Integer || keyMap.get(key) instanceof Long);
 					break;
 
 				case DOUBLE:
-					if (keyMap.get(key) instanceof Integer || keyMap.get(key) instanceof Long
-							|| keyMap.get(key) instanceof Double) {
-						validType = true;
-					}
+					validType = (keyMap.get(key) instanceof Integer || keyMap.get(key) instanceof Long
+							|| keyMap.get(key) instanceof Double);
 					break;
 
 				case PRICE:
 					if (keyMap.get(key) instanceof Integer || keyMap.get(key) instanceof Double) {
-						vF.formatprice(keyMap.get(key));
-						validType = true;
+						try {
+							vF.formatprice(keyMap.get(key));
+							validType = true;
+						} catch (InvalidFieldsValuesException e) {
+							detailsMsg = e.getMessage();
+						}
 					}
 					break;
 
 				case CREDIT_CARD:
 					if (keyMap.get(key) instanceof Long) {
-
-						vF.invalidCreditCard((Long) keyMap.get(key));
-						validType = true;
+						try {
+							vF.invalidCreditCard((Long) keyMap.get(key));
+							validType = true;
+						} catch (InvalidFieldsValuesException e) {
+							detailsMsg = e.getMessage();
+						}
 					}
 					break;
 
 				case EXPIRATION_DATE:
 					if ((keyMap.get(key) instanceof String)) {
-						vF.validDateExpiry((String) keyMap.get(key));
-						validType = true;
+						try {
+							vF.validDateExpiry((String) keyMap.get(key));
+							validType = true;
+						} catch (InvalidFieldsValuesException e) {
+							detailsMsg = e.getMessage();
+						}
 					}
 					break;
 
 				case PHONE:
-					if ((keyMap.get(key) instanceof String)) {
-						vF.isPhone((String) keyMap.get(key));
-						validType = true;
-					}
+					validType = ((keyMap.get(key) instanceof String) && vF.isPhone((String) keyMap.get(key)));
 					break;
 
 				case COUNTRY:
-					if ((keyMap.get(key) instanceof String)) {
-						vF.country((String) keyMap.get(key));
-						String country = (String) keyMap.get(key);
-						validType = true;
-					}
+					validType = ((keyMap.get(key) instanceof String) && vF.isCountry((String) keyMap.get(key)));
 					break;
 
 				case DATETIME:// diferenciar al devolver los datos
@@ -315,14 +316,11 @@ public class ControlFields {
 					break;
 
 				case EMAIL:
-					if ((keyMap.get(key) instanceof String)) {
-						vF.checkMail((String) keyMap.get(key));
-						validType = true;
-					}
+					validType = ((keyMap.get(key) instanceof String) && vF.checkMail((String) keyMap.get(key)));
 					break;
+
 				case DNI:
-					if ((keyMap.get(key) instanceof String)) {
-						vF.isDNI((String) keyMap.get(key));
+					if ((keyMap.get(key) instanceof String) && vF.isDNI((String) keyMap.get(key))) {
 						keyMap.replace(key, ((String) keyMap.get(key)).toUpperCase());
 						validType = true;
 					}
@@ -330,16 +328,17 @@ public class ControlFields {
 
 				case INTEGER_UNSIGNED:
 					if ((keyMap.get(key) instanceof Integer)) {
-						vF.NegativeNotAllowed((Integer) keyMap.get(key));
-						validType = true;
+						try {
+							vF.NegativeNotAllowed((Integer) keyMap.get(key));
+							validType = true;
+						} catch (InvalidFieldsValuesException e) {
+							detailsMsg = e.getMessage();
+						}
 					}
 					break;
 
 				case BOOLEAN:
-					if ((keyMap.get(key) instanceof Integer)) {
-						vF.isBoolean((Integer) keyMap.get(key));
-						validType = true;
-					}
+					validType =  ((keyMap.get(key) instanceof Integer) && vF.isBoolean((Integer) keyMap.get(key)));						
 					break;
 
 				case BOOKING_ACTION:
@@ -349,9 +348,7 @@ public class ControlFields {
 						try {
 							keyMap.replace(key, BookingDao.Action.valueOf((String) keyMap.get(key)));
 							validType = true;
-						} catch (IllegalArgumentException e) {
-							validType = false;
-						}
+						} catch (IllegalArgumentException e) {}
 					}
 					break;
 
@@ -362,9 +359,7 @@ public class ControlFields {
 						try {
 							keyMap.replace(key, UserDao.Action.valueOf((String) keyMap.get(key)));
 							validType = true;
-						} catch (IllegalArgumentException e) {
-							validType = false;
-						}
+						} catch (IllegalArgumentException e) {}
 					}
 					break;
 
@@ -375,9 +370,7 @@ public class ControlFields {
 						try {
 							keyMap.replace(key, UserRoleDao.UserRole.valueOf((String) keyMap.get(key)));
 							validType = true;
-						} catch (IllegalArgumentException e) {
-							validType = false;
-						}
+						} catch (IllegalArgumentException e) {}
 					}
 					break;
 
@@ -389,9 +382,7 @@ public class ControlFields {
 						try {
 							keyMap.replace(key, CustomerDao.Action.valueOf((String) keyMap.get(key)));
 							validType = true;
-						} catch (IllegalArgumentException e) {
-							validType = false;
-						}
+						} catch (IllegalArgumentException e) {}
 					}
 					break;
 
@@ -410,7 +401,7 @@ public class ControlFields {
 
 			} else {
 				if (allowBasicExpression
-						&& key.equals(SQLStatementBuilder.ExtendedSQLConditionValuesProcessor.EXPRESSION_KEY)) {
+						&& key.equals(SQLStatementBuilder.ExtendedSQLConditionValuesProcessor.EXPRESSION_KEY)) {					
 					// TODO comprobamos contenido de basic expresion....
 				} else {
 					throw new InvalidFieldsException(ErrorMessage.INVALID_FIELD + key);

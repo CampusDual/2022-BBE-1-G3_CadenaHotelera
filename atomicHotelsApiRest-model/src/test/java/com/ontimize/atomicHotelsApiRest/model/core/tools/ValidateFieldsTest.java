@@ -80,73 +80,73 @@ class ValidateFieldsTest {
 			}
 		};
 	}
-
-	@Nested
-	@DisplayName("Test for required()")
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	public class Required {
-
-		@ParameterizedTest(name = "Keymap  y Campos - Válidos")
-		@DisplayName("Keymap  y Campos - Válidos")
-		@ValueSource(strings = { "campo1", "campo3", "campo2" })
-		void testRequiredOKFields(String string) {
-			assertDoesNotThrow(() -> ValidateFields.required(getKeyMap(), string));
-		}
-
-		@ParameterizedTest(name = "Campos - NO válidos")
-		@DisplayName("Campos - NO válidos")
-		@ValueSource(strings = { "campo4", "", " ", "" })
-		void testRequiredKOFields(String string) {
-			assertThrows(MissingFieldsException.class, () -> ValidateFields.required(getKeyMap(), string));
-		}
-
-		@ParameterizedTest(name = "Campos - Null y Empty")
-		@DisplayName("Campos - Null y Empty")
-		@NullAndEmptySource
-		void testRequiredKOFieldsNullEmpty(String string) {
-			assertThrows(MissingFieldsException.class, () -> ValidateFields.required(getKeyMap(), string));
-		}
-
-		@ParameterizedTest(name = "Keymap NO válido")
-		@DisplayName("Keymap NO válido")
-		@ValueSource(strings = { "campo1", "campo3", "campo2" })
-		void testRequiredKOKeyMap(String string) {
-			assertThrows(MissingFieldsException.class, () -> ValidateFields.required(anyMap(), string));
-		}
-
-	}
-
-	@Nested
-	@DisplayName("Test for restricted()")
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	public class Restricted {
-
-		@Test
-		@DisplayName("Keymap  y Campos - Válidos")
-		void testRestrictedMapOfStringObjectStringArrayOK() {
-			Map<String, Object> keyMap = getKeyMap();
-			assertFalse(keyMap.containsKey("campo999"));
-			ValidateFields.restricted(keyMap, "campo1", "campo2", "campo3", "campo999");
-			assertFalse(keyMap.containsKey("campo1"));
-			assertFalse(keyMap.containsKey("campo2"));
-			assertFalse(keyMap.containsKey("campo3"));
-			assertFalse(keyMap.containsKey("campo999"));
-			assertTrue(keyMap.isEmpty(), keyMap.toString());
-		}
-
-		@Test
-		@DisplayName("attrList  y Campos - Válidos")
-		void testRestrictedListOfStringStringArray() {
-			List<String> attrList = getAttrList();
-			assertFalse(attrList.contains("campo999"));
-			ValidateFields.restricted(attrList, "campo1", "campo2", "campo3", "campo999");
-			assertFalse(attrList.contains("campo1"));
-			assertFalse(attrList.contains("campo2"));
-			assertFalse(attrList.contains("campo3"));
-			assertFalse(attrList.contains("campo999"));
-			assertTrue(attrList.isEmpty(), attrList.toString());
-		}
-	}
+//
+//	@Nested
+//	@DisplayName("Test for required()")
+//	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+//	public class Required {
+//
+//		@ParameterizedTest(name = "Keymap  y Campos - Válidos")
+//		@DisplayName("Keymap  y Campos - Válidos")
+//		@ValueSource(strings = { "campo1", "campo3", "campo2" })
+//		void testRequiredOKFields(String string) {
+//			assertDoesNotThrow(() -> ValidateFields.required(getKeyMap(), string));
+//		}
+//
+//		@ParameterizedTest(name = "Campos - NO válidos")
+//		@DisplayName("Campos - NO válidos")
+//		@ValueSource(strings = { "campo4", "", " ", "" })
+//		void testRequiredKOFields(String string) {
+//			assertThrows(MissingFieldsException.class, () -> ValidateFields.required(getKeyMap(), string));
+//		}
+//
+//		@ParameterizedTest(name = "Campos - Null y Empty")
+//		@DisplayName("Campos - Null y Empty")
+//		@NullAndEmptySource
+//		void testRequiredKOFieldsNullEmpty(String string) {
+//			assertThrows(MissingFieldsException.class, () -> ValidateFields.required(getKeyMap(), string));
+//		}
+//
+//		@ParameterizedTest(name = "Keymap NO válido")
+//		@DisplayName("Keymap NO válido")
+//		@ValueSource(strings = { "campo1", "campo3", "campo2" })
+//		void testRequiredKOKeyMap(String string) {
+//			assertThrows(MissingFieldsException.class, () -> ValidateFields.required(anyMap(), string));
+//		}
+//
+//	}
+//
+//	@Nested
+//	@DisplayName("Test for restricted()")
+//	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+//	public class Restricted {
+//
+//		@Test
+//		@DisplayName("Keymap  y Campos - Válidos")
+//		void testRestrictedMapOfStringObjectStringArrayOK() {
+//			Map<String, Object> keyMap = getKeyMap();
+//			assertFalse(keyMap.containsKey("campo999"));
+//			ValidateFields.restricted(keyMap, "campo1", "campo2", "campo3", "campo999");
+//			assertFalse(keyMap.containsKey("campo1"));
+//			assertFalse(keyMap.containsKey("campo2"));
+//			assertFalse(keyMap.containsKey("campo3"));
+//			assertFalse(keyMap.containsKey("campo999"));
+//			assertTrue(keyMap.isEmpty(), keyMap.toString());
+//		}
+//
+//		@Test
+//		@DisplayName("attrList  y Campos - Válidos")
+//		void testRestrictedListOfStringStringArray() {
+//			List<String> attrList = getAttrList();
+//			assertFalse(attrList.contains("campo999"));
+//			ValidateFields.restricted(attrList, "campo1", "campo2", "campo3", "campo999");
+//			assertFalse(attrList.contains("campo1"));
+//			assertFalse(attrList.contains("campo2"));
+//			assertFalse(attrList.contains("campo3"));
+//			assertFalse(attrList.contains("campo999"));
+//			assertTrue(attrList.isEmpty(), attrList.toString());
+//		}
+//	}
 
 	@Nested
 	@DisplayName("Test for Dates")
@@ -243,40 +243,40 @@ class ValidateFieldsTest {
 
 	}
 
-	@Nested
-	@DisplayName("Test for empty fields")
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	public class Emptys {
-
-		@ParameterizedTest()
-		@DisplayName("Campos válidos")
-		@ValueSource(strings = { "campo1", "campo2", "campo3" })
-		void testEmptyFieldOK(String valor) {
-			assertDoesNotThrow(() -> ValidateFields.emptyField(getKeyMap(), valor));
-		}
-
-		@ParameterizedTest()
-		@DisplayName("Campos NO válidos")
-		@ValueSource(strings = { "campo1", "campo2", "campo3", "campo999" })
-		void testEmptyFieldKo(String valor) {
-			assertThrows(MissingFieldsException.class,
-					() -> ValidateFields.emptyField(getKeyMapWithEmptyNullEmptyValues(), valor));
-		}
-
-		@Test
-		@DisplayName("Varios Campos entrada válidos")
-		void testEmptyFieldsOK() {
-			assertDoesNotThrow(() -> ValidateFields.emptyFields(getKeyMap(), "campo1", "campo2", "campo3"));
-		}
-
-		@Test
-		@DisplayName("Varios Campos entrada NO válidos")
-		void testEmptyFieldsKO() {
-			assertThrows(MissingFieldsException.class, () -> ValidateFields
-					.emptyFields(getKeyMapWithEmptyNullEmptyValues(), "campo1", "campo2", "campo3", "campo999"));
-		}
-
-	}
+//	@Nested
+//	@DisplayName("Test for empty fields")
+//	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+//	public class Emptys {
+//
+//		@ParameterizedTest()
+//		@DisplayName("Campos válidos")
+//		@ValueSource(strings = { "campo1", "campo2", "campo3" })
+//		void testEmptyFieldOK(String valor) {
+//			assertDoesNotThrow(() -> ValidateFields.emptyField(getKeyMap(), valor));
+//		}
+//
+//		@ParameterizedTest()
+//		@DisplayName("Campos NO válidos")
+//		@ValueSource(strings = { "campo1", "campo2", "campo3", "campo999" })
+//		void testEmptyFieldKo(String valor) {
+//			assertThrows(MissingFieldsException.class,
+//					() -> ValidateFields.emptyField(getKeyMapWithEmptyNullEmptyValues(), valor));
+//		}
+//
+////		@Test
+////		@DisplayName("Varios Campos entrada válidos")
+////		void testEmptyFieldsOK() {
+////			assertDoesNotThrow(() -> ValidateFields.emptyFields(getKeyMap(), "campo1", "campo2", "campo3"));
+////		}
+////
+////		@Test
+////		@DisplayName("Varios Campos entrada NO válidos")
+////		void testEmptyFieldsKO() {
+////			assertThrows(MissingFieldsException.class, () -> ValidateFields
+////					.emptyFields(getKeyMapWithEmptyNullEmptyValues(), "campo1", "campo2", "campo3", "campo999"));
+////		}
+//
+//	}
 
 	@Nested
 	@DisplayName("Test for Prices")
