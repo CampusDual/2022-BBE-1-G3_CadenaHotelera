@@ -62,6 +62,14 @@ public class ReportRestController extends ORestController<IReportService>{
 				}
 	 
 	 @RequestMapping(
+				value = "/occupancyByNationalityChart",
+				method = RequestMethod.POST,
+				produces = MediaType.APPLICATION_JSON_VALUE)
+				public ResponseEntity<EntityResult> occupancyByNationalityChart(@RequestBody Map<String,Object> req) {
+			 	return this.getService().occupancyByNationalityChart((Map<String,Object>)req.get("filter"),(List<String>)req.get("columns"));
+				}
+	 
+	 @RequestMapping(
 			 value = "/plantilla",
 			 method = RequestMethod.POST,
 			 produces = MediaType.APPLICATION_JSON_VALUE)
