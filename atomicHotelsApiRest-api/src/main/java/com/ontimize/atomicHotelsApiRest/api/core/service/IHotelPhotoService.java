@@ -13,7 +13,7 @@ public interface IHotelPhotoService {
 	 public EntityResult hotelPhotoQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
 	 public EntityResult hotelPhotoInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException;
 	 public EntityResult hotelPhotoDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
-	 public ResponseEntity getHotelPicture(Map<String, Object> filter, List<String> columns) throws OntimizeJEERuntimeException;
+	 public ResponseEntity getHotelPictureQuery(Map<String, Object> filter, List<String> columns) throws OntimizeJEERuntimeException;
 	 public EntityResult hotelPhoto2Insert(Map<String, Object> data) throws OntimizeJEERuntimeException;
 
 

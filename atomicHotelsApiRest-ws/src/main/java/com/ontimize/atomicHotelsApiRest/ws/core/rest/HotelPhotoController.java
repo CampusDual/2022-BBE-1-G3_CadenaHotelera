@@ -28,11 +28,11 @@ public class HotelPhotoController extends ORestController<IHotelPhotoService> {
 	}
 
 	@RequestMapping(
-				value = "/getPicture",
+				value = "/getHotelPicture",
 				method = RequestMethod.POST,
 				produces = MediaType.APPLICATION_JSON_VALUE)
 				public ResponseEntity<EntityResult> query(@RequestBody Map<String,Object> req) {
-			 	return this.getService().getHotelPicture((Map<String,Object>)req.get("filter"),(List<String>)req.get("columns"));
+			 	return this.getService().getHotelPictureQuery((Map<String,Object>)req.get("filter"),(List<String>)req.get("columns"));
 				}
 
 }

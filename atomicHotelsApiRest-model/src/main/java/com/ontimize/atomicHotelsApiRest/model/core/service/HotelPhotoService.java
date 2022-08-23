@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -144,8 +145,8 @@ public class HotelPhotoService implements IHotelPhotoService {
 
 
 			try{
-		//        File archivo = (File) data.get(dao.ATTR_FILE);
-				 File archivo = new File("c:\\atom1.jpg");
+		        File archivo = (File) data.get(dao.ATTR_FILE);
+		//		 File archivo = new File("c:\\atom1.jpg");
 		        byte[] imgFoto = new byte[(int)archivo.length()];
 		        FileInputStream inte = new FileInputStream(archivo);
 		        inte.read(imgFoto);
@@ -159,9 +160,7 @@ public class HotelPhotoService implements IHotelPhotoService {
 		    }catch(Exception ex){
 		        System.out.println(ex.getMessage());
 		    }
-		
-			
-			
+
 
 		} catch (ValidateException e) {
 			e.getMessage();
@@ -179,7 +178,7 @@ public class HotelPhotoService implements IHotelPhotoService {
 	
 	@Override
 //	@Secured({ PermissionsProviderSecured.SECURED })
-	public ResponseEntity getHotelPicture(Map<String, Object> filter, List<String> columns) {
+	public ResponseEntity getHotelPictureQuery(Map<String, Object> filter, List<String> columns) {
 		EntityResult resultado = new EntityResultWrong();
 
 		Map<String, Object> consultaKeyMap = new HashMap<>() {
