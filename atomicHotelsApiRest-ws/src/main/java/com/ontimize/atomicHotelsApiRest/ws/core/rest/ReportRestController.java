@@ -41,7 +41,7 @@ public class ReportRestController extends ORestController<IReportService>{
 				value = "/incomeVsExpensesChart",
 				method = RequestMethod.POST,
 				produces = MediaType.APPLICATION_JSON_VALUE)
-				public ResponseEntity<EntityResult> aa(@RequestBody Map<String,Object> req) {
+				public ResponseEntity<EntityResult> incomeVsExpensesChart(@RequestBody Map<String,Object> req) {
 			 	return this.getService().incomeVsExpensesChart((Map<String,Object>)req.get("filter"),(List<String>)req.get("columns"));
 				}
 	 
@@ -49,8 +49,16 @@ public class ReportRestController extends ORestController<IReportService>{
 				value = "/receipt",
 				method = RequestMethod.POST,
 				produces = MediaType.APPLICATION_JSON_VALUE)
-				public ResponseEntity<EntityResult> b(@RequestBody Map<String,Object> req) {
+				public ResponseEntity<EntityResult> receipt(@RequestBody Map<String,Object> req) {
 			 	return this.getService().receipt((Map<String,Object>)req.get("filter"),(List<String>)req.get("columns"));
+				}
+	 
+	 @RequestMapping(
+				value = "/occupancyChart",
+				method = RequestMethod.POST,
+				produces = MediaType.APPLICATION_JSON_VALUE)
+				public ResponseEntity<EntityResult> occupancyChart(@RequestBody Map<String,Object> req) {
+			 	return this.getService().occupancyChart((Map<String,Object>)req.get("filter"),(List<String>)req.get("columns"));
 				}
 	 
 	 @RequestMapping(
