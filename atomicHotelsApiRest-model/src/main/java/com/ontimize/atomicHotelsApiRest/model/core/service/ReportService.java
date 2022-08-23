@@ -335,7 +335,18 @@ public class ReportService implements IReportService {
 				put(RoomTypeDao.ATTR_PRICE,consultaHabitacionFinal.getRecordValues(0).get(RoomTypeDao.ATTR_PRICE));
 			}};
 			
-
+			Map<String,Object> sinServcios = new HashMap<String,Object>(){{
+				put("bsx_units", null);
+				put("bsx_precio", null);
+				put("sxt_description", null);
+				put("sxt_name", null);
+				put("bsx_date", null);
+			}};
+			
+			if(servciosExtra.isEmpty()) {
+				servciosExtra.addRecord(sinServcios);
+			}
+			
 			JRTableModelDataSource dataSource = new JRTableModelDataSource(EntityResultUtils.createTableModel(servciosExtra));
 			JasperReport jasperReport = JasperCompileManager.compileReport(RECEIPT);
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, ReportsConfig.getBasicParametersPutAll(parameters), dataSource);
