@@ -2,17 +2,20 @@
 <!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Receipt_template" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a65bf8c7-f3d4-4dd8-bd4f-d5c4fbe29826">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="New Data Adapter"/>
-	<parameter name="subReport" class="net.sf.jasperreports.engine.JasperPrint"/>
+	<parameter name="rcp_days" class="java.lang.Integer"/>
+	<parameter name="rcp_bkg_id" class="java.lang.Integer"/>
+	<parameter name="rcp_date" class="java.sql.Timestamp"/>
+	<parameter name="rcp_total_services" class="java.math.BigDecimal"/>
+	<parameter name="rcp_total" class="java.math.BigDecimal"/>
+	<parameter name="rcp_total_room" class="java.math.BigDecimal"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="rcp_days" class="java.lang.Integer"/>
-	<field name="rcp_bkg_id" class="java.lang.Integer"/>
-	<field name="rcp_date" class="java.sql.Timestamp"/>
-	<field name="rcp_total_services" class="java.math.BigDecimal"/>
-	<field name="rcp_total" class="java.math.BigDecimal"/>
-	<field name="rcp_total_room" class="java.math.BigDecimal"/>
-	<field name="extra_services" class="java.util.ArrayList"/>
+	<field name="sxt_name" class="java.lang.String"/>
+	<field name="sxt_description" class="java.lang.String"/>
+	<field name="bsx_units" class="java.lang.Integer"/>
+	<field name="bsx_precio" class="java.math.BigDecimal"/>
+	<field name="bsx_date" class="java.sql.Timestamp"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -37,12 +40,12 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c657aea8-9b58-4313-a22b-7c38feffed0c"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{rcp_date}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{rcp_date}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
 	<pageHeader>
-		<band height="35" splitType="Stretch">
+		<band height="68" splitType="Stretch">
 			<staticText>
 				<reportElement x="0" y="4" width="70" height="22" uuid="f8e72d51-02cd-4f92-93b5-069bef1f758c">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2824188f-9c8b-4e8b-b1b4-9c22f6b44959"/>
@@ -55,28 +58,84 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2824188f-9c8b-4e8b-b1b4-9c22f6b44959"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{rcp_bkg_id}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{rcp_bkg_id}]]></textFieldExpression>
 			</textField>
-		</band>
-	</pageHeader>
-	<columnHeader>
-		<band height="32" splitType="Stretch">
-			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
 			<staticText>
-				<reportElement x="0" y="6" width="110" height="20" uuid="612f9ea7-17b9-4872-b949-2d849b500855">
+				<reportElement x="0" y="38" width="110" height="20" uuid="612f9ea7-17b9-4872-b949-2d849b500855">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="130e82a0-a038-4733-8237-2520928a05ad"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle"/>
 				<text><![CDATA[EXTRA SERVICES]]></text>
 			</staticText>
 		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="32" splitType="Stretch">
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
+			<staticText>
+				<reportElement x="6" y="0" width="100" height="20" uuid="f6c469ff-06d4-4879-a47e-aede85812eaf">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="aee27727-9763-44f5-83c9-3ae55bb77272"/>
+				</reportElement>
+				<text><![CDATA[SERVCICE EXTRA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="140" y="0" width="100" height="20" uuid="c1af6405-50c9-4b21-850b-3baa07bd349e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6b955120-716d-49d4-a947-306ac40666b0"/>
+				</reportElement>
+				<text><![CDATA[DESCRIPTION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="270" y="0" width="60" height="20" uuid="08e80aa5-104e-406d-af8b-fa424098f440">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="815228a8-4637-4d35-a969-d3f99eeb6e8a"/>
+				</reportElement>
+				<text><![CDATA[UNITS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="350" y="0" width="70" height="20" uuid="01e5bbdb-81af-4bbd-8b56-35177f0ec3fa">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3f111d76-552d-4e79-9a96-573bfbd1e83b"/>
+				</reportElement>
+				<text><![CDATA[PRICE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="450" y="1" width="100" height="30" uuid="af9c8299-6713-43de-bf94-e6967d7f9afb">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7714c06b-0585-4466-9b9f-536dde731fd3"/>
+				</reportElement>
+				<text><![CDATA[DATE]]></text>
+			</staticText>
+		</band>
 	</columnHeader>
 	<detail>
-		<band height="310" splitType="Stretch">
-			<subreport>
-				<reportElement x="20" y="10" width="480" height="291" uuid="8ae2f478-467e-4bc7-8560-ebfaa93a3e58"/>
-				<parametersMapExpression><![CDATA[$P{subReport}]]></parametersMapExpression>
-			</subreport>
+		<band height="48" splitType="Stretch">
+			<textField>
+				<reportElement x="6" y="11" width="100" height="30" uuid="810c8d9d-ba66-4b20-81ea-af4790d5c6b5">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="aee27727-9763-44f5-83c9-3ae55bb77272"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{sxt_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="130" y="11" width="100" height="30" uuid="2681548d-1d32-4b40-9e33-a0f0376c7d31">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6b955120-716d-49d4-a947-306ac40666b0"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{sxt_description}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="260" y="10" width="60" height="30" uuid="0213d605-6fe8-4b10-a623-1958f7bc2c1f">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="815228a8-4637-4d35-a969-d3f99eeb6e8a"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{bsx_units}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="342" y="10" width="100" height="30" uuid="9fd5c6c3-e207-4888-928d-cf858d93461e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3f111d76-552d-4e79-9a96-573bfbd1e83b"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{bsx_precio}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="447" y="11" width="100" height="30" uuid="ad39431a-9498-4d94-b545-0acec1a9e93a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7714c06b-0585-4466-9b9f-536dde731fd3"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{bsx_date}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<columnFooter>
@@ -99,7 +158,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8354bab4-8fda-45ca-8528-050e8d07312f"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{rcp_days}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{rcp_days}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="30" width="130" height="20" uuid="e16f7c6e-1db1-4330-a2ba-ff67bee5fcdc">
@@ -113,7 +172,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f6fc0326-9391-4201-850f-1406df7f12ea"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{rcp_total_services}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{rcp_total_services}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="60" width="130" height="30" uuid="56faec07-8791-439b-803a-1cfd8bf01fe6">
@@ -127,7 +186,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="910f50be-2928-49a1-910a-6fb427b5da5c"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{rcp_total_room}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{rcp_total_room}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="460" y="105" width="66" height="15" uuid="cce0f820-a3df-42e9-acde-17b4fa45b162">
@@ -141,7 +200,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a1a195a0-7157-4ad1-ba6f-b630226a4863"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{rcp_total}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{rcp_total}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

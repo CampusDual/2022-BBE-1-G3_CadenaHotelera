@@ -287,6 +287,8 @@ public class ReportService implements IReportService {
 			cf.validate(keyMap);
 	
 			consulta = receiptService.completeReceiptQuery(keyMap, new ArrayList<String>());
+			
+			EntityResult consultaFinal =consulta;
 
 //			EntityResult consultaCategorizada = new EntityResultMapImpl();
 //				for(int i = 0; i <consulta.calculateRecordNumber();i++) {
@@ -325,18 +327,26 @@ public class ReportService implements IReportService {
 //			
 //			servciosExtra.addRecord(consultaServicios);
 			
-			JRTableModelDataSource dataSourceServices = new JRTableModelDataSource(EntityResultUtils.createTableModel(servciosExtra));
-			JasperReport jasperReportServices = JasperCompileManager.compileReport(EXTRA_SERVICES);
-     		JasperPrint jasperPrintServices= JasperFillManager.fillReport(jasperReportServices, new HashMap<String,Object>(), dataSourceServices);
-//			
-			Map<String,Object> subReport = new HashMap<String,Object>(){{
-				put("subReport",jasperPrintServices);
-			}};
+//			JRTableModelDataSource dataSourceServices = new JRTableModelDataSource(EntityResultUtils.createTableModel(servciosExtra));
+//			JasperReport jasperReportServices = JasperCompileManager.compileReport(EXTRA_SERVICES);
+//     		JasperPrint jasperPrintServices= JasperFillManager.fillReport(jasperReportServices, new HashMap<String,Object>(), dataSourceServices);
+////			
+//			Map<String,Object> subReport = new HashMap<String,Object>(){{
+//				put("subReport",jasperPrintServices);
+//			}};
 			
-			System.err.println(consulta);
-			JRTableModelDataSource dataSource = new JRTableModelDataSource(EntityResultUtils.createTableModel(consulta));
+			Map<String,Object> parameters = new HashMap<String,Object>(){{
+				put("rcp_date",consultaFinal.getRecordValues(0).get("rcp_date"));
+				put("rcp_bkg_id",consultaFinal.getRecordValues(0).get("rcp_bkg_id"));
+				put("rcp_days",consultaFinal.getRecordValues(0).get("rcp_days"));
+				put("rcp_total_services",consultaFinal.getRecordValues(0).get("rcp_total_services"));
+				put("rcp_total_room",consultaFinal.getRecordValues(0).get("rcp_total_room"));
+				put("rcp_total",consultaFinal.getRecordValues(0).get("rcp_total"));
+			}};
+
+			JRTableModelDataSource dataSource = new JRTableModelDataSource(EntityResultUtils.createTableModel(servciosExtra));
 			JasperReport jasperReport = JasperCompileManager.compileReport(RECEIPT);
-			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, subReport, dataSource);
+			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 			jasperPrint.setOrientation(OrientationEnum.LANDSCAPE);
 			
 			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
