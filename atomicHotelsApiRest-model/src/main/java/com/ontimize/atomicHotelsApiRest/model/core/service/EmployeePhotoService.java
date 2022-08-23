@@ -144,6 +144,7 @@ public class EmployeePhotoService implements IEmployeePhotoService {
 			header.setContentDispositionFormData(pictureName, pictureName);
 			header.setCacheControl("must-revalidate, post-check=0, pre-check=0");
 			return new ResponseEntity(bytes.getBytes(), header, HttpStatus.OK);
+		
 		}
 
 	}
