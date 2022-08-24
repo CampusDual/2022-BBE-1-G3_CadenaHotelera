@@ -523,11 +523,10 @@ public class ControlFields {
 			{
 				put("Columns info", new HashMap<String, Object>() {
 					{
-						put("Valid fields", infoValid);
-						put("Required fields", required);
-						put("Allow Optional fields", optional);
-						put("Allow Empty List", !noEmptyList);
-						put("WARNING", "Remove field '" + HELP_KEY_INFO + "' to disable this result");
+						put("Valid columns", infoValid);
+						put("Required columns", required);
+//						put("Allow Optional columns", optional);
+						put("WARNING", "Remove columm '" + HELP_KEY_INFO + "' to disable this result");
 					}
 				});
 			}
@@ -550,8 +549,8 @@ public class ControlFields {
 					{
 						put("Valid fields", infoValid);
 						put("Required fields", required);
-						put("Allow Optional fields", optional);
-						put("Allow BasicExpressions", allowBasicExpression);
+//						put("Allow Optional fields", optional);
+//						put("Allow BasicExpressions", allowBasicExpression);
 						put("WARNING", "Remove field '" + HELP_KEY_INFO + "' to disable this result");
 					}
 				});

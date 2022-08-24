@@ -104,7 +104,7 @@ public class BookingService implements IBookingService {
 
 			resultado = this.daoHelper.query(this.dao, keyMap, attrList);
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
@@ -360,7 +360,7 @@ public class BookingService implements IBookingService {
 			resultado = this.daoHelper.query(this.dao, keyMap, attrList, "queryInfoBooking");
 		} catch (ValidateException e) {
 			resultado = e.getEntityResult();
-		} catch ( LiadaPardaException e) {
+		} catch (LiadaPardaException e) {
 			System.err.println(e.getMessage());
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (Exception e) {
@@ -382,7 +382,7 @@ public class BookingService implements IBookingService {
 			return this.daoHelper.query(this.dao, keyMap, attrList, "queryBasicBooking");
 		} catch (ValidateException e) {
 			return e.getEntityResult();
-		} catch ( LiadaPardaException e) {
+		} catch (LiadaPardaException e) {
 			System.err.println(e.getMessage());
 			return new EntityResultWrong(e.getMessage());
 		}
@@ -626,7 +626,7 @@ public class BookingService implements IBookingService {
 
 			resultado = this.daoHelper.query(this.dao, keyMap, attrList, "queryBookedRoomForAddingExtraServices");
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
@@ -667,7 +667,7 @@ public class BookingService implements IBookingService {
 
 			resultado = this.daoHelper.query(this.dao, keyMap, attrList, "queryBookingSlotsInfo");
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}
@@ -825,7 +825,7 @@ public class BookingService implements IBookingService {
 
 			resultado = this.daoHelper.query(this.dao, keyMap, lista, "queryInfoBooking");
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}
