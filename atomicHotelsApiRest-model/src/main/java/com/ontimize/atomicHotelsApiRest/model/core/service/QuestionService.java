@@ -26,6 +26,7 @@ import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.QuestionDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.UserRoleDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
@@ -48,7 +49,7 @@ public class QuestionService implements IQuestionService {
 	ControlFields cf;
 
 	@Override
-//	@Secured({ PermissionsProviderSecured.SECURED })
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult questionQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 
@@ -57,10 +58,12 @@ public class QuestionService implements IQuestionService {
 
 			cf.reset();
 			cf.addBasics(dao.fields);
+
+			cf.setCPHtlColum(dao.ATTR_HTL_ID);
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER);
+
 			cf.validate(keyMap);
 			cf.validate(attrList);
-			System.err.println(cf.infoValidateMap());
-			System.err.println(cf.infoValidateList());
 
 			resultado = this.daoHelper.query(this.dao, keyMap, attrList);
 		} catch (ValidateException e) {
@@ -73,7 +76,38 @@ public class QuestionService implements IQuestionService {
 	}
 
 	@Override
-//	@Secured({ PermissionsProviderSecured.SECURED })
+	@Secured({ PermissionsProviderSecured.SECURED })
+	public EntityResult questionPublicQuery(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException {
+
+		EntityResult resultado = new EntityResultWrong();
+		try {
+
+			cf.reset();
+			cf.addBasics(dao.fields);
+			cf.setRestricted(new ArrayList() {
+				{
+					add(dao.ATTR_PUBLIC);
+					add(dao.ATTR_USER);
+				}
+			});
+			cf.setCPHtlColum(dao.ATTR_HTL_ID);
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER,UserRoleDao.ROLE_STAFF);
+			cf.validate(keyMap);
+			cf.validate(attrList);
+
+			resultado = this.daoHelper.query(this.dao, keyMap, attrList, "queryPublic");
+		} catch (ValidateException e) {
+			resultado = e.getEntityResult();
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
+		}
+		return resultado;
+	}
+
+	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult questionInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException {
 
 		EntityResult resultado = new EntityResultWrong();
@@ -89,10 +123,13 @@ public class QuestionService implements IQuestionService {
 			});
 			cf.setRestricted(new ArrayList<String>() {
 				{
-					add(dao.ATTR_ID);// El id no se puede actualizar
-					add(dao.ATTR_PUBLIC);// El id no se puede actualizar
+					add(dao.ATTR_ID);
+					add(dao.ATTR_PUBLIC);
 				}
 			});
+
+			cf.setCPUserColum(dao.ATTR_USER);
+			cf.addCPUser(true);
 			cf.validate(attrMap);
 
 			if (attrMap.containsKey(dao.ATTR_HTL_ID)) {
@@ -125,7 +162,7 @@ public class QuestionService implements IQuestionService {
 	}
 
 	@Override
-//	@Secured({ PermissionsProsviderSecured.SECURED })
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult questionUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
 
@@ -141,20 +178,22 @@ public class QuestionService implements IQuestionService {
 			cf.reset();
 			cf.addBasics(dao.fields);
 			cf.setRequired(requiredFilter);
+
 			cf.setOptional(false);// No será aceptado ningún campo que no esté en required
 			cf.validate(keyMap);
 
 			// ControlFields de los nuevos datos
-			List<String> restrictedData = new ArrayList<String>() {
-				{
-					add(dao.ATTR_ID);// El id no se puede actualizar
-				}
-			};
+
 			cf.reset();
 			cf.addBasics(dao.fields);
-			cf.setRestricted(restrictedData);
+			cf.setRestricted(new ArrayList<String>() {
+				{
+					add(dao.ATTR_USER);
+					add(dao.ATTR_ID);
+				}
+			});
 			cf.validate(attrMap);
-
+//todo revisar, hay que buscar si existe la question antes de actualizar
 			if (attrMap.containsKey(dao.ATTR_HTL_ID)) {
 				Map<String, Object> subConsultaKeyMap = new HashMap<>();
 				subConsultaKeyMap.put(HotelDao.ATTR_ID, attrMap.get(dao.ATTR_HTL_ID));
@@ -162,7 +201,7 @@ public class QuestionService implements IQuestionService {
 						EntityResultTools.attributes(HotelDao.ATTR_ID)); // aqui se restringen por permisos
 				if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros, la habitación es erronea.
 					throw new EntityResultRequiredException(ErrorMessage.INVALID_HOTEL_ID);
-				}
+				} 
 			}
 
 			resultado = this.daoHelper.update(this.dao, attrMap, keyMap);
@@ -173,6 +212,9 @@ public class QuestionService implements IQuestionService {
 			}
 		} catch (ValidateException e) {
 			resultado = e.getEntityResult();
+		} catch (EntityResultRequiredException e) {
+			resultado = new EntityResultWrong(e.getMessage());
+		
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
 		} catch (DataIntegrityViolationException e) {
@@ -185,7 +227,7 @@ public class QuestionService implements IQuestionService {
 	}
 
 	@Override
-//	@Secured({ PermissionsProviderSecured.SECURED })
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult questionDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 
 		EntityResult resultado = new EntityResultMapImpl();

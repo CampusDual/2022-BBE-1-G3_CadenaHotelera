@@ -11,9 +11,17 @@ import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
 
 public interface IQuestionService {
-	public EntityResult questionQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
-	 public EntityResult questionInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException;
-	 public EntityResult questionUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
-	 public EntityResult questionDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
+	public EntityResult questionPublicQuery(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException;
+
+	public EntityResult questionQuery(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException;
+
+	public EntityResult questionInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException;
+
+	public EntityResult questionUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
+			throws OntimizeJEERuntimeException;
+
+	public EntityResult questionDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
 
 }

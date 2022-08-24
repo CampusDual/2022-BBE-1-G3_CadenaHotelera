@@ -168,15 +168,22 @@
 		INSERT INTO tserver_permission VALUES (119,'com.ontimize.atomicHotelsApiRest.api.core.service.IStatisticsService/servicesExtraIncomeByHotelQuery');
 		INSERT INTO tserver_permission VALUES (120,'com.ontimize.atomicHotelsApiRest.api.core.service.IStatisticsService/incomeVsExpensesByHotelQuery');
 
-	-- picture
+		-- picture
 		-- employeePhoto
 		INSERT INTO tserver_permission VALUES (121,'com.ontimize.atomicHotelsApiRest.api.core.service.IEmployeePhotoService/employeePhotoQuery');
 		INSERT INTO tserver_permission VALUES (122,'com.ontimize.atomicHotelsApiRest.api.core.service.IEmployeePhotoService/employeePhotoInsert');
 		INSERT INTO tserver_permission VALUES (123,'com.ontimize.atomicHotelsApiRest.api.core.service.IEmployeePhotoService/employeePhotoDelete');
 		INSERT INTO tserver_permission VALUES (124,'com.ontimize.atomicHotelsApiRest.api.core.service.IEmployeePhotoService/getPicture');
 																									
-		INSERT INTO tserver_permission VALUES (125,''); --no valido
+		-- question
+		INSERT INTO tserver_permission VALUES (125,'com.ontimize.atomicHotelsApiRest.api.core.service.IQuestionService/questionQuery');
+		INSERT INTO tserver_permission VALUES (126,'com.ontimize.atomicHotelsApiRest.api.core.service.IQuestionService/questionDelete');
+		INSERT INTO tserver_permission VALUES (127,'com.ontimize.atomicHotelsApiRest.api.core.service.IQuestionService/questionUpdate');
+		INSERT INTO tserver_permission VALUES (128,'com.ontimize.atomicHotelsApiRest.api.core.service.IQuestionService/questionInsert');
+		INSERT INTO tserver_permission VALUES (129,'com.ontimize.atomicHotelsApiRest.api.core.service.IQuestionService/questionPublicQuery');
 
+		
+		
 		--varios
 		INSERT INTO tserver_permission VALUES (111,'com.ontimize.atomicHotelsApiRest.api.core.service.IHotelService/poiQuery');
 		INSERT INTO tserver_permission VALUES (112,'com.ontimize.atomicHotelsApiRest.api.core.service.IUserService/userCancelUpdate');
@@ -229,7 +236,7 @@ ALTER SEQUENCE trole_server_permission_id_role_server_permission_seq RESTART WIT
 
 	--hotelManager 2		
 		INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 2,id_server_permission 
-			FROM tserver_permission WHERE id_server_permission >= 1 AND id_server_permission <= 124;
+			FROM tserver_permission WHERE id_server_permission >= 1 AND id_server_permission <= 129;
 		DELETE FROM trole_server_permission 
 			WHERE ( id_server_permission in(2,4,6,7,8,49,50,51,73,74,76,77,78,82,83,84,94,95,96,108,109,110,112) 
 					OR id_server_permission >= 86 AND id_server_permission <= 92
@@ -247,6 +254,8 @@ ALTER SEQUENCE trole_server_permission_id_role_server_permission_seq RESTART WIT
 					OR id_server_permission >= 86 AND id_server_permission <= 92
 			) AND ID_ROLENAME = 3;
 		INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (3,111);
+		INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (3,128);
+		INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (3,129);
 	
 	--customer 4	
 		INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 4,id_server_permission FROM tserver_permission WHERE id_server_permission >= 1 AND id_server_permission <= 85	;	
@@ -255,10 +264,14 @@ ALTER SEQUENCE trole_server_permission_id_role_server_permission_seq RESTART WIT
 			) AND ID_ROLENAME = 4;
 		
 		INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (4,111);
+		INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (4,128);
+		INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (4,129);
 	
 	--user 5 - información pública	
 	INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (5,1);
 	INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (5,111);
+	INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (5,128);
+	INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (5,129);
 
 
 	

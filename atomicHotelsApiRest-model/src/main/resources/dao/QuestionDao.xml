@@ -6,5 +6,20 @@
 	<UpdateKeys>
 		<Column>qst_id</Column>
 	</UpdateKeys>
-	<GeneratedKey>qst_id</GeneratedKey>	
+	<GeneratedKey>qst_id</GeneratedKey>
+		<Queries>
+
+	<Query id="queryPublic">
+			<Sentence>
+				<![CDATA[
+				    SELECT
+				     	#COLUMNS#
+				    FROM
+				     	questions				   	
+	   				WHERE qst_public = 1	   						  
+				    #WHERE_CONCAT#				    
+			    ]]>
+			</Sentence>
+		</Query>	
+		</Queries>
 </JdbcEntitySetup>
