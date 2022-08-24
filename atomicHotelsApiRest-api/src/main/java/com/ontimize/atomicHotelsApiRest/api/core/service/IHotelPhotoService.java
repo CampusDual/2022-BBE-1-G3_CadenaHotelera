@@ -14,7 +14,5 @@ public interface IHotelPhotoService {
 	 public EntityResult hotelPhotoInsert(Map<String, Object> attrMap) throws OntimizeJEERuntimeException;
 	 public EntityResult hotelPhotoDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException;
 	 public ResponseEntity getHotelPictureQuery(Map<String, Object> filter, List<String> columns) throws OntimizeJEERuntimeException;
-	 public EntityResult hotelPhoto2Insert(Map<String, Object> data) throws OntimizeJEERuntimeException;
-
 
 }

@@ -69,7 +69,13 @@ public class HotelPhotoService implements IHotelPhotoService {
 	@Autowired
 	ControlFields cf;
 	
-	
+	/**
+	 * Método para insertar imágenes en la tabla hotelphotos.
+	 * Dependiendo de los parámetros de búsqueda del postman, diferenciando si a la hora de enviar la imagen, se especifica el origen de la misma, de las siguientes formas:
+	 * -ATTR_FILE_PATH : ruta 				(Ej: "htl_pct_file_path": "c:\\atom1.jpg")
+	 * -ATTR_FILE_URL  : url				(Ej: "htl_pct_file_url": "http://lh5.googleusercontent.com/-UzW5aTVIdo8/JGCWrabJ6jc/s512-c/photo.jpg"
+	 * -ATTR_FILE_BYTE : archivo de bytes	"htl_pct_file_byte": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxISEBAQEhESFRUXFxYXFxgXbD/Q3q88Sp1HnTofm/c1S7hdS....
+	 */
 	@Override
 //	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult hotelPhotoInsert(Map<String, Object> data) throws OntimizeJEERuntimeException {
@@ -106,53 +112,19 @@ public class HotelPhotoService implements IHotelPhotoService {
 				} else {
 					resultado.setMessage("El archivo" + p.toAbsolutePath().toString() + " no existe. ");
 				}
-			}
-
-			if(data.get(dao.ATTR_FILE_URL) !=null && data.get(dao.ATTR_FILE_PATH) ==null && data.get(dao.ATTR_FILE_BYTE) ==null) {
+			}else if(data.get(dao.ATTR_FILE_URL) !=null && data.get(dao.ATTR_FILE_PATH) ==null && data.get(dao.ATTR_FILE_BYTE) ==null) {
+				
 				URL u = new URL((String) data.get(dao.ATTR_FILE_URL));
-/*				int contentLength = u.openConnection().getContentLength();
-				InputStream openStream = u.openStream();
-				byte[] binaryData = new byte[contentLength];
 
- */
 				InputStream	openStream = u.openStream();
-		int contentLength = openStream.available();
-		byte[] binaryData = new byte[contentLength];
-		openStream.read(binaryData);
+				int contentLength = openStream.available();
+				byte[] binaryData = new byte[contentLength];
+				openStream.read(binaryData);
 
-				
-				
-			    data.put(dao.ATTR_FILE, binaryData);
-/*				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				InputStream is = null;
-				try {
-				  is = u.openStream ();
-				  byte[] byteChunk = new byte[4096]; // Or whatever size you want to read in at a time.
-				  int n;
-
-				  while ( (n = is.read(byteChunk)) > 0 ) {
-				    baos.write(byteChunk, 0, n);
-				  }
-				}
-				catch (IOException e) {
-				  System.err.printf ("Failed while reading bytes from %s: %s", u.toExternalForm(), e.getMessage());
-				  e.printStackTrace ();
-				  // Perform any other exception handling that's appropriate.
-				}
-				finally {
-				  if (is != null) { is.close(); }
-				}
-				data.put(dao.ATTR_FILE, baos);
-*/				
-				
+			    data.put(dao.ATTR_FILE, binaryData);				
 				resultado = daoHelper.insert(this.dao, data);
 				resultado.setMessage("Archivo cargado correctamente ." );
-			} else {
-				resultado.setMessage("El archivo no existe. ");
-			}
-			if(data.get(dao.ATTR_FILE_BYTE) !=null && data.get(dao.ATTR_FILE_URL) ==null && data.get(dao.ATTR_FILE_PATH) ==null) {
-
-				
+			}else if(data.get(dao.ATTR_FILE_BYTE) !=null && data.get(dao.ATTR_FILE_URL) ==null && data.get(dao.ATTR_FILE_PATH) ==null) {
 			
 				  byte[] bis = Base64.getDecoder().decode((String) data.get(dao.ATTR_FILE_BYTE));
 				
@@ -163,58 +135,6 @@ public class HotelPhotoService implements IHotelPhotoService {
 				resultado.setMessage("El archivo no existe. ");
 			}
 			
-		
-
-		} catch (ValidateException e) {
-			e.getMessage();
-			resultado = new EntityResultWrong(e.getMessage());
-			
-		}catch (DuplicateKeyException e) {
-			resultado.setMessage("El nombre introducido "+data.get(dao.ATTR_NAME)+" ya tiene foto asociada");
-		} catch (Exception e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(ErrorMessage.ERROR);
-		}
-		
-		return resultado;
-	}
-
-	@Override
-//	@Secured({ PermissionsProviderSecured.SECURED })
-	public EntityResult hotelPhoto2Insert(Map<String, Object> data) throws OntimizeJEERuntimeException {
-		EntityResult resultado = new EntityResultWrong();
-
-		try {
-
-			List<String> required = new ArrayList<>() {
-				{
-					add(dao.ATTR_NAME);
-//					add(dao.ATTR_FILE);
-				}
-			};
-			
-			List<String> restricted = new ArrayList<String>() {
-				{
-					add(dao.ATTR_ID);
-				}
-			};
-			
-			cf.reset();
-			cf.addBasics(dao.fields);
-			cf.setRequired(required);
-			cf.setRestricted(restricted);
-			cf.validate(data);
-
-			URL u = new URL((String) data.get(dao.ATTR_FILE_URL));
-			int contentLength = u.openConnection().getContentLength();
-			InputStream openStream = u.openStream();
-			byte[] binaryData = new byte[contentLength];
-
-
-		    data.put(dao.ATTR_FILE, binaryData);
-			resultado = daoHelper.insert(this.dao, data);
-			resultado.setMessage("Archivo cargado correctamente ." );
-				
 		} catch (ValidateException e) {
 			e.getMessage();
 			resultado = new EntityResultWrong(e.getMessage());
@@ -229,6 +149,11 @@ public class HotelPhotoService implements IHotelPhotoService {
 		return resultado;
 	}
 	
+	/**
+	 * Método para visualizar las imágenes.
+	 * ResponseEntity representa la respuesta HTTP completa: código de estado, encabezados y cuerpo. Podemos usarlo para configurar completamente la respuesta HTTP.
+	 * ResponseEntity proporciona dos interfaces de construcción anidadas: HeadersBuilder y su subinterfaz, BodyBuilder. Podemos acceder a sus capacidades a través de sus métodos estáticos.
+	 */
 	@Override
 //	@Secured({ PermissionsProviderSecured.SECURED })
 	public ResponseEntity getHotelPictureQuery(Map<String, Object> filter, List<String> columns) {
