@@ -58,13 +58,15 @@ public class QuestionService implements IQuestionService {
 			cf.reset();
 			cf.addBasics(dao.fields);
 			cf.validate(keyMap);
-
 			cf.validate(attrList);
+			System.err.println(cf.infoValidateMap());
+			System.err.println(cf.infoValidateList());
 
 			resultado = this.daoHelper.query(this.dao, keyMap, attrList);
 		} catch (ValidateException e) {
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (Exception e) {
+			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}
 		return resultado;
@@ -112,7 +114,6 @@ public class QuestionService implements IQuestionService {
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
-
 		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);
 		} catch (Exception e) {
@@ -177,6 +178,7 @@ public class QuestionService implements IQuestionService {
 		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_REQUIRED_FIELDS);
 		} catch (Exception e) {
+			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
@@ -220,6 +222,7 @@ public class QuestionService implements IQuestionService {
 		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
 		} catch (Exception e) {
+			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;

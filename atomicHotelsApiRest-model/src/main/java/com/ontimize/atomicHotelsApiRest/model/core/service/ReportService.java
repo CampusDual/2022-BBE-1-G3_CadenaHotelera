@@ -312,7 +312,7 @@ public class ReportService implements IReportService {
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport,
 					ReportsConfig.getBasicParametersPutAll(keyMap));
 			jasperPrint.setOrientation(OrientationEnum.LANDSCAPE);
-
+			
 			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
 
 		}  catch (ValidateException e) {			

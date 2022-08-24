@@ -65,7 +65,13 @@
 				<artifactId>amadeus-java</artifactId>
 				<version>6.2.1</version>
 			</dependency>
-
+			
+			<dependency>
+				<groupId>net.sf.jasperreports</groupId>
+				<artifactId>jasperreports</artifactId>
+				<version>6.20.0</version>
+			</dependency>
+			
 			<dependency>
 
 
@@ -111,11 +117,11 @@
 				<artifactId>amadeus-java</artifactId>
 				<version>6.2.1</version>
 			</dependency>
-<dependency>
-    <groupId>org.json</groupId>
-    <artifactId>json</artifactId>
-    <version>20220320</version>
-</dependency>
+			<dependency>
+				<groupId>org.json</groupId>
+				<artifactId>json</artifactId>
+				<version>20220320</version>
+			</dependency>
 			<dependency>
 
 
@@ -153,13 +159,13 @@
 				<version>42.2.25</version>
 
 			</dependency>
-<!-- https://mvnrepository.com/artifact/org.json/json -->
+			<!-- https://mvnrepository.com/artifact/org.json/json -->
 			<dependency>
-			    <groupId>org.json</groupId>
-			    <artifactId>json</artifactId>
-			    <version>20220320</version>
+				<groupId>org.json</groupId>
+				<artifactId>json</artifactId>
+				<version>20220320</version>
 			</dependency>
-<!-- AMADEUS API -->
+			<!-- AMADEUS API -->
 			<dependency>
 				<groupId>com.amadeus</groupId>
 				<artifactId>amadeus-java</artifactId>

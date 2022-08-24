@@ -1,10 +1,12 @@
 package com.ontimize.atomicHotelsApiRest.model.core.tools;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -42,7 +44,6 @@ public class ControlFields {
 	private boolean optional;
 	private boolean noEmptyList;
 	private boolean noWildcard;
-	private boolean noColumns;
 	private boolean allowBasicExpression;
 	private boolean controlPermissionsActive;
 	private String detailsMsg = "";
@@ -61,12 +62,11 @@ public class ControlFields {
 
 	public void reset() {
 		fields = new HashMap<String, type>();
-		restricted = null;
-		required = null;
+		restricted = new ArrayList<>();
+		required = new ArrayList<>();
 		optional = true;
 		noEmptyList = true; // solo para las Listas no los HashMap
 		noWildcard = true;
-		noColumns = false;
 		allowBasicExpression = true;
 
 		resetPermissions();
@@ -159,23 +159,19 @@ public class ControlFields {
 //			throw new InvalidFieldsException(ErrorMessage.NO_BASIC_EXPRESSION);
 //		}
 
-		if (required != null) {
-			for (String key : required) {
-				if (!keyMap.containsKey(key)) {
-					throw new MissingFieldsException(ErrorMessage.REQUIRED_FIELD + key);
-				}
+		for (String key : required) {
+			if (!keyMap.containsKey(key)) {
+				throw new MissingFieldsException(ErrorMessage.REQUIRED_FIELD + key);
 			}
 		}
 
-		if (restricted != null) {
-			for (String key : restricted) {
-				if (keyMap.containsKey(key)) {
-					throw new RestrictedFieldException(ErrorMessage.INVALID_FIELD + key);
-				}
+		for (String key : restricted) {
+			if (keyMap.containsKey(key)) {
+				throw new RestrictedFieldException(ErrorMessage.INVALID_FIELD + key);
 			}
 		}
 
-		if (!optional && required == null) {
+		if (!optional && required.isEmpty()) {
 			throw new LiadaPardaException(ErrorMessage.INTERNAL_CAGADA);
 		} else {
 			if (!optional && (required.size() != keyMap.size())) {
@@ -338,7 +334,7 @@ public class ControlFields {
 					break;
 
 				case BOOLEAN:
-					validType =  ((keyMap.get(key) instanceof Integer) && vF.isBoolean((Integer) keyMap.get(key)));						
+					validType = ((keyMap.get(key) instanceof Integer) && vF.isBoolean((Integer) keyMap.get(key)));
 					break;
 
 				case BOOKING_ACTION:
@@ -348,7 +344,8 @@ public class ControlFields {
 						try {
 							keyMap.replace(key, BookingDao.Action.valueOf((String) keyMap.get(key)));
 							validType = true;
-						} catch (IllegalArgumentException e) {}
+						} catch (IllegalArgumentException e) {
+						}
 					}
 					break;
 
@@ -359,7 +356,8 @@ public class ControlFields {
 						try {
 							keyMap.replace(key, UserDao.Action.valueOf((String) keyMap.get(key)));
 							validType = true;
-						} catch (IllegalArgumentException e) {}
+						} catch (IllegalArgumentException e) {
+						}
 					}
 					break;
 
@@ -370,7 +368,8 @@ public class ControlFields {
 						try {
 							keyMap.replace(key, UserRoleDao.UserRole.valueOf((String) keyMap.get(key)));
 							validType = true;
-						} catch (IllegalArgumentException e) {}
+						} catch (IllegalArgumentException e) {
+						}
 					}
 					break;
 
@@ -382,7 +381,8 @@ public class ControlFields {
 						try {
 							keyMap.replace(key, CustomerDao.Action.valueOf((String) keyMap.get(key)));
 							validType = true;
-						} catch (IllegalArgumentException e) {}
+						} catch (IllegalArgumentException e) {
+						}
 					}
 					break;
 
@@ -401,7 +401,7 @@ public class ControlFields {
 
 			} else {
 				if (allowBasicExpression
-						&& key.equals(SQLStatementBuilder.ExtendedSQLConditionValuesProcessor.EXPRESSION_KEY)) {					
+						&& key.equals(SQLStatementBuilder.ExtendedSQLConditionValuesProcessor.EXPRESSION_KEY)) {
 					// TODO comprobamos contenido de basic expresion....
 				} else {
 					throw new InvalidFieldsException(ErrorMessage.INVALID_FIELD + key);
@@ -446,23 +446,19 @@ public class ControlFields {
 				throw new MissingFieldsException(ErrorMessage.REQUIRED_MINIMUM_COLUMS);
 			}
 
-			if (required != null) {
-				for (String key : required) {
-					if (!columns.contains(key)) {
-						throw new MissingFieldsException(ErrorMessage.REQUIRED_COLUMN + key);
-					}
+			for (String key : required) {
+				if (!columns.contains(key)) {
+					throw new MissingFieldsException(ErrorMessage.REQUIRED_COLUMN + key);
 				}
 			}
 
-			if (restricted != null) {
-				for (String key : restricted) {
-					if (columns.contains(key)) {
-						throw new RestrictedFieldException(ErrorMessage.INVALID_COLUM + key);
-					}
+			for (String key : restricted) {
+				if (columns.contains(key)) {
+					throw new RestrictedFieldException(ErrorMessage.INVALID_COLUM + key);
 				}
 			}
 
-			if (!optional && required == null) {
+			if (!optional && required.isEmpty()) {
 				throw new LiadaPardaException(ErrorMessage.INTERNAL_CAGADA);
 			} else {
 				if (!optional && (required.size() != columns.size())) {
@@ -485,6 +481,40 @@ public class ControlFields {
 				columns.add("null"); // para saltarse los filtros de ontimize
 			}
 		}
+	}
+
+	public String infoValidateList() {
+		StringBuilder info = new StringBuilder();
+		Set<String> infoValid = (fields.keySet());
+		infoValid.removeAll(restricted);
+
+		info.append("\n---------------------\n");
+		info.append("Colums info: ");
+		info.append("\t\nValid fields: \n\t\t" + infoValid);
+		info.append("\t\nRequired fields: \n\t\t" + required.toString());
+		info.append("\t\nAllow Optional fields: " + optional);
+		info.append("\t\nOnly Empty List: " + !noEmptyList);
+		info.append("\t\nAllow Empty List: " + !noEmptyList);
+		info.append("\n---------------------\n");
+
+		return info.toString();
+	}
+
+	public String infoValidateMap() {
+		StringBuilder info = new StringBuilder();
+
+		HashMap<String, Object> infoValid = new HashMap<>();
+		infoValid.putAll(fields);
+		infoValid.keySet().removeAll(restricted);
+
+		info.append("\n---------------------\n");
+		info.append("Fields info:");
+		info.append("\n\tValid fields/types: \n\t\t" + infoValid.toString());
+		info.append("\n\tRequired fields: \n\t\t" + required.toString());
+		info.append("\n\tAllow Optional fields: " + optional);
+		info.append("\n\tAllow BasicExpressions: " + allowBasicExpression);
+		info.append("\n---------------------\n");
+		return info.toString();
 	}
 
 	public void addCPUser(boolean b) {
