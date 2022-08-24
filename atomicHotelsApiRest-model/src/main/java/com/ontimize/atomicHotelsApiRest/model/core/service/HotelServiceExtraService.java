@@ -58,7 +58,7 @@ public class HotelServiceExtraService implements IHotelServiceExtraService {
 			resultado = this.daoHelper.query(this.dao, keyMap, attrList);
 
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);
@@ -100,7 +100,7 @@ public class HotelServiceExtraService implements IHotelServiceExtraService {
 			resultado.setMessage("HotelServiceExtra registrado");
 
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 		} catch (DataIntegrityViolationException e) {
@@ -157,7 +157,7 @@ public class HotelServiceExtraService implements IHotelServiceExtraService {
 				}
 			}
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
 		} catch (DataIntegrityViolationException e) {// Puede ser que se meta una FK que no exista o se le ponga null al
@@ -205,7 +205,7 @@ public class HotelServiceExtraService implements IHotelServiceExtraService {
 			}
 
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);

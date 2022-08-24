@@ -99,9 +99,7 @@ public class StatisticsService implements IStatisticsService {
 			resultado = this.daoHelper.query(this.hotelDao, keyMap, attrList, "queryHotelMaximunCapacity");
 
 		} catch (ValidateException e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(e.getMessage());
-
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
@@ -184,12 +182,10 @@ public class StatisticsService implements IStatisticsService {
 			}
 
 		} catch (ValidateException e) {
-			e.printStackTrace();
-			return resultado = new EntityResultWrong(e.getMessage());
-
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
-			return resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
 		return resultado;
 
@@ -267,9 +263,7 @@ public class StatisticsService implements IStatisticsService {
 			}
 
 		} catch (ValidateException e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(e.getMessage());
-
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
@@ -349,9 +343,7 @@ public class StatisticsService implements IStatisticsService {
 					});
 
 		} catch (ValidateException e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(e.getMessage());
-
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
@@ -458,9 +450,7 @@ public class StatisticsService implements IStatisticsService {
 			}
 
 		} catch (ValidateException e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(e.getMessage());
-
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
@@ -545,9 +535,7 @@ public class StatisticsService implements IStatisticsService {
 					});
 
 		} catch (ValidateException e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(e.getMessage());
-
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
@@ -624,9 +612,7 @@ public class StatisticsService implements IStatisticsService {
 			}
 
 		} catch (ValidateException e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(e.getMessage());
-
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
@@ -691,9 +677,7 @@ public class StatisticsService implements IStatisticsService {
 			}
 
 		} catch (ValidateException e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(e.getMessage());
-
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
@@ -824,9 +808,7 @@ public class StatisticsService implements IStatisticsService {
 			}
 
 		} catch (ValidateException e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(e.getMessage());
-
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);

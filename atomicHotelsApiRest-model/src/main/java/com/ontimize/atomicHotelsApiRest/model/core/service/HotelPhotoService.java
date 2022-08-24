@@ -58,7 +58,6 @@ import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 
 public class HotelPhotoService implements IHotelPhotoService {
 
-	
 	@Autowired
 	private HotelPhotoDao dao;
 
@@ -68,13 +67,16 @@ public class HotelPhotoService implements IHotelPhotoService {
 	private DefaultOntimizeDaoHelper daoHelper;
 	@Autowired
 	ControlFields cf;
-	
+
 	/**
-	 * Método para insertar imágenes en la tabla hotelphotos.
-	 * Dependiendo de los parámetros de búsqueda del postman, diferenciando si a la hora de enviar la imagen, se especifica el origen de la misma, de las siguientes formas:
-	 * -ATTR_FILE_PATH : ruta 				(Ej: "htl_pct_file_path": "c:\\atom1.jpg")
-	 * -ATTR_FILE_URL  : url				(Ej: "htl_pct_file_url": "http://lh5.googleusercontent.com/-UzW5aTVIdo8/JGCWrabJ6jc/s512-c/photo.jpg"
-	 * -ATTR_FILE_BYTE : archivo de bytes	"htl_pct_file_byte": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxISEBAQEhESFRUXFxYXFxgXbD/Q3q88Sp1HnTofm/c1S7hdS....
+	 * Método para insertar imágenes en la tabla hotelphotos. Dependiendo de los
+	 * parámetros de búsqueda del postman, diferenciando si a la hora de enviar la
+	 * imagen, se especifica el origen de la misma, de las siguientes formas:
+	 * -ATTR_FILE_PATH : ruta (Ej: "htl_pct_file_path": "c:\\atom1.jpg")
+	 * -ATTR_FILE_URL : url (Ej: "htl_pct_file_url":
+	 * "http://lh5.googleusercontent.com/-UzW5aTVIdo8/JGCWrabJ6jc/s512-c/photo.jpg"
+	 * -ATTR_FILE_BYTE : archivo de bytes "htl_pct_file_byte":
+	 * "/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxISEBAQEhESFRUXFxYXFxgXbD/Q3q88Sp1HnTofm/c1S7hdS....
 	 */
 	@Override
 //	@Secured({ PermissionsProviderSecured.SECURED })
@@ -86,73 +88,77 @@ public class HotelPhotoService implements IHotelPhotoService {
 			List<String> required = new ArrayList<>() {
 				{
 					add(dao.ATTR_NAME);
-	//				add(dao.ATTR_FILE);
+					// add(dao.ATTR_FILE);
 				}
 			};
-			
+
 			List<String> restricted = new ArrayList<String>() {
 				{
 					add(dao.ATTR_ID);
 				}
 			};
-			
+
 			cf.reset();
 			cf.addBasics(dao.fields);
 			cf.setRequired(required);
 			cf.setRestricted(restricted);
 			cf.validate(data);
-			
-			if(data.get(dao.ATTR_FILE_PATH) !=null && data.get(dao.ATTR_FILE_URL) ==null && data.get(dao.ATTR_FILE_BYTE) ==null) {
+
+			if (data.get(dao.ATTR_FILE_PATH) != null && data.get(dao.ATTR_FILE_URL) == null
+					&& data.get(dao.ATTR_FILE_BYTE) == null) {
 				Path p = Paths.get((String) data.get(dao.ATTR_FILE_PATH));
 				if (Files.exists(p)) {
-			    	data.put(dao.ATTR_FILE, Files.readAllBytes(p));
+					data.put(dao.ATTR_FILE, Files.readAllBytes(p));
 					resultado = daoHelper.insert(this.dao, data);
-					resultado.setMessage("El archivo" + p.toAbsolutePath().toString() + " cargado correctamente." );
-					
+					resultado.setMessage("El archivo" + p.toAbsolutePath().toString() + " cargado correctamente.");
+
 				} else {
 					resultado.setMessage("El archivo" + p.toAbsolutePath().toString() + " no existe. ");
 				}
-			}else if(data.get(dao.ATTR_FILE_URL) !=null && data.get(dao.ATTR_FILE_PATH) ==null && data.get(dao.ATTR_FILE_BYTE) ==null) {
-				
+			} else if (data.get(dao.ATTR_FILE_URL) != null && data.get(dao.ATTR_FILE_PATH) == null
+					&& data.get(dao.ATTR_FILE_BYTE) == null) {
+
 				URL u = new URL((String) data.get(dao.ATTR_FILE_URL));
 
-				InputStream	openStream = u.openStream();
+				InputStream openStream = u.openStream();
 				int contentLength = openStream.available();
 				byte[] binaryData = new byte[contentLength];
 				openStream.read(binaryData);
 
-			    data.put(dao.ATTR_FILE, binaryData);				
+				data.put(dao.ATTR_FILE, binaryData);
 				resultado = daoHelper.insert(this.dao, data);
-				resultado.setMessage("Archivo cargado correctamente ." );
-			}else if(data.get(dao.ATTR_FILE_BYTE) !=null && data.get(dao.ATTR_FILE_URL) ==null && data.get(dao.ATTR_FILE_PATH) ==null) {
-			
-				  byte[] bis = Base64.getDecoder().decode((String) data.get(dao.ATTR_FILE_BYTE));
-				
-			    data.put(dao.ATTR_FILE, bis);
+				resultado.setMessage("Archivo cargado correctamente .");
+			} else if (data.get(dao.ATTR_FILE_BYTE) != null && data.get(dao.ATTR_FILE_URL) == null
+					&& data.get(dao.ATTR_FILE_PATH) == null) {
+
+				byte[] bis = Base64.getDecoder().decode((String) data.get(dao.ATTR_FILE_BYTE));
+
+				data.put(dao.ATTR_FILE, bis);
 				resultado = daoHelper.insert(this.dao, data);
-				resultado.setMessage("Archivo cargado correctamente." );
+				resultado.setMessage("Archivo cargado correctamente.");
 			} else {
 				resultado.setMessage("El archivo no existe. ");
 			}
-			
+
 		} catch (ValidateException e) {
-			e.getMessage();
-			resultado = new EntityResultWrong(e.getMessage());
-			
-		}catch (DuplicateKeyException e) {
-			resultado.setMessage("El nombre introducido "+data.get(dao.ATTR_NAME)+" ya tiene foto asociada");
+			resultado = e.getEntityResult();
+		} catch (DuplicateKeyException e) {
+			resultado.setMessage("El nombre introducido " + data.get(dao.ATTR_NAME) + " ya tiene foto asociada");
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}
-		
+
 		return resultado;
 	}
-	
+
 	/**
-	 * Método para visualizar las imágenes.
-	 * ResponseEntity representa la respuesta HTTP completa: código de estado, encabezados y cuerpo. Podemos usarlo para configurar completamente la respuesta HTTP.
-	 * ResponseEntity proporciona dos interfaces de construcción anidadas: HeadersBuilder y su subinterfaz, BodyBuilder. Podemos acceder a sus capacidades a través de sus métodos estáticos.
+	 * Método para visualizar las imágenes. ResponseEntity representa la respuesta
+	 * HTTP completa: código de estado, encabezados y cuerpo. Podemos usarlo para
+	 * configurar completamente la respuesta HTTP. ResponseEntity proporciona dos
+	 * interfaces de construcción anidadas: HeadersBuilder y su subinterfaz,
+	 * BodyBuilder. Podemos acceder a sus capacidades a través de sus métodos
+	 * estáticos.
 	 */
 	@Override
 //	@Secured({ PermissionsProviderSecured.SECURED })
@@ -183,7 +189,7 @@ public class HotelPhotoService implements IHotelPhotoService {
 			return new ResponseEntity(bytes.getBytes(), header, HttpStatus.OK);
 
 		} else {
-			filter.put(dao.ATTR_ID, "1");	//Poner en la tabla, el identificador 1, la foto de file not found
+			filter.put(dao.ATTR_ID, "1"); // Poner en la tabla, el identificador 1, la foto de file not found
 			resultado = this.daoHelper.query(dao, filter, columns);
 			BytesBlock bytes = (BytesBlock) resultado.getRecordValues(0).get(dao.ATTR_FILE);
 			HttpHeaders header = new HttpHeaders();
@@ -198,58 +204,54 @@ public class HotelPhotoService implements IHotelPhotoService {
 	@Override
 //	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult hotelPhotoDelete(Map<String, Object> filter) throws OntimizeJEERuntimeException {
-		
-	EntityResult resultado= new EntityResultWrong();
-	try {
-		cf.reset();
-	cf.addBasics(dao.fields);	
-	cf.setRequired(List.of(dao.ATTR_ID));
-	cf.validate(filter);
-	Map<String,Object> consulta=new HashMap<>();
-	consulta.put(dao.ATTR_ID,filter.get(dao.ATTR_ID));
-	
-	if(daoHelper.query(dao, consulta,List.of(dao.ATTR_ID)).calculateRecordNumber()>0) {
-	resultado=daoHelper.delete(dao, filter);
-	resultado.setMessage("Foto con identificador : "+filter.get(dao.ATTR_ID)+". borrada");
-	}else {
-		resultado=new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
-	}
-	} catch (ValidateException e) {
-		e.getMessage();
-		resultado = new EntityResultWrong(e.getMessage());
-	} catch (Exception e) {
-		e.printStackTrace();
-		resultado = new EntityResultWrong(ErrorMessage.ERROR);
-	}
-	
-	return resultado;
-	}
 
+		EntityResult resultado = new EntityResultWrong();
+		try {
+			cf.reset();
+			cf.addBasics(dao.fields);
+			cf.setRequired(List.of(dao.ATTR_ID));
+			cf.validate(filter);
+			Map<String, Object> consulta = new HashMap<>();
+			consulta.put(dao.ATTR_ID, filter.get(dao.ATTR_ID));
 
+			if (daoHelper.query(dao, consulta, List.of(dao.ATTR_ID)).calculateRecordNumber() > 0) {
+				resultado = daoHelper.delete(dao, filter);
+				resultado.setMessage("Foto con identificador : " + filter.get(dao.ATTR_ID) + ". borrada");
+			} else {
+				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
+			}
+		} catch (ValidateException e) {
+			resultado = e.getEntityResult();
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.ERROR);
+		}
+
+		return resultado;
+	}
 
 	@Override
-	//@Secured({ PermissionsProviderSecured.SECURED })
-	public EntityResult hotelPhotoQuery(Map<String, Object>filter, List<String> columns) throws OntimizeJEERuntimeException {
-		 EntityResult resultado=new EntityResultWrong();
-		 
-		 try {
-		 cf.reset();
-		 cf.addBasics(dao.fields);
-	//	 cf.setRequired(List.of(dao.ATTR_ID));
-		 cf.validate(filter);
-		 cf.validate(columns);
-		 resultado=daoHelper.query(dao, filter, columns);
-		 } catch (ValidateException e) {
-				e.getMessage();
-				resultado = new EntityResultWrong(e.getMessage());
+	// @Secured({ PermissionsProviderSecured.SECURED })
+	public EntityResult hotelPhotoQuery(Map<String, Object> filter, List<String> columns)
+			throws OntimizeJEERuntimeException {
+		EntityResult resultado = new EntityResultWrong();
 
-			} catch (Exception e) {
-				e.printStackTrace();
-				resultado = new EntityResultWrong(ErrorMessage.ERROR);
-			}
-		 
-		 return resultado;
-		
+		try {
+			cf.reset();
+			cf.addBasics(dao.fields);
+			// cf.setRequired(List.of(dao.ATTR_ID));
+			cf.validate(filter);
+			cf.validate(columns);
+			resultado = daoHelper.query(dao, filter, columns);
+		} catch (ValidateException e) {
+			resultado = e.getEntityResult();
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = new EntityResultWrong(ErrorMessage.ERROR);
+		}
+
+		return resultado;
+
 	}
 
 }

@@ -67,8 +67,7 @@ public class RoomTypeFeatureService implements IRoomTypeFeatureService{
 			resultado = this.daoHelper.query(this.dao, keyMap, attrList);
 
 		} catch (ValidateException e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);
@@ -108,7 +107,7 @@ public class RoomTypeFeatureService implements IRoomTypeFeatureService{
 			resultado.setMessage("Room type features registered");
 
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 		} catch (DataIntegrityViolationException e) {
@@ -172,7 +171,7 @@ public class RoomTypeFeatureService implements IRoomTypeFeatureService{
 			}
 
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);

@@ -64,7 +64,7 @@ public class HotelServiceService implements IHotelServiceService {
 
 			resultado = this.daoHelper.query(this.dao, keyMap, attrList, "queryhotelservice");
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}
@@ -89,7 +89,7 @@ public class HotelServiceService implements IHotelServiceService {
 
 			resultado = this.daoHelper.query(this.dao, keyMap, attrList);
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}
@@ -111,10 +111,10 @@ public class HotelServiceService implements IHotelServiceService {
 				}
 			};
 			cf.addBasics(dao.fields);
-			
+
 			cf.setCPHtlColum(dao.ATTR_ID_HTL);
 			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
-			
+
 			cf.setRequired(required);
 			cf.setOptional(false);
 			cf.validate(attrMap);
@@ -123,7 +123,7 @@ public class HotelServiceService implements IHotelServiceService {
 			resultado.setMessage("HotelService registrado");
 
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 		} catch (DataIntegrityViolationException e) {
@@ -141,7 +141,7 @@ public class HotelServiceService implements IHotelServiceService {
 	public EntityResult hotelServiceDelete(Map<String, Object> keyMap) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultMapImpl();
 		try {
-	
+
 			List<String> required = new ArrayList<String>() {
 				{
 					add(dao.ATTR_ID_HTL);
@@ -172,7 +172,7 @@ public class HotelServiceService implements IHotelServiceService {
 			}
 
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR);

@@ -80,14 +80,12 @@ public class RoomService implements IRoomService {
 			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
 
 			cf.addBasics(dao.fields);
-			cf.validate(keyMap);			
+			cf.validate(keyMap);
 			cf.validate(attrList);
 			resultado = this.daoHelper.query(this.dao, keyMap, attrList);
 
 		} catch (ValidateException e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(e.getMessage());
-
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);
@@ -114,9 +112,7 @@ public class RoomService implements IRoomService {
 
 			resultado = this.daoHelper.query(this.dao, keysValues, attrList, "queryInfoRooms");
 		} catch (ValidateException e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(e.getMessage());
-
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);
@@ -158,7 +154,7 @@ public class RoomService implements IRoomService {
 			resultado.setMessage("Room registrada");
 
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 		} catch (Exception e) {
@@ -228,7 +224,7 @@ public class RoomService implements IRoomService {
 			}
 
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (DuplicateKeyException e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
@@ -279,7 +275,7 @@ public class RoomService implements IRoomService {
 			}
 
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
 		} catch (Exception e) {
@@ -295,7 +291,9 @@ public class RoomService implements IRoomService {
 			throws OntimizeJEERuntimeException {
 		try {
 			return roomsUnbookedgInRange(keyMap, attrList);
-		} catch (ValidateException | EntityResultRequiredException e) {
+		} catch (ValidateException e) {
+			return e.getEntityResult();
+		} catch (EntityResultRequiredException e) {
 			System.err.println(e.getMessage());
 			return new EntityResultWrong(e.getMessage());
 		} catch (Exception e) {

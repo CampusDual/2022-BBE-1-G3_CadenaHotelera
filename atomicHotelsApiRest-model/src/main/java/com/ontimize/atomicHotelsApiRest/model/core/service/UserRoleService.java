@@ -67,8 +67,7 @@ public class UserRoleService implements IUserRoleService {
 			resultado = this.daoHelper.query(this.dao, keyMap, attrList);
 
 		} catch (ValidateException e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
@@ -122,7 +121,7 @@ public class UserRoleService implements IUserRoleService {
 			resultado.setMessage("Rol de Usuario, registrado");
 
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 		} catch (DataIntegrityViolationException e) {
@@ -170,7 +169,7 @@ public class UserRoleService implements IUserRoleService {
 //			}
 
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
 		} catch (Exception e) {

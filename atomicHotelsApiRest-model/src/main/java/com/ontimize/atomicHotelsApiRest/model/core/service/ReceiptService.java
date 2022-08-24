@@ -79,7 +79,7 @@ public class ReceiptService implements IReceiptService {
 
 			resultado = this.daoHelper.query(this.dao, keyMap, attrList);
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);
@@ -132,7 +132,18 @@ public class ReceiptService implements IReceiptService {
 
 			// El resultado de esto se añade dentro del resultado de la siguente
 			EntityResult serviciosExtra = bookingServiceExtraService
-					.extraServicesNameDescriptionUnitsPriceDateQuery(keyMapServciosExtra, new ArrayList<String>());// Devuelve unos atributos fijos independientemente de la lista que se le pase
+					.extraServicesNameDescriptionUnitsPriceDateQuery(keyMapServciosExtra, new ArrayList<String>());// Devuelve
+																													// unos
+																													// atributos
+																													// fijos
+																													// independientemente
+																													// de
+																													// la
+																													// lista
+																													// que
+																													// se
+																													// le
+																													// pase
 
 			List<Object> servicios = new ArrayList<Object>();
 			for (int i = 0; i < serviciosExtra.calculateRecordNumber(); i++) {
@@ -146,7 +157,7 @@ public class ReceiptService implements IReceiptService {
 			reciboCompleto.addRecord(calculoReceipt);
 
 		} catch (ValidateException e) {
-			reciboCompleto = new EntityResultWrong(ErrorMessage.RESULT_REQUIRED + e.getMessage());
+			reciboCompleto = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			reciboCompleto = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
@@ -237,8 +248,7 @@ public class ReceiptService implements IReceiptService {
 				resultado = new EntityResultWrong(ErrorMessage.NO_RECEIPT_FOR_UNFINISH_BOOKING);
 			}
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
-
+			resultado = e.getEntityResult();
 		} catch (EntityResultRequiredException e) {
 			resultado = new EntityResultWrong(ErrorMessage.RESULT_REQUIRED + " " + ErrorMessage.NO_BOOKING_ID);
 
@@ -317,7 +327,7 @@ public class ReceiptService implements IReceiptService {
 			}
 
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
 		} catch (Exception e) {

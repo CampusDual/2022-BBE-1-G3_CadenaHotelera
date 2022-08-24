@@ -116,7 +116,6 @@ public class HotelService implements IHotelService {
 
 		} catch (ValidateException e) {
 			resultado = e.getEntityResult();
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);

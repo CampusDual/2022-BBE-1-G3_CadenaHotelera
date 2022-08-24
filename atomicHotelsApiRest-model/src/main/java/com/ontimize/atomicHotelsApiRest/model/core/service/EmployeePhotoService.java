@@ -91,9 +91,7 @@ public class EmployeePhotoService implements IEmployeePhotoService {
 				}
 			}
 		} catch (ValidateException e) {
-			e.getMessage();
-			resultado = new EntityResultWrong(e.getMessage());
-
+			resultado = e.getEntityResult();
 		} catch (DuplicateKeyException e) {
 			resultado.setMessage("El Dni introducido " + data.get(dao.ATTR_EMPLOYEE_DNI) + " ya tiene foto asociada");
 		} catch (Exception e) {
@@ -169,8 +167,7 @@ public class EmployeePhotoService implements IEmployeePhotoService {
 				resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_MISSING_FIELD);
 			}
 		} catch (ValidateException e) {
-			e.getMessage();
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);
@@ -200,9 +197,7 @@ public class EmployeePhotoService implements IEmployeePhotoService {
 			cf.validate(columns);
 			resultado = daoHelper.query(dao, filter, columns);
 		} catch (ValidateException e) {
-			e.getMessage();
-			resultado = new EntityResultWrong(e.getMessage());
-
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);

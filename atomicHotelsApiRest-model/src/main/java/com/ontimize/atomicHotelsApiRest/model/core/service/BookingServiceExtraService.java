@@ -76,7 +76,7 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 			resultado = this.daoHelper.query(this.dao, keyMap, attrList);
 
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
@@ -185,7 +185,7 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 		} catch (EntityResultRequiredException e) {
 			resultado = new EntityResultWrong(ErrorMessage.RESULT_REQUIRED + " " + ErrorMessage.NO_BOOKING_ID);
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 		} catch (DataIntegrityViolationException e) {
@@ -261,7 +261,7 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 			}
 
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (EntityResultRequiredException e) {
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (DataIntegrityViolationException e) {
@@ -301,7 +301,7 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 			resultado = this.daoHelper.query(this.dao, keyMap, attrList,
 					"queryServciosExtraPrecioUnidadesTotal");
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
@@ -340,7 +340,7 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 			resultado = this.daoHelper.query(this.dao, keyMap, attrList,
 					"queryServiciosExtraNombreDescripcionUnidadesPrecioFecha");
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}

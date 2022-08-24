@@ -144,7 +144,7 @@ public class ReportService implements IReportService {
 			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
 
 		} catch (ValidateException e) {
-			resultado = ResponseEntity.ok(new EntityResultWrong(e.getMessage()));
+			resultado = ResponseEntity.ok(e.getEntityResult());
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = ResponseEntity.ok(new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR));
@@ -192,7 +192,7 @@ public class ReportService implements IReportService {
 			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
 
 		} catch (ValidateException e) {
-			resultado = ResponseEntity.ok(new EntityResultWrong(e.getMessage()));
+			resultado = ResponseEntity.ok(e.getEntityResult());
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = ResponseEntity.ok(new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR));
@@ -270,7 +270,7 @@ public class ReportService implements IReportService {
 			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
 
 		} catch (ValidateException e) {			
-			resultado = ResponseEntity.ok(new EntityResultWrong(e.getMessage()));
+			resultado = ResponseEntity.ok(e.getEntityResult());
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = ResponseEntity.ok(new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR));
@@ -316,7 +316,8 @@ public class ReportService implements IReportService {
 			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
 
 		}  catch (ValidateException e) {			
-			resultado = ResponseEntity.ok(new EntityResultWrong(e.getMessage()));
+			resultado = ResponseEntity.ok(e.getEntityResult());
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = ResponseEntity.ok(new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR));
@@ -424,7 +425,8 @@ public class ReportService implements IReportService {
 //			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
 //
 //		}  catch (ValidateException e) {			
-//			resultado = ResponseEntity.ok(new EntityResultWrong(e.getMessage()));
+//						resultado = ResponseEntity.ok(e.getEntityResult());
+
 //		} catch (Exception e) {
 //			e.printStackTrace();
 //			resultado = ResponseEntity.ok(new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR));
@@ -502,7 +504,7 @@ public class ReportService implements IReportService {
 			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
 
 		} catch (ValidateException e) {			
-			resultado = ResponseEntity.ok(new EntityResultWrong(e.getMessage()));
+			resultado = ResponseEntity.ok(e.getEntityResult());
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = ResponseEntity.ok(new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR));
@@ -578,7 +580,7 @@ public class ReportService implements IReportService {
 			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
 
 		} catch (ValidateException e) {			
-			resultado = ResponseEntity.ok(new EntityResultWrong(e.getMessage()));
+			resultado = ResponseEntity.ok(e.getEntityResult());
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = ResponseEntity.ok(new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR));
@@ -650,7 +652,8 @@ public class ReportService implements IReportService {
 //
 //		} catch (ValidateException e) {
 //			e.printStackTrace();
-//			resultado = new EntityResultWrong(e.getMessage());
+//						resultado = ResponseEntity.ok(e.getEntityResult());
+
 //		} catch (Exception e) {
 //			e.printStackTrace();
 //			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);

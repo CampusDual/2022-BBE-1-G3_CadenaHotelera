@@ -40,6 +40,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesE
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
+import com.ontimize.jee.common.db.Entity;
 import com.ontimize.jee.common.db.SQLStatementBuilder.BasicExpression;
 import com.ontimize.jee.common.db.SQLStatementBuilder.BasicField;
 import com.ontimize.jee.common.db.SQLStatementBuilder.BasicOperator;
@@ -127,13 +128,11 @@ public class BookingService implements IBookingService {
 			cf.addBasics(dao.fields, RoomDao.fields, RoomTypeDao.fields, HotelDao.fields, CustomerDao.fields);
 
 			cf.validate(keyMap);
-			cf.validate(attrList);			
-						
-			
+			cf.validate(attrList);
 
 			resultado = this.daoHelper.query(this.dao, keyMap, attrList, "queryInfoBooking");
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
@@ -206,8 +205,7 @@ public class BookingService implements IBookingService {
 				resultado = new EntityResultWrong("No se puede reservar, tarjeta no valida.");
 			}
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
-			e.printStackTrace();
+			resultado = e.getEntityResult();
 		} catch (EntityResultRequiredException e) {
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (DuplicateKeyException e) {
@@ -229,7 +227,7 @@ public class BookingService implements IBookingService {
 	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult bookingActionUpdate(Map<String, Object> attrMap, Map<String, Object> keyMap)
 			throws OntimizeJEERuntimeException {
-		EntityResult resultadoER = new EntityResultWrong(ErrorMessage.INVALID_ACTION);
+		EntityResult resultado = new EntityResultWrong(ErrorMessage.INVALID_ACTION);
 		try {
 			// ControlFields del filtro
 
@@ -266,49 +264,50 @@ public class BookingService implements IBookingService {
 
 			switch (status) {
 			case CANCELED:
-				resultadoER = new EntityResultWrong("No se pueden modificar reservas canceladas");
+				resultado = new EntityResultWrong("No se pueden modificar reservas canceladas");
 				break;
 
 			case COMPLETED:
-				resultadoER = new EntityResultWrong("No se pueden modificar reservas finalizadas");
+				resultado = new EntityResultWrong("No se pueden modificar reservas finalizadas");
 				break;
 
 			case IN_PROGRESS:
 				if (action == BookingDao.Action.CHECKOUT) {
-					resultadoER = this.daoHelper.update(this.dao,
+					resultado = this.daoHelper.update(this.dao,
 							EntityResultTools.keysvalues(dao.ATTR_CHECKOUT, new Date()), keyMap);
 				} else if (action == BookingDao.Action.CHECKIN) {
-					resultadoER = new EntityResultWrong("El checkin ya se ha realizado");
+					resultado = new EntityResultWrong("El checkin ya se ha realizado");
 				} else if (action == BookingDao.Action.CANCEL) {
-					resultadoER = new EntityResultWrong("No se puede cancelar una reserva en proceso");
+					resultado = new EntityResultWrong("No se puede cancelar una reserva en proceso");
 				}
 				break;
 
 			case CONFIRMED:
 				if (action == BookingDao.Action.CHECKIN) {
-					resultadoER = this.daoHelper.update(this.dao,
+					resultado = this.daoHelper.update(this.dao,
 							EntityResultTools.keysvalues(dao.ATTR_CHECKIN, new Date()), keyMap);
 				} else if (action == BookingDao.Action.CANCEL) {
-					resultadoER = this.daoHelper.update(this.dao,
+					resultado = this.daoHelper.update(this.dao,
 							EntityResultTools.keysvalues(dao.ATTR_CANCELED, new Date()), keyMap);
 				} else if (action == BookingDao.Action.CHECKOUT) {
-					resultadoER = new EntityResultWrong(
-							"Para realizar el checkout, primero debe realizarse el checkin");
+					resultado = new EntityResultWrong("Para realizar el checkout, primero debe realizarse el checkin");
 				}
 				break;
 			}
-			if (!resultadoER.isWrong()) {
-				resultadoER.setMessage("Operación realizada");
+			if (!resultado.isWrong()) {
+				resultado.setMessage("Operación realizada");
 			}
 
-		} catch (ValidateException | EntityResultRequiredException e) {
+		} catch (ValidateException e) {
+			resultado = e.getEntityResult();
+		} catch (EntityResultRequiredException e) {
 			System.err.println(e.getMessage());
-			resultadoER = new EntityResultWrong(e.getMessage());
+			resultado = new EntityResultWrong(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
-			resultadoER = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
+			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
 		}
-		return resultadoER;
+		return resultado;
 	}
 
 	@Override
@@ -323,6 +322,7 @@ public class BookingService implements IBookingService {
 	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult bookingsInRangeQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException, InvalidFieldsValuesException {
+		EntityResult resultado = new EntityResultWrong();
 		try {
 			cf.reset();
 
@@ -332,11 +332,14 @@ public class BookingService implements IBookingService {
 			cf.addBasics(RoomDao.fields);
 
 			bookingsInRangeBuilder(keyMap, attrList);
-			return this.daoHelper.query(this.dao, keyMap, attrList, "queryBasicBooking");
-		} catch (ValidateException | LiadaPardaException e) {
+			resultado = this.daoHelper.query(this.dao, keyMap, attrList, "queryBasicBooking");
+		} catch (ValidateException e) {
+			resultado = e.getEntityResult();
+		} catch (LiadaPardaException e) {
 			System.err.println(e.getMessage());
-			return new EntityResultWrong(e.getMessage());
+			resultado = new EntityResultWrong(e.getMessage());
 		}
+		return resultado;
 	}
 
 	@Override
@@ -355,7 +358,9 @@ public class BookingService implements IBookingService {
 
 			bookingsInRangeBuilder(keyMap, attrList);
 			resultado = this.daoHelper.query(this.dao, keyMap, attrList, "queryInfoBooking");
-		} catch (ValidateException | LiadaPardaException e) {
+		} catch (ValidateException e) {
+			resultado = e.getEntityResult();
+		} catch ( LiadaPardaException e) {
 			System.err.println(e.getMessage());
 			resultado = new EntityResultWrong(e.getMessage());
 		} catch (Exception e) {
@@ -375,7 +380,9 @@ public class BookingService implements IBookingService {
 			// no ponemos permisos, para que tenga en cuenta todas las habitaciones
 			bookingsInRangeBuilder(keyMap, attrList);
 			return this.daoHelper.query(this.dao, keyMap, attrList, "queryBasicBooking");
-		} catch (ValidateException | LiadaPardaException e) {
+		} catch (ValidateException e) {
+			return e.getEntityResult();
+		} catch ( LiadaPardaException e) {
 			System.err.println(e.getMessage());
 			return new EntityResultWrong(e.getMessage());
 		}
@@ -434,7 +441,7 @@ public class BookingService implements IBookingService {
 		BasicExpression exp06 = new BasicExpression(bkgEnd, BasicOperator.LESS_OP, rangeEnd);
 		BasicExpression groupExp03 = new BasicExpression(exp05, BasicOperator.AND_OP, exp06);// dentro checkin y
 																								// checkout
-		
+
 		// las uno
 		BasicExpression auxFilterRangeBE = new BasicExpression(groupExp01, BasicOperator.OR_OP, groupExp02);
 		BasicExpression filterRangeBE = new BasicExpression(auxFilterRangeBE, BasicOperator.OR_OP, groupExp03);
@@ -541,14 +548,13 @@ public class BookingService implements IBookingService {
 			resultado = this.daoHelper.query(this.dao, keyMap, attrList, "queryDiasPrecioUnitarioHabitacion");
 
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}
 		return resultado;
 	}
 
-	
 	public EntityResult bookingsHotelsQuery(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
@@ -568,7 +574,7 @@ public class BookingService implements IBookingService {
 			resultado = this.daoHelper.query(this.dao, keyMap, attrList, "queryBookingsHotel");
 
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}
@@ -604,7 +610,7 @@ public class BookingService implements IBookingService {
 		try {
 			List<String> required = Arrays.asList(dao.ATTR_ROOM_ID);
 			cf.reset();
-			
+
 			cf.setCPHtlColum(RoomDao.ATTR_HOTEL_ID);
 			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
 

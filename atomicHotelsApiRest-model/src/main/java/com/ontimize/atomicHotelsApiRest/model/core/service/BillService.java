@@ -75,7 +75,7 @@ public class BillService implements IBillService {
 			resultado = this.daoHelper.query(this.dao, keyMap, attrList);
 
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);
 		}
@@ -118,7 +118,7 @@ public class BillService implements IBillService {
 			resultado.setMessage("Bill registered.");
 
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 		} catch (DataIntegrityViolationException e) {
@@ -179,7 +179,7 @@ public class BillService implements IBillService {
 				resultado.setMessage("Bill updated");
 			}
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
 		} catch (DataIntegrityViolationException e) {// Puede ser que se meta una FK que no exista o se le ponga null al
@@ -226,7 +226,7 @@ public class BillService implements IBillService {
 			}
 
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
 		} catch (Exception e) {
@@ -323,9 +323,7 @@ public class BillService implements IBillService {
 			resultadoFinal.addRecord(mapFinal);
 
 		} catch (ValidateException e) {
-			e.printStackTrace();
-			return resultado = new EntityResultWrong(e.getMessage());
-
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
@@ -377,10 +375,7 @@ public class BillService implements IBillService {
 																						// general
 
 		} catch (ValidateException e) {
-			e.printStackTrace();
-
-			return resultado = new EntityResultWrong(e.getMessage());
-
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
@@ -434,9 +429,7 @@ public class BillService implements IBillService {
 			resultado = this.daoHelper.query(this.dao, keyMap, attrList, "billsByHotelDep");
 
 		} catch (ValidateException e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(e.getMessage());
-
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
