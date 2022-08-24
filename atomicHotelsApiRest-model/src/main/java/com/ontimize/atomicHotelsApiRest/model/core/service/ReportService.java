@@ -538,13 +538,13 @@ public class ReportService implements IReportService {
 			cf.setRequired(required);
 			cf.validate(keyMap);
 
-			consulta = statisticsService.hotelOccupancyByNationalityPercentageQuery(keyMap, new ArrayList<String>());
+			consulta = statisticsService.hotelOccupancyByNationalityQuery(keyMap, new ArrayList<String>());
 					
-			EntityResult ocupacion = new EntityResultMapImpl();
-			List<Object> lista = (List<Object>) consulta.getRecordValues(0).get("occupancy");
-			for (Object a : lista) {
-				ocupacion.addRecord((HashMap<String, Object>) a);
-			}
+//			EntityResult ocupacion = new EntityResultMapImpl();
+//			List<Object> lista = (List<Object>) consulta.getRecordValues(0).get("occupancy");
+//			for (Object a : lista) {
+//				ocupacion.addRecord((HashMap<String, Object>) a);
+//			}
 
 //			EntityResult consultaCategorizada = new EntityResultMapImpl();
 //			for (int i = 0; i < consulta.calculateRecordNumber(); i++) {
@@ -570,7 +570,7 @@ public class ReportService implements IReportService {
 			}};
 			
 			JRTableModelDataSource dataSource = new JRTableModelDataSource(
-					EntityResultUtils.createTableModel(ocupacion));
+					EntityResultUtils.createTableModel(consulta));
 			JasperReport jasperReport = JasperCompileManager.compileReport(OCCUPANCY_BY_NATIONALITY_CHART);
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, ReportsConfig.getBasicParametersPutAll(fechas),
 					dataSource);

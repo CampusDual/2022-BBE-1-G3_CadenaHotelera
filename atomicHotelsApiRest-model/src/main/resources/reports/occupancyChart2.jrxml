@@ -18,11 +18,12 @@
 	<parameter name="icon" class="java.io.InputStream"/>
 	<parameter name="from" class="java.util.Date"/>
 	<parameter name="to" class="java.util.Date"/>
-	<queryString>
+	<parameter name="htl_id" class="java.lang.Integer"/>
+	<queryString language="plsql">
 		<![CDATA[]]>
 	</queryString>
 	<field name="cst_cnt_iso" class="java.lang.String"/>
-	<field name="occupancy_percentage_in_date_range" class="java.lang.Double"/>
+	<field name="occupancy_in_date_range" class="java.math.BigDecimal"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -79,12 +80,12 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="500">
+		<band height="272">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<printWhenExpression><![CDATA[$V{REPORT_COUNT}==1]]></printWhenExpression>
 			<pie3DChart>
 				<chart evaluationTime="Report">
-					<reportElement x="0" y="10" width="545" height="420" uuid="b40ad0e9-83ae-4ede-848b-f490a0dab989"/>
+					<reportElement x="0" y="0" width="545" height="272" uuid="8160d559-e9c6-45be-8d11-ca0b0b8be30d"/>
 					<chartTitle/>
 					<chartSubtitle/>
 					<chartLegend/>
@@ -92,7 +93,7 @@
 				<pieDataset>
 					<dataset resetType="Report"/>
 					<keyExpression><![CDATA[$F{cst_cnt_iso}]]></keyExpression>
-					<valueExpression><![CDATA[$F{occupancy_percentage_in_date_range}]]></valueExpression>
+					<valueExpression><![CDATA[$F{occupancy_in_date_range}]]></valueExpression>
 				</pieDataset>
 				<pie3DPlot>
 					<plot/>
@@ -102,14 +103,7 @@
 		</band>
 	</detail>
 	<columnFooter>
-		<band height="18" splitType="Stretch">
-			<line>
-				<reportElement positionType="FixRelativeToBottom" x="0" y="3" width="555" height="1" uuid="fa45a887-615a-4d84-a2d7-8a2219671b3c"/>
-				<graphicElement>
-					<pen lineWidth="0.5" lineColor="#999999"/>
-				</graphicElement>
-			</line>
-		</band>
+		<band height="272" splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
 		<band height="25" splitType="Stretch">
