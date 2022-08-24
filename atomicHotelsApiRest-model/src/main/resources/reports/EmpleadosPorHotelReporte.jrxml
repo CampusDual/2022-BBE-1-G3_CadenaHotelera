@@ -2,7 +2,7 @@
 <!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="EmpleadosSimpleReporte" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="095036f7-ac69-4614-b262-b2868e184c38">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Bootcamp"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Backend_2022_G3"/>
 	<property name="net.sf.jasperreports.components.table.generate.pdf.tags" value="true"/>
 	<property name="net.sf.jasperreports.print.create.bookmarks" value="true"/>
 	<parameter name="htl_id" class="java.lang.Integer">
@@ -10,7 +10,7 @@
 		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
 	</parameter>
 	<queryString language="SQL">
-		<![CDATA[SELECT htl_name,dpt_name,emp_name,
+		<![CDATA[SELECT htl_name,dpt_name,emp_name,emp_surname,
 	emp_identity_document,emp_email,emp_salary,
 	pct_file
 FROM employees inner join  employeesphotos on employeesphotos.pct_emp_dni=employees.emp_identity_document 
@@ -31,6 +31,11 @@ FROM employees inner join  employeesphotos on employeesphotos.pct_emp_dni=employ
 	<field name="emp_name" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="emp_name"/>
 		<property name="com.jaspersoft.studio.field.label" value="emp_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="employees"/>
+	</field>
+	<field name="emp_surname" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="emp_surname"/>
+		<property name="com.jaspersoft.studio.field.label" value="emp_surname"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="employees"/>
 	</field>
 	<field name="emp_identity_document" class="java.lang.String">
@@ -72,8 +77,8 @@ FROM employees inner join  employeesphotos on employeesphotos.pct_emp_dni=employ
 	<background>
 		<band height="617">
 			<image>
-				<reportElement x="220" y="120" width="470" height="497" uuid="32407439-ab38-4b13-a19e-7757ff2d7d3b"/>
-				<imageExpression><![CDATA["/images/icono_atom.png"]]></imageExpression>
+				<reportElement x="0" y="100" width="550" height="510" uuid="32407439-ab38-4b13-a19e-7757ff2d7d3b"/>
+				<imageExpression><![CDATA["/images/logo atom_white3.png"]]></imageExpression>
 			</image>
 		</band>
 	</background>
@@ -95,28 +100,34 @@ FROM employees inner join  employeesphotos on employeesphotos.pct_emp_dni=employ
 				<imageExpression><![CDATA["/images/icono_atom.png"]]></imageExpression>
 			</image>
 			<textField pattern="d MMMM  yyyy.">
-				<reportElement x="310" y="46" width="140" height="30" forecolor="#DAE9F5" backcolor="#696060" uuid="6d657f99-d901-4e88-a1af-442eff0f86e7"/>
-				<textElement>
-					<font size="14" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
-			</textField>
-			<textField pattern="d MMMM  yyyy.">
 				<reportElement x="100" y="46" width="140" height="30" forecolor="#DAE9F5" backcolor="#696060" uuid="2b9697ea-3285-4a86-a45b-d0ff499d6582"/>
 				<textElement>
 					<font size="14" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{htl_name}]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement x="310" y="49" width="141" height="21" forecolor="#DAE9F5" uuid="24b9e285-6020-438d-a9e1-a91523e797f2"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[DATEFORMAT(NOW( ),"d ' de 'MMMM' del 'YYYY")]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<pageHeader>
-		<band height="22" splitType="Stretch"/>
-	</pageHeader>
-	<columnHeader>
-		<band height="11" splitType="Stretch">
+		<band height="22" splitType="Stretch">
 			<staticText>
-				<reportElement mode="Opaque" x="-10" y="-21" width="100" height="20" forecolor="#FCFAFA" backcolor="#C4BFBE" uuid="d079964a-482d-4371-8dba-ff54dc9f51c8">
+				<reportElement mode="Opaque" x="50" y="0" width="110" height="20" forecolor="#FCFAFA" backcolor="#C4BFBE" uuid="0fa56e92-6943-498e-8ebf-19e4e799528b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="233d23af-c2d7-4f07-8e96-2d6d2e3a7069"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Apellidos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="-10" y="0" width="60" height="20" forecolor="#FCFAFA" backcolor="#C4BFBE" uuid="24200010-7e5f-42dd-b1da-16d8dc0e8a35">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="233d23af-c2d7-4f07-8e96-2d6d2e3a7069"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -125,16 +136,16 @@ FROM employees inner join  employeesphotos on employeesphotos.pct_emp_dni=employ
 				<text><![CDATA[Nombre]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="90" y="-21" width="100" height="20" forecolor="#FCFAFA" backcolor="#C4BFBE" uuid="789de4b1-c5a4-446a-b81b-825801d48e4e">
+				<reportElement mode="Opaque" x="160" y="0" width="60" height="20" forecolor="#FCFAFA" backcolor="#C4BFBE" uuid="50f41e0d-142c-4931-bb24-2d1a3072ee51">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f6b078ca-fd28-4e01-a7c4-c4fe3dd37b7c"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="10" isBold="true" isItalic="true"/>
 				</textElement>
-				<text><![CDATA[Nº Documento]]></text>
+				<text><![CDATA[DNI]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="190" y="-21" width="90" height="20" forecolor="#FCFAFA" backcolor="#C4BFBE" uuid="a7fe8f35-14c2-42fd-b6ee-f382ec7c3633">
+				<reportElement mode="Opaque" x="220" y="0" width="70" height="20" forecolor="#FCFAFA" backcolor="#C4BFBE" uuid="0e3e35f8-7ef2-49e7-9251-e2564dce56a8">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3fd7d2fa-1ede-4a11-855c-85c353581257"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -143,7 +154,7 @@ FROM employees inner join  employeesphotos on employeesphotos.pct_emp_dni=employ
 				<text><![CDATA[Departamento]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="484" y="-21" width="74" height="20" forecolor="#FCFAFA" backcolor="#C4BFBE" uuid="3b81b771-dfea-4a6b-84cc-19ba467f17c2">
+				<reportElement mode="Opaque" x="484" y="0" width="74" height="20" forecolor="#FCFAFA" backcolor="#C4BFBE" uuid="cddf9444-dfcb-4e95-9634-c735ae39af6e">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ccaa3635-b373-43f1-a5c6-b7bbf0050e53"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -152,16 +163,16 @@ FROM employees inner join  employeesphotos on employeesphotos.pct_emp_dni=employ
 				<text><![CDATA[Foto]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="280" y="-21" width="118" height="20" forecolor="#FCFAFA" backcolor="#C4BFBE" uuid="fe763c49-3467-419b-b589-c4e2354c5512">
+				<reportElement mode="Opaque" x="290" y="0" width="128" height="20" forecolor="#FCFAFA" backcolor="#C4BFBE" uuid="1ce9f046-34fc-4e89-8ecb-8daeee8af47a">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="eb5f38e4-6a94-46d1-92b1-81cb1ebdbae9"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="10" isBold="true" isItalic="true"/>
 				</textElement>
-				<text><![CDATA[email]]></text>
+				<text><![CDATA[Email]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="398" y="-21" width="86" height="20" forecolor="#FCFAFA" backcolor="#C4BFBE" uuid="465e0be7-e816-41c4-9db2-a5aa0f332b64">
+				<reportElement mode="Opaque" x="418" y="0" width="66" height="20" forecolor="#FCFAFA" backcolor="#C4BFBE" uuid="9aeb0c75-a37f-4a87-8d5b-70be4ba7c30a">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0f27009a-5338-48c7-ada1-c9993edd2137"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -170,49 +181,59 @@ FROM employees inner join  employeesphotos on employeesphotos.pct_emp_dni=employ
 				<text><![CDATA[Coste empresa]]></text>
 			</staticText>
 		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="11" splitType="Stretch"/>
 	</columnHeader>
 	<detail>
 		<band height="37" splitType="Stretch">
-			<textField>
-				<reportElement x="-10" y="7" width="100" height="20" uuid="2703ebc9-4823-468a-a7da-fe9f9c1b5181">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="233d23af-c2d7-4f07-8e96-2d6d2e3a7069"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{emp_name}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="90" y="7" width="70" height="20" uuid="f730358c-9b81-4d41-8e44-833ea15753d5">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f6b078ca-fd28-4e01-a7c4-c4fe3dd37b7c"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{emp_identity_document}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="160" y="7" width="80" height="20" uuid="20e4fb93-a383-4909-a52a-30a82ac06293">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3fd7d2fa-1ede-4a11-855c-85c353581257"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{dpt_name}]]></textFieldExpression>
-			</textField>
 			<image>
 				<reportElement x="500" y="0" width="75" height="35" uuid="d4335aa5-997e-4dfc-9832-e01568e48e62"/>
 				<imageExpression><![CDATA[$F{pct_file}]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement x="398" y="7" width="86" height="20" uuid="ac3c1c8a-cb2a-43bd-949e-e2813b79b864">
+				<reportElement x="420" y="7" width="74" height="20" uuid="50dcf32a-1393-4d22-81ef-8daa7634d88d">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0f27009a-5338-48c7-ada1-c9993edd2137"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{emp_salary}+"€"]]></textFieldExpression>
 			</textField>
 			<textField hyperlinkType="Reference">
-				<reportElement x="240" y="7" width="158" height="20" uuid="b74c8153-0e0b-4476-b412-5e6b3ed6dbab">
+				<reportElement x="290" y="7" width="129" height="20" uuid="b7b42967-3507-4899-999e-aeebef84fba6">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="eb5f38e4-6a94-46d1-92b1-81cb1ebdbae9"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{emp_email}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="220" y="7" width="70" height="20" uuid="c3f3f5f4-89f5-4a6d-a5a0-256b37ca48d5">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3fd7d2fa-1ede-4a11-855c-85c353581257"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{dpt_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="160" y="7" width="60" height="20" uuid="7bf49b7c-d0e2-4d83-a9f5-2aa50913a824">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f6b078ca-fd28-4e01-a7c4-c4fe3dd37b7c"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{emp_identity_document}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="50" y="7" width="110" height="20" uuid="a13ff939-666d-456b-9bc7-f139450ecd08">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="233d23af-c2d7-4f07-8e96-2d6d2e3a7069"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{emp_surname}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="-10" y="7" width="60" height="20" uuid="371c51de-8460-418a-8b9a-97e9e92ea0f6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="233d23af-c2d7-4f07-8e96-2d6d2e3a7069"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{emp_name}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
