@@ -1,0 +1,230 @@
+{
+	"info": {
+		"_postman_id": "5dd0de67-6968-494d-a0b1-6ece237dcffa",
+		"name": "Hotel Picture",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "-C hotel photo",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "atom",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"data\":\r\n    {\"htl_pct_name\":\"hot1\",\r\n    \"htl_pct_description\": \"Archivo no encontrado\",\r\n    \"htl_pct_file\": \"c:\\\\atom1.jpg\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/hotelphoto/hotelPhoto",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"hotelphoto",
+						"hotelPhoto"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-C hotel photo2",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "atom",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"data\":\r\n    {\"htl_pct_name\":\"hot1\",\r\n    \"htl_pct_description\": \"Archivo no encontrado\",\r\n    \"htl_pct_file\": \"c:\\\\atom1.jpg\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/hotelphoto/hotelPhoto",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"hotelphoto",
+						"hotelPhoto"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R individual hotel photo",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "atom",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"filter\": {\r\n     \"htl_pct_id\": 1\r\n    },\r\n    \"columns\": [\"htl_pct_name\",\"htl_pct_file\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/hotelphoto/hotelPhoto/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"hotelphoto",
+						"hotelPhoto",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-D delete hotel photo",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "atom",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n     \"htl_pct_id\": 2\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/hotelphoto/hotelPhoto",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"hotelphoto",
+						"hotelPhoto"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "-R responseEntity",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "atom",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"filter\": {\r\n     \"htl_pct_id\": 1\r\n    },\r\n    \"columns\": [\"htl_pct_file\"]\r\n} ",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/hotelphoto/getHotelPicture",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"hotelphoto",
+						"getHotelPicture"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
