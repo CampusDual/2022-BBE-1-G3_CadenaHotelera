@@ -46,6 +46,7 @@ import com.ontimize.jee.common.util.remote.BytesBlock;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 
 import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRField;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -85,6 +86,7 @@ public class ReportService implements IReportService {
 	private final String PRUEBA_PATH = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\prueba.jrxml";
 	private final String INCOME_VS_EXPENSES_CHART = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\incomeVsExpensesChart.jrxml";
 	private final String RECEIPT = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Receipt_template.jrxml";
+	private final String RECEIPT_BD = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Receipt_template_BD.jrxml";
 	private final String OCCUPANCY_CHART = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\occupancyChart.jrxml";
 	private final String OCCUPANCY_BY_NATIONALITY_CHART = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\occupancyChart2.jrxml";
 
@@ -275,7 +277,8 @@ public class ReportService implements IReportService {
 		}
 		return resultado;
 	}
-
+	
+	
 	@Override 
 	public ResponseEntity receipt(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
@@ -289,84 +292,25 @@ public class ReportService implements IReportService {
 
 			List<String> required = new ArrayList<String>() {
 				{
-					add(ReceiptDao.ATTR_ID);
+					add(BookingDao.ATTR_ID);
 				}
 			};
 
 			cf.reset();
-			cf.addBasics(ReceiptDao.fields);
+			cf.addBasics(BookingDao.fields);
 			cf.setRequired(required);
 			cf.setOptional(false);
 			cf.validate(keyMap);
 
-			consultaRecibo = receiptService.completeReceiptQuery(keyMap, new ArrayList<String>());
+//			JRDataSource dataSource = new JRDataSource("");			
 
-			EntityResult consultaReciboFinal = consultaRecibo;
+//			JRTableModelDataSource dataSource = new JRTableModelDataSource(
+//					EntityResultUtils.createTableModel(servciosExtra));
+			
 
-			Map<String, Object> idBooking = new HashMap<String, Object>() {
-				{
-					put(BookingDao.ATTR_ID, consultaReciboFinal.getRecordValues(0).get(ReceiptDao.ATTR_BOOKING_ID));
-				}
-			};
-
-			consultaReserva = bookingService.bookingCompleteInfoQuery(idBooking, new ArrayList<String>());
-
-			consultaHabitacion = bookingService.bookingDaysUnitaryRoomPriceQuery(idBooking, new ArrayList<String>());
-
-			EntityResult consultaReservaFinal = consultaReserva;
-			EntityResult consultaHabitacionFinal = consultaHabitacion;
-
-			EntityResult servciosExtra = new EntityResultMapImpl();
-			List<Object> lista = (List<Object>) consultaRecibo.getRecordValues(0).get("extra_services");
-			for (Object a : lista) {
-				servciosExtra.addRecord((HashMap<String, Object>) a);
-			}
-
-			Map<String, Object> parameters = new HashMap<String, Object>() {
-				{
-
-					put(ReceiptDao.ATTR_DATE, consultaReciboFinal.getRecordValues(0).get(ReceiptDao.ATTR_DATE));
-					put(ReceiptDao.ATTR_BOOKING_ID,
-							consultaReciboFinal.getRecordValues(0).get(ReceiptDao.ATTR_BOOKING_ID));
-					put(ReceiptDao.ATTR_DIAS, consultaReciboFinal.getRecordValues(0).get(ReceiptDao.ATTR_DIAS));
-					put(ReceiptDao.ATTR_TOTAL_SERVICES,
-							consultaReciboFinal.getRecordValues(0).get(ReceiptDao.ATTR_TOTAL_SERVICES));
-					put(ReceiptDao.ATTR_TOTAL_ROOM,
-							consultaReciboFinal.getRecordValues(0).get(ReceiptDao.ATTR_TOTAL_ROOM));
-					put(ReceiptDao.ATTR_TOTAL, consultaReciboFinal.getRecordValues(0).get(ReceiptDao.ATTR_TOTAL));
-					put(ReceiptDao.ATTR_ID, consultaReciboFinal.getRecordValues(0).get(ReceiptDao.ATTR_ID));
-
-					put(CustomerDao.ATTR_NAME, consultaReservaFinal.getRecordValues(0).get(CustomerDao.ATTR_NAME));
-					put(CustomerDao.ATTR_SURNAME,
-							consultaReservaFinal.getRecordValues(0).get(CustomerDao.ATTR_SURNAME));
-
-					put(BookingDao.ATTR_CHECKIN,
-							consultaHabitacionFinal.getRecordValues(0).get(BookingDao.ATTR_CHECKIN));
-					put(BookingDao.ATTR_CHECKOUT,
-							consultaHabitacionFinal.getRecordValues(0).get(BookingDao.ATTR_CHECKOUT));
-					put(RoomTypeDao.ATTR_PRICE, consultaHabitacionFinal.getRecordValues(0).get(RoomTypeDao.ATTR_PRICE));
-				}
-			};
-
-//			Map<String, Object> sinServcios = new HashMap<String, Object>() {
-//				{
-//					put("bsx_units", null);
-//					put("bsx_precio", null);
-//					put("sxt_description", null);
-//					put("sxt_name", null);
-//					put("bsx_date", null);
-//				}
-//			};
-//
-//			if (servciosExtra.isEmpty()) {
-//				servciosExtra.addRecord(sinServcios);
-//			}
-
-			JRTableModelDataSource dataSource = new JRTableModelDataSource(
-					EntityResultUtils.createTableModel(servciosExtra));
-			JasperReport jasperReport = JasperCompileManager.compileReport(RECEIPT);
+			JasperReport jasperReport = JasperCompileManager.compileReport(RECEIPT_BD);
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport,
-					ReportsConfig.getBasicParametersPutAll(parameters), dataSource);
+					ReportsConfig.getBasicParametersPutAll(keyMap));
 			jasperPrint.setOrientation(OrientationEnum.LANDSCAPE);
 
 			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
@@ -379,6 +323,114 @@ public class ReportService implements IReportService {
 		}
 		return resultado;
 	}
+
+//	@Override 
+//	public ResponseEntity receipt(Map<String, Object> keyMap, List<String> attrList)
+//			throws OntimizeJEERuntimeException {
+//
+//		EntityResult consultaRecibo = new EntityResultMapImpl();
+//		EntityResult consultaReserva = new EntityResultMapImpl();
+//		EntityResult consultaHabitacion = new EntityResultMapImpl();
+//
+//		ResponseEntity resultado;
+//		try {
+//
+//			List<String> required = new ArrayList<String>() {
+//				{
+//					add(ReceiptDao.ATTR_ID);
+//				}
+//			};
+//
+//			cf.reset();
+//			cf.addBasics(ReceiptDao.fields);
+//			cf.setRequired(required);
+//			cf.setOptional(false);
+//			cf.validate(keyMap);
+//
+//			consultaRecibo = receiptService.completeReceiptQuery(keyMap, new ArrayList<String>());
+//
+//			EntityResult consultaReciboFinal = consultaRecibo;
+//
+//			Map<String, Object> idBooking = new HashMap<String, Object>() {
+//				{
+//					put(BookingDao.ATTR_ID, consultaReciboFinal.getRecordValues(0).get(ReceiptDao.ATTR_BOOKING_ID));
+//				}
+//			};
+//
+//			consultaReserva = bookingService.bookingCompleteInfoQuery(idBooking, new ArrayList<String>());
+//
+//			consultaHabitacion = bookingService.bookingDaysUnitaryRoomPriceQuery(idBooking, new ArrayList<String>());
+//
+//			EntityResult consultaReservaFinal = consultaReserva;
+//			EntityResult consultaHabitacionFinal = consultaHabitacion;
+//
+//			EntityResult servciosExtra = new EntityResultMapImpl();
+//			List<Object> lista = (List<Object>) consultaRecibo.getRecordValues(0).get("extra_services");
+//			for (Object a : lista) {
+//				servciosExtra.addRecord((HashMap<String, Object>) a);
+//			}
+//
+//			Map<String, Object> parameters = new HashMap<String, Object>() {
+//				{
+//
+//					put(ReceiptDao.ATTR_DATE, consultaReciboFinal.getRecordValues(0).get(ReceiptDao.ATTR_DATE));
+//					put(ReceiptDao.ATTR_BOOKING_ID,
+//							consultaReciboFinal.getRecordValues(0).get(ReceiptDao.ATTR_BOOKING_ID));
+//					put(ReceiptDao.ATTR_DIAS, consultaReciboFinal.getRecordValues(0).get(ReceiptDao.ATTR_DIAS));
+//					put(ReceiptDao.ATTR_TOTAL_SERVICES,
+//							consultaReciboFinal.getRecordValues(0).get(ReceiptDao.ATTR_TOTAL_SERVICES));
+//					put(ReceiptDao.ATTR_TOTAL_ROOM,
+//							consultaReciboFinal.getRecordValues(0).get(ReceiptDao.ATTR_TOTAL_ROOM));
+//					put(ReceiptDao.ATTR_TOTAL, consultaReciboFinal.getRecordValues(0).get(ReceiptDao.ATTR_TOTAL));
+//					put(ReceiptDao.ATTR_ID, consultaReciboFinal.getRecordValues(0).get(ReceiptDao.ATTR_ID));
+//
+//					put(CustomerDao.ATTR_NAME, consultaReservaFinal.getRecordValues(0).get(CustomerDao.ATTR_NAME));
+//					put(CustomerDao.ATTR_SURNAME,
+//							consultaReservaFinal.getRecordValues(0).get(CustomerDao.ATTR_SURNAME));
+//
+//					put(BookingDao.ATTR_CHECKIN,
+//							consultaHabitacionFinal.getRecordValues(0).get(BookingDao.ATTR_CHECKIN));
+//					put(BookingDao.ATTR_CHECKOUT,
+//							consultaHabitacionFinal.getRecordValues(0).get(BookingDao.ATTR_CHECKOUT));
+//					put(RoomTypeDao.ATTR_PRICE, consultaHabitacionFinal.getRecordValues(0).get(RoomTypeDao.ATTR_PRICE));
+//				}
+//			};
+//			
+//			
+//
+////			Map<String, Object> sinServcios = new HashMap<String, Object>() {
+////				{
+////					put("bsx_units", null);
+////					put("bsx_precio", null);
+////					put("sxt_description", null);
+////					put("sxt_name", null);
+////					put("bsx_date", null);
+////				}
+////			};
+////
+////			if (servciosExtra.isEmpty()) {
+////				servciosExtra.addRecord(sinServcios);
+////			}
+//			
+//			
+//
+//			JRTableModelDataSource dataSource = new JRTableModelDataSource(
+//					EntityResultUtils.createTableModel(servciosExtra));
+//			JasperReport jasperReport = JasperCompileManager.compileReport(RECEIPT);
+//			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport,
+//					ReportsConfig.getBasicParametersPutAll(parameters), dataSource);
+//			jasperPrint.setOrientation(OrientationEnum.LANDSCAPE);
+//
+//			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
+//
+//		}  catch (ValidateException e) {			
+//			resultado = ResponseEntity.ok(new EntityResultWrong(e.getMessage()));
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			resultado = ResponseEntity.ok(new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR));
+//		}
+//		return resultado;
+//	}
 
 	public ResponseEntity returnFile(byte[] bytesPdf) {
 		HttpHeaders header = new HttpHeaders();

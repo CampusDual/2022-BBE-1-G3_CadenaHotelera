@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jdbcDataAdapter class="net.sf.jasperreports.data.jdbc.JdbcDataAdapterImpl">
+  <name>Adaptador postgresql</name>
+  <driver>org.postgresql.Driver</driver>
+  <username>Backend_2022_G3</username>
+  <password>quei1Okai3eeGieboo</password>
+  <url>jdbc:postgresql://45.84.210.174:65432/Backend_2022_G3</url>
+  <database></database>
+  <savePassword>true</savePassword>
+  <serverAddress></serverAddress>
+</jdbcDataAdapter>

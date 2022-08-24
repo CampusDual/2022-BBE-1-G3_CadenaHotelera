@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="plantilla" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ced95029-b569-4027-895c-af2843a4e088">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="net.sf.jasperreports.data.adapter" value="AdaptadorPostgresql.xml"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="226"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="767"/>
 	<style name="Title" fontName="Times New Roman" fontSize="50" isBold="true"/>
 	<style name="SubTitle" forecolor="#736343" fontName="Arial" fontSize="18"/>
 	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
@@ -16,37 +20,101 @@
 	<parameter name="logo_01" class="java.io.InputStream"/>
 	<parameter name="logo_02" class="java.io.InputStream"/>
 	<parameter name="icon" class="java.io.InputStream"/>
-	<parameter name="rcp_days" class="java.lang.Integer"/>
-	<parameter name="rcp_id" class="java.lang.Integer">
-		<defaultValueExpression><![CDATA[$P{rcp_id}]]></defaultValueExpression>
-	</parameter>
-	<parameter name="rcp_date" class="java.sql.Timestamp"/>
-	<parameter name="rcp_total_services" class="java.math.BigDecimal"/>
-	<parameter name="rcp_total" class="java.math.BigDecimal"/>
-	<parameter name="rcp_total_room" class="java.math.BigDecimal"/>
-	<parameter name="bkg_checkin" class="java.sql.Timestamp"/>
-	<parameter name="bkg_checkout" class="java.sql.Timestamp"/>
-	<parameter name="cst_name" class="java.lang.String"/>
-	<parameter name="cst_surname" class="java.lang.String"/>
-	<parameter name="rmt_price" class="java.math.BigDecimal"/>
-	<queryString>
-		<![CDATA[]]>
+	<parameter name="bkg_id" class="java.lang.Integer"/>
+	<queryString language="plsql">
+		<![CDATA[SELECT cst_name, cst_surname,rcp_date, rcp_id, bsx_id, sxt_name, sxt_description,bsx_date,bsx_units,bsx_precio,bkg_id, rmt_price,(CASE WHEN (bkg_checkout::date  - bkg_checkin::date) =0 THEN 1 ELSE (bkg_checkout::date- bkg_checkin::date) END)AS rcp_days, bkg_checkout, bkg_checkin
+     FROM public.bookings LEFT JOIN public.rooms ON bkg_rm_id = rm_id 
+     LEFT JOIN public.room_types ON rmt_id = rm_rmt_id
+     LEFT JOIN bookings_services_extra bse ON bkg_id = bsx_bkg_id
+     LEFT JOIN servicesxtra ON bsx_sxt_id = sxt_id
+     LEFT JOIN receipts ON rcp_bkg_id=bkg_id
+   LEFT JOIN customers ON bkg_cst_id = cst_id
+     WHERE bkg_id=$P{bkg_id} AND bkg_canceled IS NULL AND bkg_checkout IS NOT NULL]]>
 	</queryString>
-	<field name="sxt_name" class="java.lang.String"/>
-	<field name="sxt_description" class="java.lang.String"/>
-	<field name="bsx_units" class="java.lang.Integer"/>
-	<field name="bsx_precio" class="java.math.BigDecimal"/>
-	<field name="bsx_date" class="java.sql.Timestamp"/>
-	<field name="rcp_days" class="java.math.BigDecimal"/>
-	<field name="rmt_price" class="java.math.BigDecimal"/>
-	<field name="rcp_total_room" class="java.math.BigDecimal"/>
-	<field name="rcp_date" class="java.sql.Timestamp"/>
-	<field name="cst_name" class="java.lang.String"/>
-	<field name="cst_surname" class="java.lang.String"/>
-	<field name="bkg_checkin" class="java.sql.Timestamp"/>
-	<field name="bkg_checkout" class="java.sql.Timestamp"/>
-	<field name="rcp_total_services" class="java.math.BigDecimal"/>
-	<field name="rcp_total" class="java.math.BigDecimal"/>
+	<field name="cst_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cst_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="cst_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="customers"/>
+	</field>
+	<field name="cst_surname" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cst_surname"/>
+		<property name="com.jaspersoft.studio.field.label" value="cst_surname"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="customers"/>
+	</field>
+	<field name="rcp_date" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="rcp_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="rcp_date"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="receipts"/>
+	</field>
+	<field name="rcp_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="rcp_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="rcp_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="receipts"/>
+	</field>
+	<field name="bsx_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="bsx_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="bsx_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bookings_services_extra"/>
+	</field>
+	<field name="sxt_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="sxt_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="sxt_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="servicesxtra"/>
+	</field>
+	<field name="sxt_description" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="sxt_description"/>
+		<property name="com.jaspersoft.studio.field.label" value="sxt_description"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="servicesxtra"/>
+	</field>
+	<field name="bsx_date" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="bsx_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="bsx_date"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bookings_services_extra"/>
+	</field>
+	<field name="bsx_units" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="bsx_units"/>
+		<property name="com.jaspersoft.studio.field.label" value="bsx_units"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bookings_services_extra"/>
+	</field>
+	<field name="bsx_precio" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="bsx_precio"/>
+		<property name="com.jaspersoft.studio.field.label" value="bsx_precio"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bookings_services_extra"/>
+	</field>
+	<field name="bkg_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="bkg_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="bkg_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bookings"/>
+	</field>
+	<field name="rmt_price" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="rmt_price"/>
+		<property name="com.jaspersoft.studio.field.label" value="rmt_price"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="room_types"/>
+	</field>
+	<field name="rcp_days" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="rcp_days"/>
+		<property name="com.jaspersoft.studio.field.label" value="rcp_days"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="receipts"/>
+	</field>
+	<field name="bkg_checkout" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="bkg_checkout"/>
+		<property name="com.jaspersoft.studio.field.label" value="bkg_checkout"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bookings"/>
+	</field>
+	<field name="bkg_checkin" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="bkg_checkin"/>
+		<property name="com.jaspersoft.studio.field.label" value="bkg_checkin"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bookings"/>
+	</field>
+	<variable name="total_servcio" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{bsx_precio}.multiply(new BigDecimal($F{bsx_units}))]]></variableExpression>
+	</variable>
+	<variable name="total_habitacion" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{rmt_price}.multiply(new BigDecimal($F{rcp_days}))]]></variableExpression>
+	</variable>
+	<variable name="total_servicios" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{total_servcio}]]></variableExpression>
+	</variable>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -101,7 +169,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font size="16"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{rcp_id}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{rcp_id}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="250" y="109" width="246" height="20" uuid="cea9b800-ef6b-4521-9dcd-7632dde2adeb">
@@ -126,16 +194,16 @@
 			</staticText>
 			<frame>
 				<reportElement mode="Opaque" x="-20" y="187" width="597" height="51" forecolor="#D0B48E" backcolor="#F2EBDF" uuid="14cb79ff-2eee-4d27-ba1a-9c67ce4172b3"/>
+				<textField>
+					<reportElement x="460" y="12" width="113" height="24" uuid="c11daf21-0018-446c-b4c6-e88568707778">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="910f50be-2928-49a1-910a-6fb427b5da5c"/>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{total_habitacion}]]></textFieldExpression>
+				</textField>
 			</frame>
-			<textField>
-				<reportElement x="449" y="204" width="98" height="15" uuid="c11daf21-0018-446c-b4c6-e88568707778">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="910f50be-2928-49a1-910a-6fb427b5da5c"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{rcp_total_room}]]></textFieldExpression>
-			</textField>
 			<staticText>
 				<reportElement x="194" y="164" width="84" height="18" uuid="7360bcca-8639-4cb5-8726-28081da17ed5">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8354bab4-8fda-45ca-8528-050e8d07312f"/>
@@ -236,7 +304,7 @@
 		<band splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
-		<band height="21" splitType="Stretch">
+		<band height="22" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<printWhenExpression><![CDATA[$F{sxt_name} != null]]></printWhenExpression>
 			<line>
@@ -248,7 +316,7 @@
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement x="14" y="-2" width="100" height="15" uuid="890f79d9-0581-480f-9be8-3f95ffdee801">
+				<reportElement x="0" y="-1" width="100" height="15" uuid="890f79d9-0581-480f-9be8-3f95ffdee801">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="aee27727-9763-44f5-83c9-3ae55bb77272"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -256,7 +324,7 @@
 				<text><![CDATA[SERVICIO EXTRA]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="130" y="-2" width="100" height="15" uuid="a5e028de-d36e-4e35-abf7-6d1f6078906f">
+				<reportElement x="110" y="-1" width="100" height="15" uuid="a5e028de-d36e-4e35-abf7-6d1f6078906f">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6b955120-716d-49d4-a947-306ac40666b0"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -264,7 +332,7 @@
 				<text><![CDATA[DESCRIPCIÓN]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="447" y="-1" width="100" height="15" uuid="75257bd9-c234-4dfe-a02b-387c80df42eb">
+				<reportElement x="390" y="-1" width="100" height="15" uuid="75257bd9-c234-4dfe-a02b-387c80df42eb">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3f111d76-552d-4e79-9a96-573bfbd1e83b"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -272,7 +340,7 @@
 				<text><![CDATA[PRECIO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="379" y="-2" width="60" height="15" uuid="a5f6ab07-f7dd-415b-abbc-fdf586527ab7">
+				<reportElement x="320" y="0" width="60" height="15" uuid="a5f6ab07-f7dd-415b-abbc-fdf586527ab7">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="815228a8-4637-4d35-a969-d3f99eeb6e8a"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -280,12 +348,17 @@
 				<text><![CDATA[UNIDADES]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="279" y="-2" width="50" height="15" uuid="dda0f5df-fe9b-411d-9ec7-3601ab33de9b">
+				<reportElement x="238" y="0" width="50" height="15" uuid="dda0f5df-fe9b-411d-9ec7-3601ab33de9b">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7714c06b-0585-4466-9b9f-536dde731fd3"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[FECHA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="490" y="-1" width="40" height="14" uuid="6a09d4f7-2637-49ce-a692-65af2d67391d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[TOTAL]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -296,7 +369,7 @@
 			<frame>
 				<reportElement style="Row" mode="Opaque" x="0" y="0" width="555" height="15" uuid="a98495d8-3c8d-4fa0-81f5-30c3efc2f766"/>
 				<textField isBlankWhenNull="true">
-					<reportElement x="8" y="2" width="112" height="28" uuid="c245ea9e-f4ea-4a67-a4ca-dc61f86256f7">
+					<reportElement x="1" y="0" width="99" height="28" uuid="c245ea9e-f4ea-4a67-a4ca-dc61f86256f7">
 						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="aee27727-9763-44f5-83c9-3ae55bb77272"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -305,7 +378,7 @@
 					<textFieldExpression><![CDATA[$F{sxt_name}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="130" y="2" width="100" height="28" uuid="c77859f6-ea9d-41bc-b39b-12d101be0202">
+					<reportElement x="110" y="0" width="100" height="28" uuid="c77859f6-ea9d-41bc-b39b-12d101be0202">
 						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6b955120-716d-49d4-a947-306ac40666b0"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -314,7 +387,7 @@
 					<textFieldExpression><![CDATA[$F{sxt_description}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="447" y="2" width="98" height="28" uuid="34a0fcb1-c5a9-4bde-88a8-30aefd6199f2">
+					<reportElement x="390" y="0" width="98" height="28" uuid="34a0fcb1-c5a9-4bde-88a8-30aefd6199f2">
 						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3f111d76-552d-4e79-9a96-573bfbd1e83b"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -323,7 +396,7 @@
 					<textFieldExpression><![CDATA[$F{bsx_precio}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="380" y="2" width="60" height="28" uuid="a2fe630b-5cea-4d23-99db-0b40659eccfa">
+					<reportElement x="316" y="0" width="60" height="28" uuid="a2fe630b-5cea-4d23-99db-0b40659eccfa">
 						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="815228a8-4637-4d35-a969-d3f99eeb6e8a"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -332,13 +405,18 @@
 					<textFieldExpression><![CDATA[$F{bsx_units}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="264" y="2" width="83" height="28" uuid="7d16a9d0-8beb-41b9-9ec0-028b340395f4">
+					<reportElement x="220" y="0" width="83" height="28" uuid="7d16a9d0-8beb-41b9-9ec0-028b340395f4">
 						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7714c06b-0585-4466-9b9f-536dde731fd3"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Center" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{bsx_date})]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="499" y="0" width="55" height="28" uuid="80964099-4a17-49eb-8b22-6c1e978847c4"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{total_servcio}]]></textFieldExpression>
 				</textField>
 			</frame>
 		</band>
@@ -382,19 +460,8 @@
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="63" splitType="Stretch">
+		<band height="72" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
-			<textField>
-				<reportElement x="447" y="4" width="100" height="20" uuid="cf468c2e-2d74-4a32-8283-f7086140cc29">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f6fc0326-9391-4201-850f-1406df7f12ea"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="11" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{rcp_total_services}]]></textFieldExpression>
-			</textField>
 			<staticText>
 				<reportElement x="299" y="4" width="148" height="20" uuid="1e529d69-59f3-492d-9220-50d75d791d56">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f6fc0326-9391-4201-850f-1406df7f12ea"/>
@@ -423,7 +490,12 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="14" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{rcp_total}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{total_servicios}.add($V{total_habitacion})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="465" y="4" width="90" height="20" uuid="3aee8b85-52f5-467a-947e-edf0c55ce695"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{total_servicios}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>
