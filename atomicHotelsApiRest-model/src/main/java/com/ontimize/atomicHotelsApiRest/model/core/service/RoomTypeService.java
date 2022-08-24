@@ -53,7 +53,7 @@ public class RoomTypeService implements IRoomTypeService {
 			cf.validate(attrList);
 			return this.daoHelper.query(this.roomTypeDao, keyMap, attrList);
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
@@ -95,7 +95,7 @@ public class RoomTypeService implements IRoomTypeService {
 		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);
@@ -138,7 +138,7 @@ public class RoomTypeService implements IRoomTypeService {
 				resultado.setMessage("RoomType actualizada");
 			}
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
 		} catch (DataIntegrityViolationException e) {
@@ -180,8 +180,7 @@ public class RoomTypeService implements IRoomTypeService {
 				resultado.setMessage("RoomType eliminado");
 			}
 		} catch (ValidateException e) {
-			e.getStackTrace();
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (DataIntegrityViolationException e) {
 			e.getStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
@@ -208,7 +207,7 @@ public class RoomTypeService implements IRoomTypeService {
 			resultado = this.daoHelper.query(this.roomTypeDao, keysValues, attrList, "queryRoomTypes");
 
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
@@ -235,7 +234,7 @@ public class RoomTypeService implements IRoomTypeService {
 			resultado = this.daoHelper.query(this.roomTypeDao, keysValues, attrList, "queryRoomFeaturesTypes");
 
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);

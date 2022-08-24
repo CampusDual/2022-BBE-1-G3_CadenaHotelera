@@ -512,15 +512,14 @@ public class ControlFields {
 	}
 
 	public EntityResult infoValidateListER() {
-		EntityResult eR = new EntityResultWrong();
 		List<String> infoValid;
 		if (!optional) {
 			infoValid = required;
 		} else {
-			infoValid = (List<String>) (fields.keySet());
+			infoValid = new ArrayList<>(fields.keySet());
 			infoValid.removeAll(restricted);
 		}
-		eR.addRecord(new HashMap<String, Object>() {
+		return new EntityResultWrong(new HashMap<String, Object>() {
 			{
 				put("Columns info", new HashMap<String, Object>() {
 					{
@@ -533,8 +532,6 @@ public class ControlFields {
 				});
 			}
 		});
-
-		return eR;
 	}
 
 	public EntityResult infoValidateMapER() {
@@ -547,7 +544,7 @@ public class ControlFields {
 		if (!optional) {
 			infoValid.keySet().removeIf(t -> !required.contains(t));
 		}
-		eR.addRecord(new HashMap<String, Object>() {
+		return new EntityResultWrong(new HashMap<String, Object>() {
 			{
 				put("Fields info", new HashMap<String, Object>() {
 					{
@@ -560,8 +557,6 @@ public class ControlFields {
 				});
 			}
 		});
-
-		return eR;
 
 	}
 

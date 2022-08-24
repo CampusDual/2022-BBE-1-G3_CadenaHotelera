@@ -54,7 +54,7 @@ public class CountryService implements ICountryService {
 			cf.validate(attrList);
 			resultado = this.daoHelper.query(this.countryDao, keyMap, attrList);
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);

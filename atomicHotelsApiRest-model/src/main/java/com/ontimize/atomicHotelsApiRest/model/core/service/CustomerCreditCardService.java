@@ -66,7 +66,7 @@ public class CustomerCreditCardService implements ICustomerCreditCardService{
 		cf.validate(attrList);
 		return this.daoHelper.query(this.customerCreditCardDao, keyMap, attrList);
 		}catch( ValidateException e) {
-			resultado=new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		}catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
@@ -115,7 +115,7 @@ public class CustomerCreditCardService implements ICustomerCreditCardService{
 		}catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_MISSING_FK);
 		}catch (ValidateException e) {
-			resultado =new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (EntityResultRequiredException e) {
 			resultado = new EntityResultWrong(e.getMessage());		
 		}catch (Exception e) {
@@ -162,8 +162,7 @@ public class CustomerCreditCardService implements ICustomerCreditCardService{
 		}
 
 		} catch (ValidateException e) {
-
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (DataIntegrityViolationException e) {	
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
 		}catch (Exception e) {
