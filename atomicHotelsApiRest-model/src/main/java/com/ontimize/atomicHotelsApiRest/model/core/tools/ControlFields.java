@@ -12,11 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InfoValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.MissingFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.RestrictedFieldException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.service.ICountryService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
@@ -24,6 +26,7 @@ import com.ontimize.atomicHotelsApiRest.model.core.dao.UserDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.UserRoleDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.TypeCodes.type;
 import com.ontimize.jee.common.db.SQLStatementBuilder;
+import com.ontimize.jee.common.dto.EntityResult;
 
 /**
  * Validador de campos y valores de keyMaps (filtros) y attrList (columnas),
@@ -37,6 +40,7 @@ import com.ontimize.jee.common.db.SQLStatementBuilder;
 @Component
 public class ControlFields {
 
+	private static final String HELP_KEY_INFO = "help_info";
 	private Map<String, type> fields;
 	private List<String> restricted;
 	private List<String> required;
@@ -45,6 +49,7 @@ public class ControlFields {
 	private boolean noEmptyList;
 	private boolean noWildcard;
 	private boolean allowBasicExpression;
+	private boolean allowHelpCommand;
 	private boolean controlPermissionsActive;
 	private String detailsMsg = "";
 
@@ -68,7 +73,7 @@ public class ControlFields {
 		noEmptyList = true; // solo para las Listas no los HashMap
 		noWildcard = true;
 		allowBasicExpression = true;
-
+		allowHelpCommand = true;
 		resetPermissions();
 
 	}
@@ -145,10 +150,11 @@ public class ControlFields {
 	 * @throws InvalidFieldsException
 	 * @throws InvalidFieldsValuesException
 	 * @throws LiadaPardaException
+	 * @throws InfoValidateException
 	 */
 	@SuppressWarnings("static-access")
 	public void validate(Map<String, Object> keyMap) throws MissingFieldsException, RestrictedFieldException,
-			InvalidFieldsException, InvalidFieldsValuesException, LiadaPardaException {
+			InvalidFieldsException, InvalidFieldsValuesException, LiadaPardaException, InfoValidateException {
 
 		if (keyMap == null) {
 			throw new MissingFieldsException(ErrorMessage.NO_NULL_DATA);
@@ -158,7 +164,9 @@ public class ControlFields {
 //		if( !allowBasicExpression && keyMap.containsKey(SQLStatementBuilder.ExtendedSQLConditionValuesProcessor.EXPRESSION_KEY)) {		
 //			throw new InvalidFieldsException(ErrorMessage.NO_BASIC_EXPRESSION);
 //		}
-
+		if (allowHelpCommand && keyMap.containsKey(HELP_KEY_INFO)) {
+			throw new InfoValidateException(infoValidateMapER());
+		}
 		for (String key : required) {
 			if (!keyMap.containsKey(key)) {
 				throw new MissingFieldsException(ErrorMessage.REQUIRED_FIELD + key);
@@ -427,14 +435,18 @@ public class ControlFields {
 	 * @throws RestrictedFieldException
 	 * @throws LiadaPardaException
 	 * @throws InvalidFieldsException
+	 * @throws InfoValidateException
 	 */
-	public void validate(List<String> columns)
-			throws MissingFieldsException, RestrictedFieldException, LiadaPardaException, InvalidFieldsException {
+	public void validate(List<String> columns) throws MissingFieldsException, RestrictedFieldException,
+			LiadaPardaException, InvalidFieldsException, InfoValidateException {
 
 		if (columns == null) {
 			throw new MissingFieldsException(ErrorMessage.NO_NULL_DATA);
 		}
 
+		if (allowHelpCommand && columns.contains(HELP_KEY_INFO)) {
+			throw new InfoValidateException(infoValidateListER());
+		}
 		if (noEmptyList) {
 			int minimuSize = 1;
 
@@ -493,11 +505,64 @@ public class ControlFields {
 		info.append("\t\nValid fields: \n\t\t" + infoValid);
 		info.append("\t\nRequired fields: \n\t\t" + required.toString());
 		info.append("\t\nAllow Optional fields: " + optional);
-		info.append("\t\nOnly Empty List: " + !noEmptyList);
 		info.append("\t\nAllow Empty List: " + !noEmptyList);
 		info.append("\n---------------------\n");
 
 		return info.toString();
+	}
+
+	public EntityResult infoValidateListER() {
+		EntityResult eR = new EntityResultWrong();
+		List<String> infoValid;
+		if (!optional) {
+			infoValid = required;
+		} else {
+			infoValid = (List<String>) (fields.keySet());
+			infoValid.removeAll(restricted);
+		}
+		eR.addRecord(new HashMap<String, Object>() {
+			{
+				put("Columns info", new HashMap<String, Object>() {
+					{
+						put("Valid fields", infoValid);
+						put("Required fields", required);
+						put("Allow Optional fields", optional);
+						put("Allow Empty List", !noEmptyList);
+						put("WARNING", "Remove field '" + HELP_KEY_INFO + "' to disable this result");
+					}
+				});
+			}
+		});
+
+		return eR;
+	}
+
+	public EntityResult infoValidateMapER() {
+		EntityResult eR = new EntityResultWrong();
+
+		HashMap<String, Object> infoValid = new HashMap<>();
+		infoValid.putAll(fields);
+		infoValid.keySet().removeAll(restricted);
+
+		if (!optional) {
+			infoValid.keySet().removeIf(t -> !required.contains(t));
+		}
+		eR.addRecord(new HashMap<String, Object>() {
+			{
+				put("Fields info", new HashMap<String, Object>() {
+					{
+						put("Valid fields", infoValid);
+						put("Required fields", required);
+						put("Allow Optional fields", optional);
+						put("Allow BasicExpressions", allowBasicExpression);
+						put("WARNING", "Remove field '" + HELP_KEY_INFO + "' to disable this result");
+					}
+				});
+			}
+		});
+
+		return eR;
+
 	}
 
 	public String infoValidateMap() {

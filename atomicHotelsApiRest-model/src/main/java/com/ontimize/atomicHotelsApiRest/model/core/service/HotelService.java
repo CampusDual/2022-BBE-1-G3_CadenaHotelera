@@ -115,8 +115,7 @@ public class HotelService implements IHotelService {
 			resultado = this.daoHelper.query(this.dao, keyMap, attrList);
 
 		} catch (ValidateException e) {
-			e.printStackTrace();
-			resultado = new EntityResultWrong(e.getMessage());
+			resultado = e.getEntityResult();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -159,7 +158,7 @@ public class HotelService implements IHotelService {
 			resultado.setMessage("Hotel registrado");
 
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR + e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 		} catch (Exception e) {
@@ -269,7 +268,7 @@ public class HotelService implements IHotelService {
 				}
 			}
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR + " - " + e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (DuplicateKeyException e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
@@ -298,7 +297,7 @@ public class HotelService implements IHotelService {
 			cf.addBasics(dao.fields);
 			cf.setRequired(required);
 			cf.setOptional(false);
-			cf.validate(keyMap);  
+			cf.validate(keyMap);
 
 			Map<String, Object> subConsultaKeyMap = new HashMap<>() {
 				{
@@ -316,7 +315,7 @@ public class HotelService implements IHotelService {
 			}
 
 		} catch (ValidateException e) {
-			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR + e.getMessage());
+			resultado = e.getEntityResult();
 		} catch (DataIntegrityViolationException e) {
 			resultado = new EntityResultWrong(ErrorMessage.DELETE_ERROR_FOREING_KEY);
 		} catch (Exception e) {
@@ -348,24 +347,24 @@ public class HotelService implements IHotelService {
 //		return queryRes;
 ////		return null;
 //	}
-	
+
 	@SuppressWarnings("static-access")
 	@Override
 	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult poiQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 		EntityResult pois = new EntityResultMapImpl();
-		String category = (keyMap.containsKey("category")) ? (String) keyMap.get("category") : "" ;
-		String radius = (keyMap.containsKey("radius")) ? (String) keyMap.get("radius") : "1" ;
-		
+		String category = (keyMap.containsKey("category")) ? (String) keyMap.get("category") : "";
+		String radius = (keyMap.containsKey("radius")) ? (String) keyMap.get("radius") : "1";
+
 		try {
-			if(keyMap.containsKey("category")){
+			if (keyMap.containsKey("category")) {
 				keyMap.remove("category");
 			}
-			if(keyMap.containsKey("radius")) {
+			if (keyMap.containsKey("radius")) {
 				keyMap.remove("radius");
 			}
-			
+
 			List<String> required = Arrays.asList(dao.ATTR_ID);
 			cf.reset();
 			cf.addBasics(dao.fields);
@@ -377,8 +376,7 @@ public class HotelService implements IHotelService {
 				keyMapDireccion.put(dao.ATTR_ID, keyMap.get(dao.ATTR_ID));
 			}
 			resultado = hotelQuery(keyMapDireccion, attrList);
-		} catch (MissingFieldsException | RestrictedFieldException | InvalidFieldsException
-				| InvalidFieldsValuesException | LiadaPardaException e1) {
+		} catch (ValidateException | LiadaPardaException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
@@ -420,7 +418,7 @@ public class HotelService implements IHotelService {
 				String urlEndpoint2 = "https://test.api.amadeus.com/v1/security/oauth2/token";
 				String urlParams = "grant_type=client_credentials&client_id=h3nxa8Fz2gDyhWAhSY8nhlAGaZ43tGHv&client_secret=yTjGtt92Ww2ezfAT";
 				String urlPoi = "https://test.api.amadeus.com/v1/reference-data/locations/pois?latitude=" + latitude
-						+ "&longitude=" + longitude + "&radius="+radius+"&categories="+category;
+						+ "&longitude=" + longitude + "&radius=" + radius + "&categories=" + category;
 
 				URL url2 = new URL(urlEndpoint2);
 				HttpsURLConnection con2 = (HttpsURLConnection) url2.openConnection();
@@ -462,21 +460,17 @@ public class HotelService implements IHotelService {
 					System.out.println(response2.toString());
 					JSONObject jsonarray3 = new JSONObject(response2.toString());
 					JSONArray jsarray = (JSONArray) jsonarray3.get("data");
-					
-					
 
-					int u=0;
+					int u = 0;
 					System.out.println(jsarray.length());
 					StringBuilder cc = new StringBuilder();
-					while(u<jsarray.length())
-					{
-						JSONObject coor = (JSONObject)jsarray.get(u);
+					while (u < jsarray.length()) {
+						JSONObject coor = (JSONObject) jsarray.get(u);
 						cc.append(coor.get("geoCode"));
 						u++;
 					}
 					System.err.println(cc.toString());
-					
-					
+
 					@SuppressWarnings("unchecked")
 					Map<String, Object> aux = resultado.getRecordValues(0); // obtenemos el HashMap 0 de resultado.
 					List<Object> auxList = new ArrayList<>(); // creamos una lista auxiliar
@@ -485,13 +479,13 @@ public class HotelService implements IHotelService {
 						JSONObject nuevo = (JSONObject) jsarray.get(i);
 						// System.out.println(nuevo.get("name"));
 						poisMp.put("Poins", nuevo.get("name")); // creamos POINS en el hashmap POISMP
-						
+
 						JSONObject Ogeo = nuevo.getJSONObject("geoCode");
-						Map<String, Object> coorM= new HashMap<>();
+						Map<String, Object> coorM = new HashMap<>();
 						coorM.put("latitude", Ogeo.get("latitude"));
 						coorM.put("longitude", Ogeo.get("longitude"));
 						poisMp.put("geoCode", coorM);
-						
+
 						poisMp.put("Category", nuevo.get("category"));
 						auxList.add(poisMp); //
 					}

@@ -80,8 +80,7 @@ public class RoomService implements IRoomService {
 			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
 
 			cf.addBasics(dao.fields);
-			cf.validate(keyMap);
-
+			cf.validate(keyMap);			
 			cf.validate(attrList);
 			resultado = this.daoHelper.query(this.dao, keyMap, attrList);
 

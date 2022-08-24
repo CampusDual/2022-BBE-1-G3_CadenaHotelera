@@ -127,7 +127,9 @@ public class BookingService implements IBookingService {
 			cf.addBasics(dao.fields, RoomDao.fields, RoomTypeDao.fields, HotelDao.fields, CustomerDao.fields);
 
 			cf.validate(keyMap);
-			cf.validate(attrList);
+			cf.validate(attrList);			
+						
+			
 
 			resultado = this.daoHelper.query(this.dao, keyMap, attrList, "queryInfoBooking");
 		} catch (ValidateException e) {

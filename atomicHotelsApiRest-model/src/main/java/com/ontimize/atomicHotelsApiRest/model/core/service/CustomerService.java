@@ -14,6 +14,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.EntityResultRequiredException;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InfoValidateException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.InvalidFieldsValuesException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.LiadaPardaException;
@@ -82,7 +83,7 @@ public class CustomerService implements ICustomerService {
 	}
 
 	public boolean isCustomerValidBookingHolder(Object customerId)
-			throws OntimizeJEERuntimeException, EntityResultRequiredException, MissingFieldsException, RestrictedFieldException, InvalidFieldsException, InvalidFieldsValuesException, LiadaPardaException {
+			throws OntimizeJEERuntimeException, EntityResultRequiredException, MissingFieldsException, RestrictedFieldException, InvalidFieldsException, InvalidFieldsValuesException, LiadaPardaException, InfoValidateException {
 		EntityResult resultado = new EntityResultWrong();
 
 		Map<String, Object> keyMap = new HashMap<>();
