@@ -2,7 +2,7 @@
 <!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="EmpleadosSimpleReporte" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="095036f7-ac69-4614-b262-b2868e184c38">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Bootcamp"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Backend_2022_G3"/>
 	<property name="net.sf.jasperreports.components.table.generate.pdf.tags" value="true"/>
 	<property name="net.sf.jasperreports.print.create.bookmarks" value="true"/>
 	<queryString language="SQL">
@@ -33,8 +33,8 @@ FROM hotels]]>
 	<background>
 		<band height="665">
 			<image>
-				<reportElement x="195" y="40" width="350" height="319" uuid="32407439-ab38-4b13-a19e-7757ff2d7d3b"/>
-				<imageExpression><![CDATA["/images/icono_atom.png"]]></imageExpression>
+				<reportElement x="-5" y="40" width="550" height="560" uuid="32407439-ab38-4b13-a19e-7757ff2d7d3b"/>
+				<imageExpression><![CDATA["/images/logo atom_white3.png"]]></imageExpression>
 			</image>
 			<image>
 				<reportElement x="0" y="409" width="554" height="256" uuid="1197060b-b557-4668-a1e5-64f37caf29e5"/>
@@ -59,12 +59,12 @@ FROM hotels]]>
 				<reportElement x="470" y="-70" width="170" height="146" uuid="8600f3d0-ba3f-40bd-ab9f-265f79c568e0"/>
 				<imageExpression><![CDATA["/images/icono_atom.png"]]></imageExpression>
 			</image>
-			<textField pattern="d MMMM  yyyy.">
-				<reportElement x="200" y="46" width="140" height="30" forecolor="#DAE9F5" backcolor="#696060" uuid="6d657f99-d901-4e88-a1af-442eff0f86e7"/>
-				<textElement>
-					<font size="14" isBold="true"/>
+			<textField>
+				<reportElement x="200" y="40" width="141" height="30" forecolor="#DAE9F5" uuid="9dcf292f-3fcc-4544-b8af-8091a5a59932"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[DATEFORMAT(NOW( ),"d ' de 'MMMM' del 'YYYY")]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -107,7 +107,7 @@ FROM hotels]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="10" isBold="true" isItalic="true"/>
 				</textElement>
-				<text><![CDATA[email]]></text>
+				<text><![CDATA[Email]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
