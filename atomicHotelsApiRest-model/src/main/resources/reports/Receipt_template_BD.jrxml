@@ -126,6 +126,18 @@
 				<reportElement x="0" y="0" width="160" height="151" uuid="ddc15723-2728-421f-b95e-2df9faf64ce1"/>
 				<imageExpression><![CDATA[$P{logo_01}]]></imageExpression>
 			</image>
+			<frame>
+				<reportElement mode="Opaque" x="-20" y="187" width="597" height="51" forecolor="#D0B48E" backcolor="#F2EBDF" uuid="14cb79ff-2eee-4d27-ba1a-9c67ce4172b3"/>
+				<textField evaluationTime="Report">
+					<reportElement x="453" y="13" width="108" height="24" isPrintInFirstWholeBand="true" uuid="c11daf21-0018-446c-b4c6-e88568707778">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="910f50be-2928-49a1-910a-6fb427b5da5c"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{total_habitacion}]]></textFieldExpression>
+				</textField>
+			</frame>
 			<staticText>
 				<reportElement style="Title" x="170" y="0" width="263" height="62" uuid="1a652692-054a-40f3-ade5-68d8da36626d"/>
 				<textElement verticalAlignment="Middle"/>
@@ -193,18 +205,6 @@
 				</textElement>
 				<text><![CDATA[CLIENTE:]]></text>
 			</staticText>
-			<frame>
-				<reportElement mode="Opaque" x="-20" y="187" width="597" height="51" forecolor="#D0B48E" backcolor="#F2EBDF" uuid="14cb79ff-2eee-4d27-ba1a-9c67ce4172b3"/>
-				<textField>
-					<reportElement x="460" y="12" width="113" height="24" uuid="c11daf21-0018-446c-b4c6-e88568707778">
-						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="910f50be-2928-49a1-910a-6fb427b5da5c"/>
-					</reportElement>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="10"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{total_habitacion}]]></textFieldExpression>
-				</textField>
-			</frame>
 			<staticText>
 				<reportElement x="194" y="164" width="84" height="18" uuid="7360bcca-8639-4cb5-8726-28081da17ed5">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8354bab4-8fda-45ca-8528-050e8d07312f"/>
@@ -291,7 +291,7 @@
 				<text><![CDATA[PRECIO DÍA]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="450" y="164" width="104" height="18" uuid="c1d64e16-3e95-4377-a826-4a46b954e871">
+				<reportElement x="436" y="164" width="104" height="18" uuid="c1d64e16-3e95-4377-a826-4a46b954e871">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3f111d76-552d-4e79-9a96-573bfbd1e83b"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -415,8 +415,8 @@
 					<textFieldExpression><![CDATA[new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{bsx_date})]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="499" y="0" width="55" height="28" uuid="80964099-4a17-49eb-8b22-6c1e978847c4"/>
-					<textElement verticalAlignment="Middle"/>
+					<reportElement x="487" y="0" width="55" height="28" uuid="80964099-4a17-49eb-8b22-6c1e978847c4"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$V{total_servcio}]]></textFieldExpression>
 				</textField>
 			</frame>
@@ -464,7 +464,7 @@
 		<band height="72" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<staticText>
-				<reportElement x="299" y="4" width="148" height="20" uuid="1e529d69-59f3-492d-9220-50d75d791d56">
+				<reportElement x="303" y="4" width="148" height="20" uuid="1e529d69-59f3-492d-9220-50d75d791d56">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f6fc0326-9391-4201-850f-1406df7f12ea"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -474,28 +474,28 @@
 				<text><![CDATA[TOTAL SERVICIOS EXTRA:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="377" y="32" width="66" height="30" uuid="1300d8c2-b303-42eb-ac1e-fbaa33e33ee9">
+				<reportElement x="385" y="32" width="66" height="30" uuid="1300d8c2-b303-42eb-ac1e-fbaa33e33ee9">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a1a195a0-7157-4ad1-ba6f-b630226a4863"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="14" isBold="true"/>
 				</textElement>
-				<text><![CDATA[TOTAL]]></text>
+				<text><![CDATA[TOTAL:]]></text>
 			</staticText>
 			<textField evaluationTime="Report">
-				<reportElement x="446" y="32" width="100" height="30" uuid="9cc3193c-7019-4b4c-b657-92209f0a75a3">
+				<reportElement x="461" y="32" width="82" height="30" uuid="9cc3193c-7019-4b4c-b657-92209f0a75a3">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a1a195a0-7157-4ad1-ba6f-b630226a4863"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="14" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{total_servicios}.add($V{total_habitacion})]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="465" y="4" width="90" height="20" uuid="3aee8b85-52f5-467a-947e-edf0c55ce695"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<reportElement x="453" y="4" width="90" height="20" uuid="3aee8b85-52f5-467a-947e-edf0c55ce695"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$V{total_servicios}]]></textFieldExpression>
 			</textField>
 		</band>
