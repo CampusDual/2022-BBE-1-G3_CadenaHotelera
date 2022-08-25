@@ -103,12 +103,12 @@
 					"basic": [
 						{
 							"key": "password",
-							"value": "demouser",
+							"value": "123456",
 							"type": "string"
 						},
 						{
 							"key": "username",
-							"value": "demo",
+							"value": "usuarioLibre",
 							"type": "string"
 						}
 					]
@@ -148,12 +148,12 @@
 					"basic": [
 						{
 							"key": "password",
-							"value": "demouser",
+							"value": "123456",
 							"type": "string"
 						},
 						{
 							"key": "username",
-							"value": "demo",
+							"value": "gerenteAtom01",
 							"type": "string"
 						}
 					]
@@ -162,7 +162,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\": {\r\n     \"qst_id\": 8\r\n    },\r\n    \"data\": {\r\n        \"qst_question\": \"¿Admiten niños?\",\r\n        \"qst_public\": 1,\r\n        \"qst_htl_id\": 3\r\n    }     \r\n}",
+					"raw": "{\r\n    \"filter\": {\r\n     \"qst_id\": 3\r\n    },\r\n    \"data\": {\r\n        \"qst_public\": 1\r\n    }     \r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
