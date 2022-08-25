@@ -557,7 +557,7 @@ public class ReportService implements IReportService {
 			cf.validate(keyMap);
 			
 			JasperReport jasperReport = JasperCompileManager.compileReport(EMPLOYEE_BY_HOTEL);
-			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap<>());
+			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, keyMap);
 
 			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
 			

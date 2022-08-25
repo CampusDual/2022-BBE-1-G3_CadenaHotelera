@@ -5,7 +5,7 @@
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="src\main\resources\reports\AdaptadorPostgresql.xml"/>
 	<property name="net.sf.jasperreports.components.table.generate.pdf.tags" value="true"/>
 	<property name="net.sf.jasperreports.print.create.bookmarks" value="true"/>
-	<property name="net.sf.jasperreports.data.adapter" value="reports\AdaptadorPostgresql.xml"/>
+	<property name="net.sf.jasperreports.data.adapter" value="AdaptadorPostgresql.xml"/>
 	<parameter name="htl_id" class="java.lang.Integer">
 		<parameterDescription><![CDATA[id del hotel]]></parameterDescription>
 		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
