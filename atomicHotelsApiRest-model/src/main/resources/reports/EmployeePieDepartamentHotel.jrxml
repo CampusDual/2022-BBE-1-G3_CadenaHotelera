@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="EmployeePieDepartamentHotel" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f00566eb-d3a4-4963-9623-1ae62c230618">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="AdaptadorPostgresql.xml"/>
+	<parameter name="htl_id" class="java.lang.Integer"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT
+	hotels.htl_name,departments.dpt_name,
+	sum(employees.emp_salary)
+FROM employees
+	inner join hotels ON 
+	 hotels.htl_id = employees.emp_htl_id 
+	inner join departments ON 
+	 employees.emp_dpt_id = departments.dpt_id 
+WHERE 
+	 hotels.htl_id = $P{htl_id}
+group by departments.dpt_name,hotels.htl_name]]>
+	</queryString>
+	<field name="htl_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="htl_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="htl_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="hotels"/>
+	</field>
+	<field name="dpt_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="dpt_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="dpt_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="departments"/>
+	</field>
+	<field name="sum" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="sum"/>
+		<property name="com.jaspersoft.studio.field.label" value="sum"/>
+	</field>
+	<background>
+		<band height="590" splitType="Stretch">
+			<image>
+				<reportElement x="20" y="60" width="740" height="530" uuid="ff79cf8a-4efd-4aa6-b942-a6dc85479fad"/>
+				<imageExpression><![CDATA["/images/logo atom_white3.png"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="-20" y="-30" width="595" height="106" forecolor="#DAE9F5" backcolor="#696060" uuid="e10625dc-4dc4-477c-bff0-83bc492fd1c7"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Albertus Extra Bold" size="28"/>
+				</textElement>
+				<text><![CDATA[Coste por departamentos.]]></text>
+			</staticText>
+			<image>
+				<reportElement x="10" y="0" width="70" height="70" uuid="a9a83736-aefc-4eaa-b6ad-76c6a1334593"/>
+				<imageExpression><![CDATA["/images/logo_atom_01.png"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="470" y="-70" width="170" height="146" uuid="6221288c-9f91-4792-a798-166d99f0b8e6"/>
+				<imageExpression><![CDATA["/images/icono_atom.png"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="190" y="50" width="141" height="21" forecolor="#DAE9F5" uuid="0e2138bb-1fe3-40a9-8f29-1948312abf6a"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[DATEFORMAT(NOW( ),"d ' de 'MMMM' del 'YYYY")]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<summary>
+		<band height="270" splitType="Stretch">
+			<pie3DChart>
+				<chart evaluationTime="Report">
+					<reportElement x="-20" y="20" width="595" height="250" uuid="991905e6-74eb-4e8d-a874-9d9b6b3b42fc"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<pieDataset>
+					<dataset resetType="Report"/>
+					<keyExpression><![CDATA[$F{dpt_name}]]></keyExpression>
+					<valueExpression><![CDATA[$F{sum}]]></valueExpression>
+					<labelExpression><![CDATA[$F{sum}.toPlainString()]]></labelExpression>
+				</pieDataset>
+				<pie3DPlot>
+					<plot/>
+					<itemLabel/>
+				</pie3DPlot>
+			</pie3DChart>
+			<textField>
+				<reportElement x="130" y="0" width="360" height="30" uuid="3103199f-05a3-4013-9db4-b05a7dda1a02"/>
+				<textElement textAlignment="Center">
+					<font size="22" isBold="true" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{htl_name}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

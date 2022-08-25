@@ -8,11 +8,16 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.bouncycastle.util.Bytes;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,7 +94,7 @@ public class ReportService implements IReportService {
 	private final String RECEIPT_BD = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\Receipt_template_BD.jrxml";
 	private final String OCCUPANCY_CHART = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\occupancyChart.jrxml";
 	private final String OCCUPANCY_BY_NATIONALITY_CHART = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\occupancyChart2.jrxml";
-
+	private final String LISTALLEMPLOYEE = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\EmpleadosAllReporte.jasper";
 	@Override
 	public ResponseEntity test(Map<String, Object> keyMap, List<String> attrList) {
 		EntityResult consulta = new EntityResultMapImpl();
@@ -661,4 +666,36 @@ public class ReportService implements IReportService {
 //
 //		return resultado;
 //	}
+	@Override
+	public ResponseEntity listAllEmployeeReport(Map<String, Object> keyMap, List<String> attrList) {
+		EntityResult consulta = new EntityResultMapImpl();
+		ResponseEntity resultado;
+		try {
+			
+			JasperPrint reporteLleno = JasperFillManager.fillReport(LISTALLEMPLOYEE, new HashMap<>(),
+					getMyPostgresConnection());
+
+			resultado = returnFile(JasperExportManager.exportReportToPdf(reporteLleno));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = ResponseEntity.ok(new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR));
+		}
+		return resultado;
+
+	}
+	private static Connection getMyPostgresConnection() {
+		try {
+			Class.forName("org.postgresql.Driver");
+			String connectionURL="jdbc:postgresql://45.84.210.174:65432/Backend_2022_G3";
+			Connection conn= DriverManager.getConnection(connectionURL,"Backend_2022_G3" , "quei1Okai3eeGieboo");
+			return conn;
+		}catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	} 
+	
+	
+	
 }

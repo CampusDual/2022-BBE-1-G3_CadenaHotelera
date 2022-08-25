@@ -2,7 +2,7 @@
 <!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="EmpleadosSimpleReporte" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="095036f7-ac69-4614-b262-b2868e184c38">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Backend_2022_G3"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="AdaptadorPostgresql.xml"/>
 	<property name="net.sf.jasperreports.components.table.generate.pdf.tags" value="true"/>
 	<property name="net.sf.jasperreports.print.create.bookmarks" value="true"/>
 	<queryString language="SQL">
