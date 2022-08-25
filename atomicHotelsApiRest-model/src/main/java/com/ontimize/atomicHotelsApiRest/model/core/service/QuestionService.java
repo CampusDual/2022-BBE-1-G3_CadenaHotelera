@@ -92,7 +92,7 @@ public class QuestionService implements IQuestionService {
 				}
 			});
 			cf.setCPHtlColum(dao.ATTR_HTL_ID);
-			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER,UserRoleDao.ROLE_STAFF);
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
 			cf.validate(keyMap);
 			cf.validate(attrList);
 
@@ -193,16 +193,25 @@ public class QuestionService implements IQuestionService {
 				}
 			});
 			cf.validate(attrMap);
-//todo revisar, hay que buscar si existe la question antes de actualizar
-			if (attrMap.containsKey(dao.ATTR_HTL_ID)) {
-				Map<String, Object> subConsultaKeyMap = new HashMap<>();
-				subConsultaKeyMap.put(HotelDao.ATTR_ID, attrMap.get(dao.ATTR_HTL_ID));
-				EntityResult auxEntity = hotelService.hotelQuery(subConsultaKeyMap,
-						EntityResultTools.attributes(HotelDao.ATTR_ID)); // aqui se restringen por permisos
-				if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros, la habitación es erronea.
-					throw new EntityResultRequiredException(ErrorMessage.INVALID_HOTEL_ID);
-				} 
+
+			Map<String, Object> subConsultaKeyMap = new HashMap<>();
+			subConsultaKeyMap.putAll(keyMap);
+			EntityResult auxEntity = questionQuery(subConsultaKeyMap,
+					EntityResultTools.attributes(dao.ATTR_ID)); // aqui se restringen por permisos
+			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros, la habitación es erronea.
+				throw new EntityResultRequiredException(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
 			}
+			
+//			if (attrMap.containsKey(dao.ATTR_HTL_ID)) {
+//				subConsultaKeyMap = new HashMap<>();
+//				subConsultaKeyMap.put(HotelDao.ATTR_ID, attrMap.get(dao.ATTR_HTL_ID));
+//
+//				auxEntity = hotelService.hotelQuery(subConsultaKeyMap,
+//						EntityResultTools.attributes(HotelDao.ATTR_ID)); // aqui se restringen por permisos
+//				if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros, la habitación es erronea.
+//					throw new EntityResultRequiredException(ErrorMessage.INVALID_HOTEL_ID);
+//				}
+//			}
 
 			resultado = this.daoHelper.update(this.dao, attrMap, keyMap);
 			if (resultado.getCode() == EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE) {
@@ -214,7 +223,7 @@ public class QuestionService implements IQuestionService {
 			resultado = e.getEntityResult();
 		} catch (EntityResultRequiredException e) {
 			resultado = new EntityResultWrong(e.getMessage());
-		
+
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.UPDATE_ERROR_DUPLICATED_FIELD);
 		} catch (DataIntegrityViolationException e) {
