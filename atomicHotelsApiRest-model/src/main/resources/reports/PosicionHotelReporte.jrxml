@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="EmpleadosSimpleReporte" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="095036f7-ac69-4614-b262-b2868e184c38">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PosicionHotelReporte" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="095036f7-ac69-4614-b262-b2868e184c38">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="AdaptadorPostgresql.xml"/>
 	<property name="net.sf.jasperreports.components.table.generate.pdf.tags" value="true"/>
 	<property name="net.sf.jasperreports.print.create.bookmarks" value="true"/>
-	<queryString language="SQL">
+	<property name="net.sf.jasperreports.data.adapter" value="reports/AdaptadorPostgresql.xml"/>
+	<parameter name="fondo" class="java.io.InputStream"/>
+	<parameter name="mapa" class="java.io.InputStream"/>
+	<parameter name="logo_01" class="java.io.InputStream"/>
+	<parameter name="icon" class="java.io.InputStream"/>
+	<parameter name="logo" class="java.io.InputStream"/>
+	<parameter name="logo_02" class="java.io.InputStream"/>
+	<queryString language="plsql">
 		<![CDATA[SELECT htl_name,htl_city,htl_phone,htl_email,htl_id
 FROM hotels]]>
 	</queryString>
@@ -40,11 +47,11 @@ FROM hotels]]>
 		<band height="676">
 			<image>
 				<reportElement x="-5" y="40" width="550" height="560" uuid="32407439-ab38-4b13-a19e-7757ff2d7d3b"/>
-				<imageExpression><![CDATA["/images/logo atom_white3.png"]]></imageExpression>
+				<imageExpression><![CDATA[$P{fondo}]]></imageExpression>
 			</image>
 			<image>
 				<reportElement positionType="FixRelativeToBottom" x="-5" y="440" width="555" height="236" uuid="1197060b-b557-4668-a1e5-64f37caf29e5"/>
-				<imageExpression><![CDATA["/images/mapaHotels.png"]]></imageExpression>
+				<imageExpression><![CDATA[$P{mapa}]]></imageExpression>
 			</image>
 		</band>
 	</background>
@@ -59,18 +66,18 @@ FROM hotels]]>
 			</staticText>
 			<image>
 				<reportElement x="10" y="0" width="70" height="70" uuid="62afdba0-100a-424c-8a7e-ed87d5dcf409"/>
-				<imageExpression><![CDATA["/images/logo_atom_01.png"]]></imageExpression>
+				<imageExpression><![CDATA[$P{logo_01}]]></imageExpression>
 			</image>
 			<image>
 				<reportElement x="470" y="-70" width="170" height="146" uuid="8600f3d0-ba3f-40bd-ab9f-265f79c568e0"/>
-				<imageExpression><![CDATA["/images/icono_atom.png"]]></imageExpression>
+				<imageExpression><![CDATA[$P{icon}]]></imageExpression>
 			</image>
-			<textField>
-				<reportElement x="200" y="40" width="141" height="30" forecolor="#DAE9F5" uuid="9dcf292f-3fcc-4544-b8af-8091a5a59932"/>
-				<textElement textAlignment="Center">
-					<font size="12" isBold="true"/>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="160" y="40" width="197" height="20" forecolor="#D4E3EE" uuid="ac6867f5-017c-47b2-8b55-7d3ca4160468"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[DATEFORMAT(NOW( ),"d ' de 'MMMM' del 'YYYY")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -159,7 +166,7 @@ FROM hotels]]>
 			</textField>
 			<image>
 				<reportElement x="29" y="0" width="401" height="50" uuid="6d726ec2-be54-4c91-93f5-7effeefa082c"/>
-				<imageExpression><![CDATA["/images/logo_atom_02.png"]]></imageExpression>
+				<imageExpression><![CDATA[$P{logo_02}]]></imageExpression>
 			</image>
 		</band>
 	</pageFooter>

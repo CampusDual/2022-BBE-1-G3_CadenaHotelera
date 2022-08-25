@@ -94,61 +94,26 @@ public class ReportService implements IReportService {
 	private final String LISTALLEMPLOYEE = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\EmpleadosAllReporte.jasper";
 	private final String EMPLOYEE_BY_HOTEL = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\EmpleadosPorHotelReporte2.jrxml";
 	private final String DEPARTMENT_EXPENSES_CHART = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\departmentExpensesByHotelChart.jrxml";
-	
-	@Override
-	public ResponseEntity test(Map<String, Object> keyMap, List<String> attrList) {
-		EntityResult consulta = new EntityResultMapImpl();
+	private final String LIST_HOTELS = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\PosicionHotelReporte.jrxml";
+	@Override//TODO si Compila
+	public ResponseEntity hotels(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException {
+
 		ResponseEntity resultado;
-		try {
-
+		try {	
+			List<String> required = new ArrayList<String>() {
+				{
+					add(HotelDao.ATTR_ID);
+				}
+			};
 			cf.reset();
 			cf.addBasics(HotelDao.fields);
+			cf.setRequired(required);
+			cf.setOptional(false);
 			cf.validate(keyMap);
-
-			List<String> required = Arrays.asList(HotelDao.ATTR_ID, HotelDao.ATTR_NAME, HotelDao.ATTR_CITY);
-			cf.reset();
-			cf.addBasics(HotelDao.fields);
-//			cf.setRequired(required);
-//			cf.setOptional(false);
-			cf.validate(attrList);
-
-			consulta = hotelService.hotelQuery(keyMap, attrList);
-
-			List<PruebaHoteles> a = new ArrayList<PruebaHoteles>();
-
-//			for (int i = 0; i < consulta.calculateRecordNumber(); i++) {
-//				Integer id = (Integer) consulta.getRecordValues(i).get(HotelDao.ATTR_ID);
-//				String name = (String) consulta.getRecordValues(i).get(HotelDao.ATTR_NAME);
-//				String city = (String) consulta.getRecordValues(i).get(HotelDao.ATTR_CITY);
-//
-//				PruebaHoteles h = new PruebaHoteles(id, name, city);
-//				a.add(h);
-//			}
-
-			String fotoPath = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\images\\atom.png";
-
-			Files.readAllBytes(Paths.get(fotoPath));
-//			
-//			Map<String, Object> parameters = new HashMap<String, Object>() {
-//				{
-//					put("hotels_title", "HOTELES ATÓMICOS");
-//					put("hotels_subtitle", "Grupo Cadena de Hoteles Atómicos");
-//					put("foto", new ByteArrayInputStream(Files.readAllBytes(Paths.get(fotoPath))));
-//					put("foto2", Paths.get(fotoPath));
-////					put("foto",Files.readAllBytes(Paths.get(fotoPath)));
-//				}
-//			};
-//			
-//			JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(a);
-
-			JRTableModelDataSource dataSource = new JRTableModelDataSource(
-					EntityResultUtils.createTableModel(consulta));
-			JasperReport jasperReport = JasperCompileManager.compileReport(HOTEL_TEMPLATE_PATH);
-			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, ReportsConfig.getBasicParameters(), dataSource);
-
+			JasperReport jasperReport = JasperCompileManager.compileReport(LIST_HOTELS);
+			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, ReportsConfig.getBasicParametersPutAll(keyMap));
 			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
-
-		} catch (ValidateException e) {
+		} catch (ValidateException e) {			
 			resultado = ResponseEntity.ok(e.getEntityResult());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -157,7 +122,6 @@ public class ReportService implements IReportService {
 		return resultado;
 
 	}
-
 	@Override
 	public ResponseEntity plantilla(Map<String, Object> keyMap, List<String> attrList) {
 		EntityResult consulta = new EntityResultMapImpl();
@@ -167,7 +131,7 @@ public class ReportService implements IReportService {
 			cf.reset();
 			cf.addBasics(HotelDao.fields);
 			cf.validate(keyMap);
-
+            
 			List<String> required = Arrays.asList(HotelDao.ATTR_ID, HotelDao.ATTR_NAME, HotelDao.ATTR_CITY);
 			cf.reset();
 			cf.addBasics(HotelDao.fields);
@@ -240,15 +204,11 @@ public class ReportService implements IReportService {
 				HashMap<String, Object> auxMap = new HashMap<>();
 				auxMap.put("htl_id", consulta.getRecordValues(i).get("htl_id"));
 				auxMap.put("htl_name", consulta.getRecordValues(i).get("htl_name"));
-
 				auxMap.put("serie", "total_income");
 				auxMap.put("value", consulta.getRecordValues(i).get("total_income"));
-
 				consultaCategorizada.addRecord(auxMap);
-
 				auxMap.put("serie", "total_expenses");
 				auxMap.put("value", consulta.getRecordValues(i).get("total_expenses"));
-
 				consultaCategorizada.addRecord(auxMap);
 
 			}
@@ -538,7 +498,7 @@ public class ReportService implements IReportService {
 
 	}
 	
-	@Override//TODO No Compila
+	@Override//TODO si Compila
 	public ResponseEntity employeesByHotel(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException {
 
 		ResponseEntity resultado;

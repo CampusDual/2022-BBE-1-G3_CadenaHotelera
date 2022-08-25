@@ -12,7 +12,8 @@ public abstract class ReportsConfig {
 	public static final String PATH_LOGO_ATOM_01 = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\images\\logo_atom_01.png";
 	public static final String PATH_LOGO_ATOM_02 = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\images\\logo_atom_02.png";
 	public static final String PATH_ICON_ATOM = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\images\\icono_atom.png";
-
+    public static final String PATH_ATOM_WHITE03="..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\images\\logo atom_white3.png";
+    public static final String PATH_MAP="..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\images\\mapaHotels.png";
 	//textos
 	public static final String TITLE = "Atom Hotels";
 	public static final String SUBTITLE = "Hotel Group";
@@ -28,7 +29,8 @@ public abstract class ReportsConfig {
 		result.put("logo_01", getImage(PATH_LOGO_ATOM_01));
 		result.put("logo_02", getImage(PATH_LOGO_ATOM_02));
 		result.put("icon", getImage(PATH_ICON_ATOM));
-
+        result.put("fondo", getImage(PATH_ATOM_WHITE03));
+        result.put("mapa", getImage(PATH_MAP));
 		return result;
 	}
 
