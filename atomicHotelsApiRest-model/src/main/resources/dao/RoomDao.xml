@@ -50,6 +50,7 @@
 					      rooms
 					     LEFT JOIN room_types ON rm_rmt_id = rmt_id
 					     LEFT JOIN hotels ON rm_htl_id = htl_id
+					     LEFT JOIN beds_combo ON rmt_bdc_id = bdc_id
 					     WHERE 
 					     rm_status != 0
 					     #WHERE_CONCAT#

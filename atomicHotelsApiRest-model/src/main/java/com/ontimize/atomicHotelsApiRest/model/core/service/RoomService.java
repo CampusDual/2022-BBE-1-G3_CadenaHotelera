@@ -28,6 +28,7 @@ import com.ontimize.jee.common.db.SQLStatementBuilder.BasicOperator;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IBookingService;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IRoomService;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.BedComboDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.FeatureDao;
@@ -312,12 +313,13 @@ public class RoomService implements IRoomService {
 	 * @throws OntimizeJEERuntimeException
 	 * @throws MissingFieldsException
 	 * @throws EntityResultRequiredException
+	 * @throws LiadaPardaException 
 	 * @throws InvalidFieldsValuesException
 	 */
 	public EntityResult roomsUnbookedgInRange(Map<String, Object> keyMap, List<String> attrList)
-			throws OntimizeJEERuntimeException, EntityResultRequiredException, ValidateException {
+			throws OntimizeJEERuntimeException, EntityResultRequiredException, ValidateException, LiadaPardaException {
 		EntityResult resultado = new EntityResultWrong();
-		try {
+//		try {
 
 			List<String> required = new ArrayList<String>() {
 				{
@@ -329,12 +331,15 @@ public class RoomService implements IRoomService {
 
 			cf.setCPHtlColum(dao.ATTR_HOTEL_ID);
 			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
-
-			cf.addBasics(BookingDao.fields, RoomDao.fields);
+			cf.addBasics(BookingDao.fields, RoomDao.fields, RoomTypeDao.fields, BedComboDao.fields);
 			cf.setRequired(required);
-//		cf.setOptional(false);
-
 			cf.validate(keyMap);
+			
+			cf.reset();
+			cf.setCPHtlColum(dao.ATTR_HOTEL_ID);
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
+			cf.addBasics(BookingDao.fields, RoomDao.fields, RoomTypeDao.fields, BedComboDao.fields);			
+			cf.validate(attrList);
 
 			ValidateFields.dataRange(keyMap.get(BookingDao.ATTR_START), keyMap.get(BookingDao.ATTR_END));
 
@@ -360,10 +365,10 @@ public class RoomService implements IRoomService {
 
 			resultado = this.daoHelper.query(this.dao, keyMap, attrList, "queryInfoRooms");
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
-		}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR);
+//		}
 
 		return resultado;
 	}

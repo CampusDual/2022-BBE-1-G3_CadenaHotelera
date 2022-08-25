@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<JdbcEntitySetup xmlns="http://www.ontimize.com/schema/jdbc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ontimize.com/schema/jdbc http://www.ontimize.com/schema/jdbc/ontimize-jdbc-dao.xsd" catalog="" schema="${mainschema}" table="answers" datasource="mainDataSource" sqlhandler="dbSQLStatementHandler">
+	<DeleteKeys>
+		<Column>ans_id</Column>
+	</DeleteKeys>
+	<UpdateKeys>
+		<Column>ans_id</Column>
+	</UpdateKeys>
+	<GeneratedKey>ans_id</GeneratedKey>
+	<Queries>
+	<Query id="default">
+			<Sentence>
+				<![CDATA[
+				    SELECT
+				     	#COLUMNS#
+				    FROM
+				     	answers
+					LEFT JOIN questions ON ans_qst_id = qst_id				   					   		   					   						 
+				    #WHERE#				    
+			    ]]>
+			</Sentence>
+		</Query>
+		<Query id="queryPublic">
+			<Sentence>
+				<![CDATA[
+				    SELECT
+				     	#COLUMNS#
+				    FROM
+				     	answers
+					LEFT JOIN questions ON ans_qst_id = qst_id				   					   	
+	   				WHERE ans_public = 1  AND qst_public = 1	   						  
+				    #WHERE_CONCAT#				    
+			    ]]>
+			</Sentence>
+		</Query>
+	</Queries>
+</JdbcEntitySetup>
