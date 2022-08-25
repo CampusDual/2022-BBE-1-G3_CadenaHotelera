@@ -33,8 +33,16 @@ public class ReportRestController extends ORestController<IReportService>{
 				value = "/hotels",
 				method = RequestMethod.POST,
 				produces = MediaType.APPLICATION_JSON_VALUE)
-				public ResponseEntity<EntityResult> query(@RequestBody Map<String,Object> req) {
+				public ResponseEntity<EntityResult> hotels(@RequestBody Map<String,Object> req) {
 			 	return this.getService().hotels((Map<String,Object>)req.get("filter"),(List<String>)req.get("columns"));
+				}
+	 
+	 @RequestMapping(
+				value = "/employeePieCostByDepartament",
+				method = RequestMethod.POST,
+				produces = MediaType.APPLICATION_JSON_VALUE)
+				public ResponseEntity<EntityResult> employeePieCostByDepartament(@RequestBody Map<String,Object> req) {
+			 	return this.getService().employeePieCostByDepartament((Map<String,Object>)req.get("filter"),(List<String>)req.get("columns"));
 				}
 	 
 	 @RequestMapping(

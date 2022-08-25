@@ -95,6 +95,7 @@ public class ReportService implements IReportService {
 	private final String EMPLOYEE_BY_HOTEL = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\EmpleadosPorHotelReporte2.jrxml";
 	private final String DEPARTMENT_EXPENSES_CHART = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\departmentExpensesByHotelChart.jrxml";
 	private final String LIST_HOTELS = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\PosicionHotelReporte.jrxml";
+	private final String EMPLOYEE_DEPARTMENT_COST = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\EmployeePieDepartamentHotel.jrxml";
 	@Override//TODO si Compila
 	public ResponseEntity hotels(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException {
 
@@ -122,6 +123,39 @@ public class ReportService implements IReportService {
 		return resultado;
 
 	}
+	@Override//TODO si Compila
+	public ResponseEntity employeePieCostByDepartament(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException {
+
+		ResponseEntity resultado;
+		try {	
+			List<String> required = new ArrayList<String>() {
+				{
+					add(HotelDao.ATTR_ID);
+				}
+			};
+			cf.reset();
+			cf.addBasics(HotelDao.fields);
+			cf.setRequired(required);
+			cf.setOptional(false);
+			cf.validate(keyMap);
+			JasperReport jasperReport = JasperCompileManager.compileReport(EMPLOYEE_DEPARTMENT_COST);
+			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, ReportsConfig.getBasicParametersPutAll(keyMap));
+			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
+		} catch (ValidateException e) {			
+			resultado = ResponseEntity.ok(e.getEntityResult());
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = ResponseEntity.ok(new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR));
+		}
+		return resultado;
+
+	}
+	
+	
+	
+	
+	
+	
 	@Override
 	public ResponseEntity plantilla(Map<String, Object> keyMap, List<String> attrList) {
 		EntityResult consulta = new EntityResultMapImpl();

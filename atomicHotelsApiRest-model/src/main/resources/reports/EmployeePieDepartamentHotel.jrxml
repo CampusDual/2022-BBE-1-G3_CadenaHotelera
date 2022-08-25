@@ -3,8 +3,15 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="EmployeePieDepartamentHotel" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f00566eb-d3a4-4963-9623-1ae62c230618">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="AdaptadorPostgresql.xml"/>
+	<property name="net.sf.jasperreports.data.adapter" value="reports/AdaptadorPostgresql.xml"/>
 	<parameter name="htl_id" class="java.lang.Integer"/>
-	<queryString language="SQL">
+	<parameter name="fondo" class="java.io.InputStream"/>
+	<parameter name="mapa" class="java.io.InputStream"/>
+	<parameter name="logo_01" class="java.io.InputStream"/>
+	<parameter name="icon" class="java.io.InputStream"/>
+	<parameter name="logo" class="java.io.InputStream"/>
+	<parameter name="logo_02" class="java.io.InputStream"/>
+	<queryString language="plsql">
 		<![CDATA[SELECT
 	hotels.htl_name,departments.dpt_name,
 	sum(employees.emp_salary)
@@ -35,7 +42,7 @@ group by departments.dpt_name,hotels.htl_name]]>
 		<band height="590" splitType="Stretch">
 			<image>
 				<reportElement x="20" y="60" width="740" height="530" uuid="ff79cf8a-4efd-4aa6-b942-a6dc85479fad"/>
-				<imageExpression><![CDATA["/images/logo atom_white3.png"]]></imageExpression>
+				<imageExpression><![CDATA[$P{fondo}]]></imageExpression>
 			</image>
 		</band>
 	</background>
@@ -50,18 +57,18 @@ group by departments.dpt_name,hotels.htl_name]]>
 			</staticText>
 			<image>
 				<reportElement x="10" y="0" width="70" height="70" uuid="a9a83736-aefc-4eaa-b6ad-76c6a1334593"/>
-				<imageExpression><![CDATA["/images/logo_atom_01.png"]]></imageExpression>
+				<imageExpression><![CDATA[$P{logo_01}]]></imageExpression>
 			</image>
 			<image>
 				<reportElement x="470" y="-70" width="170" height="146" uuid="6221288c-9f91-4792-a798-166d99f0b8e6"/>
-				<imageExpression><![CDATA["/images/icono_atom.png"]]></imageExpression>
+				<imageExpression><![CDATA[$P{icon}]]></imageExpression>
 			</image>
-			<textField>
-				<reportElement x="190" y="50" width="141" height="21" forecolor="#DAE9F5" uuid="0e2138bb-1fe3-40a9-8f29-1948312abf6a"/>
-				<textElement textAlignment="Center">
-					<font size="12" isBold="true"/>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="160" y="40" width="197" height="20" forecolor="#D4E3EE" uuid="06d281e8-cb5e-4f38-9791-1c5907b5e213"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[DATEFORMAT(NOW( ),"d ' de 'MMMM' del 'YYYY")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
