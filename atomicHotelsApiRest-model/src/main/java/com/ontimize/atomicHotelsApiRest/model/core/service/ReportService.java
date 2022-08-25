@@ -34,6 +34,7 @@ import com.ontimize.atomicHotelsApiRest.api.core.service.IReportService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BillDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.BookingDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.EmployeeDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.ReceiptDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomTypeDao;
@@ -74,7 +75,7 @@ public class ReportService implements IReportService {
 
 	@Autowired
 	private BookingService bookingService;
-
+	
 
 	@Autowired
 	private ReceiptService receiptService;
@@ -101,15 +102,15 @@ public class ReportService implements IReportService {
 
 		ResponseEntity resultado;
 		try {	
-			List<String> required = new ArrayList<String>() {
-				{
-					add(HotelDao.ATTR_ID);
-				}
-			};
+//			List<String> required = new ArrayList<String>() {
+//				{
+//					add(HotelDao.ATTR_ID);
+//				}
+//			};
 			cf.reset();
 			cf.addBasics(HotelDao.fields);
-			cf.setRequired(required);
-			cf.setOptional(false);
+//			cf.setRequired(required);
+			cf.setOptional(true);
 			cf.validate(keyMap);
 			JasperReport jasperReport = JasperCompileManager.compileReport(LIST_HOTELS);
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, ReportsConfig.getBasicParametersPutAll(keyMap));
@@ -133,6 +134,11 @@ public class ReportService implements IReportService {
 					add(HotelDao.ATTR_ID);
 				}
 			};
+			
+			///Ver si existe el hotel
+			
+			EntityResult existe=hotelService.hotelQuery(keyMap, required);
+			if(existe.calculateRecordNumber()==1) {	
 			cf.reset();
 			cf.addBasics(HotelDao.fields);
 			cf.setRequired(required);
@@ -141,6 +147,9 @@ public class ReportService implements IReportService {
 			JasperReport jasperReport = JasperCompileManager.compileReport(EMPLOYEE_DEPARTMENT_COST);
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, ReportsConfig.getBasicParametersPutAll(keyMap));
 			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
+			}else {
+				resultado = ResponseEntity.ok(new EntityResultWrong(ErrorMessage.INVALID_HOTEL_ID));
+			}
 		} catch (ValidateException e) {			
 			resultado = ResponseEntity.ok(e.getEntityResult());
 		} catch (Exception e) {
@@ -543,7 +552,10 @@ public class ReportService implements IReportService {
 					add(HotelDao.ATTR_ID);
 				}
 			};
-
+///Ver si existe el hotel
+			
+			EntityResult existe=hotelService.hotelQuery(keyMap, required);
+			if(existe.calculateRecordNumber()==1) {	
 			cf.reset();
 			cf.addBasics(HotelDao.fields);
 			cf.setRequired(required);
@@ -554,6 +566,9 @@ public class ReportService implements IReportService {
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, ReportsConfig.getBasicParametersPutAll(keyMap));
 
 			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
+			}else {
+				resultado = ResponseEntity.ok(new EntityResultWrong(ErrorMessage.INVALID_HOTEL_ID));
+				}
 			
 		
 		} catch (ValidateException e) {			
