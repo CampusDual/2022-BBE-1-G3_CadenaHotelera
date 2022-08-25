@@ -50,7 +50,7 @@
 			"response": []
 		},
 		{
-			"name": "R - grafica",
+			"name": "R - expensesVsIncome",
 			"request": {
 				"auth": {
 					"type": "basic",
@@ -132,6 +132,182 @@
 					"path": [
 						"reports",
 						"receipt"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "R - occupationByNationality",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "atom",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"from\":\"2022-12-12\",\r\n        \"to\":\"2022-12-13\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/reports/occupancyChart",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"reports",
+						"occupancyChart"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "R - occupancy",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "atom",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"from\":\"2022-12-12\",\r\n        \"to\":\"2022-12-13\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/reports/occupancyChart",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"reports",
+						"occupancyChart"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "R- employeeByHotel",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "atom",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"htl_id\":1\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/reports/employeesByHotel",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"reports",
+						"employeesByHotel"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "R - departmentExpensesByHotelChart",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "atom",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"from\":\"2022-12-12\",\r\n        \"to\":\"2022-12-13\",\r\n        \"htl_id\":4\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:33333/reports/departmentExpensesByHotelChart",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "33333",
+					"path": [
+						"reports",
+						"departmentExpensesByHotelChart"
 					]
 				}
 			},

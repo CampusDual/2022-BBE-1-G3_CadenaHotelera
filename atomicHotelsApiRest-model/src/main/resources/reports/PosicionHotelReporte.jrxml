@@ -2,11 +2,11 @@
 <!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="EmpleadosSimpleReporte" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="095036f7-ac69-4614-b262-b2868e184c38">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Backend_2022_G3"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="AdaptadorPostgresql.xml"/>
 	<property name="net.sf.jasperreports.components.table.generate.pdf.tags" value="true"/>
 	<property name="net.sf.jasperreports.print.create.bookmarks" value="true"/>
 	<queryString language="SQL">
-		<![CDATA[SELECT htl_name,htl_city,htl_phone,htl_email
+		<![CDATA[SELECT htl_name,htl_city,htl_phone,htl_email,htl_id
 FROM hotels]]>
 	</queryString>
 	<field name="htl_name" class="java.lang.String">
@@ -29,15 +29,21 @@ FROM hotels]]>
 		<property name="com.jaspersoft.studio.field.label" value="htl_email"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="hotels"/>
 	</field>
+	<field name="htl_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="htl_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="htl_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="hotels"/>
+	</field>
+	<sortField name="htl_id"/>
 	<sortField name="htl_name"/>
 	<background>
-		<band height="665">
+		<band height="676">
 			<image>
 				<reportElement x="-5" y="40" width="550" height="560" uuid="32407439-ab38-4b13-a19e-7757ff2d7d3b"/>
 				<imageExpression><![CDATA["/images/logo atom_white3.png"]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="0" y="409" width="554" height="256" uuid="1197060b-b557-4668-a1e5-64f37caf29e5"/>
+				<reportElement positionType="FixRelativeToBottom" x="-5" y="440" width="555" height="236" uuid="1197060b-b557-4668-a1e5-64f37caf29e5"/>
 				<imageExpression><![CDATA["/images/mapaHotels.png"]]></imageExpression>
 			</image>
 		</band>

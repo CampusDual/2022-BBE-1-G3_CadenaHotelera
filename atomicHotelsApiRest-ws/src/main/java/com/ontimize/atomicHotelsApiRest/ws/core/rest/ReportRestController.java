@@ -76,4 +76,27 @@ public class ReportRestController extends ORestController<IReportService>{
 	 public ResponseEntity<EntityResult> plantilla(@RequestBody Map<String,Object> req) {
 		 return this.getService().plantilla((Map<String,Object>)req.get("filter"),(List<String>)req.get("columns"));
 	 }
+	 @RequestMapping(
+			 value = "/listAllEmployeeReport",
+			 method = RequestMethod.POST,
+			 produces = MediaType.APPLICATION_JSON_VALUE)
+	 public ResponseEntity<EntityResult> listAllEmployeeReport(@RequestBody Map<String,Object> req) {
+		 return this.getService().listAllEmployeeReport((Map<String,Object>)req.get("filter"),(List<String>)req.get("columns"));
+	 }
+	 
+	 @RequestMapping(
+				value = "/employeesByHotel",
+				method = RequestMethod.POST,
+				produces = MediaType.APPLICATION_JSON_VALUE)
+				public ResponseEntity<EntityResult> employeesByHotel(@RequestBody Map<String,Object> req) {
+			 	return this.getService().employeesByHotel((Map<String,Object>)req.get("filter"),(List<String>)req.get("columns"));
+				}
+	 
+	 @RequestMapping(
+				value = "/departmentExpensesByHotelChart",
+				method = RequestMethod.POST,
+				produces = MediaType.APPLICATION_JSON_VALUE)
+				public ResponseEntity<EntityResult> departmentExpensesByHotelChart(@RequestBody Map<String,Object> req) {
+			 	return this.getService().departmentExpensesByHotelChart((Map<String,Object>)req.get("filter"),(List<String>)req.get("columns"));
+				}
 }
