@@ -31,6 +31,7 @@ public class ErrorMessage {
 	public static final String INVALID_ROOM_ID = "La habitación no existe.";
 	public static final String INVALID_HOTEL_ID = "El hotel no existe.";
 	public static final String INVALID_CUSTOMER_ID = "El cliente no existe.";
+	public static final String INVALID_QUESTION_ID = "La pregunta no existe.";
 	public static final String BOOKED_ROOM = "La habitación está reservada dentro de ese rango de fechas";
 	
 	 

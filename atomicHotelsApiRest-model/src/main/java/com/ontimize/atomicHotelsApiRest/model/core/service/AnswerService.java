@@ -25,6 +25,7 @@ import com.ontimize.jee.common.security.PermissionsProviderSecured;
 import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.AnswerDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.CustomerDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.UserRoleDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
@@ -124,12 +125,14 @@ public class AnswerService implements IAnswerService {
 			cf.setRequired(new ArrayList<String>() {
 				{
 					add(dao.ATTR_ANSWER);
+					add(dao.ATTR_QUESTION_ID);
 				}
 			});
 			cf.setRestricted(new ArrayList<String>() {
 				{
 					add(dao.ATTR_ID);
 					add(dao.ATTR_PUBLIC);
+					add(dao.ATTR_USER);
 				}
 			});
 
@@ -137,22 +140,26 @@ public class AnswerService implements IAnswerService {
 			cf.addCPUser(true);
 			cf.validate(attrMap);
 
-			if (attrMap.containsKey(QuestionDao.ATTR_HTL_ID)) {
+			if (attrMap.containsKey(dao.ATTR_QUESTION_ID)) {
 				Map<String, Object> subConsultaKeyMap = new HashMap<>();
-				subConsultaKeyMap.put(QuestionDao.ATTR_HTL_ID, attrMap.get(QuestionDao.ATTR_HTL_ID));
+				subConsultaKeyMap.put(QuestionDao.ATTR_ID, attrMap.get(dao.ATTR_QUESTION_ID));
 				EntityResult auxEntity = questionService.questionQuery(subConsultaKeyMap,
-						EntityResultTools.attributes(QuestionDao.ATTR_ID)); // aqui se restringen por permisos
+						EntityResultTools.attributes(QuestionDao.ATTR_ID,QuestionDao.ATTR_HTL_ID)); // aqui se restringen por permisos
 				if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros, la habitación es erronea.
-					throw new EntityResultRequiredException(ErrorMessage.INVALID_HOTEL_ID);
+					throw new EntityResultRequiredException(ErrorMessage.INVALID_QUESTION_ID);
 				}
 			}
 			if (attrMap.containsKey(dao.ATTR_CUSTOMER_ID)) {
 				Map<String, Object> subConsultaKeyMap = new HashMap<>();
-				subConsultaKeyMap.put(dao.ATTR_CUSTOMER_ID, attrMap.get(dao.ATTR_CUSTOMER_ID));
-				EntityResult auxEntity = customerService.hotelQuery(subConsultaKeyMap,
-						EntityResultTools.attributes(HotelDao.ATTR_ID)); // aqui se restringen por permisos
+				cf.reset(); 
+				cf.setCPUserColum(CustomerDao.ATTR_USER);			
+				cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_CUSTOMER);
+				cf.validate(subConsultaKeyMap);
+				subConsultaKeyMap.put(CustomerDao.ATTR_ID, attrMap.get(dao.ATTR_CUSTOMER_ID));
+				EntityResult auxEntity = daoHelper.query(this.dao,subConsultaKeyMap,
+						EntityResultTools.attributes(HotelDao.ATTR_ID),"queryCustomerGuestsHotel"); // aqui se restringen por permisos
 				if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros, la habitación es erronea.
-					throw new EntityResultRequiredException(ErrorMessage.INVALID_HOTEL_ID);
+					throw new EntityResultRequiredException(ErrorMessage.INVALID_CUSTOMER_ID);
 				}
 			}
 			
@@ -161,8 +168,8 @@ public class AnswerService implements IAnswerService {
 
 		} catch (ValidateException e) {
 			resultado = e.getEntityResult();
-//		} catch (EntityResultRequiredException e) {
-//			resultado = new EntityResultWrong(e.getMessage());
+		} catch (EntityResultRequiredException e) {
+			resultado = new EntityResultWrong(e.getMessage());
 		} catch (DuplicateKeyException e) {
 			resultado = new EntityResultWrong(ErrorMessage.CREATION_ERROR_DUPLICATED_FIELD);
 		} catch (DataIntegrityViolationException e) {
