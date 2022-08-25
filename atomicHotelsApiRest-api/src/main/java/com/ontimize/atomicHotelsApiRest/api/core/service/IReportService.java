@@ -23,5 +23,8 @@ public interface IReportService {
 	public ResponseEntity occupancyByNationalityChart(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException;
 	public ResponseEntity listAllEmployeeReport(Map<String, Object> keyMap, List<String> attrList);
+	public ResponseEntity employeesByHotel(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException;
+	public ResponseEntity departmentExpensesByHotelChart(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException;
 
 }
