@@ -353,36 +353,36 @@ public class HotelService implements IHotelService {
 	public EntityResult poiQuery(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 		EntityResult pois = new EntityResultMapImpl();
-		String category = (keyMap.containsKey("category")) ? (String) keyMap.get("category") : "";
-		String radius = (keyMap.containsKey("radius")) ? (String) keyMap.get("radius") : "1";
+
+//		String category = (keyMap.containsKey("category")) ? (String) keyMap.get("category") : "";
+//		String radius = (keyMap.containsKey("radius")) ? (String) keyMap.get("radius") : "1";
 
 		try {
-			if (keyMap.containsKey("category")) {
-				keyMap.remove("category");
-			}
-			if (keyMap.containsKey("radius")) {
-				keyMap.remove("radius");
-			}
-
-			List<String> required = Arrays.asList(dao.ATTR_ID);
+//			if (keyMap.containsKey("category")) {
+//				keyMap.remove("category");
+//			}
+//			if (keyMap.containsKey("radius")) {
+//				keyMap.remove("radius");
+//			}
+			List<String> required = Arrays.asList(dao.ATTR_ID, dao.ATTR_CATEGORY, dao.ATTR_RADIUS);
 			cf.reset();
 			cf.addBasics(dao.fields);
 			cf.setRequired(required);
 			cf.validate(keyMap);
+			cf.setNoEmptyList(false);
 			cf.validate(attrList);
 			Map<String, Object> keyMapDireccion = new HashMap<>();
 			if (keyMap.get(dao.ATTR_ID) != null) {
 				keyMapDireccion.put(dao.ATTR_ID, keyMap.get(dao.ATTR_ID));
 			}
-			resultado = hotelQuery(keyMapDireccion, attrList);
-		} catch (ValidateException | LiadaPardaException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		String street = (String) resultado.getRecordValues(0).get(dao.ATTR_STREET);
-		String city = (String) resultado.getRecordValues(0).get(dao.ATTR_CITY);
+			
+			List<String> attrList1 = Arrays.asList(dao.ATTR_ID,dao.ATTR_STREET,dao.ATTR_CITY);
+			resultado = hotelQuery(keyMapDireccion, attrList1);
+		
 
-		try {
+		
+			String street = (String) resultado.getRecordValues(0).get(dao.ATTR_STREET);
+			String city = (String) resultado.getRecordValues(0).get(dao.ATTR_CITY);
 			String urlEnpoint = "https://nominatim.openstreetmap.org/search?street="
 					+ URLEncoder.encode(street, StandardCharsets.UTF_8) + "&city="
 					+ URLEncoder.encode(city, StandardCharsets.UTF_8) + "&format=json";
@@ -412,24 +412,25 @@ public class HotelService implements IHotelService {
 						put(dao.ATTR_LON, longitude);
 					}
 				};
+
 				EntityResult coorUpdate = hotelUpdate(attrMapco, keyMap);
 
 				String urlEndpoint2 = "https://test.api.amadeus.com/v1/security/oauth2/token";
 				String urlParams = "grant_type=client_credentials&client_id=h3nxa8Fz2gDyhWAhSY8nhlAGaZ43tGHv&client_secret=yTjGtt92Ww2ezfAT";
 				String urlPoi = "https://test.api.amadeus.com/v1/reference-data/locations/pois?latitude=" + latitude
-						+ "&longitude=" + longitude + "&radius=" + radius + "&categories=" + category;
+						+ "&longitude=" + longitude + "&radius=" + keyMap.get(dao.ATTR_RADIUS) +"&page%5Blimit%5D=10&page%5Boffset%5D=0"+ "&categories="
+						+ keyMap.get(dao.ATTR_CATEGORY);
 
 				URL url2 = new URL(urlEndpoint2);
 				HttpsURLConnection con2 = (HttpsURLConnection) url2.openConnection();
 				con2.setDoOutput(true);
 				con2.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-
 				byte[] dataUrlEndPoint2 = urlParams.getBytes(StandardCharsets.UTF_8);
 				int dataLenght = dataUrlEndPoint2.length;
 				con2.setRequestProperty("Content-Lenght", Integer.toString(dataLenght)); // content lenght va en bytes
 				con2.setRequestMethod("POST");
 				con2.setUseCaches(false);
-				try {
+	
 					DataOutputStream wr = new DataOutputStream(con2.getOutputStream());
 					wr.write(dataUrlEndPoint2); // escirbe en servidor
 					BufferedReader br = new BufferedReader(new InputStreamReader((con2.getInputStream()))); // leemos
@@ -447,6 +448,10 @@ public class HotelService implements IHotelService {
 					con3.setRequestProperty("Content-Type", "application/json");
 					con3.setRequestMethod("GET");
 					con3.connect();
+					int responseCod = con3.getResponseCode();
+					if(responseCod==200) {
+						
+					
 					BufferedReader in2 = new BufferedReader(new InputStreamReader(con3.getInputStream()));
 
 					StringBuffer response2 = new StringBuffer();
@@ -485,32 +490,30 @@ public class HotelService implements IHotelService {
 						coorM.put("longitude", Ogeo.get("longitude"));
 						poisMp.put("geoCode", coorM);
 
-						poisMp.put("Category", nuevo.get("category"));
+						poisMp.put("Category", nuevo.get(dao.ATTR_CATEGORY));
 						auxList.add(poisMp); //
 					}
 					aux.put("POINS", auxList);
 					pois.addRecord(aux);
-
-				} catch (IOException e) {
-					e.getMessage();
-				}
-
+					}
+					else {
+						pois = new EntityResultWrong("Error de conexión con la api amadeus");
+					}
 			}
-
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		
 		} catch (NullPointerException e) {
 			pois = new EntityResultWrong("Este hotel no se encuentra.");
 		} catch (JSONException e) {
 			pois = new EntityResultWrong("La dirección o ciudad del hotel no se encuentran");
-		}
+		} catch (ValidateException e) {
+			pois = e.getEntityResult();
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			pois = new EntityResultWrong(e1.getMessage());
+		} 
 
 		return pois;
-
 	}
 
 }
