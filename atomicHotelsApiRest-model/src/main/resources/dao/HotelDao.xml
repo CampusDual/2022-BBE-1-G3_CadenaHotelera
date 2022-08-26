@@ -85,7 +85,7 @@ catalog="" schema="${mainschema}" table="hotels" datasource="mainDataSource" sql
 		(SELECT cst_cnt_iso, bkg_id, days.fecha, aux.capacity, (case when (bkg_canceled is null and days.fecha>= DATE(bkg_start) and days.fecha<=DATE(bkg_end))=false then 'N' else 'S' end) as ocupada
 		FROM bookings 
 		JOIN customers ON bkg_cst_id = cst_id 
-		LEFT JOIN 
+		JOIN 
 			(SELECT rm_htl_id, rm_id, sum(bdc_slots) AS capacity
     		FROM rooms
 			LEFT JOIN room_types rmt ON rmt_id = rm_rmt_id
