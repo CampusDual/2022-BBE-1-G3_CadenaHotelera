@@ -184,10 +184,10 @@
 
 		-- answer
 		INSERT INTO tserver_permission VALUES (130,'com.ontimize.atomicHotelsApiRest.api.core.service.IAnswerService/answerQuery');
-		INSERT INTO tserver_permission VALUES (131,'com.ontimize.atomicHotelsApiRest.api.core.service.IAnswerService/questionDelete');
+		INSERT INTO tserver_permission VALUES (131,'com.ontimize.atomicHotelsApiRest.api.core.service.IAnswerService/answerDelete');
 		INSERT INTO tserver_permission VALUES (132,'com.ontimize.atomicHotelsApiRest.api.core.service.IAnswerService/answerUpdate');
-		INSERT INTO tserver_permission VALUES (133,'com.ontimize.atomicHotelsApiRest.api.core.service.IAnswerService/questionInsert');
-		INSERT INTO tserver_permission VALUES (134,'com.ontimize.atomicHotelsApiRest.api.core.service.IAnswerService/questionPublicQuery');
+		INSERT INTO tserver_permission VALUES (133,'com.ontimize.atomicHotelsApiRest.api.core.service.IAnswerService/answerInsert');
+		INSERT INTO tserver_permission VALUES (134,'com.ontimize.atomicHotelsApiRest.api.core.service.IAnswerService/answerPublicQuery');
 
 		
 		--varios
@@ -196,10 +196,12 @@
 	
 	
 -- modificaciones
-	UPDATE tserver_permission SET permission_name = 'com.ontimize.atomicHotelsApiRest.api.core.service.IEmployeePhotoService/employeePhotoQuery' WHERE id_server_permission = 121;
-	UPDATE tserver_permission SET permission_name = 'com.ontimize.atomicHotelsApiRest.api.core.service.IEmployeePhotoService/employeePhotoInsert' WHERE id_server_permission = 122;
-	UPDATE tserver_permission SET permission_name = 'com.ontimize.atomicHotelsApiRest.api.core.service.IEmployeePhotoService/employeePhotoDelete' WHERE id_server_permission = 123;
-	UPDATE tserver_permission SET permission_name = 'com.ontimize.atomicHotelsApiRest.api.core.service.IEmployeePhotoService/getPicture'WHERE id_server_permission = 124;
+	UPDATE tserver_permission SET permission_name = 'com.ontimize.atomicHotelsApiRest.api.core.service.IAnswerService/answerQuery' WHERE id_server_permission = 130;
+	UPDATE tserver_permission SET permission_name = 'com.ontimize.atomicHotelsApiRest.api.core.service.IAnswerService/answerDelete' WHERE id_server_permission = 131;
+	UPDATE tserver_permission SET permission_name = 'com.ontimize.atomicHotelsApiRest.api.core.service.IAnswerService/answerUpdate' WHERE id_server_permission = 132;
+	UPDATE tserver_permission SET permission_name = 'com.ontimize.atomicHotelsApiRest.api.core.service.IAnswerService/answerInsert' WHERE id_server_permission = 133;
+	UPDATE tserver_permission SET permission_name = 'com.ontimize.atomicHotelsApiRest.api.core.service.IAnswerService/answerPublicQuery' WHERE id_server_permission = 134;
+
 	UPDATE tserver_permission SET permission_name = '' WHERE id_server_permission = 125;
 	
 --ROLES
@@ -254,16 +256,13 @@ ALTER SEQUENCE trole_server_permission_id_role_server_permission_seq RESTART WIT
 		--DELETE FROM trole_server_permission WHERE id_rolename = 2
 
 	--staff 3
-		INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 3,id_server_permission FROM tserver_permission WHERE id_server_permission >= 1 AND id_server_permission <= 93	;		
+		INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 3,id_server_permission FROM tserver_permission WHERE id_server_permission >= 1 AND id_server_permission <= 93	;
+	INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 3,id_server_permission FROM tserver_permission WHERE id_server_permission >= 125 AND id_server_permission <= 134	;
 		DELETE FROM trole_server_permission
 			WHERE ( id_server_permission in(2,3,4,6,7,8,49,50,51,53,55,57,58,59,65,66,67,73,74,76,77,78,82,83,84) 
 					OR id_server_permission >= 86 AND id_server_permission <= 92
 			) AND ID_ROLENAME = 3;
 		INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (3,111);
-		INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (3,128);
-		INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (3,129);
-		INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (3,133);
-		INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (3,134);
 	
 	--customer 4	
 		INSERT INTO trole_server_permission (id_rolename,id_server_permission) SELECT 4,id_server_permission FROM tserver_permission WHERE id_server_permission >= 1 AND id_server_permission <= 85	;	
@@ -274,7 +273,6 @@ ALTER SEQUENCE trole_server_permission_id_role_server_permission_seq RESTART WIT
 		INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (4,111);
 		INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (4,128);
 		INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (4,129);
-		INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (4,133);
 		INSERT INTO trole_server_permission (id_rolename,id_server_permission) VALUES (4,134);
 	
 	--user 5 - información pública	

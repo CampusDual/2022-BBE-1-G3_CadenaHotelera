@@ -60,7 +60,7 @@ public class QuestionService implements IQuestionService {
 			cf.addBasics(dao.fields);
 
 			cf.setCPHtlColum(dao.ATTR_HTL_ID);
-			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER);
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER,UserRoleDao.ROLE_STAFF);
 
 			cf.validate(keyMap);
 			cf.validate(attrList);

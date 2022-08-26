@@ -53,7 +53,6 @@ public class AnswerService implements IAnswerService {
 	@Autowired
 	ControlFields cf;
 
-	
 	@Override
 	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult answerQuery(Map<String, Object> keyMap, List<String> attrList)
@@ -121,7 +120,7 @@ public class AnswerService implements IAnswerService {
 		try {
 
 			cf.reset();
-			cf.addBasics(dao.fields,QuestionDao.fields);
+			cf.addBasics(dao.fields, QuestionDao.fields);
 			cf.setRequired(new ArrayList<String>() {
 				{
 					add(dao.ATTR_ANSWER);
@@ -131,7 +130,6 @@ public class AnswerService implements IAnswerService {
 			cf.setRestricted(new ArrayList<String>() {
 				{
 					add(dao.ATTR_ID);
-					add(dao.ATTR_PUBLIC);
 					add(dao.ATTR_USER);
 				}
 			});
@@ -140,29 +138,29 @@ public class AnswerService implements IAnswerService {
 			cf.addCPUser(true);
 			cf.validate(attrMap);
 
-			if (attrMap.containsKey(dao.ATTR_QUESTION_ID)) {
-				Map<String, Object> subConsultaKeyMap = new HashMap<>();
-				subConsultaKeyMap.put(QuestionDao.ATTR_ID, attrMap.get(dao.ATTR_QUESTION_ID));
-				EntityResult auxEntity = questionService.questionQuery(subConsultaKeyMap,
-						EntityResultTools.attributes(QuestionDao.ATTR_ID,QuestionDao.ATTR_HTL_ID)); // aqui se restringen por permisos
-				if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros, la habitación es erronea.
-					throw new EntityResultRequiredException(ErrorMessage.INVALID_QUESTION_ID);
-				}
+			Map<String, Object> subConsultaKeyMap = new HashMap<>();
+			subConsultaKeyMap.put(QuestionDao.ATTR_ID, attrMap.get(dao.ATTR_QUESTION_ID));
+			EntityResult auxEntity = questionService.questionQuery(subConsultaKeyMap,
+					EntityResultTools.attributes(QuestionDao.ATTR_ID, QuestionDao.ATTR_HTL_ID)); // aqui se restringen
+																									// por permisos
+			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros, la habitación es erronea.
+				throw new EntityResultRequiredException(ErrorMessage.INVALID_QUESTION_ID);
 			}
-			if (attrMap.containsKey(dao.ATTR_CUSTOMER_ID)) {
-				Map<String, Object> subConsultaKeyMap = new HashMap<>();
-				cf.reset(); 
-				cf.setCPUserColum(CustomerDao.ATTR_USER);			
-				cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_CUSTOMER);
-				cf.validate(subConsultaKeyMap);
-				subConsultaKeyMap.put(CustomerDao.ATTR_ID, attrMap.get(dao.ATTR_CUSTOMER_ID));
-				EntityResult auxEntity = daoHelper.query(this.dao,subConsultaKeyMap,
-						EntityResultTools.attributes(HotelDao.ATTR_ID),"queryCustomerGuestsHotel"); // aqui se restringen por permisos
-				if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros, la habitación es erronea.
-					throw new EntityResultRequiredException(ErrorMessage.INVALID_CUSTOMER_ID);
-				}
-			}
-			
+
+//			if (attrMap.containsKey(dao.ATTR_CUSTOMER_ID)) {
+//				Map<String, Object> subConsultaKeyMap = new HashMap<>();
+//				cf.reset(); 
+//				cf.setCPUserColum(CustomerDao.ATTR_USER);			
+//				cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_CUSTOMER);
+//				cf.validate(subConsultaKeyMap);
+//				subConsultaKeyMap.put(CustomerDao.ATTR_ID, attrMap.get(dao.ATTR_CUSTOMER_ID));
+//				EntityResult auxEntity = daoHelper.query(this.dao,subConsultaKeyMap,
+//						EntityResultTools.attributes(HotelDao.ATTR_ID),"queryCustomerGuestsHotel"); // aqui se restringen por permisos
+//				if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros, la habitación es erronea.
+//					throw new EntityResultRequiredException(ErrorMessage.INVALID_CUSTOMER_ID);
+//				}
+//			}
+
 			resultado = this.daoHelper.insert(this.dao, attrMap);
 			resultado.setMessage("Answer registrada");
 
@@ -217,12 +215,15 @@ public class AnswerService implements IAnswerService {
 
 			Map<String, Object> subConsultaKeyMap = new HashMap<>();
 			subConsultaKeyMap.putAll(keyMap);
-			EntityResult auxEntity = answerQuery(subConsultaKeyMap,
-					EntityResultTools.attributes(dao.ATTR_ID)); // aqui se restringen por permisos
+			EntityResult auxEntity = answerQuery(subConsultaKeyMap, EntityResultTools.attributes(dao.ATTR_ID)); // aqui
+																												// se
+																												// restringen
+																												// por
+																												// permisos
 			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros, la habitación es erronea.
 				throw new EntityResultRequiredException(ErrorMessage.UPDATE_ERROR_MISSING_FIELD);
 			}
-			
+
 //			if (attrMap.containsKey(dao.ATTR_HTL_ID)) {
 //				subConsultaKeyMap = new HashMap<>();
 //				subConsultaKeyMap.put(HotelDao.ATTR_ID, attrMap.get(dao.ATTR_HTL_ID));

@@ -41,6 +41,8 @@ import org.springframework.stereotype.Service;
 import com.ontimize.atomicHotelsApiRest.api.core.service.IHotelPhotoService;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelPhotoDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.QuestionDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.UserRoleDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ErrorMessage;
@@ -79,7 +81,7 @@ public class HotelPhotoService implements IHotelPhotoService {
 	 * "/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxISEBAQEhESFRUXFxYXFxgXbD/Q3q88Sp1HnTofm/c1S7hdS....
 	 */
 	@Override
-//	@Secured({ PermissionsProviderSecured.SECURED })
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult hotelPhotoInsert(Map<String, Object> data) throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
 
@@ -88,6 +90,7 @@ public class HotelPhotoService implements IHotelPhotoService {
 			List<String> required = new ArrayList<>() {
 				{
 					add(dao.ATTR_NAME);
+					add(dao.ATTR_HTL_ID);
 					// add(dao.ATTR_FILE);
 				}
 			};
@@ -97,6 +100,8 @@ public class HotelPhotoService implements IHotelPhotoService {
 					add(dao.ATTR_ID);
 				}
 			};
+			cf.setCPHtlColum(QuestionDao.ATTR_HTL_ID);
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
 
 			cf.reset();
 			cf.addBasics(dao.fields);
@@ -161,7 +166,7 @@ public class HotelPhotoService implements IHotelPhotoService {
 	 * estáticos.
 	 */
 	@Override
-//	@Secured({ PermissionsProviderSecured.SECURED })
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public ResponseEntity getHotelPictureQuery(Map<String, Object> filter, List<String> columns) {
 		EntityResult resultado = new EntityResultWrong();
 
@@ -202,7 +207,7 @@ public class HotelPhotoService implements IHotelPhotoService {
 	}
 
 	@Override
-//	@Secured({ PermissionsProviderSecured.SECURED })
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult hotelPhotoDelete(Map<String, Object> filter) throws OntimizeJEERuntimeException {
 
 		EntityResult resultado = new EntityResultWrong();
@@ -231,7 +236,7 @@ public class HotelPhotoService implements IHotelPhotoService {
 	}
 
 	@Override
-	// @Secured({ PermissionsProviderSecured.SECURED })
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public EntityResult hotelPhotoQuery(Map<String, Object> filter, List<String> columns)
 			throws OntimizeJEERuntimeException {
 		EntityResult resultado = new EntityResultWrong();
