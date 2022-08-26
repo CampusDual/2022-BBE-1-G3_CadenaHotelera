@@ -193,7 +193,7 @@ public class ReceiptService implements IReceiptService {
 			cf.addBasics(BookingDao.fields);
 			cf.validate(consultaBookingStatus);
 
-			if (bookingService.getBookingStatus(consultaBookingStatus).equals(BookingDao.Status.COMPLETED)) {
+			if (bookingService.getBookingStatus(consultaBookingStatus).equals(BookingDao.Status.COMPLETED)) { 
 
 				Object reservaEnRecibo = attrMap.get(dao.ATTR_BOOKING_ID);
 				Map<String, Object> bkg_id = new HashMap<String, Object>();
