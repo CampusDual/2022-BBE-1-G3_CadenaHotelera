@@ -51,7 +51,7 @@ group by departments.dpt_name,hotels.htl_name]]>
 			<staticText>
 				<reportElement mode="Opaque" x="-20" y="-30" width="595" height="106" forecolor="#DAE9F5" backcolor="#696060" uuid="e10625dc-4dc4-477c-bff0-83bc492fd1c7"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Albertus Extra Bold" size="28"/>
+					<font fontName="Times New Roman" size="28"/>
 				</textElement>
 				<text><![CDATA[Coste por departamentos.]]></text>
 			</staticText>

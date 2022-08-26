@@ -21,7 +21,7 @@
 	<parameter name="logo_01" class="java.io.InputStream"/>
 	<parameter name="logo_02" class="java.io.InputStream"/>
 	<parameter name="icon" class="java.io.InputStream"/>
-	<parameter name="bkg_id" class="java.lang.Integer"/>
+	<parameter name="rcp_id" class="java.lang.Integer"/>
 	<queryString language="plsql">
 		<![CDATA[SELECT cst_name, cst_surname,rcp_date, rcp_id, bsx_id, sxt_name, sxt_description,bsx_date,bsx_units,bsx_precio,bkg_id, rmt_price,(CASE WHEN (bkg_checkout::date  - bkg_checkin::date) =0 THEN 1 ELSE (bkg_checkout::date- bkg_checkin::date) END)AS rcp_days, bkg_checkout, bkg_checkin
      FROM public.bookings LEFT JOIN public.rooms ON bkg_rm_id = rm_id 
@@ -30,7 +30,7 @@
      LEFT JOIN servicesxtra ON bsx_sxt_id = sxt_id
      LEFT JOIN receipts ON rcp_bkg_id=bkg_id
    LEFT JOIN customers ON bkg_cst_id = cst_id
-     WHERE bkg_id=$P{bkg_id} AND bkg_canceled IS NULL AND bkg_checkout IS NOT NULL]]>
+     WHERE rcp_id=$P{rcp_id} AND bkg_canceled IS NULL AND bkg_checkout IS NOT NULL]]>
 	</queryString>
 	<field name="cst_name" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="cst_name"/>
