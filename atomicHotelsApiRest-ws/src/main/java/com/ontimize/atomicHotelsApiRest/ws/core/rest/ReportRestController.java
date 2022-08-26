@@ -31,10 +31,11 @@ public class ReportRestController extends ORestController<IReportService>{
 	 
 	 @RequestMapping(
 				value = "/hotels",
-				method = RequestMethod.POST,
+				method = RequestMethod.GET,
 				produces = MediaType.APPLICATION_JSON_VALUE)
-				public ResponseEntity<EntityResult> hotels(@RequestBody Map<String,Object> req) {
-			 	return this.getService().hotels((Map<String,Object>)req.get("filter"),(List<String>)req.get("columns"));
+				public ResponseEntity<EntityResult> hotels() {
+			 	return this.getService().hotels();
+//			 	return this.getService().hotels((Map<String,Object>)req.get("filter"),(List<String>)req.get("columns"));
 				}
 	 
 	 @RequestMapping(
@@ -77,13 +78,13 @@ public class ReportRestController extends ORestController<IReportService>{
 			 	return this.getService().occupancyByNationalityChart((Map<String,Object>)req.get("filter"),(List<String>)req.get("columns"));
 				}
 	 
-	 @RequestMapping(
-			 value = "/plantilla",
-			 method = RequestMethod.POST,
-			 produces = MediaType.APPLICATION_JSON_VALUE)
-	 public ResponseEntity<EntityResult> plantilla(@RequestBody Map<String,Object> req) {
-		 return this.getService().plantilla((Map<String,Object>)req.get("filter"),(List<String>)req.get("columns"));
-	 }
+//	 @RequestMapping(
+//			 value = "/plantilla",
+//			 method = RequestMethod.POST,
+//			 produces = MediaType.APPLICATION_JSON_VALUE)
+//	 public ResponseEntity<EntityResult> plantilla(@RequestBody Map<String,Object> req) {
+//		 return this.getService().plantilla((Map<String,Object>)req.get("filter"),(List<String>)req.get("columns"));
+//	 }
 	 @RequestMapping(
 			 value = "/listAllEmployeeReport",
 			 method = RequestMethod.POST,

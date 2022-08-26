@@ -30,6 +30,7 @@ import org.apache.poi.ss.util.ImageUtils;
 import org.postgresql.core.Encoding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -50,8 +51,10 @@ import com.ontimize.atomicHotelsApiRest.model.core.tools.TypeCodes.type;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.exceptions.OntimizeJEERuntimeException;
 import com.ontimize.jee.common.security.PermissionsProviderSecured;
+import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.common.util.remote.BytesBlock;
 import com.lowagie.text.Image;
+import com.ontimize.atomicHotelsApiRest.api.core.exceptions.EntityResultRequiredException;
 import com.ontimize.atomicHotelsApiRest.api.core.exceptions.ValidateException;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 
@@ -100,14 +103,25 @@ public class HotelPhotoService implements IHotelPhotoService {
 					add(dao.ATTR_ID);
 				}
 			};
-			cf.setCPHtlColum(QuestionDao.ATTR_HTL_ID);
-			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
 
 			cf.reset();
+			cf.setCPHtlColum(dao.ATTR_HTL_ID);
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
 			cf.addBasics(dao.fields);
 			cf.setRequired(required);
 			cf.setRestricted(restricted);
 			cf.validate(data);
+
+			Map<String, Object> subConsultaKeyMap = new HashMap<>();
+			subConsultaKeyMap.put(HotelDao.ATTR_ID, data.get(dao.ATTR_HTL_ID));
+			EntityResult auxEntity = hs.hotelQuery(subConsultaKeyMap, EntityResultTools.attributes(HotelDao.ATTR_ID)); // aqui
+																														// se
+																														// restringen
+																														// por
+																														// permisos
+			if (auxEntity.calculateRecordNumber() == 0) { // si no hay registros, la habitación es erronea.
+				throw new EntityResultRequiredException(ErrorMessage.INVALID_HOTEL_ID);
+			}
 
 			if (data.get(dao.ATTR_FILE_PATH) != null && data.get(dao.ATTR_FILE_URL) == null
 					&& data.get(dao.ATTR_FILE_BYTE) == null) {
@@ -149,6 +163,8 @@ public class HotelPhotoService implements IHotelPhotoService {
 			resultado = e.getEntityResult();
 		} catch (DuplicateKeyException e) {
 			resultado.setMessage("El nombre introducido " + data.get(dao.ATTR_NAME) + " ya tiene foto asociada");
+		} catch (EntityResultRequiredException e) {
+			resultado.setMessage(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = new EntityResultWrong(ErrorMessage.ERROR);
@@ -168,42 +184,66 @@ public class HotelPhotoService implements IHotelPhotoService {
 	@Override
 	@Secured({ PermissionsProviderSecured.SECURED })
 	public ResponseEntity getHotelPictureQuery(Map<String, Object> filter, List<String> columns) {
-		EntityResult resultado = new EntityResultWrong();
+		ResponseEntity resultado = ResponseEntity.ok(new EntityResultWrong());
+		EntityResult resultadoER = new EntityResultWrong();
 
-		Map<String, Object> consultaKeyMap = new HashMap<>() {
-			{
-				put(dao.ATTR_ID, filter.get(dao.ATTR_ID));
+		try {
+
+			cf.reset();
+			cf.addBasics(dao.fields);
+			// cf.setRequired(List.of(dao.ATTR_ID));
+			cf.setCPHtlColum(dao.ATTR_HTL_ID);
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
+
+			cf.validate(filter);
+			cf.validate(columns);
+
+			Map<String, Object> consultaKeyMap = new HashMap<>() {
+				{
+					put(dao.ATTR_ID, filter.get(dao.ATTR_ID));
+				}
+			};
+			cf.reset();
+			cf.setCPHtlColum(dao.ATTR_HTL_ID);
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
+
+			Map<String, Object> consultaKeyMap2 = new HashMap<>() {
+				{
+					put(HotelDao.ATTR_ID, filter.get(dao.ATTR_HTL_ID));
+				}
+			};
+
+			if (hotelPhotoQuery(consultaKeyMap, List.of(dao.ATTR_ID)).calculateRecordNumber() > 0
+					&& hs.hotelQuery(consultaKeyMap2, List.of(HotelDao.ATTR_ID)).calculateRecordNumber() > 0) {
+
+				resultadoER = this.daoHelper.query(dao, filter, columns);
+				BytesBlock bytes = (BytesBlock) resultadoER.getRecordValues(0).get(dao.ATTR_FILE);
+				HttpHeaders header = new HttpHeaders();
+				header.setContentType(MediaType.IMAGE_JPEG);
+				String pictureName = "picture.jpg";
+				header.setContentDispositionFormData(pictureName, pictureName);
+				header.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+				resultado = new ResponseEntity(bytes.getBytes(), header, HttpStatus.OK);
+
+			} else {
+				filter.put(dao.ATTR_ID, "1"); // Poner en la tabla, el identificador 1, la foto de file not found
+				resultadoER = this.daoHelper.query(dao, filter, columns);
+				BytesBlock bytes = (BytesBlock) resultadoER.getRecordValues(0).get(dao.ATTR_FILE);
+				HttpHeaders header = new HttpHeaders();
+				header.setContentType(MediaType.IMAGE_JPEG);
+				String pictureName = "picture.jpg";
+				header.setContentDispositionFormData(pictureName, pictureName);
+				header.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+				resultado = new ResponseEntity(bytes.getBytes(), header, HttpStatus.OK);
 			}
-		};
-		Map<String, Object> consultaKeyMap2 = new HashMap<>() {
-			{
-				put(HotelDao.ATTR_ID, filter.get(dao.ATTR_HTL_ID));
-			}
-		};
 
-		if (hotelPhotoQuery(consultaKeyMap, List.of(dao.ATTR_ID)).calculateRecordNumber() > 0
-				&& hs.hotelQuery(consultaKeyMap2, List.of(HotelDao.ATTR_ID)).calculateRecordNumber() > 0) {
-
-			resultado = this.daoHelper.query(dao, filter, columns);
-			BytesBlock bytes = (BytesBlock) resultado.getRecordValues(0).get(dao.ATTR_FILE);
-			HttpHeaders header = new HttpHeaders();
-			header.setContentType(MediaType.IMAGE_JPEG);
-			String pictureName = "picture.jpg";
-			header.setContentDispositionFormData(pictureName, pictureName);
-			header.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-			return new ResponseEntity(bytes.getBytes(), header, HttpStatus.OK);
-
-		} else {
-			filter.put(dao.ATTR_ID, "1"); // Poner en la tabla, el identificador 1, la foto de file not found
-			resultado = this.daoHelper.query(dao, filter, columns);
-			BytesBlock bytes = (BytesBlock) resultado.getRecordValues(0).get(dao.ATTR_FILE);
-			HttpHeaders header = new HttpHeaders();
-			header.setContentType(MediaType.IMAGE_JPEG);
-			String pictureName = "picture.jpg";
-			header.setContentDispositionFormData(pictureName, pictureName);
-			header.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-			return new ResponseEntity(bytes.getBytes(), header, HttpStatus.OK);
+		} catch (ValidateException e) {
+			resultado = ResponseEntity.ok(e.getEntityResult());
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultado = ResponseEntity.ok(new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR));
 		}
+		return resultado;
 	}
 
 	@Override
@@ -215,6 +255,9 @@ public class HotelPhotoService implements IHotelPhotoService {
 			cf.reset();
 			cf.addBasics(dao.fields);
 			cf.setRequired(List.of(dao.ATTR_ID));
+			cf.setCPHtlColum(dao.ATTR_HTL_ID);
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
+
 			cf.validate(filter);
 			Map<String, Object> consulta = new HashMap<>();
 			consulta.put(dao.ATTR_ID, filter.get(dao.ATTR_ID));
@@ -245,8 +288,11 @@ public class HotelPhotoService implements IHotelPhotoService {
 			cf.reset();
 			cf.addBasics(dao.fields);
 			// cf.setRequired(List.of(dao.ATTR_ID));
+			cf.setCPHtlColum(dao.ATTR_HTL_ID);
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
 			cf.validate(filter);
 			cf.validate(columns);
+
 			resultado = daoHelper.query(dao, filter, columns);
 		} catch (ValidateException e) {
 			resultado = e.getEntityResult();

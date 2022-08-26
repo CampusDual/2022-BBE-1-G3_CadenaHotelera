@@ -38,6 +38,7 @@ import com.ontimize.atomicHotelsApiRest.model.core.dao.EmployeeDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.HotelDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.ReceiptDao;
 import com.ontimize.atomicHotelsApiRest.model.core.dao.RoomTypeDao;
+import com.ontimize.atomicHotelsApiRest.model.core.dao.UserRoleDao;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.ControlFields;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultUtils;
 import com.ontimize.atomicHotelsApiRest.model.core.tools.EntityResultWrong;
@@ -75,7 +76,6 @@ public class ReportService implements IReportService {
 
 	@Autowired
 	private BookingService bookingService;
-	
 
 	@Autowired
 	private ReceiptService receiptService;
@@ -97,26 +97,28 @@ public class ReportService implements IReportService {
 	private final String DEPARTMENT_EXPENSES_CHART = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\departmentExpensesByHotelChart.jrxml";
 	private final String LIST_HOTELS = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\PosicionHotelReporte.jrxml";
 	private final String EMPLOYEE_DEPARTMENT_COST = "..\\atomicHotelsApiRest-model\\src\\main\\resources\\reports\\EmployeePieDepartamentHotel.jrxml";
-	@Override//TODO si Compila
-	public ResponseEntity hotels(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException {
+
+	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
+	public ResponseEntity hotels() throws OntimizeJEERuntimeException {
 
 		ResponseEntity resultado;
-		try {	
+		try {
 //			List<String> required = new ArrayList<String>() {
 //				{
 //					add(HotelDao.ATTR_ID);
 //				}
 //			};
-			cf.reset();
-			cf.addBasics(HotelDao.fields);
+//			cf.reset();
+//			cf.addBasics(HotelDao.fields);
 //			cf.setRequired(required);
-			cf.setOptional(true);
-			cf.validate(keyMap);
+//			cf.setNoEmptyList(false);
+//			cf.validate(keyMap);
 			JasperReport jasperReport = JasperCompileManager.compileReport(LIST_HOTELS);
-			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, ReportsConfig.getBasicParametersPutAll(keyMap));
+			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, ReportsConfig.getBasicParameters());
 			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
-		} catch (ValidateException e) {			
-			resultado = ResponseEntity.ok(e.getEntityResult());
+//		} catch (ValidateException e) {			
+//			resultado = ResponseEntity.ok(e.getEntityResult());
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultado = ResponseEntity.ok(new EntityResultWrong(ErrorMessage.UNKNOWN_ERROR));
@@ -124,33 +126,41 @@ public class ReportService implements IReportService {
 		return resultado;
 
 	}
-	@Override//TODO si Compila
-	public ResponseEntity employeePieCostByDepartament(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException {
+
+	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
+	public ResponseEntity employeePieCostByDepartament(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException {
 
 		ResponseEntity resultado;
-		try {	
+		try {
 			List<String> required = new ArrayList<String>() {
 				{
 					add(HotelDao.ATTR_ID);
 				}
 			};
-			
-			///Ver si existe el hotel
-			
-			EntityResult existe=hotelService.hotelQuery(keyMap, required);
-			if(existe.calculateRecordNumber()==1) {	
+
+			/// Ver si existe el hotel
+
 			cf.reset();
 			cf.addBasics(HotelDao.fields);
+			cf.setCPHtlColum(HotelDao.ATTR_ID);
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER);
+
 			cf.setRequired(required);
 			cf.setOptional(false);
 			cf.validate(keyMap);
-			JasperReport jasperReport = JasperCompileManager.compileReport(EMPLOYEE_DEPARTMENT_COST);
-			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, ReportsConfig.getBasicParametersPutAll(keyMap));
-			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
-			}else {
+
+			EntityResult existe = hotelService.hotelQuery(keyMap, required);
+			if (existe.calculateRecordNumber() == 1) {
+				JasperReport jasperReport = JasperCompileManager.compileReport(EMPLOYEE_DEPARTMENT_COST);
+				JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport,
+						ReportsConfig.getBasicParametersPutAll(keyMap));
+				resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
+			} else {
 				resultado = ResponseEntity.ok(new EntityResultWrong(ErrorMessage.INVALID_HOTEL_ID));
 			}
-		} catch (ValidateException e) {			
+		} catch (ValidateException e) {
 			resultado = ResponseEntity.ok(e.getEntityResult());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -159,13 +169,7 @@ public class ReportService implements IReportService {
 		return resultado;
 
 	}
-	
-	
-	
-	
-	
-	
-	@Override
+
 	public ResponseEntity plantilla(Map<String, Object> keyMap, List<String> attrList) {
 		EntityResult consulta = new EntityResultMapImpl();
 		ResponseEntity resultado;
@@ -174,7 +178,7 @@ public class ReportService implements IReportService {
 			cf.reset();
 			cf.addBasics(HotelDao.fields);
 			cf.validate(keyMap);
-            
+
 			List<String> required = Arrays.asList(HotelDao.ATTR_ID, HotelDao.ATTR_NAME, HotelDao.ATTR_CITY);
 			cf.reset();
 			cf.addBasics(HotelDao.fields);
@@ -214,6 +218,7 @@ public class ReportService implements IReportService {
 	}
 
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public ResponseEntity incomeVsExpensesChart(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult consulta = new EntityResultMapImpl();
@@ -265,7 +270,7 @@ public class ReportService implements IReportService {
 			jasperPrint.setOrientation(OrientationEnum.LANDSCAPE);
 			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
 
-		} catch (ValidateException e) {			
+		} catch (ValidateException e) {
 			resultado = ResponseEntity.ok(e.getEntityResult());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -273,9 +278,9 @@ public class ReportService implements IReportService {
 		}
 		return resultado;
 	}
-	
-	
-	@Override 
+
+	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public ResponseEntity receipt(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 
@@ -287,21 +292,21 @@ public class ReportService implements IReportService {
 					add(BookingDao.ATTR_ID);
 				}
 			};
-
+//todo hacer consulta por recibos
 			cf.reset();
 			cf.addBasics(BookingDao.fields);
 			cf.setRequired(required);
 			cf.setOptional(false);
 			cf.validate(keyMap);
-			
+
 			JasperReport jasperReport = JasperCompileManager.compileReport(RECEIPT_BD);
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport,
 					ReportsConfig.getBasicParametersPutAll(keyMap));
 			jasperPrint.setOrientation(OrientationEnum.LANDSCAPE);
-			
+
 			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
 
-		}  catch (ValidateException e) {			
+		} catch (ValidateException e) {
 			resultado = ResponseEntity.ok(e.getEntityResult());
 
 		} catch (Exception e) {
@@ -311,8 +316,6 @@ public class ReportService implements IReportService {
 		return resultado;
 	}
 
-
-
 	public ResponseEntity returnFile(byte[] bytesPdf) {
 		HttpHeaders header = new HttpHeaders();
 		header.setContentType(MediaType.APPLICATION_PDF);
@@ -321,8 +324,9 @@ public class ReportService implements IReportService {
 		header.setCacheControl("must-revalidate, post-check=0, pre-check=0");
 		return new ResponseEntity(bytesPdf, header, HttpStatus.OK);
 	}
-	
+
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public ResponseEntity occupancyChart(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult consulta = new EntityResultMapImpl();
@@ -369,20 +373,22 @@ public class ReportService implements IReportService {
 
 			}
 
-			Map<String,Object> fechas = new HashMap<String,Object>(){{
-				put("from",keyMap.get("from"));
-				put("to",keyMap.get("to"));
-			}};
-			
+			Map<String, Object> fechas = new HashMap<String, Object>() {
+				{
+					put("from", keyMap.get("from"));
+					put("to", keyMap.get("to"));
+				}
+			};
+
 			JRTableModelDataSource dataSource = new JRTableModelDataSource(
 					EntityResultUtils.createTableModel(consultaCategorizada));
 			JasperReport jasperReport = JasperCompileManager.compileReport(OCCUPANCY_CHART);
-			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, ReportsConfig.getBasicParametersPutAll(fechas),
-					dataSource);
+			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport,
+					ReportsConfig.getBasicParametersPutAll(fechas), dataSource);
 			jasperPrint.setOrientation(OrientationEnum.LANDSCAPE);
 			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
 
-		} catch (ValidateException e) {			
+		} catch (ValidateException e) {
 			resultado = ResponseEntity.ok(e.getEntityResult());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -390,8 +396,9 @@ public class ReportService implements IReportService {
 		}
 		return resultado;
 	}
-	
+
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public ResponseEntity occupancyByNationalityChart(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult consulta = new EntityResultMapImpl();
@@ -417,37 +424,42 @@ public class ReportService implements IReportService {
 
 			cf.reset();
 			cf.addBasics(fields);
+			cf.setCPHtlColum(HotelDao.ATTR_ID);
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
+
 			cf.setRequired(required);
 			cf.validate(keyMap);
 
 			consulta = statisticsService.hotelOccupancyByNationalityQuery(keyMap, new ArrayList<String>());
-			
-			List<String> hotelList = Arrays.asList(HotelDao.ATTR_NAME,HotelDao.ATTR_CITY);
-			Map<String,Object> idHotel = new HashMap<String,Object>(){{
-				put(HotelDao.ATTR_ID,keyMap.get(HotelDao.ATTR_ID));
-			}};
-			
-			subConsulta=hotelService.hotelQuery(idHotel, hotelList);
+
+			List<String> hotelList = Arrays.asList(HotelDao.ATTR_NAME, HotelDao.ATTR_CITY);
+			Map<String, Object> idHotel = new HashMap<String, Object>() {
+				{
+					put(HotelDao.ATTR_ID, keyMap.get(HotelDao.ATTR_ID));
+				}
+			};
+
+			subConsulta = hotelService.hotelQuery(idHotel, hotelList);
 
 //			Map<String,Object> hotleFechas = new HashMap<String,Object>(){{
 //				put(HotelDao.ATTR_NAME,subConsulta.getRecordValues(0).get(HotelDao.ATTR_NAME));
 //				put(HotelDao.ATTR_FROM,keyMap.get(HotelDao.ATTR_FROM));
 //				put(HotelDao.ATTR_TO,keyMap.get(HotelDao.ATTR_TO));
 //			}};
-			
-			keyMap.put(HotelDao.ATTR_NAME,subConsulta.getRecordValues(0).get(HotelDao.ATTR_NAME));
-			
+
+			keyMap.put(HotelDao.ATTR_NAME, subConsulta.getRecordValues(0).get(HotelDao.ATTR_NAME));
+
 			JRTableModelDataSource dataSource = new JRTableModelDataSource(
 					EntityResultUtils.createTableModel(consulta));
 			JasperReport jasperReport = JasperCompileManager.compileReport(OCCUPANCY_BY_NATIONALITY_CHART);
-			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, ReportsConfig.getBasicParametersPutAll(keyMap),
-					dataSource);
+			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport,
+					ReportsConfig.getBasicParametersPutAll(keyMap), dataSource);
 			jasperPrint.setOrientation(OrientationEnum.LANDSCAPE);
 			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
 
-		} catch (NullPointerException e) {			
+		} catch (NullPointerException e) {
 			resultado = ResponseEntity.ok("No hay datos");
-		} catch (ValidateException e) {			
+		} catch (ValidateException e) {
 			resultado = ResponseEntity.ok(e.getEntityResult());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -455,8 +467,9 @@ public class ReportService implements IReportService {
 		}
 		return resultado;
 	}
-	
+
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public ResponseEntity departmentExpensesByHotelChart(Map<String, Object> keyMap, List<String> attrList)
 			throws OntimizeJEERuntimeException {
 		EntityResult consulta = new EntityResultMapImpl();
@@ -481,38 +494,43 @@ public class ReportService implements IReportService {
 			};
 
 			cf.reset();
+			cf.setCPHtlColum(HotelDao.ATTR_ID);
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
+
 			cf.addBasics(fields);
 			cf.setRequired(required);
 			cf.validate(keyMap);
 
 			consulta = statisticsService.departmentExpensesByHotelQuery(keyMap, new ArrayList<String>());
-			
-			List<String> hotelList = Arrays.asList(HotelDao.ATTR_NAME,HotelDao.ATTR_CITY);
-			Map<String,Object> idHotel = new HashMap<String,Object>(){{
-				put(HotelDao.ATTR_ID,keyMap.get(HotelDao.ATTR_ID));
-			}};
-			
-			subConsulta=hotelService.hotelQuery(idHotel, hotelList);
+
+			List<String> hotelList = Arrays.asList(HotelDao.ATTR_NAME, HotelDao.ATTR_CITY);
+			Map<String, Object> idHotel = new HashMap<String, Object>() {
+				{
+					put(HotelDao.ATTR_ID, keyMap.get(HotelDao.ATTR_ID));
+				}
+			};
+
+			subConsulta = hotelService.hotelQuery(idHotel, hotelList);
 
 //			Map<String,Object> hotleFechas = new HashMap<String,Object>(){{
 //				put(HotelDao.ATTR_NAME,subConsulta.getRecordValues(0).get(HotelDao.ATTR_NAME));
 //				put(HotelDao.ATTR_FROM,keyMap.get(HotelDao.ATTR_FROM));
 //				put(HotelDao.ATTR_TO,keyMap.get(HotelDao.ATTR_TO));
 //			}};
-			
-			keyMap.put(HotelDao.ATTR_NAME,subConsulta.getRecordValues(0).get(HotelDao.ATTR_NAME));
-			
+
+			keyMap.put(HotelDao.ATTR_NAME, subConsulta.getRecordValues(0).get(HotelDao.ATTR_NAME));
+
 			JRTableModelDataSource dataSource = new JRTableModelDataSource(
 					EntityResultUtils.createTableModel(consulta));
 			JasperReport jasperReport = JasperCompileManager.compileReport(DEPARTMENT_EXPENSES_CHART);
-			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, ReportsConfig.getBasicParametersPutAll(keyMap),
-					dataSource);
+			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport,
+					ReportsConfig.getBasicParametersPutAll(keyMap), dataSource);
 			jasperPrint.setOrientation(OrientationEnum.LANDSCAPE);
 			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
 
-		} catch (NullPointerException e) {			
+		} catch (NullPointerException e) {
 			resultado = ResponseEntity.ok("No hay datos");
-		} catch (ValidateException e) {			
+		} catch (ValidateException e) {
 			resultado = ResponseEntity.ok(e.getEntityResult());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -521,13 +539,13 @@ public class ReportService implements IReportService {
 		return resultado;
 	}
 
-
 	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
 	public ResponseEntity listAllEmployeeReport(Map<String, Object> keyMap, List<String> attrList) {
 		EntityResult consulta = new EntityResultMapImpl();
 		ResponseEntity resultado;
 		try {
-			
+
 			JasperPrint reporteLleno = JasperFillManager.fillReport(LISTALLEMPLOYEE, new HashMap<>(),
 					getMyPostgresConnection());
 
@@ -540,38 +558,43 @@ public class ReportService implements IReportService {
 		return resultado;
 
 	}
-	
-	@Override//TODO si Compila
-	public ResponseEntity employeesByHotel(Map<String, Object> keyMap, List<String> attrList) throws OntimizeJEERuntimeException {
+
+	@Override
+	@Secured({ PermissionsProviderSecured.SECURED })
+	public ResponseEntity employeesByHotel(Map<String, Object> keyMap, List<String> attrList)
+			throws OntimizeJEERuntimeException {
 
 		ResponseEntity resultado;
 		try {
-			
+
 			List<String> required = new ArrayList<String>() {
 				{
 					add(HotelDao.ATTR_ID);
 				}
 			};
 ///Ver si existe el hotel
-			
-			EntityResult existe=hotelService.hotelQuery(keyMap, required);
-			if(existe.calculateRecordNumber()==1) {	
+
 			cf.reset();
 			cf.addBasics(HotelDao.fields);
+			cf.setCPHtlColum(HotelDao.ATTR_ID);
+			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
+
 			cf.setRequired(required);
 			cf.setOptional(false);
 			cf.validate(keyMap);
-			
-			JasperReport jasperReport = JasperCompileManager.compileReport(EMPLOYEE_BY_HOTEL);
-			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, ReportsConfig.getBasicParametersPutAll(keyMap));
 
-			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
-			}else {
+			EntityResult existe = hotelService.hotelQuery(keyMap, required);
+			if (existe.calculateRecordNumber() == 1) {
+				JasperReport jasperReport = JasperCompileManager.compileReport(EMPLOYEE_BY_HOTEL);
+				JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport,
+						ReportsConfig.getBasicParametersPutAll(keyMap));
+
+				resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
+			} else {
 				resultado = ResponseEntity.ok(new EntityResultWrong(ErrorMessage.INVALID_HOTEL_ID));
-				}
-			
-		
-		} catch (ValidateException e) {			
+			}
+
+		} catch (ValidateException e) {
 			resultado = ResponseEntity.ok(e.getEntityResult());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -580,18 +603,19 @@ public class ReportService implements IReportService {
 		return resultado;
 
 	}
+
 	private static Connection getMyPostgresConnection() {
 		try {
 			Class.forName("org.postgresql.Driver");
-			String connectionURL="jdbc:postgresql://45.84.210.174:65432/Backend_2022_G3";
-			Connection conn= DriverManager.getConnection(connectionURL,"Backend_2022_G3" , "quei1Okai3eeGieboo");
+			String connectionURL = "jdbc:postgresql://45.84.210.174:65432/Backend_2022_G3";
+			Connection conn = DriverManager.getConnection(connectionURL, "Backend_2022_G3", "quei1Okai3eeGieboo");
 			return conn;
-		}catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
 		return null;
-	} 
-	
+	}
+
 //	@Override
 //	public EntityResult reportPruebaQuery(Map<String, Object> keyMap, List<String> attrList)
 //			throws OntimizeJEERuntimeException {
@@ -665,7 +689,7 @@ public class ReportService implements IReportService {
 //
 //		return resultado;
 //	}
-	
+
 //	@Override 
 //	public ResponseEntity receipt(Map<String, Object> keyMap, List<String> attrList)
 //			throws OntimizeJEERuntimeException {
@@ -774,5 +798,5 @@ public class ReportService implements IReportService {
 //		}
 //		return resultado;
 //	}
-	
+
 }

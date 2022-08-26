@@ -69,7 +69,6 @@ public class ReceiptService implements IReceiptService {
 		try {
 
 			cf.reset();
-
 			cf.setCPRoleUsersRestrictions(UserRoleDao.ROLE_MANAGER, UserRoleDao.ROLE_STAFF);
 
 			cf.addBasics(dao.fields);
