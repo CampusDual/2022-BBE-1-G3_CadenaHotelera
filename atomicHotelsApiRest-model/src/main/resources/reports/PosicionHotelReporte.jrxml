@@ -60,7 +60,7 @@ FROM hotels]]>
 			<staticText>
 				<reportElement mode="Opaque" x="-20" y="-32" width="595" height="106" forecolor="#DAE9F5" backcolor="#696060" uuid="8bf6f891-7921-465d-8138-237a1598c466"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Albertus Extra Bold" size="37"/>
+					<font fontName="Times New Roman" size="37"/>
 				</textElement>
 				<text><![CDATA[Listado de hoteles]]></text>
 			</staticText>

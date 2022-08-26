@@ -1,13 +1,12 @@
 {
 	"info": {
-		"_postman_id": "8bf9d2dc-8cd0-4e3e-9269-5bdfd5f18782",
+		"_postman_id": "fc2dd4bb-b6f0-4060-8652-ee58b0d12273",
 		"name": "Reports",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "22294604"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "R - Hotels List",
+			"name": "R - HOTELES",
 			"request": {
 				"auth": {
 					"type": "basic",
@@ -80,7 +79,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:33333/reports/testChar",
+					"raw": "http://localhost:33333/reports/incomeVsExpensesChart",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -88,7 +87,7 @@
 					"port": "33333",
 					"path": [
 						"reports",
-						"testChar"
+						"incomeVsExpensesChart"
 					]
 				}
 			},
@@ -116,7 +115,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\":{\r\n        \"rcp_id\":11\r\n    }\r\n}",
+					"raw": "{\r\n    \"filter\":{\r\n        \"bkg_id\":3\r\n\r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -160,7 +159,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\":{\r\n        \"from\":\"2022-12-12\",\r\n        \"to\":\"2022-12-13\"\r\n    }\r\n}",
+					"raw": "{\r\n    \"filter\":{\r\n        \"from\":\"2022-12-12\",\r\n        \"to\":\"2022-12-13\",\r\n        \"htl_id\":1\r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -168,7 +167,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:33333/reports/occupancyChart",
+					"raw": "http://localhost:33333/reports/occupancyByNationalityChart",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -176,14 +175,14 @@
 					"port": "33333",
 					"path": [
 						"reports",
-						"occupancyChart"
+						"occupancyByNationalityChart"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "R - occupancy",
+			"name": "R - departmentExpensesByHotelChart",
 			"request": {
 				"auth": {
 					"type": "basic",
@@ -204,7 +203,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\":{\r\n        \"from\":\"2022-12-12\",\r\n        \"to\":\"2022-12-13\"\r\n    }\r\n}",
+					"raw": "{\r\n    \"filter\":{\r\n        \"from\":\"2022-12-12\",\r\n        \"to\":\"2022-12-13\",\r\n        \"htl_id\":4\r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -212,7 +211,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:33333/reports/occupancyChart",
+					"raw": "http://localhost:33333/reports/departmentExpensesByHotelChart",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -220,7 +219,7 @@
 					"port": "33333",
 					"path": [
 						"reports",
-						"occupancyChart"
+						"departmentExpensesByHotelChart"
 					]
 				}
 			},
@@ -271,7 +270,7 @@
 			"response": []
 		},
 		{
-			"name": "R - departmentExpensesByHotelChart",
+			"name": "R - occupancy",
 			"request": {
 				"auth": {
 					"type": "basic",
@@ -292,7 +291,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\":{\r\n        \"from\":\"2022-12-12\",\r\n        \"to\":\"2022-12-13\",\r\n        \"htl_id\":4\r\n    }\r\n}",
+					"raw": "{\r\n    \"filter\":{\r\n        \"from\":\"2022-12-12\",\r\n        \"to\":\"2022-12-13\"\r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -300,7 +299,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:33333/reports/departmentExpensesByHotelChart",
+					"raw": "http://localhost:33333/reports/occupancyChart",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -308,7 +307,7 @@
 					"port": "33333",
 					"path": [
 						"reports",
-						"departmentExpensesByHotelChart"
+						"occupancyChart"
 					]
 				}
 			},
