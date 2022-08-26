@@ -289,22 +289,30 @@ public class ReportService implements IReportService {
 
 			List<String> required = new ArrayList<String>() {
 				{
-					add(BookingDao.ATTR_ID);
+					add(ReceiptDao.ATTR_ID);
 				}
 			};
 //todo hacer consulta por recibos
 			cf.reset();
-			cf.addBasics(BookingDao.fields);
+			cf.addBasics(ReceiptDao.fields);
 			cf.setRequired(required);
 			cf.setOptional(false);
 			cf.validate(keyMap);
+			
+			List<String> receiptList = Arrays.asList(ReceiptDao.ATTR_ID);
+			EntityResult consulta = receiptService.receiptQuery(keyMap, receiptList);
+			
+			if(consulta.calculateRecordNumber()!=0) {
+				JasperReport jasperReport = JasperCompileManager.compileReport(RECEIPT_BD);
+				JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport,
+						ReportsConfig.getBasicParametersPutAll(keyMap));
+				jasperPrint.setOrientation(OrientationEnum.LANDSCAPE);
 
-			JasperReport jasperReport = JasperCompileManager.compileReport(RECEIPT_BD);
-			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport,
-					ReportsConfig.getBasicParametersPutAll(keyMap));
-			jasperPrint.setOrientation(OrientationEnum.LANDSCAPE);
-
-			resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
+				resultado = returnFile(JasperExportManager.exportReportToPdf(jasperPrint));
+				
+			}else {
+				resultado = ResponseEntity.ok("El recibo no existe");
+			}	
 
 		} catch (ValidateException e) {
 			resultado = ResponseEntity.ok(e.getEntityResult());

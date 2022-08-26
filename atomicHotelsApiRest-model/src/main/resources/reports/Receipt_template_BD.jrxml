@@ -109,6 +109,7 @@
 	</field>
 	<variable name="total_servcio" class="java.math.BigDecimal">
 		<variableExpression><![CDATA[$F{bsx_precio}.multiply(new BigDecimal($F{bsx_units}))]]></variableExpression>
+		<initialValueExpression><![CDATA[new BigDecimal(0)]]></initialValueExpression>
 	</variable>
 	<variable name="total_habitacion" class="java.math.BigDecimal">
 		<variableExpression><![CDATA[$F{rmt_price}.multiply(new BigDecimal($F{rcp_days}))]]></variableExpression>
@@ -491,12 +492,12 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="14" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{total_servicios}.add($V{total_habitacion})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{total_servicios} !=null ? $V{total_servicios}.add($V{total_habitacion}):$V{total_habitacion}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="false">
 				<reportElement x="453" y="4" width="90" height="20" uuid="3aee8b85-52f5-467a-947e-edf0c55ce695"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$V{total_servicios}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{total_servicios}!=null?$V{total_servicios}:new BigDecimal(0)]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>
