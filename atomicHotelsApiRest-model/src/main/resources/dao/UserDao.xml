@@ -20,6 +20,11 @@
                 <Column>PASSWORD</Column>
                 <Column>NAME</Column>
                 <Column>SURNAME</Column>
+                <Column>user_</Column>
+                <Column>email</Column>
+                <Column>password</Column>
+                <Column>name</Column>
+                <Column>surname</Column>
                 <Column>htl_restriction</Column>
             </ValidColumns>
             <Sentence>
@@ -38,7 +43,12 @@
                 <Column>EMAIL</Column>
                 <Column>PASSWORD</Column>
                 <Column>NAME</Column>
-                <Column>SURNAME</Column>
+                <Column>SURNAME</Column>                
+                <Column>user_</Column>
+                <Column>email</Column>
+                <Column>password</Column>
+                <Column>name</Column>
+                <Column>surname</Column>
                 <Column>htl_restriction</Column>
             </ValidColumns>
             <Sentence>

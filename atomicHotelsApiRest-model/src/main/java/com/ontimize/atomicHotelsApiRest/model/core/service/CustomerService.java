@@ -84,7 +84,9 @@ public class CustomerService implements ICustomerService {
 			throws OntimizeJEERuntimeException, EntityResultRequiredException, MissingFieldsException, RestrictedFieldException, InvalidFieldsException, InvalidFieldsValuesException, LiadaPardaException, InfoValidateException {
 		EntityResult resultado = new EntityResultWrong();
 
-		Map<String, Object> keyMap = new HashMap<>();
+		Map<String, Object> keyMap = new HashMap<>() {{
+			put(CustomerDao.ATTR_ID,customerId);
+		}};
 
 		cf.reset();
 		cf.addBasics(dao.fields);

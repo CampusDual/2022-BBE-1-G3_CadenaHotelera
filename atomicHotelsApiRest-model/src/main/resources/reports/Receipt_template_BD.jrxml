@@ -194,7 +194,7 @@
 				<textElement verticalAlignment="Top">
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{cst_surname}+", "+$F{cst_name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{cst_surname} != null ? ($F{cst_surname}+", "+$F{cst_name}) : $F{cst_name}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="178" y="109" width="65" height="20" uuid="59f9514b-2821-4d1c-a1ab-6becb04917f0">

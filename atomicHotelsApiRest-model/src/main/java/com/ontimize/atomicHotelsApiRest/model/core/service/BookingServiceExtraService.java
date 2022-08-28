@@ -179,7 +179,7 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 					resultado.setMessage("Servicio extra registrado");
 
 				} else {
-					resultado = new EntityResultWrong("El servcio solicitado no está en el hotel de la reserva");
+					resultado = new EntityResultWrong("El servicio solicitado no está en el hotel de la reserva");
 				}
 			}
 		} catch (EntityResultRequiredException e) {
@@ -234,19 +234,19 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 						.getBookingStatus(auxEntity.getRecordValues(0).get(dao.ATTR_ID_BKG))
 						.equals(BookingDao.Status.CANCELED)) {
 					resultado = new EntityResultWrong(
-							"La reserva de este servicio esta cancelada, no se pueden eliminar su servcio extra asociado.");
+							"La reserva de este servicio esta cancelada, no se pueden eliminar su servicio extra asociado.");
 
 				} else if (bookingService
 						.getBookingStatus(auxEntity.getRecordValues(0).get(dao.ATTR_ID_BKG))
 						.equals(BookingDao.Status.COMPLETED)) {
 					resultado = new EntityResultWrong(
-							"La reserva de este servicio esta completada, no se pueden eliminar su servcio extra asociado.");
+							"La reserva de este servicio esta completada, no se pueden eliminar su servicio extra asociado.");
 
 				} else if (bookingService
 						.getBookingStatus(auxEntity.getRecordValues(0).get(dao.ATTR_ID_BKG))
 						.equals(BookingDao.Status.CONFIRMED)) {
 					resultado = new EntityResultWrong(
-							"La reserva de este servicio esta confirmada, no se pueden eliminar su servcio extra asociado.");
+							"La reserva de este servicio esta confirmada, no se pueden eliminar su servicio extra asociado.");
 
 				} else if (bookingService
 						.getBookingStatus(auxEntity.getRecordValues(0).get(dao.ATTR_ID_BKG))
@@ -273,7 +273,7 @@ public class BookingServiceExtraService implements IBookingServiceExtraService {
 	}
 
 	/**
-	 * Dado un bsx_bkg_id devuelve los servcios extra de esa reserva, con sus
+	 * Dado un bsx_bkg_id devuelve los servicios extra de esa reserva, con sus
 	 * precios, las unidades y el total de cada registro
 	 * 
 	 * @param keyMap   (dao.ATTR_ID_BKG)

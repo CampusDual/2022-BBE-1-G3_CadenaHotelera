@@ -69,6 +69,8 @@ public class UserService implements IUserService {
 			cf.setControlPermissionsActive(false);
 			cf.validate(keyMap);
 			cf.validate(attrList);
+//			System.err.println(keyMap);
+//			System.err.println(attrList);
 			resultado = this.daoHelper.query(this.dao, keyMap, attrList);
 
 		} catch (ValidateException e) {
