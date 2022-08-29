@@ -416,7 +416,7 @@ public class HotelService implements IHotelService {
 				EntityResult coorUpdate = hotelUpdate(attrMapco, keyMap);
 
 				String urlEndpoint2 = "https://test.api.amadeus.com/v1/security/oauth2/token";
-				String urlParams = "grant_type=client_credentials&client_id=h3nxa8Fz2gDyhWAhSY8nhlAGaZ43tGHv&client_secret=yTjGtt92Ww2ezfAT";
+				String urlParams = "grant_type=client_credentials&client_id=OiD6eJmJHbF5pS9d9cFMjOJBQQAJcWnm&client_secret=kxp59MWMcdFrcADB";
 				String urlPoi = "https://test.api.amadeus.com/v1/reference-data/locations/pois?latitude=" + latitude
 						+ "&longitude=" + longitude + "&radius=" + keyMap.get(dao.ATTR_RADIUS) +"&page%5Blimit%5D=10&page%5Boffset%5D=0"+ "&categories="
 						+ keyMap.get(dao.ATTR_CATEGORY);
