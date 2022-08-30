@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "16358d13-48bd-4b6d-869e-736ca6aae966",
+		"_postman_id": "bd8aeda4-6318-4c00-8cfd-d8667c5de7e5",
 		"name": "Point of Interes",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "15674806"
@@ -9,11 +9,26 @@
 		{
 			"name": "Points of interes",
 			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "usuarioLibre",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"filter\": {\r\n     \"htl_id\":2\r\n    },\r\n    \"columns\": [\"htl_street\",\"htl_city\",\"htl_id\"]\r\n}",
+					"raw": "{\r\n    \"filter\": {\r\n     \"htl_id\":9,\r\n     \"category\":\"SIGHTS,NIGHTLIFE\",\r\n     \"radius\":\"1\"\r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
